@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { Switch, Route } from "react-router-dom";
 
-import Header from "./headers/Header";
+import Header from "./header/Header";
 import Dashboard from "./dashboard/Dashboard";
 
 export default class Home extends Component {

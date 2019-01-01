@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Tab from "../tab/Tab";
+import Tab from "./tab/Tab";
 
 export default class TabHeader extends Component {
 
