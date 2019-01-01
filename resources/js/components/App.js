@@ -3,11 +3,12 @@ import ReactDOM from 'react-dom';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
 import HomeLayout from "./HomeLayout";
 import ProjectLayout from "./ProjectLayout";
+import { Provider } from 'react-redux'
+import store from '../store/store.js';
 
 export default class App extends Component {
     render() {
         return (
-            <BrowserRouter>
                 <Switch>
                     <Route
                         path="/project"
@@ -15,11 +16,15 @@ export default class App extends Component {
                     />
                     <Route path="/"  component={HomeLayout}/>
                 </Switch>
-            </BrowserRouter>
         );
     }
 }
 
 if (document.getElementById('app')) {
-    ReactDOM.render(<App />, document.getElementById('app'));
+    ReactDOM.render(
+    <Provider store={store}>
+    <BrowserRouter>
+        <App />
+    </BrowserRouter>
+    </Provider>, document.getElementById('app'));
 }
