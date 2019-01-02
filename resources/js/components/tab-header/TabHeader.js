@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import Tab from "./tab/Tab";
+import { connect } from 'react-redux';
+import { setTable } from '../../store/actions/project';
 
-export default class TabHeader extends Component {
+class TabHeader extends Component {
 
   constructor(props) {
     super(props);
@@ -10,18 +12,33 @@ export default class TabHeader extends Component {
       activeTabIndex: 0,
       activeContenteditable: false,
       tabs: [
-        {title: 'Tab 1'},
-        {title: 'Tab 2'},
-        {title: 'Tab 3'},
+        { title: 'Tab 1' },
+        { title: 'Tab 2' },
+        { title: 'Tab 3' },
       ]
     };
 
     this.onTabClick = this.onTabClick.bind(this);
     this.addTabs = this.addTabs.bind(this);
     this.onTabDoubleClick = this.onTabDoubleClick.bind(this);
+
+    this.props.setTable({ tab: 0, rows: this.prepareRows(0) });
+  }
+
+  prepareRows(tabId) {
+    const rows = [];
+    for (let i = 1; i <= 3; i++) {
+      rows.push({
+        id: i, title: "Tab " + (tabId + 1), complete: (20 * i)
+      });
+    }
+
+    return rows;
   }
 
   onTabClick(tabIndex) {
+    this.props.setTable({ tab: tabIndex, rows: this.prepareRows(tabIndex) });
+
     this.setState({
       activeTabIndex: tabIndex
     });
@@ -61,12 +78,14 @@ export default class TabHeader extends Component {
   // }
 
   addTabs() {
-    this.state.tabs.push({title: `Tab ${this.state.tabs.length + 1}`}) ;
+    const tabIndex = this.state.tabs.length;
+    this.state.tabs.push({ title: `Tab ${this.state.tabs.length + 1}` });
+    this.props.setTable({tab: tabIndex, rows: this.prepareRows(tabIndex)});
 
-     this.setState({
-       tabs: this.state.tabs,
-       activeTabIndex: this.state.tabs.length - 1
-     });
+    this.setState({
+      tabs: this.state.tabs,
+      activeTabIndex: this.state.tabs.length - 1
+    });
   }
 
   render() {
@@ -92,3 +111,15 @@ export default class TabHeader extends Component {
     )
   }
 }
+
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setTable: data => dispatch(setTable(data))
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(TabHeader);
