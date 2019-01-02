@@ -1,26 +1,27 @@
 import React, { Component, Fragment } from 'react';
 import ReactDataGrid from 'react-data-grid';
+import { connect } from 'react-redux';
 
 const columns = [
-    { key: "id", name: "ID", editable: true },
-    { key: "title", name: "Title", editable: true },
-    { key: "complete", name: "Complete", editable: true }
+  { key: "id", name: "ID", editable: true },
+  { key: "title", name: "Title", editable: true },
+  { key: "complete", name: "Complete", editable: true }
 ];
 
-export default class Project extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            rows:  [
-                { id: 0, title: "Task 1", complete: 20 },
-                { id: 1, title: "Task 2", complete: 40 },
-                { id: 2, title: "Task 3", complete: 60 }
-            ]
-        }
-
-        this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
+class Project extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+         rows: []
     }
 
+    this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
+  }
+
+
+  componentDidUpdate() {
+    //console.log(this.props.tab);
+  }
 
   onGridRowsUpdated({ fromRow, toRow, updated }) {
     this.setState(state => {
@@ -31,19 +32,36 @@ export default class Project extends Component {
       return { rows };
     });
   };
+
   render() {
+    const { rows } = this.props;
     return (
       <Fragment>
-            <div className="mt-5">
-                <ReactDataGrid
-                    columns={columns}
-                    rowGetter={i => this.state.rows[i]}
-                    rowsCount={3}
-                    onGridRowsUpdated={this.onGridRowsUpdated}
-                    enableCellSelect={true}
-                />
-            </div>
+        <div className="mt-5">
+          {
+            rows.length
+            ? <ReactDataGrid
+                columns={columns}
+                rowGetter={i => this.props.rows[i]}
+                rowsCount={3}
+                onGridRowsUpdated={this.onGridRowsUpdated}
+                enableCellSelect={true}
+              />
+            : `Loading...`
+          }
+        </div>
       </Fragment>
     )
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    tab: state.project.tab,
+    rows: state.project.rows,
+  };
+};
+
+export default connect(
+  mapStateToProps
+)(Project);
