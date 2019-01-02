@@ -10530,3 +10530,10 @@ header {
   border-radius: 30px;
 }
 
+header input {
+  border: none;
+  background: transparent;
+  font-size: 1.575rem;
+  text-align: center;
+}
+
