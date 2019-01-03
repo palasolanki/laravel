@@ -5,7 +5,11 @@ import { connect } from 'react-redux';
 const columns = [
   { key: "id", name: "ID", editable: true },
   { key: "title", name: "Title", editable: true },
-  { key: "complete", name: "Complete", editable: true }
+  { key: "paid_date", name: "Paid Date", editable: true },
+  { key: "complete", name: "Complete", editable: true },
+  { key: "paid_by", name: "Paid By", editable: true },
+  { key: "medium", name: "Medium", editable: true },
+  { key: "comment", name: "Comment", editable: true }
 ];
 
 class Project extends Component {

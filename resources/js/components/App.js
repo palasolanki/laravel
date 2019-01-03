@@ -5,10 +5,16 @@ import HomeLayout from "./HomeLayout";
 import ProjectLayout from "./ProjectLayout";
 import { Provider } from 'react-redux'
 import store from '../store/store.js';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fab } from '@fortawesome/free-brands-svg-icons'
+import { faBars } from '@fortawesome/free-solid-svg-icons'
+
+library.add(fab, faBars );
 
 export default class App extends Component {
     render() {
         return (
+            <div className="wrapper">
                 <Switch>
                     <Route
                         path="/project"
@@ -16,6 +22,7 @@ export default class App extends Component {
                     />
                     <Route path="/"  component={HomeLayout}/>
                 </Switch>
+            </div>
         );
     }
 }
