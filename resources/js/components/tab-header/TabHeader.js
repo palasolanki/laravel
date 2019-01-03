@@ -21,6 +21,7 @@ class TabHeader extends Component {
     this.onTabClick = this.onTabClick.bind(this);
     this.addTabs = this.addTabs.bind(this);
     this.onTabDoubleClick = this.onTabDoubleClick.bind(this);
+    this.onTabKeyPress = this.onTabKeyPress.bind(this);
 
     this.props.setTable({ tab: 0, rows: this.prepareRows(0) });
   }
@@ -44,38 +45,21 @@ class TabHeader extends Component {
     });
   }
 
-  onTabDoubleClick(tabIndex, e) {
-
+  onTabDoubleClick(tabIndex) {
     this.tabTitleRef[tabIndex].querySelector('div').contentEditable = true;
-    // if(this.tabTitleRef[tabIndex]) {
-    //   console.log(this.tabTitleRef[tabIndex]);
-    //   setTimeout(() => {
-    //     this.tabTitleRef[tabIndex].focus();
-    //   }, 300)
-    // }
-    // this.setState({
-    //   activeContenteditable: tabIndex
-    // });
-   // this.tabTitleRef[tabIndex].focus();
-
+    this.tabTitleRef[tabIndex].querySelector('div').focus();
   }
 
   onTabBlur(tabIndex) {
-    this.setState({
-      activeContenteditable: null
-    });
+    this.tabTitleRef[tabIndex].querySelector('div').contentEditable = false;
+
   }
 
-  // handleClickOutside(e) {
-  //   if (this.tabTitleRef[this.state.activeContenteditable].contains(e.target)) {
-  //     return;
-  //   }
-  //   else {
-  //     this.setState({
-  //       activeContenteditable: null,
-  //     })
-  //   }
-  // }
+  onTabKeyPress(tabIndex, e) {
+    if(e.charCode === 13) {
+      this.tabTitleRef[tabIndex].querySelector('div').contentEditable = false;
+    }
+  }
 
   addTabs() {
     const tabIndex = this.state.tabs.length;
@@ -92,7 +76,7 @@ class TabHeader extends Component {
     const { activeTabIndex, tabs, activeContenteditable } = this.state;
 
     return (
-      <div style={{marginTop: '10px'}}>
+      <div>
       <ul className="nav nav-tabs">
         {tabs.map((tab, i) => {
           return <Tab key={i}
@@ -101,6 +85,7 @@ class TabHeader extends Component {
               isActive={(activeTabIndex === i)}
               onTabClick={() => this.onTabClick(i)}
               onTabDoubleClick={() => this.onTabDoubleClick(i)}
+              onTabKeyPress={(e) => this.onTabKeyPress(i, e)}
               onTabBlur={() => this.onTabBlur(i)}
               title={tab.title}
            />
