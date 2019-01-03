@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react'
 import { Switch, Route } from "react-router-dom";
 
-import Header from "./headers/Header";
-import TabHeader from "./headers/TabHeader";
+import Header from "./header/Header";
+import TabHeader from "./tab-header/TabHeader";
 import Project from "./project/Project";
 
 export default class ProjectLayout extends Component {
