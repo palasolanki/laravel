@@ -51146,10 +51146,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/es/index.js");
-/* harmony import */ var _project_header_ProjectHeader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./project-header/ProjectHeader */ "./resources/js/components/project-header/ProjectHeader.js");
-/* harmony import */ var _tab_header_TabHeader__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./tab-header/TabHeader */ "./resources/js/components/tab-header/TabHeader.js");
-/* harmony import */ var _project_Project__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./project/Project */ "./resources/js/components/project/Project.js");
-/* harmony import */ var _sidebar_Sidebar__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./sidebar/Sidebar */ "./resources/js/components/sidebar/Sidebar.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _project_header_ProjectHeader__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./project-header/ProjectHeader */ "./resources/js/components/project-header/ProjectHeader.js");
+/* harmony import */ var _tab_header_TabHeader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./tab-header/TabHeader */ "./resources/js/components/tab-header/TabHeader.js");
+/* harmony import */ var _project_Project__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./project/Project */ "./resources/js/components/project/Project.js");
+/* harmony import */ var _sidebar_Sidebar__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./sidebar/Sidebar */ "./resources/js/components/sidebar/Sidebar.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -51160,13 +51162,14 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
 
 
 
@@ -51180,24 +51183,43 @@ var ProjectLayout =
 function (_Component) {
   _inherits(ProjectLayout, _Component);
 
-  function ProjectLayout() {
+  function ProjectLayout(props) {
+    var _this;
+
     _classCallCheck(this, ProjectLayout);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(ProjectLayout).apply(this, arguments));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ProjectLayout).call(this, props));
+    _this.state = {
+      isSidebarOpen: false
+    };
+    _this.toggleSidebar = _this.toggleSidebar.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    return _this;
   }
 
   _createClass(ProjectLayout, [{
+    key: "toggleSidebar",
+    value: function toggleSidebar() {
+      this.setState({
+        isSidebarOpen: !this.state.isSidebarOpen
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       var match = this.props.match;
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_project_header_ProjectHeader__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      var isSidebarOpen = this.state.isSidebarOpen;
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_project_header_ProjectHeader__WEBPACK_IMPORTED_MODULE_3__["default"], {
         toggleSidebar: this.toggleSidebar
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_sidebar_Sidebar__WEBPACK_IMPORTED_MODULE_5__["default"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "main"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_tab_header_TabHeader__WEBPACK_IMPORTED_MODULE_3__["default"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Switch"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_sidebar_Sidebar__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        isSidebarOpen: isSidebarOpen
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: classnames__WEBPACK_IMPORTED_MODULE_2___default()({
+          "full": !isSidebarOpen
+        }, "main")
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_tab_header_TabHeader__WEBPACK_IMPORTED_MODULE_4__["default"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Switch"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Route"], {
         exact: true,
         path: match.url,
-        component: _project_Project__WEBPACK_IMPORTED_MODULE_4__["default"]
+        component: _project_Project__WEBPACK_IMPORTED_MODULE_5__["default"]
       }))));
     }
   }]);
@@ -51397,8 +51419,7 @@ function (_Component) {
     _this.editTitle = _this.editTitle.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.setTitle = _this.setTitle.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.onBlur = _this.onBlur.bind(_assertThisInitialized(_assertThisInitialized(_this)));
-    _this.onkeyPress = _this.onkeyPress.bind(_assertThisInitialized(_assertThisInitialized(_this))); // this.handleClickOutside = this.handleClickOutside.bind(this);
-
+    _this.onkeyPress = _this.onkeyPress.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     return _this;
   }
 
@@ -51440,7 +51461,7 @@ function (_Component) {
           projectTitle = _this$state.projectTitle;
       var toggleSidebar = this.props.toggleSidebar;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("header", {
-        className: "project-header d-flex align-items-center justify-content-center"
+        className: "project-header d-flex align-items-center"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
         className: "logo rounded-circle",
         src: _images_favicon_png__WEBPACK_IMPORTED_MODULE_2___default.a,
@@ -51589,7 +51610,7 @@ function (_Component) {
 
       var rows = this.props.rows;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0__["Fragment"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "mt-5"
+        className: "grid-table mt-5"
       }, rows.length ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_data_grid__WEBPACK_IMPORTED_MODULE_1___default.a, {
         columns: columns,
         rowGetter: function rowGetter(i) {

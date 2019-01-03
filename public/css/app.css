@@ -10496,7 +10496,7 @@ a.text-dark:focus {
 }
 
 header {
-  background-color: #00bcd4;
+  background-color: #32afbc;
   height: 50px;
 }
 
@@ -10504,6 +10504,18 @@ header h3,
 header input {
   font-size: 20px;
   color: #fff;
+}
+
+.project-header {
+  position: relative;
+}
+
+.project-header h3 {
+  position: absolute;
+  -webkit-transform: translatey(-50%);
+          transform: translatey(-50%);
+  left: 50%;
+  top: 50%;
 }
 
 .nav-link {
@@ -10544,7 +10556,7 @@ header input {
 
 .nav-tabs {
   border-bottom: 1px solid #dee2e6;
-  background-color: #00bcd4;
+  background-color: #32afbc;
 }
 
 .nav-tabs .nav-item {
@@ -10562,6 +10574,10 @@ header input {
   position: relative;
 }
 
+.nav-tabs .nav-link.active {
+  border-color: transparent;
+}
+
 .nav-tabs .nav-link.active:hover,
 .nav-tabs .nav-link.active:focus {
   border-color: transparent;
@@ -10570,13 +10586,14 @@ header input {
 .sidebar {
   position: absolute;
   width: 250px;
-  background: #cdfaff;
+  background: #fff;
   height: calc(100vh - 50px);
   margin-top: 50px;
   z-index: 9;
   top: 0;
   left: -250px;
   transition: all 0.5s;
+  border-right: 1px solid #e2e2e2;
 }
 
 .sidebar.open {
@@ -10586,7 +10603,8 @@ header input {
 }
 
 .sidebar .nav-link.active {
-  background-color: #fff;
+  background-color: #3acbda;
+  color: #fff;
 }
 
 .sidebar .nav-link {
@@ -10610,7 +10628,25 @@ header input {
   margin-left: 250px;
 }
 
+.main.full {
+  width: 100%;
+  margin-left: 0;
+}
+
 .main {
   transition: all 0.5s;
+}
+
+.react-grid-Container {
+  width: 100% !important;
+}
+
+.react-grid-Grid {
+  border: none !important;
+}
+
+.grid-table {
+  padding-left: 15px;
+  padding-right: 15px;
 }
 

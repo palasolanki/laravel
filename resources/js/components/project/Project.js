@@ -41,7 +41,7 @@ class Project extends Component {
     const { rows } = this.props;
     return (
       <Fragment>
-        <div className="mt-5">
+        <div className="grid-table mt-5">
           {
             rows.length
             ? <ReactDataGrid

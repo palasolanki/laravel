@@ -45,7 +45,7 @@ export default class ProjectHeader extends Component {
     const { contenteditable, projectTitle } = this.state;
     const { toggleSidebar } = this.props;
     return (
-      <header className="project-header d-flex align-items-center justify-content-center">
+      <header className="project-header d-flex align-items-center">
       <img className="logo rounded-circle" src={logo} alt="Logo"/>
       <div className="ml-4" onClick={toggleSidebar}>
         <FontAwesomeIcon className="bars" icon="bars" />
