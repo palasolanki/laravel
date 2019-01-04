@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Project;
+use Faker\Generator as Faker;
 
 class ProjectSeeder extends Seeder
 {
@@ -10,7 +11,7 @@ class ProjectSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(Faker $faker)
     {
         $columns = [
             ['key' => 'id', 'name' => 'ID'],
@@ -21,6 +22,6 @@ class ProjectSeeder extends Seeder
             ['key' => 'medium', 'name' => 'Medium'],
             ['key' => 'comment', 'name' => 'Comment']
         ];
-        Project::create(['name' => 'My Project', 'columns' => $columns]);
+        Project::create(['name' => $faker->name, 'description' => $faker->sentence, 'columns' => $columns]);
     }
 }
