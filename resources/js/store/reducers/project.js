@@ -1,4 +1,4 @@
-import { SET_TABLE, SET_PROJECTS } from "../actions/project";
+import { SET_TABLE, SET_PROJECTS, SET_PROJECT } from "../actions/project";
 
 const initialState = {
     rows: [],
@@ -12,6 +12,8 @@ function project(state = initialState, action) {
             return {...state, ...action.payload};
         case SET_PROJECTS:
             return {...state, list : action.payload};
+        case SET_PROJECT:
+            return {...state, list : [...state.list, action.payload]};
         default:
             return state;
     }
