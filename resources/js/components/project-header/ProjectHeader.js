@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from '../../../images/favicon.png';
 
@@ -46,20 +47,23 @@ export default class ProjectHeader extends Component {
     const { toggleSidebar } = this.props;
     return (
       <header className="project-header d-flex align-items-center">
-      <img className="logo rounded-circle" src={logo} alt="Logo"/>
-      <div className="ml-4" onClick={toggleSidebar}>
-        <FontAwesomeIcon className="bars" icon="bars" />
-      </div>
-        { contenteditable ? <input
-        type="text"
-        value={projectTitle}
-        contentEditable={true}
-        onChange={this.setTitle}
-        onKeyPress={this.onkeyPress}
-        onBlur={this.onBlur}
-        ref={this.inputRef}
-        style={{left: "46.5%", position: "absolute"}}
-        /> : <h3 className="mb-0" onDoubleClick={this.editTitle}>{projectTitle}</h3> }
+        <Link to={'/'}>
+          <img className="logo rounded-circle" src={logo} alt="Logo"/>
+        </Link>
+        <div className="ml-4" onClick={toggleSidebar}>
+          <FontAwesomeIcon className="bars" icon="bars" />
+        </div>
+        <div className="header__pos-abs">
+          { contenteditable ? <input
+          type="text"
+          value={projectTitle}
+          contentEditable={true}
+          onChange={this.setTitle}
+          onKeyPress={this.onkeyPress}
+          onBlur={this.onBlur}
+          ref={this.inputRef}
+          /> : <h3 className="mb-0" onDoubleClick={this.editTitle}>{projectTitle}</h3> }
+        </div>
       </header>
     )
   }

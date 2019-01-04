@@ -10514,13 +10514,13 @@ header input {
   position: relative;
 }
 
-.project-header h3,
-.project-header input {
+.header__pos-abs {
   position: absolute;
-  -webkit-transform: translatey(-50%);
-          transform: translatey(-50%);
-  left: 50%;
-  top: 50%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .nav-link {
@@ -10559,11 +10559,6 @@ header input {
   text-align: center;
 }
 
-.nav-tabs {
-  border-bottom: 1px solid #dee2e6;
-  background-color: #32afbc;
-}
-
 .nav-tabs .nav-item {
   color: #fff;
   margin-right: 5px;
@@ -10573,6 +10568,7 @@ header input {
 .nav-tabs .nav-link {
   background: #2da6b3;
   white-space: nowrap;
+  border-bottom: 0px solid;
 }
 
 .nav-tabs .nav-link:hover,
@@ -10594,7 +10590,10 @@ header input {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
+  overflow-y: hidden;
   padding-top: 5px;
+  border-bottom: 0px solid;
+  background-color: #32afbc;
 }
 
 .sidebar {
@@ -10687,24 +10686,21 @@ header input {
 .dashboard .header li {
   font-size: 20px;
   cursor: pointer;
-  position: relative;
-  margin-right: 36px;
 }
 
-.dashboard .header li:not(:last-child):after {
-  content: "/";
-  position: absolute;
-  right: -20px;
-  top: 0;
-  font-weight: bold;
+.dashboard .list li > a {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  color: black;
 }
 
 .dashboard .list {
   display: flex;
-  align-items: center;
+  align-items: start;
 }
 
-.dashboard .list .list-inline-item:not(:last-child) {
+.dashboard .list .list-inline-item {
   width: 200px;
   height: 80px;
   background: #fff;
@@ -10716,6 +10712,7 @@ header input {
   margin-right: 25px;
   box-shadow: 0px 0px 8px 0px rgba(239, 239, 239, 0.5);
   cursor: pointer;
+  padding: 15px;
 }
 
 .section {
@@ -10725,5 +10722,31 @@ header input {
 .section h3 {
   display: inline-flex;
   text-decoration: underline;
+}
+
+.form__project {
+  box-shadow: 0px 0px 8px 0px rgba(239, 239, 239, 0.5);
+  width: 300px;
+}
+
+.btn--prime {
+  background-color: #32afbc;
+  color: #fff;
+}
+
+.btn:hover,
+.btn:focus {
+  color: #fff;
+}
+
+.btn--cancel {
+  background-color: #a77474;
+  color: #fff;
+}
+
+.btn__add-project {
+  height: 80px;
+  align-items: center;
+  width: 50px;
 }
 
