@@ -1,67 +1,57 @@
-import React, { Component, Fragment } from 'react';
-import {connect} from 'react-redux';
-import {getProjects} from '../../store/actions/project';
-import project from '../../store/reducers/project';
+import React, { Component, Fragment } from "react";
+import { connect } from "react-redux";
+import { getProjects } from "../../store/actions/project";
+import { Link } from "react-router-dom";
 
 class Dashboard extends Component {
-  constructor(props) {
-    super(props);
-    this.types = [
-      {title: 'Expense', projects: [
-        {title: 'Project 1'},
-        {title: 'Project 2'},
-        {title: 'Project 3'}
-      ]},
-      {title: 'Income', projects: [
-        {title: 'Project 1'},
-        {title: 'Project 2'},
-        {title: 'Project 3'}
-      ]}
-    ]
+    componentDidMount() {
+        this.props.getProjects();
     }
-
-  componentDidMount()
-  {
-    this.props.getProjects();
-  }
-  render() {
-
-    return (
-      <Fragment>
-        <div className="dashboard p-3">
-            {
-              this.types.map((type, i) => {
-               return <div className="section" key={i}>
-                  <h3 className="mb-5">{type.title}</h3>
-                  <div className="list">
-                  <ul className="ml-3 list-inline unstyled">
-                    {
-                      type.projects.map((project, j) => {
-                        return <li key={j} className="list-inline-item">
-                                <div>{project.title}</div>
-                              </li>
-                      })
-                    }
-                    <li className="list-inline-item">
-                      <button type="button" className="btn--custom btn btn-prime rounded-circle">+</button>
-                    </li>
-                  </ul>
+    render() {
+        const { list } = this.props;
+        return (
+            <div className="ml-2 mt-2 mr-2">
+                <h3>This is Dashboard</h3>
+                <div className="row">
+                    {list.map((list, index) => (
+                        <ProjectCard project={list} key={list._id} />
+                    ))}
                 </div>
-                </div>
-              })
-            }
-
-          </div>
-
-      </Fragment>
-    )
-  }
+            </div>
+        );
+    }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    getProjects: () => dispatch(getProjects())
-  }
-}
+const ProjectCard = props => (
+    <div className="col-sm-3 mt-2">
+        <div className="card">
+            <div className="card-body">
+                <h5 className="card-title">{props.project.name}</h5>
+                <p className="card-text">{props.project.description}</p>
+                <Link
+                    to={`project/${props.project._id}`}
+                    className="btn btn-primary"
+                >
+                    Go
+                </Link>
+            </div>
+        </div>
+    </div>
+);
 
-export default connect(null, mapDispatchToProps)(Dashboard);
+const mapStateToProps = state => {
+    return {
+        list: state.project.list
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        getProjects: () => dispatch(getProjects())
+    };
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Dashboard);

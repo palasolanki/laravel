@@ -58,6 +58,7 @@ export default class ProjectHeader extends Component {
         onKeyPress={this.onkeyPress}
         onBlur={this.onBlur}
         ref={this.inputRef}
+        style={{left: "46.5%", position: "absolute"}}
         /> : <h3 className="mb-0" onDoubleClick={this.editTitle}>{projectTitle}</h3> }
       </header>
     )

@@ -37,7 +37,7 @@ export default class ProjectLayout extends Component {
         <div className={classNames({ "full": !isSidebarOpen }, "main")}>
           <TabHeader />
           <Switch>
-              <Route exact path={match.url} component={Project}/>
+              <Route exact path={`${match.url}/:id` }  component={Project}/>
           </Switch>
          </div>
       </Fragment>
