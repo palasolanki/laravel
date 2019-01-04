@@ -18,15 +18,12 @@ class Project extends Component {
     this.state = {
          rows: []
     }
-
     this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
   }
 
-
   componentDidUpdate() {
-    //console.log(this.props.tab);
-  }
 
+  }
   onGridRowsUpdated({ fromRow, toRow, updated }) {
     this.setState(state => {
       const rows = state.rows.slice();

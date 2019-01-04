@@ -1,24 +1,30 @@
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+import { Link, Route } from "react-router-dom";
 import classNames from 'classnames';
 export default class Sidebar extends Component {
   constructor(props) {
     super(props);
     this.navTitles = [
-      {title: 'Dashboard', url: 'dashboard'},
-      {title: 'Projects', url: 'project'},
+      {title: 'Dashboard', url: '/'},
+      {title: 'Projects', url: '/project'},
     ];
 
     this.state = {
-      activeNav: 0
+      activeNav: null
     }
 
     this.activeNav = this.activeNav.bind(this);
   }
 
-  activeNav(navIndex) {
+  componentDidMount() {
+      this.setState({
+       activeNav: this.props.match.path
+      })
+  }
+
+  activeNav(url) {
     this.setState({
-      activeNav: navIndex
+      activeNav: url
     })
   }
 
@@ -35,8 +41,8 @@ export default class Sidebar extends Component {
             return <li className="nav-item" key={i}>
               <Link
                 to={`${navTitle.url}`}
-                className={classNames({"active": (activeNav === i)}, "nav-link")}
-                onClick={() => this.activeNav(i)}
+                className={classNames({"active": ( activeNav === navTitle.url )}, "nav-link")}
+                onClick={() => this.activeNav(navTitle.url)}
               >
                 {navTitle.title}
               </Link>

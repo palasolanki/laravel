@@ -27,7 +27,7 @@ export default class Home extends Component {
     return (
       <Fragment>
         <Header toggleSidebar={this.toggleSidebar} />
-        <Sidebar isSidebarOpen={isSidebarOpen} />
+        <Sidebar match={match} isSidebarOpen={isSidebarOpen} />
         <div className={classNames({ "full": !isSidebarOpen }, "main")}>
         <Switch>
             <Route exact path={match.url}  component={Dashboard}/>

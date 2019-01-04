@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from '../../../images/favicon.png';
 export default class Header extends Component {
-
   render() {
     const { toggleSidebar } = this.props;
     return (

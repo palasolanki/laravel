@@ -20,8 +20,12 @@ export default class ProjectLayout extends Component {
   toggleSidebar() {
     this.setState({
       isSidebarOpen: !this.state.isSidebarOpen
-    })
+    });
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 350);
   }
+
   render() {
     const { match } = this.props;
     const { isSidebarOpen } = this.state;
@@ -29,11 +33,11 @@ export default class ProjectLayout extends Component {
     return (
       <Fragment>
         <ProjectHeader toggleSidebar={this.toggleSidebar} />
-        <Sidebar isSidebarOpen={isSidebarOpen}/>
+        <Sidebar match={match} isSidebarOpen={isSidebarOpen}/>
         <div className={classNames({ "full": !isSidebarOpen }, "main")}>
           <TabHeader />
           <Switch>
-              <Route exact path={match.url}  component={Project}/>
+              <Route exact path={match.url} component={Project}/>
           </Switch>
          </div>
       </Fragment>

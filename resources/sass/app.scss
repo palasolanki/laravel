@@ -8,6 +8,9 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
+.body {
+  background-color: #f9f9f9;
+}
 .navbar-laravel {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
@@ -24,7 +27,8 @@ header input {
 .project-header {
   position: relative;
 }
-.project-header h3 {
+.project-header h3,
+.project-header input {
   position: absolute;
   transform: translatey(-50%);
   left: 50%;
@@ -68,17 +72,17 @@ header input {
 }
 .nav-tabs .nav-item {
   color: #fff;
-  // margin-left: 1px;
-  // margin-right: 1px;
+  margin-right: 5px;
+  margin-bottom: 0;
 }
 .nav-tabs .nav-link{
-  border-color: #01c4da;
   background: #2da6b3;
+  white-space: nowrap;
 }
 
 .nav-tabs .nav-link:hover,
 .nav-tabs .nav-link:focus {
-  border-color: #01c4da #01c4da #01c4da;
+  border-color: transparent;
   position: relative;
 }
 
@@ -89,6 +93,12 @@ header input {
 .nav-tabs .nav-link.active:hover,
 .nav-tabs .nav-link.active:focus {
   border-color: transparent;
+}
+.nav-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-top: 5px;
 }
 
 // Sidebar
@@ -110,15 +120,16 @@ header input {
   transform: translate3d(0, 0, 0);
 }
 .sidebar .nav-link.active {
-  background-color: #3acbda;
-  color: #fff
+  background-color: #ececec; // #3acbda;
+  color: #000;
 }
 .sidebar .nav-link {
   padding: 1rem 1rem;
   font-size: 16px;
+  color: #000;
 }
 .logo {
-  width: 50px;
+  width: 45px;
   margin-left: 20px;
 }
 .bars {
@@ -147,4 +158,58 @@ header input {
 .grid-table {
   padding-left: 15px;
   padding-right: 15px;
+}
+.btn-prime {
+  background-color: #32afbc;
+  font-size: 30px;
+  font-weight: bold;
+  height: 50px;
+  width: 50px;
+  line-height: 28px;
+}
+.btn-prime,
+.btn-prime:focus,
+.btn-prime:hover {
+  color: #fff;
+}
+.dashboard {
+  height: calc(100vh - 50px);
+}
+.dashboard .header li {
+  font-size: 20px;
+  cursor: pointer;
+  position: relative;
+  margin-right: 36px;
+}
+.dashboard .header li:not(:last-child):after {
+  content: '/';
+  position: absolute;
+  right: -20px;
+  top: 0;
+  font-weight: bold;
+}
+.dashboard .list {
+  display: flex;
+  align-items: center;
+}
+.dashboard .list .list-inline-item:not(:last-child) {
+  width: 200px;
+  height: 80px;
+  background: #fff;
+  font-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  margin-right: 25px;
+  box-shadow: 0px 0px 8px 0px rgba(239, 239, 239, 0.50);
+  cursor: pointer;
+}
+
+.section {
+  height: 50%;
+}
+.section h3 {
+  display: inline-flex;
+  text-decoration: underline
 }
