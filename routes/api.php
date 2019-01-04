@@ -12,4 +12,4 @@
 |
 */
 
-Route::get('/projects', 'ProjectController@index');
+Route::apiResource('projects', 'ProjectController');
