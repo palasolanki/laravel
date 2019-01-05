@@ -25,8 +25,11 @@ class ProjectController extends Controller
         $tab = new Tab([
             'title' => 'New Tab'
         ]);
-        $project->tabs()->save($tab);
+        $saved = $project->tabs()->save($tab);
 
-        return response()->json(['data' => $project]);
+        $data = $project->toArray();
+        $data['tab'] = $tab;
+
+        return response()->json(['data' => $data]);
     }
 }
