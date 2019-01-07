@@ -7,9 +7,9 @@ import { Provider } from 'react-redux'
 import store from '../store/store.js';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 
-library.add(fab, faBars );
+library.add(fab, faBars, faEllipsisV );
 
 export default class App extends Component {
     render() {

@@ -24,9 +24,9 @@ export default class ProjectHeader extends Component {
   }
 
   setTitle(e) {
-    this.setState({
-      projectTitle: e.target.value
-    });
+      this.setState({
+        projectTitle: e.target.value
+      });
   }
 
   onkeyPress(e) {
@@ -50,7 +50,7 @@ export default class ProjectHeader extends Component {
         <Link to={'/'}>
           <img className="logo rounded-circle" src={logo} alt="Logo"/>
         </Link>
-        <div className="ml-4" onClick={toggleSidebar}>
+        <div className="ml-sm-4 ml-2" onClick={toggleSidebar}>
           <FontAwesomeIcon className="bars" icon="bars" />
         </div>
         <div className="header__pos-abs">

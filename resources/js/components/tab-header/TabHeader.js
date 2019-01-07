@@ -11,11 +11,13 @@ class TabHeader extends Component {
     this.state = {
       activeTabIndex: 0,
       activeContenteditable: false,
+      tabLength: 0,
       tabs: [
         { title: 'Tab 1' },
         { title: 'Tab 2' },
         { title: 'Tab 3' },
-      ]
+      ],
+      visibleDropdown: false
     };
 
     this.onTabClick = this.onTabClick.bind(this);
@@ -23,6 +25,8 @@ class TabHeader extends Component {
     this.onTabDoubleClick = this.onTabDoubleClick.bind(this);
     this.onTabKeyPress = this.onTabKeyPress.bind(this);
 
+    this.showDropdown = this.showDropdown.bind(this);
+    this.deleteActiveTab = this.deleteActiveTab.bind(this);
     this.props.setTable({ tab: 0, rows: this.prepareRows(0) });
   }
 
@@ -39,20 +43,25 @@ class TabHeader extends Component {
 
   onTabClick(tabIndex) {
     this.props.setTable({ tab: tabIndex, rows: this.prepareRows(tabIndex) });
-
     this.setState({
-      activeTabIndex: tabIndex
+      activeTabIndex: tabIndex,
     });
   }
 
   onTabDoubleClick(tabIndex) {
+    this.setState({
+      visibleDropdown: false,
+      activeContenteditable: tabIndex
+    })
     this.tabTitleRef[tabIndex].querySelector('div').contentEditable = true;
     this.tabTitleRef[tabIndex].querySelector('div').focus();
   }
 
   onTabBlur(tabIndex) {
     this.tabTitleRef[tabIndex].querySelector('div').contentEditable = false;
-
+    this.setState({
+      activeContenteditable: false
+    })
   }
 
   onTabKeyPress(tabIndex, e) {
@@ -67,13 +76,40 @@ class TabHeader extends Component {
     this.props.setTable({tab: tabIndex, rows: this.prepareRows(tabIndex)});
 
     this.setState({
+      tabLength: this.state.tabs.length,
       tabs: this.state.tabs,
       activeTabIndex: this.state.tabs.length - 1
     });
   }
 
+  showDropdown() {
+      this.setState({
+        visibleDropdown: !this.state.visibleDropdown
+      })
+  }
+
+  deleteActiveTab(index) {
+    let tabs = [...this.state.tabs];
+
+    tabs.splice(index, 1);
+    this.setState({
+      activeTabIndex: 0,
+      tabs: tabs,
+      visibleDropdown: false,
+    });
+
+
+    setTimeout(() => {
+      this.setState({
+        tabLength: this.state.tabs.length
+      });
+    }, 100)
+
+  }
+
+
   render() {
-    const { activeTabIndex, tabs, activeContenteditable } = this.state;
+    const { activeTabIndex, tabs, activeContenteditable, visibleDropdown, tabLength } = this.state;
 
     return (
       <div>
@@ -88,6 +124,10 @@ class TabHeader extends Component {
               onTabKeyPress={(e) => this.onTabKeyPress(i, e)}
               onTabBlur={() => this.onTabBlur(i)}
               title={tab.title}
+              showDropdown={this.showDropdown}
+              visibleDropdown={visibleDropdown}
+              deleteActiveTab={() => this.deleteActiveTab(i)}
+              tabLength={tabLength}
            />
         })}
         <li className="position-relative add-tab-item"><div className="add-tabs" onClick={this.addTabs}>+</div></li>

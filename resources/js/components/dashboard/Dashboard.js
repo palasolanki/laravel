@@ -8,8 +8,8 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.types = [
-      {title: 'Expense'},
-      {title: 'Income'}
+      {title: 'Expense', type: 'expense'},
+      {title: 'Income', type: 'income'}
     ];
     this.state = {
       isAddProject: null,
@@ -38,19 +38,21 @@ class Dashboard extends Component {
       })
     }
 
-    saveProject() {
-
-      this.props.setProject({
-        _id: this.props.list.length ,
-        name: this.state.projectTitle,
-        description: 'New title added'
-      });
-
+    saveProject(type) {
+      if(this.state.projectTitle !== ''){
+        this.props.setProject({
+          type: type,
+          name: this.state.projectTitle,
+          description: 'New title added'
+        });
+      }
+      this.closeProjectForm();
     }
 
     closeProjectForm() {
       this.setState({
-        isAddProject: null
+        isAddProject: null,
+        projectTitle: ''
       })
     }
 
@@ -68,10 +70,10 @@ class Dashboard extends Component {
                     <div className="list">
                     <ul className="ml-3 list-inline unstyled">
                       {list.map((list) => (
-                          <ProjectCard project={list} key={list._id} />
-                      ))}
-                    </ul>
-                    <div className={classnames(
+                        list.type === type.type) ? <ProjectCard project={list} key={list._id} /> : false
+                      )}
+                      <li className="list-inline-item">
+                      <div className={classnames(
                       {'btn__add-project' : (isAddProject !== i)},
                       {'form__project bg-white p-4' : (isAddProject === i)},
                        "d-inline-flex")
@@ -80,12 +82,11 @@ class Dashboard extends Component {
                       {
                         (isAddProject === i)  ?
                           <div className="w-100">
-                          {/* <h5>Add Project Title:</h5> */}
                             <div className="form-group">
                               <input className="form-control" type="text" value={projectTitle} onChange={this.editProjectTitle} placeholder="Project Name"/>
                             </div>
                             <div className="d-flex justify-content-end mt-2">
-                              <button type="button" className="btn btn--prime mr-3" onClick={this.saveProject}>Save</button>
+                              <button type="button" className="btn btn--prime mr-3" onClick={() => this.saveProject(type.type)}>Save</button>
                               <button type="button" className="btn btn--cancel" onClick={this.closeProjectForm}>Cancel</button>
                             </div>
                           </div>
@@ -93,6 +94,9 @@ class Dashboard extends Component {
                           <button type="button" className="btn--custom btn btn-prime rounded-circle" onClick={() => this.addProject(i)}>+</button>
                       }
                       </div>
+                      </li>
+                    </ul>
+
                   </div>
                   </div>
                 })

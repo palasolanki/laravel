@@ -16,11 +16,7 @@ class ProjectController extends Controller
 
     public function store(ProjectRequest $request)
     {
-        $project = Project::create([
-            //'user_id' => $request->user()->id,
-            'name' => $request->name,
-            'description' => $request->description,
-        ]);
+        $project = Project::create($request->all());
 
         $tab = new Tab([
             'title' => 'New Tab'

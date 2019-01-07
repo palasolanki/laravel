@@ -7,13 +7,19 @@ export function setTable(payload) {
     return { type: SET_TABLE, payload };
 }
 
-
 export function setProjects(payload) {
-    return { type: SET_PROJECTS, payload };
+  return { type: SET_PROJECTS, payload };
 }
 
 export function setProject(payload) {
-    return { type: SET_PROJECT, payload };
+    return (dispatch) => {
+        return api.post('/projects', payload)
+        .then((res) => {
+            dispatch({type: SET_PROJECT, payload: res.data.data});
+            dispatch(redirect);
+        })
+    }
+    //return { type: SET_PROJECT, payload };
 }
 
 export function getProjects()
