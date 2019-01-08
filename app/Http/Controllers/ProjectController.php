@@ -10,7 +10,7 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::get();
+        $projects = Project::with('first_tab')->get();
         return response()->json(['data' => $projects]);
     }
 
@@ -24,7 +24,7 @@ class ProjectController extends Controller
         $saved = $project->tabs()->save($tab);
 
         $data = $project->toArray();
-        $data['tab'] = $tab;
+        $data['first_tab'] = $tab;
 
         return response()->json(['data' => $data]);
     }
