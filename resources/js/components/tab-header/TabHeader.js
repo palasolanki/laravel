@@ -112,7 +112,7 @@ class TabHeader extends Component {
     const { activeTabIndex, tabs, activeContenteditable, visibleDropdown, tabLength } = this.state;
 
     return (
-      <div>
+      <div className="position-relative">
       <ul className="nav nav-tabs">
         {tabs.map((tab, i) => {
           return <Tab key={i}

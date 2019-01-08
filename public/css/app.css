@@ -10564,13 +10564,13 @@ header input {
   color: #fff;
   margin-right: 5px;
   margin-bottom: 0;
-  position: relative;
 }
 
 .nav-tabs .nav-link {
   background: #2da6b3;
   white-space: nowrap;
   border-bottom: 0px solid;
+  position: relative;
 }
 
 .nav-tabs .nav-link:hover,
@@ -10591,7 +10591,7 @@ header input {
 .nav-tabs {
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: auto;
+  overflow-x: scroll;
   overflow-y: hidden;
   padding-top: 5px;
   border-bottom: 0px solid;
@@ -10759,10 +10759,6 @@ header > a {
   z-index: 1;
 }
 
-.nav-tabs {
-  overflow: inherit;
-}
-
 .custom-dropdown .btn {
   position: absolute;
   right: 5px;
@@ -10778,5 +10774,26 @@ header > a {
 .custom-dropdown .btn:hover {
   box-shadow: none;
   color: #000;
+}
+
+.ellipsis-h.btn {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  padding: 0;
+  line-height: 0;
+  font-size: 1rem;
+}
+
+.ellipsis-h.btn:focus,
+.ellipsis-h.btn:hover {
+  box-shadow: none;
+  color: #000;
+}
+
+.custom-dropdown {
+  position: absolute;
 }
 
