@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from "react";
+import { Redirect } from 'react-router-dom';
 import { connect } from "react-redux";
 import classnames from 'classnames';
 import { getProjects, setProject } from "../../store/actions/project";
@@ -47,6 +48,7 @@ class Dashboard extends Component {
         });
       }
       this.closeProjectForm();
+
     }
 
     closeProjectForm() {
@@ -58,8 +60,13 @@ class Dashboard extends Component {
 
 
     render() {
-        const { list } = this.props;
+        const { list, redirect } = this.props;
         const { isAddProject, projectTitle } = this.state;
+
+        if(redirect) {
+          const project = list[list.length - 1];
+          return <Redirect to={`project/${project._id}`} />
+        }
         return (
           <Fragment>
           <div className="dashboard p-3">
@@ -115,7 +122,8 @@ const ProjectCard = props => (
 
 const mapStateToProps = state => {
     return {
-        list: state.project.list
+        list: state.project.list,
+        redirect: state.project.redirect
     };
 };
 

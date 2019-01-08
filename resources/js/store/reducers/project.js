@@ -1,9 +1,10 @@
-import { SET_TABLE, SET_PROJECTS, SET_PROJECT } from "../actions/project";
+import { SET_TABLE, SET_PROJECTS, SET_PROJECT, SET_REDIRECT } from "../actions/project";
 
 const initialState = {
     rows: [],
     tab: null,
-    list: []
+    list: [],
+    redirect: false
 };
 
 function project(state = initialState, action) {
@@ -14,6 +15,8 @@ function project(state = initialState, action) {
             return {...state, list : action.payload};
         case SET_PROJECT:
             return {...state, list : [...state.list, action.payload]};
+        case SET_REDIRECT:
+            return {...state, redirect: action.payload};
         default:
             return state;
     }

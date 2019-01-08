@@ -15,12 +15,14 @@ export default class Tab extends Component {
                 onBlur={onTabBlur}
                 >
                   {title}
+                  {
+                (isActive && !isContentEditable && (tabLength !== 1)) && <button className="btn ellipsis-h" type="button" onClick={showDropdown}>
+                    <FontAwesomeIcon icon="ellipsis-v" />
+                    </button>
+                  }
               </div>
               {
                 (isActive && !isContentEditable && (tabLength !== 1)) &&  <div className="custom-dropdown">
-                    <button className="btn" type="button" onClick={showDropdown}>
-                    <FontAwesomeIcon icon="ellipsis-v" />
-                    </button>
                     <div className={classnames({'show': visibleDropdown}, "dropdown-menu")}>
                       <button className="dropdown-item" type="button">Edit</button>
                       <button className="dropdown-item" type="button" onClick={deleteActiveTab}>Delete</button>
