@@ -65,7 +65,7 @@ class Dashboard extends Component {
 
         if(redirect) {
           const project = list[list.length - 1];
-          return <Redirect to={`project/${project._id}`} />
+          return <Redirect to={`project/${project.first_tab._id}`} />
         }
         return (
           <Fragment>
@@ -116,7 +116,7 @@ class Dashboard extends Component {
 
 const ProjectCard = props => (
     <li className="list-inline-item">
-      <Link to={`project/${props.project._id}`}>{props.project.name} </Link>
+      <Link to={`project/${props.project.first_tab._id}`}>{props.project.name} </Link>
     </li>
 );
 
