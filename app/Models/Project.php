@@ -16,4 +16,12 @@ class Project extends Eloquent
     {
         return $this->hasMany('App\Models\Tab');
     }
+
+    /**
+     * Get the oldest tab for the project.
+     */
+    public function first_tab()
+    {
+        return $this->hasOne('App\Models\Tab')->oldest();
+    }
 }
