@@ -13,3 +13,4 @@
 */
 
 Route::apiResource('projects', 'ProjectController');
+Route::get('/tab/{id}', 'TabController@getTabData')->name('tab.getTabData');

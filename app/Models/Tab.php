@@ -8,4 +8,12 @@ class Tab extends Eloquent
 {
     protected $collection = 'tabs';
     protected $guarded = [];
+
+    /**
+     * Get the tabs for the project.
+     */
+    public function project()
+    {
+        return $this->belongsTo('App\Models\Project');
+    }
 }
