@@ -36,6 +36,7 @@ class Project extends Component {
 
   render() {
     const { rows } = this.props;
+
     return (
       <Fragment>
         <div className="grid-table mt-5">
@@ -62,6 +63,7 @@ const mapStateToProps = state => {
     rows: state.project.rows,
   };
 };
+
 
 export default connect(
   mapStateToProps

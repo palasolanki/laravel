@@ -1,13 +1,15 @@
 import React, { Component, Fragment } from 'react'
 import { Switch, Route } from "react-router-dom";
 import classNames from 'classnames';
-
+import { connect } from 'react-redux';
 import ProjectHeader from "./project-header/ProjectHeader";
 import TabHeader from "./tab-header/TabHeader";
 import Project from "./project/Project";
 import Sidebar from "./sidebar/Sidebar";
+import api from '../helpers/api';
+import { getProjectsData, setProjectsData } from "../store/actions/project";
 
-export default class ProjectLayout extends Component {
+export class ProjectLayout extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,6 +17,9 @@ export default class ProjectLayout extends Component {
     }
 
     this.toggleSidebar = this.toggleSidebar.bind(this);
+  }
+  componentDidMount() {
+    this.props.getProjectsData();
   }
 
   toggleSidebar() {
@@ -44,3 +49,22 @@ export default class ProjectLayout extends Component {
     )
   }
 }
+
+
+const mapStateToProps = state => {
+  return {
+    projectData: state.project.projectData
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getProjectsData: () => dispatch(getProjectsData()),
+    setProjectsData: (data) => dispatch(setProjectsData(data)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ProjectLayout);
