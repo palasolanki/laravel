@@ -14,3 +14,4 @@
 
 Route::apiResource('projects', 'ProjectController');
 Route::get('/tab/{id}', 'TabController@getTabData')->name('tab.getTabData');
+Route::post('/tab/{project}', 'TabController@store')->name('tab.store');
