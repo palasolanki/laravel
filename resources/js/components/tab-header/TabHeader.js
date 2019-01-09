@@ -10,9 +10,7 @@ class TabHeader extends Component {
     super(props);
     this.tabTitleRef = [];
     this.state = {
-      activeTabIndex: 2,
       activeContenteditable: false,
-      tabLength: 0,
       visibleDropdown: false
     };
 
@@ -24,6 +22,11 @@ class TabHeader extends Component {
     this.showDropdown = this.showDropdown.bind(this);
     this.deleteActiveTab = this.deleteActiveTab.bind(this);
     this.props.setTable({ tab: 0, rows: this.prepareRows(0) });
+  }
+
+  componentDidUpdate() {
+
+    //this.props.setTable({ rows: this.prepareRows(0), tabId: tabs[tabIndex]._id });
   }
 
   prepareRows(tabId) {
@@ -38,10 +41,10 @@ class TabHeader extends Component {
   }
 
   onTabClick(tabIndex) {
-    const {tabs, activeTab} = this.props;
-    this.props.setTable({ tab: tabIndex, rows: this.prepareRows(tabIndex) });
+    const {tabs} = this.props;
+    this.props.setTable({ rows: this.prepareRows(tabIndex), tabId: tabs[tabIndex]._id });
 
-    this.props.history.push(`/project/${tabs[activeTab]._id}`);
+    this.props.history.push(`/project/${tabs[tabIndex]._id}`);
   }
 
   onTabDoubleClick(tabIndex) {
@@ -69,17 +72,12 @@ class TabHeader extends Component {
   addTabs() {
     const tabIndex = this.props.tabs.length;
     const rows = this.prepareRows(tabIndex);
-    this.props.setTable({tab: tabIndex, rows});
+    this.props.setTable({rows});
 
     this.props.setTab({
       title: `Tab ${this.props.tabs.length + 1}`,
       rows: rows
     }, this.props.projectId);
-
-    this.setState({
-      tabLength: this.props.tabs.length,
-      activeTabIndex: this.props.tabs.length
-    });
   }
 
   showDropdown() {
@@ -98,22 +96,15 @@ class TabHeader extends Component {
     });
 
     this.setState({
-      activeTabIndex: 0,
       tabs: tabs,
       visibleDropdown: false,
     });
-
-    setTimeout(() => {
-      this.setState({
-        tabLength: this.props.tabs.length
-      });
-    }, 100);
   }
 
 
   render() {
-    const { activeTabIndex, activeContenteditable, visibleDropdown, tabLength } = this.state;
-    const { tabs, activeTab } = this.props;
+    const { activeContenteditable, visibleDropdown } = this.state;
+    const { tabs, activeTabId } = this.props;
     return (
       <div className="position-relative">
       <ul className="nav nav-tabs">
@@ -121,7 +112,7 @@ class TabHeader extends Component {
           return <Tab key={i}
               tabRef={tabTitleRef => (this.tabTitleRef[i] = tabTitleRef)}
               isContentEditable={(activeContenteditable === i)}
-              isActive={(activeTab === i)}
+              isActive={(activeTabId == tab._id)}
               onTabClick={() => this.onTabClick(i)}
               onTabDoubleClick={() => this.onTabDoubleClick(i)}
               onTabKeyPress={(e) => this.onTabKeyPress(i, e)}
@@ -130,7 +121,7 @@ class TabHeader extends Component {
               showDropdown={this.showDropdown}
               visibleDropdown={visibleDropdown}
               deleteActiveTab={() => this.deleteActiveTab(i)}
-              tabLength={tabLength}
+              tabLength={tabs.length}
            />
         })}
         <li className="position-relative add-tab-item"><div className="add-tabs" onClick={this.addTabs}>+</div></li>
@@ -143,14 +134,13 @@ const mapStateToProps = state => {
   return {
     tabs: state.project.tabs,
     projectId: state.project._id,
-    activeTab: state.project.tab
+    activeTabId: state.project.tabId
   };
 };
 const mapDispatchToProps = dispatch => {
   return {
     setTable: data => dispatch(setTable(data)),
-    setTab: (data, projectId) => dispatch(setTab(data, projectId)),
-    setCurrentTabId: (data, activeTab) => dispatch(setTab(data, activeTab)),
+    setTab: (data, projectId) => dispatch(setTab(data, projectId))
   };
 };
 

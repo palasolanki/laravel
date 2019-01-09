@@ -20,7 +20,7 @@ function project(state = initialState, action) {
         case SET_REDIRECT:
             return {...state, redirect: action.payload};
         case SET_PROJECTS_DATA:
-            return {...state, ...action.payload.data, tabId: action.payload.tab};
+            return {...state, ...action.payload.data, tabId: action.payload.tabId};
         case SET_TAB:
             return {...state, tabs: [...state.tabs, action.payload]};
         case SET_PROJECT_TITLE:
