@@ -2,8 +2,9 @@ import api from '../../helpers/api';
 export const SET_TABLE = "PROJECT | SET_TABLE";
 export const SET_PROJECTS = "PROJECT | SET_PROJECTS";
 export const SET_PROJECT = "PROJECT | SET_PROJECT";
-export const SET_REDIRECT = "REDIRECT | SET_REDIRECT";
-export const SET_PROJECTS_DATA = "PROJECTS_DATA | SET_PROJECTS_DATA";
+export const SET_REDIRECT = "PROJECT | SET_REDIRECT";
+export const SET_PROJECTS_DATA = "PROJECT | SET_PROJECTS_DATA";
+export const SET_TAB = "PROJECT | SET_TAB";
 
 export function setTable(payload) {
     return { type: SET_TABLE, payload };
@@ -12,11 +13,20 @@ export function setTable(payload) {
 export function setProjects(payload) {
   return { type: SET_PROJECTS, payload };
 }
-export function setProjectsData(payload) {
+export function setProjectData(payload) {
   return { type: SET_PROJECTS_DATA, payload };
 }
 export function setRedirect(payload) {
   return { type: SET_REDIRECT, payload };
+}
+export function setTab(payload, projectId) {
+    return (dispatch) => {
+        return api.post(`/tab/${projectId}`, payload)
+        .then((res) => {
+            dispatch({type: SET_TAB, payload: res.data.data});
+        })
+    }
+  return { type: SET_TAB, payload };
 }
 
 export function setProject(payload) {
@@ -27,7 +37,6 @@ export function setProject(payload) {
             dispatch(setRedirect(true));
         })
     }
-    //return { type: SET_PROJECT, payload };
 }
 
 export function getProjects()
@@ -42,12 +51,12 @@ export function getProjects()
     }
 }
 
-export function getProjectsData()
+export function getProjectData(tabId)
 {
     return (dispatch) => {
-        return api.get('/tab/')
+        return api.get(`/tab/${tabId}`)
         .then((res) => {
-           dispatch(setProjectsData(res.data.data));
+           dispatch(setProjectData({data: res.data.data, tabId: tabId}));
         })
         .catch((res) => {
 

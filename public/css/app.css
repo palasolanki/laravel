@@ -10508,6 +10508,7 @@ header h3,
 header input {
   font-size: 20px;
   color: #fff;
+  text-transform: capitalize;
 }
 
 .project-header {
