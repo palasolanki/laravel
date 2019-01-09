@@ -28,4 +28,10 @@ class ProjectController extends Controller
 
         return response()->json(['data' => $data]);
     }
+
+    public function update(ProjectRequest $request, Project $project)
+    {
+        $project->update($request->all());
+        return response()->json(['data' => $project]);
+    }
 }
