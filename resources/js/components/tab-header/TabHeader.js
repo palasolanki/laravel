@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import Tab from "./tab/Tab";
 import { connect } from 'react-redux';
-import { setTable, getProjects, setProject, setTab } from '../../store/actions/project';
+import { withRouter } from "react-router-dom";
 
+import { setTable, setTab } from '../../store/actions/project';
 class TabHeader extends Component {
 
   constructor(props) {
     super(props);
     this.tabTitleRef = [];
     this.state = {
-      activeTabIndex: 0,
+      activeTabIndex: 2,
       activeContenteditable: false,
       tabLength: 0,
       visibleDropdown: false
@@ -25,9 +26,6 @@ class TabHeader extends Component {
     this.props.setTable({ tab: 0, rows: this.prepareRows(0) });
   }
 
-  componentDidMount() {
-    this.props.getProjects();
-  }
   prepareRows(tabId) {
     const rows = [];
     for (let i = 1; i <= 3; i++) {
@@ -40,10 +38,10 @@ class TabHeader extends Component {
   }
 
   onTabClick(tabIndex) {
+    const {tabs, activeTab} = this.props;
     this.props.setTable({ tab: tabIndex, rows: this.prepareRows(tabIndex) });
-    this.setState({
-      activeTabIndex: tabIndex,
-    });
+
+    this.props.history.push(`/project/${tabs[activeTab]._id}`);
   }
 
   onTabDoubleClick(tabIndex) {
@@ -71,9 +69,6 @@ class TabHeader extends Component {
   addTabs() {
     const tabIndex = this.props.tabs.length;
     const rows = this.prepareRows(tabIndex);
-  //  this.props.tabs.push({
-  //     title: `Tab ${this.props.tabs.length + 1}` ,
-  //   });
     this.props.setTable({tab: tabIndex, rows});
 
     this.props.setTab({
@@ -83,8 +78,7 @@ class TabHeader extends Component {
 
     this.setState({
       tabLength: this.props.tabs.length,
-     // tabs: this.props.tabs,
-      activeTabIndex: this.props.tabs.length - 1
+      activeTabIndex: this.props.tabs.length
     });
   }
 
@@ -119,7 +113,7 @@ class TabHeader extends Component {
 
   render() {
     const { activeTabIndex, activeContenteditable, visibleDropdown, tabLength } = this.state;
-    const { tabs } = this.props;
+    const { tabs, activeTab } = this.props;
     return (
       <div className="position-relative">
       <ul className="nav nav-tabs">
@@ -127,7 +121,7 @@ class TabHeader extends Component {
           return <Tab key={i}
               tabRef={tabTitleRef => (this.tabTitleRef[i] = tabTitleRef)}
               isContentEditable={(activeContenteditable === i)}
-              isActive={(activeTabIndex === i)}
+              isActive={(activeTab === i)}
               onTabClick={() => this.onTabClick(i)}
               onTabDoubleClick={() => this.onTabDoubleClick(i)}
               onTabKeyPress={(e) => this.onTabKeyPress(i, e)}
@@ -148,19 +142,19 @@ class TabHeader extends Component {
 const mapStateToProps = state => {
   return {
     tabs: state.project.tabs,
-    projectId: state.project._id
+    projectId: state.project._id,
+    activeTab: state.project.tab
   };
 };
 const mapDispatchToProps = dispatch => {
   return {
     setTable: data => dispatch(setTable(data)),
-    getProjects: () => dispatch(getProjects()),
-    setProject: (data) => dispatch(setProject(data)),
-    setTab: (data, projectId) => dispatch(setTab(data, projectId))
+    setTab: (data, projectId) => dispatch(setTab(data, projectId)),
+    setCurrentTabId: (data, activeTab) => dispatch(setTab(data, activeTab)),
   };
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(TabHeader);
+)(withRouter(TabHeader));

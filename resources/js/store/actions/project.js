@@ -5,6 +5,7 @@ export const SET_PROJECT = "PROJECT | SET_PROJECT";
 export const SET_REDIRECT = "PROJECT | SET_REDIRECT";
 export const SET_PROJECTS_DATA = "PROJECT | SET_PROJECTS_DATA";
 export const SET_TAB = "PROJECT | SET_TAB";
+export const SET_PROJECT_TITLE = "PROJECT | SET_TAB";
 
 export function setTable(payload) {
     return { type: SET_TABLE, payload };
@@ -26,7 +27,6 @@ export function setTab(payload, projectId) {
             dispatch({type: SET_TAB, payload: res.data.data});
         })
     }
-  return { type: SET_TAB, payload };
 }
 
 export function setProject(payload) {
@@ -35,6 +35,15 @@ export function setProject(payload) {
         .then((res) => {
             dispatch({type: SET_PROJECT, payload: res.data.data});
             dispatch(setRedirect(true));
+        })
+    }
+}
+
+export function setProjectTitle(payload, projectId) {
+    return (dispatch) => {
+        return api.put(`/projects/${projectId}`, payload)
+        .then((res) => {
+
         })
     }
 }

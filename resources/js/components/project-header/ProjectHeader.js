@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from '../../../images/favicon.png';
 import { connect } from 'react-redux';
+import { setProjectTitle, setTable} from '../../store/actions/project';
 
 export class ProjectHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
       contenteditable: false,
-      projectTitle: 'Project Title'
     }
     this.inputRef = React.createRef();
     this.editTitle = this.editTitle.bind(this);
@@ -25,9 +25,10 @@ export class ProjectHeader extends Component {
   }
 
   setTitle(e) {
-      this.setState({
-        projectTitle: e.target.value
-      });
+    this.props.setTable({
+      name: e.target.value
+    })
+
   }
 
   onkeyPress(e) {
@@ -38,13 +39,16 @@ export class ProjectHeader extends Component {
     }
   }
   onBlur(e) {
+    this.props.setProjectTitle({
+      name: this.props.projectName
+    }, this.props.projectId);
     this.setState({
       contenteditable: false
     })
   }
 
   render() {
-    const { contenteditable, projectTitle } = this.state;
+    const { contenteditable } = this.state;
     const { toggleSidebar, projectName } = this.props;
 
     return (
@@ -58,7 +62,7 @@ export class ProjectHeader extends Component {
         <div className="header__pos-abs">
           { contenteditable ? <input
           type="text"
-          value={projectTitle}
+          value={projectName}
           contentEditable={true}
           onChange={this.setTitle}
           onKeyPress={this.onkeyPress}
@@ -73,10 +77,19 @@ export class ProjectHeader extends Component {
 
 const mapStateToProps = state => {
   return {
-    projectName: state.project.name
+    projectName: state.project.name,
+    projectId: state.project._id,
   };
 };
 
+const mapDispatchToProps = dispatch => {
+  return {
+    setProjectTitle: (data, projectId) => dispatch(setProjectTitle(data, projectId)),
+    setTable: (data) => dispatch(setTable(data))
+  }
+}
+
 export default connect(
-  mapStateToProps
+  mapStateToProps,
+  mapDispatchToProps
   )(ProjectHeader);

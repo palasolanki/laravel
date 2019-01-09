@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react'
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import ProjectHeader from "./project-header/ProjectHeader";
 import TabHeader from "./tab-header/TabHeader";
 import Project from "./project/Project";
@@ -27,7 +26,7 @@ export class ProjectLayout extends Component {
   }
 
   render() {
-    const { match } = this.props;
+    const { match, history } = this.props;
     const { isSidebarOpen } = this.state;
 
     return (
@@ -35,7 +34,7 @@ export class ProjectLayout extends Component {
         <ProjectHeader toggleSidebar={this.toggleSidebar} />
         <Sidebar match={match} isSidebarOpen={isSidebarOpen}/>
         <div className={classNames({ "full": !isSidebarOpen }, "main")}>
-          <TabHeader />
+          <TabHeader history={history}/>
           <Switch>
               <Route exact path={`${match.url}/:id` } component={Project}/>
           </Switch>
@@ -45,4 +44,4 @@ export class ProjectLayout extends Component {
   }
 }
 
-export default (ProjectLayout);
+export default withRouter(ProjectLayout);
