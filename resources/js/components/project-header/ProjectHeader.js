@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from '../../../images/favicon.png';
+import { connect } from 'react-redux';
 
-export default class ProjectHeader extends Component {
+export class ProjectHeader extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -44,7 +45,8 @@ export default class ProjectHeader extends Component {
 
   render() {
     const { contenteditable, projectTitle } = this.state;
-    const { toggleSidebar } = this.props;
+    const { toggleSidebar, projectName } = this.props;
+
     return (
       <header className="project-header d-flex align-items-center">
         <Link to={'/'}>
@@ -62,9 +64,19 @@ export default class ProjectHeader extends Component {
           onKeyPress={this.onkeyPress}
           onBlur={this.onBlur}
           ref={this.inputRef}
-          /> : <h3 className="mb-0" onDoubleClick={this.editTitle}>{projectTitle}</h3> }
+          /> : <h3 className="mb-0" onDoubleClick={this.editTitle}>{projectName}</h3> }
         </div>
       </header>
     )
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    projectName: state.project.name
+  };
+};
+
+export default connect(
+  mapStateToProps
+  )(ProjectHeader);

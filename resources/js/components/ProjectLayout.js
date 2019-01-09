@@ -6,8 +6,6 @@ import ProjectHeader from "./project-header/ProjectHeader";
 import TabHeader from "./tab-header/TabHeader";
 import Project from "./project/Project";
 import Sidebar from "./sidebar/Sidebar";
-import api from '../helpers/api';
-import { getProjectsData, setProjectsData } from "../store/actions/project";
 
 export class ProjectLayout extends Component {
   constructor(props) {
@@ -17,9 +15,6 @@ export class ProjectLayout extends Component {
     }
 
     this.toggleSidebar = this.toggleSidebar.bind(this);
-  }
-  componentDidMount() {
-    this.props.getProjectsData();
   }
 
   toggleSidebar() {
@@ -42,7 +37,7 @@ export class ProjectLayout extends Component {
         <div className={classNames({ "full": !isSidebarOpen }, "main")}>
           <TabHeader />
           <Switch>
-              <Route exact path={`${match.url}/:id` }  component={Project}/>
+              <Route exact path={`${match.url}/:id` } component={Project}/>
           </Switch>
          </div>
       </Fragment>
@@ -50,21 +45,4 @@ export class ProjectLayout extends Component {
   }
 }
 
-
-const mapStateToProps = state => {
-  return {
-    projectData: state.project.projectData
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-    getProjectsData: () => dispatch(getProjectsData()),
-    setProjectsData: (data) => dispatch(setProjectsData(data)),
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ProjectLayout);
+export default (ProjectLayout);
