@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Tab;
 use Illuminate\Http\Request;
+use App\Models\Project;
 
 class TabController extends Controller
 {
@@ -17,7 +18,10 @@ class TabController extends Controller
         return response()->json(['data' => $data]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, Project $project)
     {
+        $savedTab = $project->tabs()->save(new Tab($request->all()));
+
+        return response()->json(['data' => $savedTab]);
     }
 }
