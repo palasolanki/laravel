@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import ReactDataGrid from 'react-data-grid';
 import { connect } from 'react-redux';
-import { getProjectData, setProjectData } from "../../store/actions/project";
+import { getProjectData } from "../../store/actions/project";
 
 const columns = [
   { key: "id", name: "ID", editable: true },
@@ -22,7 +22,7 @@ class Project extends Component {
     this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
   }
 
-  componentDidMount() {
+  componentDidUpdate() {
     this.props.getProjectData(this.props.match.params.id);
   }
 
@@ -69,8 +69,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getProjectData: (tabId) => dispatch(getProjectData(tabId)),
-    setProjectData: (data) => dispatch(setProjectData(data)),
+    getProjectData: (tabId) => dispatch(getProjectData(tabId))
   };
 };
 
