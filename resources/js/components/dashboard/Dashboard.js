@@ -77,30 +77,20 @@ class Dashboard extends Component {
                     <div className="list">
                     <ul className="ml-3 list-inline unstyled">
                       {list.map((list) => (
-                        list.type === type.type) ? <ProjectCard project={list} key={list._id} /> : false
+                        list.type === type.type) && <ProjectCard project={list} key={list._id} />
                       )}
                       <li className="list-inline-item">
-                      <div className={classnames(
-                      {'btn__add-project' : (isAddProject !== i)},
-                      {'form__project bg-white p-4' : (isAddProject === i)},
-                       "d-inline-flex")
-                      }
-                      >
                       {
                         (isAddProject === i)  ?
-                          <div className="w-100">
-                            <div className="form-group">
-                              <input className="form-control" type="text" value={projectTitle} onChange={this.editProjectTitle} placeholder="Project Name"/>
-                            </div>
-                            <div className="d-flex justify-content-end mt-2">
-                              <button type="button" className="btn btn--prime mr-3" onClick={() => this.saveProject(type.type)}>Save</button>
-                              <button type="button" className="btn btn--cancel" onClick={this.closeProjectForm}>Cancel</button>
-                            </div>
-                          </div>
+                          <ProjectForm 
+                            projectTitle={projectTitle} 
+                            editProjectTitle={this.editProjectTitle} 
+                            saveProject={this.saveProject.bind(this, type.type)}
+                            closeProjectForm={this.closeProjectForm}
+                          />
                         :
-                          <button type="button" className="btn--custom btn btn-prime rounded-circle" onClick={() => this.addProject(i)}>+</button>
+                        <AddButton addProject={this.addProject.bind(this, i)}/>
                       }
-                      </div>
                       </li>
                     </ul>
 
@@ -119,6 +109,26 @@ const ProjectCard = props => (
       <Link to={`project/${props.project.first_tab._id}`}>{props.project.name} </Link>
     </li>
 );
+
+const AddButton = props => (
+  <div className="btn__add-project d-inline-flex">
+    <button type="button" className="btn--custom btn btn-prime rounded-circle" onClick={props.addProject}>+</button>
+  </div>
+)
+
+const ProjectForm = props => (
+  <div className="form__project bg-white p-4 d-inline-flex">
+    <div className="w-100">
+      <div className="form-group">
+        <input className="form-control" type="text" value={props.projectTitle} onChange={props.editProjectTitle} placeholder="Project Name" />
+      </div>
+      <div className="d-flex justify-content-end mt-2">
+        <button type="button" className="btn btn--prime mr-3" onClick={props.saveProject}>Save</button>
+        <button type="button" className="btn btn--cancel" onClick={props.closeProjectForm}>Cancel</button>
+      </div>
+    </div>
+  </div>
+)
 
 const mapStateToProps = state => {
     return {

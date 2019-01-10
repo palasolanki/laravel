@@ -19,13 +19,11 @@ class ProjectController extends Controller
     {
         $project = Project::create($request->all());
 
-        $tab = new Tab([
-            'title' => 'New Tab'
-        ]);
-        $saved = $project->tabs()->save($tab);
+        $tab = ['title' => 'New Tab'];
+        $saved = $project->tabs()->create($tab);
 
         $data = $project->toArray();
-        $data['first_tab'] = $tab;
+        $data['first_tab'] = $saved;
 
         return response()->json(['data' => $data]);
     }
