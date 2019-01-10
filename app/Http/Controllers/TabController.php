@@ -12,18 +12,13 @@ class TabController extends Controller
 {
     public function getTabData(Request $request, $tabId): JsonResponse
     {
-        $project = Tab::findOrFail($tabId)->project;
-
-        $data = $project->toArray();
-        $data['tabs'] = $project->tabs;
-
-        return response()->json(['data' => $data]);
+        $tab = Tab::with('project.tabs')->findOrFail($tabId);
+        return response()->json(['data' => $tab->project]);
     }
 
     public function store(Request $request, Project $project): JsonResponse
     {
-        $savedTab = $project->tabs()->save(new Tab($request->all()));
-
+        $savedTab = $project->tabs()->create($request->all());
         return response()->json(['data' => $savedTab]);
     }
 
