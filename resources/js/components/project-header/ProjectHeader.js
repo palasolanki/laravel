@@ -28,11 +28,13 @@ export class ProjectHeader extends Component {
     this.props.setTable({
       name: e.target.value
     })
-
   }
 
   onkeyPress(e) {
     if(e.charCode === 13) {
+      this.props.setProjectTitle({
+        name: this.props.projectName
+      }, this.props.projectId);
       this.setState({
         contenteditable: false
       })

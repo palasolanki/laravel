@@ -5,8 +5,10 @@ export const SET_PROJECT = "PROJECT | SET_PROJECT";
 export const SET_REDIRECT = "PROJECT | SET_REDIRECT";
 export const SET_PROJECTS_DATA = "PROJECT | SET_PROJECTS_DATA";
 export const SET_TAB = "PROJECT | SET_TAB";
-export const SET_PROJECT_TITLE = "PROJECT | SET_TAB";
+export const SET_PROJECT_TITLE = "PROJECT | SET_PROJECT_TITLE";
+export const RESET_TAB = "PROJECT | RESET_TAB";
 export const SET_PROJECT_ROWS = "PROJECT | SET_ROWS";
+export const SET_NEW_TAB_ADDED = "PROJECT | SET_NEW_TAB_ADDED";
 
 export function setTable(payload) {
     return { type: SET_TABLE, payload };
@@ -34,8 +36,13 @@ export function setTab(payload, projectId) {
         .then((res) => {
             dispatch({type: SET_TAB, payload: res.data.data});
             dispatch(setInitialRows(res.data.data.rows))
+            dispatch(setTabAdded(true));
         })
     }
+}
+
+export function setTabAdded(payload){
+    return {type: SET_NEW_TAB_ADDED, payload}
 }
 
 export function setProject(payload) {
@@ -52,7 +59,7 @@ export function setProjectTitle(payload, projectId) {
     return (dispatch) => {
         return api.put(`/projects/${projectId}`, payload)
         .then((res) => {
-
+            dispatch()
         })
     }
 }
@@ -99,4 +106,23 @@ export function updateTabRows(tabId, rows)
         .then((res) => {
             console.log('updated successfully');
         })
+}
+export function deleteTab(activeTabId) {
+    return (dispatch, getState) => {
+        return api.delete(`/tab/${activeTabId}`)
+        .then((res) => {
+        let tabs = getState().project.tabs;
+            tabs = tabs.filter((tab) => {
+                return tab._id !== activeTabId;
+            })
+        //    console.log(tabs);
+
+            dispatch(setTable({tabs}));
+            dispatch(setDeletedTab(true));
+        })
+    }
+}
+
+export function setDeletedTab(payload) {
+    return { type: RESET_TAB, payload}
 }
