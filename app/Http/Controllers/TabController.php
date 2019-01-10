@@ -13,7 +13,7 @@ class TabController extends Controller
     public function getTabData(Request $request, $tabId): JsonResponse
     {
         $tab = Tab::with('project.tabs')->findOrFail($tabId);
-        return response()->json(['data' => $tab->project]);
+        return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tab->rows : []]);
     }
 
     public function store(Request $request, Project $project): JsonResponse
@@ -25,6 +25,14 @@ class TabController extends Controller
     public function destroy(Tab $tab): Response
     {
         $tab->delete();
+        return response()->noContent();
+    }
+
+    public function update(Request $request, $tabId)
+    {
+        $tab = Tab::findOrFail($tabId);
+        $data = $request->all();
+        $tab->update($data);
         return response()->noContent();
     }
 }

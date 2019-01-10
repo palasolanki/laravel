@@ -17,9 +17,14 @@ class ProjectController extends Controller
 
     public function store(ProjectRequest $request): JsonResponse
     {
-        $project = Project::create($request->all());
+        $data = $request->all();
+        $type = $request->get('type');
+        $data['columns'] = config("columns.{$type}", []);
+        $project = Project::create($data);
 
         $tab = ['title' => 'New Tab'];
+        $tab['rows'] = [];
+
         $saved = $project->tabs()->create($tab);
 
         $data = $project->toArray();

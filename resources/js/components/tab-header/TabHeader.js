@@ -21,7 +21,7 @@ class TabHeader extends Component {
 
     this.showDropdown = this.showDropdown.bind(this);
     this.deleteActiveTab = this.deleteActiveTab.bind(this);
-    this.props.setTable({ tab: 0, rows: this.prepareRows(0) });
+    // this.props.setTable({ tab: 0, rows: this.prepareRows(0) });
   }
 
   componentDidUpdate() {
@@ -42,7 +42,7 @@ class TabHeader extends Component {
 
   onTabClick(tabIndex) {
     const {tabs} = this.props;
-    this.props.setTable({ rows: this.prepareRows(tabIndex), tabId: tabs[tabIndex]._id });
+    this.props.setTable({tabId: tabs[tabIndex]._id });
 
     this.props.history.push(`/project/${tabs[tabIndex]._id}`);
   }
@@ -70,13 +70,8 @@ class TabHeader extends Component {
   }
 
   addTabs() {
-    const tabIndex = this.props.tabs.length;
-    const rows = this.prepareRows(tabIndex);
-    this.props.setTable({rows});
-
     this.props.setTab({
       title: `Tab ${this.props.tabs.length + 1}`,
-      rows: rows
     }, this.props.projectId);
   }
 
