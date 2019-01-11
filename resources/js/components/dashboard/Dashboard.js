@@ -21,6 +21,7 @@ class Dashboard extends Component {
     this.editProjectTitle = this.editProjectTitle.bind(this);
     this.saveProject = this.saveProject.bind(this);
     this.closeProjectForm = this.closeProjectForm.bind(this);
+    this.onPressKey = this.onPressKey.bind(this);
   }
 
     componentDidMount() {
@@ -34,9 +35,19 @@ class Dashboard extends Component {
     }
 
     editProjectTitle(e) {
-      this.setState({
+     this.setState({
         projectTitle: e.target.value
       })
+    }
+
+    onPressKey(type, e) {
+      if(e.charCode === 13 && this.state.projectTitle !== '') {
+        this.props.setProject({
+          type: type,
+          name: this.state.projectTitle,
+          description: 'New title added'
+        });
+      }
     }
 
     saveProject(type) {
@@ -82,11 +93,12 @@ class Dashboard extends Component {
                       <li className="list-inline-item">
                       {
                         (isAddProject === i)  ?
-                          <ProjectForm 
-                            projectTitle={projectTitle} 
-                            editProjectTitle={this.editProjectTitle} 
+                          <ProjectForm
+                            projectTitle={projectTitle}
+                            editProjectTitle={this.editProjectTitle}
                             saveProject={this.saveProject.bind(this, type.type)}
                             closeProjectForm={this.closeProjectForm}
+                            onPressKey={(e) => this.onPressKey(type.type, e)}
                           />
                         :
                         <AddButton addProject={this.addProject.bind(this, i)}/>
@@ -120,7 +132,7 @@ const ProjectForm = props => (
   <div className="form__project bg-white p-4 d-inline-flex">
     <div className="w-100">
       <div className="form-group">
-        <input className="form-control" type="text" value={props.projectTitle} onChange={props.editProjectTitle} placeholder="Project Name" />
+        <input className="form-control" type="text" value={props.projectTitle} onKeyPress={props.onPressKey} onChange={props.editProjectTitle} placeholder="Project Name" />
       </div>
       <div className="d-flex justify-content-end mt-2">
         <button type="button" className="btn btn--prime mr-3" onClick={props.saveProject}>Save</button>

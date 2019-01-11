@@ -15,7 +15,7 @@ export class ProjectHeader extends Component {
     this.editTitle = this.editTitle.bind(this);
     this.setTitle = this.setTitle.bind(this);
     this.onBlur = this.onBlur.bind(this);
-    this.onkeyPress = this.onkeyPress.bind(this);
+    this.onPressKey = this.onPressKey.bind(this);
   }
 
   editTitle(e) {
@@ -30,14 +30,9 @@ export class ProjectHeader extends Component {
     })
   }
 
-  onkeyPress(e) {
+  onPressKey(e) {
     if(e.charCode === 13) {
-      this.props.setProjectTitle({
-        name: this.props.projectName
-      }, this.props.projectId);
-      this.setState({
-        contenteditable: false
-      })
+      this.onBlur();
     }
   }
   onBlur(e) {
@@ -67,7 +62,7 @@ export class ProjectHeader extends Component {
           value={projectName}
           contentEditable={true}
           onChange={this.setTitle}
-          onKeyPress={this.onkeyPress}
+          onKeyPress={this.onPressKey}
           onBlur={this.onBlur}
           ref={this.inputRef}
           /> : <h3 className="mb-0" onDoubleClick={this.editTitle}>{projectName}</h3> }

@@ -59,7 +59,6 @@ export function setProjectTitle(payload, projectId) {
     return (dispatch) => {
         return api.put(`/projects/${projectId}`, payload)
         .then((res) => {
-            dispatch()
         })
     }
 }

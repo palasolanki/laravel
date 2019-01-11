@@ -13,7 +13,6 @@ class TabHeader extends Component {
       activeContenteditable: false,
       visibleDropdown: false
     };
-
     this.onTabClick = this.onTabClick.bind(this);
     this.addTabs = this.addTabs.bind(this);
     this.onTabDoubleClick = this.onTabDoubleClick.bind(this);
@@ -21,12 +20,21 @@ class TabHeader extends Component {
 
     this.showDropdown = this.showDropdown.bind(this);
     this.deleteActiveTab = this.deleteActiveTab.bind(this);
-    // this.props.setTable({ tab: 0, rows: this.prepareRows(0) });
+    this.onClickOutside = this.onClickOutside.bind(this);
+    this.getCurrentTabIndex = this.getCurrentTabIndex.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener('mousedown', this.onClickOutside);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.onClickOutside, true);
   }
 
   componentDidUpdate() {
     const { newTabAdded, tabs, tabDeleted } = this.props;
-    const tabIndex = tabs.length-1;
+    const tabIndex = tabs.length - 1;
     const rows = this.prepareRows(tabIndex);
 
     if(newTabAdded) {
@@ -40,6 +48,7 @@ class TabHeader extends Component {
       this.props.history.push(`/project/${tabs[0]._id}`);
       this.props.setDeletedTab(false);
     }
+
   }
 
   prepareRows(tabId) {
@@ -88,12 +97,33 @@ class TabHeader extends Component {
     this.props.setTab({
       title: `Tab ${this.props.tabs.length + 1}`,
     }, this.props.projectId);
-}
+  }
 
-  showDropdown() {
-      this.setState({
-        visibleDropdown: !this.state.visibleDropdown
-      })
+  showDropdown(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.setState({
+      visibleDropdown: !this.state.visibleDropdown
+    });
+  }
+
+  getCurrentTabIndex() {
+    const {tabs, tabId} = this.props;
+
+    return tabs.findIndex((tab) => {
+      return (tab._id === tabId);
+    });
+  }
+
+  onClickOutside(e) {
+      const tabIndex = this.getCurrentTabIndex();
+
+      if(this.tabTitleRef[tabIndex] && !this.tabTitleRef[tabIndex].contains(e.target) ) {
+        this.setState({
+          visibleDropdown: false
+        });
+      }
   }
 
   deleteActiveTab(tabIndex) {
@@ -136,6 +166,7 @@ class TabHeader extends Component {
 const mapStateToProps = state => {
   return {
     tabs: state.project.tabs,
+    tabId: state.project.tabId,
     projectId: state.project._id,
     activeTabId: state.project.tabId,
     newTabAdded: state.project.newTabAdded,

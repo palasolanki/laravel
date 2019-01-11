@@ -192,7 +192,7 @@ header input {
 }
 .dashboard .list {
   display: flex;
-  align-items: start;
+  align-items: flex-start;
 }
 .dashboard .list .list-inline-item:not(:last-child) {
   width: 200px;
