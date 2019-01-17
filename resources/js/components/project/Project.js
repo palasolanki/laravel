@@ -6,7 +6,7 @@ import {
     setProjectData,
     setRows,
     updateTabRows
-    
+
 } from "../../store/actions/project";
 
 class Project extends Component {
@@ -35,7 +35,7 @@ class Project extends Component {
         updateTabRows(this.props.tabId, savingRows);
     }
 
-   
+
     addRow() {
         const rows = this.props.rows.map((row, index) => {
             return { ...row, id: index + 1 };

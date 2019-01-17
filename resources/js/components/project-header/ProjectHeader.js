@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from '../../../images/favicon.png';
 import { connect } from 'react-redux';
-import { setProjectTitle, setTable} from '../../store/actions/project';
+import { setProjectTitle, setTable } from '../../store/actions/project';
 
 export class ProjectHeader extends Component {
   constructor(props) {
@@ -13,35 +13,42 @@ export class ProjectHeader extends Component {
     }
     this.inputRef = React.createRef();
     this.editTitle = this.editTitle.bind(this);
-    this.setTitle = this.setTitle.bind(this);
     this.onBlur = this.onBlur.bind(this);
     this.onPressKey = this.onPressKey.bind(this);
   }
 
   editTitle(e) {
-      this.setState({
-        contenteditable: true,
-      });
-  }
-
-  setTitle(e) {
-    this.props.setTable({
-      name: e.target.value
-    })
+    this.setState({
+      contenteditable: true,
+    });
   }
 
   onPressKey(e) {
-    if(e.charCode === 13) {
-      this.onBlur();
+    if (e.charCode === 13) {
+      if (!e.target.value) {
+        this.props.setTable({
+          name: this.props.projectName
+        })
+      }
+      else {
+        this.props.setTable({
+          name: e.target.value
+        })
+      }
+      this.onBlur(e);
     }
   }
   onBlur(e) {
+
     this.props.setProjectTitle({
       name: this.props.projectName
     }, this.props.projectId);
+
     this.setState({
       contenteditable: false
     })
+
+
   }
 
   render() {
@@ -51,21 +58,20 @@ export class ProjectHeader extends Component {
     return (
       <header className="project-header d-flex align-items-center">
         <Link to={'/'}>
-          <img className="logo rounded-circle" src={logo} alt="Logo"/>
+          <img className="logo rounded-circle" src={logo} alt="Logo" />
         </Link>
         <div className="ml-sm-4 ml-2" onClick={toggleSidebar}>
           <FontAwesomeIcon className="bars" icon="bars" />
         </div>
         <div className="header__pos-abs">
-          { contenteditable ? <input
-          type="text"
-          value={projectName}
-          contentEditable={true}
-          onChange={this.setTitle}
-          onKeyPress={this.onPressKey}
-          onBlur={this.onBlur}
-          ref={this.inputRef}
-          /> : <h3 className="mb-0" onDoubleClick={this.editTitle}>{projectName}</h3> }
+          {contenteditable ? <input
+            type="text"
+            defaultValue={projectName}
+            contentEditable={true}
+            onKeyPress={this.onPressKey}
+            onBlur={this.onBlur}
+            ref={this.inputRef}
+          /> : <h3 className="mb-0" onDoubleClick={this.editTitle}>{projectName}</h3>}
         </div>
       </header>
     )
@@ -75,18 +81,18 @@ export class ProjectHeader extends Component {
 const mapStateToProps = state => {
   return {
     projectName: state.project.name,
-    projectId: state.project._id,
+    projectId: state.project._id
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     setProjectTitle: (data, projectId) => dispatch(setProjectTitle(data, projectId)),
-    setTable: (data) => dispatch(setTable(data))
+    setTable: (data) => dispatch(setTable(data)),
   }
 }
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-  )(ProjectHeader);
+)(ProjectHeader);
