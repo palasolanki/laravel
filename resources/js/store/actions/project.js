@@ -12,7 +12,10 @@ export const SET_NEW_TAB_ADDED = "PROJECT | SET_NEW_TAB_ADDED";
 export const SET_TAB_TITLE = "PROJECT | SET_TAB_TITLE";
 
 export function setTable(payload) {
-    return { type: SET_TABLE, payload };
+    return (dispatch) => {
+        dispatch({ type: SET_TABLE, payload });
+        dispatch(setInitialRows(payload.rows));
+    }
 }
 
 export function setProjects(payload) {
@@ -88,12 +91,15 @@ export function getProjectData(tabId) {
     }
 }
 
-function setInitialRows(rows) {
+export function setInitialRows(rows) {
+
     rows = rows || [];
+
     if (rows.length === 0) {
         rows.push({ id: 1 });
         rows.push({ id: '+' });
     }
+
     return setRows(rows);
 }
 

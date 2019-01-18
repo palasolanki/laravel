@@ -85,7 +85,7 @@ class Dashboard extends Component {
           {
             this.types.map((type, i) => {
               return <div className="section" key={i}>
-                <h3 className="mb-5">{type.title}</h3>
+                <h3 className="mb-4">{type.title}</h3>
                 <div className="list">
                   <ul className="ml-3 list-inline unstyled">
                     {list.map((list) => (

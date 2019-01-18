@@ -10721,6 +10721,8 @@ header input {
 
 .section {
   height: 50%;
+  overflow: auto;
+  padding-bottom: 20px;
 }
 
 .section h3 {

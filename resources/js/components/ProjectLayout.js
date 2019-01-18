@@ -32,13 +32,13 @@ export class ProjectLayout extends Component {
     return (
       <Fragment>
         <ProjectHeader toggleSidebar={this.toggleSidebar} />
-        <Sidebar match={match} isSidebarOpen={isSidebarOpen}/>
+        <Sidebar match={match} isSidebarOpen={isSidebarOpen} />
         <div className={classNames({ "full": !isSidebarOpen }, "main")}>
-          <TabHeader history={history}/>
+          <TabHeader history={history} />
           <Switch>
-              <Route exact path={`${match.url}/:id` } component={Project}/>
+            <Route exact path={`${match.url}/:id`} component={Project} />
           </Switch>
-         </div>
+        </div>
       </Fragment>
     )
   }

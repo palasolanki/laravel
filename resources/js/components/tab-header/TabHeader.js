@@ -3,7 +3,7 @@ import Tab from "./tab/Tab";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
 
-import { setTable, setTab, deleteTab, setTabAdded, setDeletedTab, setTabTitle } from '../../store/actions/project';
+import { setTable, setTab, deleteTab, setTabAdded, setDeletedTab, setTabTitle, getProjectData } from '../../store/actions/project';
 class TabHeader extends Component {
 
   constructor(props) {
@@ -35,7 +35,6 @@ class TabHeader extends Component {
   componentDidUpdate() {
     const { newTabAdded, tabs, tabDeleted } = this.props;
     const tabIndex = tabs.length - 1;
-    // const rows = tabs[tabIndex].rows; //this.prepareRows(tabIndex);
 
     if (newTabAdded) {
       this.props.setTable({ tabId: tabs[tabIndex]._id });
@@ -65,8 +64,7 @@ class TabHeader extends Component {
   onTabClick(tabIndex) {
     const { tabs } = this.props;
 
-    this.props.setTable({ rows: tabs[tabIndex].rows, tabId: tabs[tabIndex]._id });
-
+    this.props.setTable({ rows: tabs[tabIndex].rows || [], tabId: tabs[tabIndex]._id });
     this.props.history.push(`/project/${tabs[tabIndex]._id}`);
   }
 
@@ -182,6 +180,7 @@ class TabHeader extends Component {
 }
 const mapStateToProps = state => {
   return {
+    rows: state.project.rows,
     tabs: state.project.tabs,
     tabId: state.project.tabId,
     projectId: state.project._id,
@@ -198,7 +197,8 @@ const mapDispatchToProps = dispatch => {
     deleteTab: (activeTabId) => dispatch(deleteTab(activeTabId)),
     setTabAdded: (flag) => dispatch(setTabAdded(flag)),
     setDeletedTab: (flag) => dispatch(setDeletedTab(flag)),
-    setTabTitle: (data, activeTabId) => dispatch(setTabTitle(data, activeTabId))
+    setTabTitle: (data, activeTabId) => dispatch(setTabTitle(data, activeTabId)),
+    getProjectData: tabId => dispatch(getProjectData(tabId)),
   };
 };
 
