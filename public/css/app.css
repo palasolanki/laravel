@@ -10717,6 +10717,7 @@ header input {
   box-shadow: 0px 0px 8px 0px rgba(239, 239, 239, 0.5);
   cursor: pointer;
   padding: 15px;
+  position: relative;
 }
 
 .section {
@@ -10762,23 +10763,6 @@ header > a {
   z-index: 1;
 }
 
-.custom-dropdown .btn {
-  position: absolute;
-  right: 5px;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
-  padding: 0;
-  line-height: 0;
-  font-size: 1rem;
-}
-
-.custom-dropdown .btn:focus,
-.custom-dropdown .btn:hover {
-  box-shadow: none;
-  color: #000;
-}
-
 .ellipsis-h.btn {
   position: absolute;
   right: 5px;
@@ -10798,5 +10782,22 @@ header > a {
 
 .custom-dropdown {
   position: absolute;
+}
+
+.popup .btn {
+  position: relative;
+}
+
+.dashboard .ellipsis-h.btn {
+  top: 10px;
+  right: 10px;
+  -webkit-transform: translateY(0%);
+          transform: translateY(0%);
+}
+
+.dashboard .custom-dropdown {
+  position: absolute;
+  top: 29px;
+  left: 30px;
 }
 

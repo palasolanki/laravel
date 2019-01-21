@@ -11,7 +11,8 @@ class TabHeader extends Component {
     this.tabTitleRef = [];
     this.state = {
       activeContenteditable: false,
-      visibleDropdown: false
+      visibleDropdown: false,
+      showConfirmationPopup: false
     };
     this.onTabClick = this.onTabClick.bind(this);
     this.addTabs = this.addTabs.bind(this);
@@ -22,6 +23,8 @@ class TabHeader extends Component {
     this.deleteActiveTab = this.deleteActiveTab.bind(this);
     this.onClickOutside = this.onClickOutside.bind(this);
     this.getCurrentTabIndex = this.getCurrentTabIndex.bind(this);
+    this.confirmDeleteTab = this.confirmDeleteTab.bind(this);
+    this.backToDropdown = this.backToDropdown.bind(this);
   }
 
   componentDidMount() {
@@ -43,7 +46,7 @@ class TabHeader extends Component {
     }
 
     if (tabDeleted) {
-      this.props.setTable({ tabId: tabs[0]._id });
+      this.props.setTable({ rows: tabs[0].rows, tabId: tabs[0]._id });
       this.props.history.push(`/project/${tabs[0]._id}`);
       this.props.setDeletedTab(false);
     }
@@ -140,6 +143,17 @@ class TabHeader extends Component {
     }
   }
 
+  confirmDeleteTab(i) {
+    this.setState({
+      showConfirmationPopup: true
+    });
+  }
+  backToDropdown() {
+    this.setState({
+      showConfirmationPopup: false
+    });
+  }
+
   deleteActiveTab(tabIndex) {
     let tabs = [...this.props.tabs];
     this.props.deleteTab(tabs[tabIndex]._id);
@@ -150,7 +164,7 @@ class TabHeader extends Component {
   }
 
   render() {
-    const { activeContenteditable, visibleDropdown } = this.state;
+    const { activeContenteditable, visibleDropdown, showConfirmationPopup } = this.state;
     const { tabs, activeTabId } = this.props;
 
     return (
@@ -170,6 +184,9 @@ class TabHeader extends Component {
               visibleDropdown={visibleDropdown}
               deleteActiveTab={() => this.deleteActiveTab(i)}
               tabLength={tabs.length}
+              showConfirmationPopup={showConfirmationPopup}
+              confirmDeleteTab={() => this.confirmDeleteTab(i)}
+              backToDropdown={this.backToDropdown}
             />
           })}
           <li className="position-relative add-tab-item"><div className="add-tabs" onClick={this.addTabs}>+</div></li>

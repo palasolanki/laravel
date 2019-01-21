@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import { connect } from "react-redux";
 import { getProjects, setProject, setRedirect } from "../../store/actions/project";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -14,13 +15,20 @@ class Dashboard extends Component {
     this.state = {
       isAddProject: null,
       activeType: null,
-      projectTitle: ''
+      projectTitle: '',
+      visibleDropdown: false,
+      activeId: null,
+      showConfirmationPopup: false
     }
     this.addProject = this.addProject.bind(this);
     this.editProjectTitle = this.editProjectTitle.bind(this);
     this.saveProject = this.saveProject.bind(this);
     this.closeProjectForm = this.closeProjectForm.bind(this);
     this.onPressKey = this.onPressKey.bind(this);
+    this.showDropdown = this.showDropdown.bind(this);
+    this.deleteProject = this.deleteProject.bind(this);
+    this.confirmDeleteTab = this.confirmDeleteTab.bind(this);
+    this.backToDropdown = this.backToDropdown.bind(this);
   }
 
   componentDidMount() {
@@ -67,13 +75,35 @@ class Dashboard extends Component {
       projectTitle: ''
     })
   }
+
+  showDropdown(id) {
+    this.setState({
+      activeId: id,
+      visibleDropdown: !this.state.visibleDropdown
+    })
+  }
+
+  deleteProject() {
+
+  }
+
+  confirmDeleteTab() {
+    this.setState({
+      showConfirmationPopup: true
+    });
+  }
+  backToDropdown() {
+    this.setState({
+      showConfirmationPopup: false
+    });
+  }
   componentWillUnmount() {
     this.props.setRedirect(false);
   }
 
   render() {
     const { list, redirect } = this.props;
-    const { isAddProject, projectTitle } = this.state;
+    const { isAddProject, projectTitle, visibleDropdown, activeId, showConfirmationPopup, backToDropdown } = this.state;
 
     if (redirect) {
       const project = list[list.length - 1];
@@ -88,8 +118,19 @@ class Dashboard extends Component {
                 <h3 className="mb-4">{type.title}</h3>
                 <div className="list">
                   <ul className="ml-3 list-inline unstyled">
-                    {list.map((list) => (
-                      list.type === type.type) && <ProjectCard project={list} key={list._id} />
+                    {list.map((list, i) => (
+                      list.type === type.type) && <ProjectCard
+                        showDropdown={() => this.showDropdown(i)}
+                        index={i}
+                        activeId={activeId}
+                        visibleDropdown={visibleDropdown}
+                        project={list}
+                        key={list._id}
+                        deleteProject={() => this.deleteProject(i)}
+                        confirmDeleteTab={this.confirmDeleteTab}
+                        showConfirmationPopup={showConfirmationPopup}
+                        backToDropdown={this.backToDropdown}
+                      />
                     )}
                     <li className="list-inline-item">
                       {
@@ -106,7 +147,6 @@ class Dashboard extends Component {
                       }
                     </li>
                   </ul>
-
                 </div>
               </div>
             })
@@ -118,9 +158,38 @@ class Dashboard extends Component {
 }
 
 const ProjectCard = props => (
-  <li className="list-inline-item">
-    <Link to={`project/${props.project.first_tab._id}`}>{props.project.name} </Link>
-  </li>
+  <Fragment>
+    <li className="list-inline-item">
+      <Link to={`project/${props.project.first_tab._id}`}>{props.project.name}</Link>
+      <button className="btn ellipsis-h" type="button" onClick={props.showDropdown}>
+        <FontAwesomeIcon icon="ellipsis-v" />
+      </button>
+      {
+        (props.visibleDropdown && (props.index === props.activeId)) && <div className="custom-dropdown">
+          {
+            <div className="dropdown-menu show">
+              {
+                props.showConfirmationPopup ?
+                  <div className="popup">
+                    <p className="text-center">Are you sure?</p>
+                    <div className="d-flex justify-content-around px-4">
+                      <button className="btn btn-sm btn--prime" onclick={props.deleteProject}>Yes</button>
+                      <button className="btn btn-sm btn--cancel" onClick={props.backToDropdown}>No</button>
+                    </div>
+                  </div>
+                  :
+                  <Fragment>
+                    <button className="dropdown-item" type="button">Edit</button>
+                    <button className="dropdown-item" type="button" onClick={props.confirmDeleteTab}>Delete</button>
+                  </Fragment>
+              }
+
+            </div>
+          }
+        </div>
+      }
+    </li>
+  </Fragment>
 );
 
 const AddButton = props => (
