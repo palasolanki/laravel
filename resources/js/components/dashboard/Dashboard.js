@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { Redirect } from 'react-router-dom';
 import { connect } from "react-redux";
+import classnames from 'classnames';
 import { getProjects, setProject, setRedirect } from "../../store/actions/project";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 class Dashboard extends Component {
   constructor(props) {
     super(props);
+    this.dropdownRef = null;
     this.types = [
       { title: 'Expense', type: 'expense' },
       { title: 'Income', type: 'income' }
@@ -20,6 +22,7 @@ class Dashboard extends Component {
       activeId: null,
       showConfirmationPopup: false
     }
+
     this.addProject = this.addProject.bind(this);
     this.editProjectTitle = this.editProjectTitle.bind(this);
     this.saveProject = this.saveProject.bind(this);
@@ -29,10 +32,14 @@ class Dashboard extends Component {
     this.deleteProject = this.deleteProject.bind(this);
     this.confirmDeleteTab = this.confirmDeleteTab.bind(this);
     this.backToDropdown = this.backToDropdown.bind(this);
+    this.onClickOutside = this.onClickOutside.bind(this);
   }
 
   componentDidMount() {
+
     this.props.getProjects();
+    document.addEventListener('mousedown', this.onClickOutside);
+
   }
 
   addProject(index) {
@@ -97,13 +104,25 @@ class Dashboard extends Component {
       showConfirmationPopup: false
     });
   }
+
+  onClickOutside(e) {
+
+    if (this.dropdownRef && !this.dropdownRef.contains(e.target)) {
+      this.setState({
+        visibleDropdown: false
+      });
+    }
+
+  }
+
   componentWillUnmount() {
     this.props.setRedirect(false);
+    document.removeEventListener('mousedown', this.onClickOutside, true);
   }
 
   render() {
     const { list, redirect } = this.props;
-    const { isAddProject, projectTitle, visibleDropdown, activeId, showConfirmationPopup, backToDropdown } = this.state;
+    const { isAddProject, projectTitle, visibleDropdown, activeId, showConfirmationPopup } = this.state;
 
     if (redirect) {
       const project = list[list.length - 1];
@@ -130,6 +149,7 @@ class Dashboard extends Component {
                         confirmDeleteTab={this.confirmDeleteTab}
                         showConfirmationPopup={showConfirmationPopup}
                         backToDropdown={this.backToDropdown}
+                        dropdownRef={dropdownRef => (this.dropdownRef = dropdownRef)}
                       />
                     )}
                     <li className="list-inline-item">
@@ -161,11 +181,11 @@ const ProjectCard = props => (
   <Fragment>
     <li className="list-inline-item">
       <Link to={`project/${props.project.first_tab._id}`}>{props.project.name}</Link>
-      <button className="btn ellipsis-h" type="button" onClick={props.showDropdown}>
+      <button className={classnames({ 'd-block': (props.visibleDropdown && (props.index === props.activeId)) }, "btn ellipsis-h")} type="button" onClick={props.showDropdown}>
         <FontAwesomeIcon icon="ellipsis-v" />
       </button>
       {
-        (props.visibleDropdown && (props.index === props.activeId)) && <div className="custom-dropdown">
+        (props.visibleDropdown && (props.index === props.activeId)) && <div className="custom-dropdown" ref={props.dropdownRef}>
           {
             <div className="dropdown-menu show">
               {
@@ -173,7 +193,7 @@ const ProjectCard = props => (
                   <div className="popup">
                     <p className="text-center">Are you sure?</p>
                     <div className="d-flex justify-content-around px-4">
-                      <button className="btn btn-sm btn--prime" onclick={props.deleteProject}>Yes</button>
+                      <button className="btn btn-sm btn--prime" onClick={props.deleteProject}>Yes</button>
                       <button className="btn btn-sm btn--cancel" onClick={props.backToDropdown}>No</button>
                     </div>
                   </div>

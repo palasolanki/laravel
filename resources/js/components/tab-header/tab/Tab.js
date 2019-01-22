@@ -6,6 +6,7 @@ export default class Tab extends Component {
 
   render() {
     const { title, isActive, onTabClick, onTabDoubleClick, tabRef, onTabBlur, onTabKeyPress, showDropdown, visibleDropdown, deleteActiveTab, isContentEditable, tabLength, showConfirmationPopup, confirmDeleteTab, backToDropdown } = this.props;
+
     return <li className="nav-item" ref={tabRef}>
       <div
         className={"nav-link " + (isActive ? 'active' : '')}

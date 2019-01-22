@@ -10789,10 +10789,17 @@ header > a {
 }
 
 .dashboard .ellipsis-h.btn {
+  display: none;
   top: 10px;
   right: 10px;
   -webkit-transform: translateY(0%);
           transform: translateY(0%);
+  transition: 1s all;
+}
+
+.dashboard .list-inline-item:hover .ellipsis-h.btn {
+  display: block;
+  transition: 1s all;
 }
 
 .dashboard .custom-dropdown {
