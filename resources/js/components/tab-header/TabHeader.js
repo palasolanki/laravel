@@ -3,7 +3,7 @@ import Tab from "./tab/Tab";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
 
-import { setTable, setTab, deleteTab, setTabAdded, setDeletedTab } from '../../store/actions/project';
+import { setTable, setTab, deleteTab, setTabAdded, setDeletedTab, setTabTitle, getProjectData } from '../../store/actions/project';
 class TabHeader extends Component {
 
   constructor(props) {
@@ -11,7 +11,8 @@ class TabHeader extends Component {
     this.tabTitleRef = [];
     this.state = {
       activeContenteditable: false,
-      visibleDropdown: false
+      visibleDropdown: false,
+      showConfirmationPopup: false
     };
     this.onTabClick = this.onTabClick.bind(this);
     this.addTabs = this.addTabs.bind(this);
@@ -22,6 +23,8 @@ class TabHeader extends Component {
     this.deleteActiveTab = this.deleteActiveTab.bind(this);
     this.onClickOutside = this.onClickOutside.bind(this);
     this.getCurrentTabIndex = this.getCurrentTabIndex.bind(this);
+    this.confirmDeleteTab = this.confirmDeleteTab.bind(this);
+    this.backToDropdown = this.backToDropdown.bind(this);
   }
 
   componentDidMount() {
@@ -35,16 +38,15 @@ class TabHeader extends Component {
   componentDidUpdate() {
     const { newTabAdded, tabs, tabDeleted } = this.props;
     const tabIndex = tabs.length - 1;
-    const rows = this.prepareRows(tabIndex);
 
-    if(newTabAdded) {
-      this.props.setTable({ rows: rows, tabId: tabs[tabIndex]._id });
+    if (newTabAdded) {
+      this.props.setTable({ tabId: tabs[tabIndex]._id });
       this.props.history.push(`/project/${tabs[tabIndex]._id}`);
       this.props.setTabAdded(false);
     }
 
-    if(tabDeleted) {
-      this.props.setTable({ tabId: tabs[0]._id });
+    if (tabDeleted) {
+      this.props.setTable({ rows: tabs[0].rows, tabId: tabs[0]._id });
       this.props.history.push(`/project/${tabs[0]._id}`);
       this.props.setDeletedTab(false);
     }
@@ -63,9 +65,9 @@ class TabHeader extends Component {
   }
 
   onTabClick(tabIndex) {
-    const {tabs} = this.props;
-    this.props.setTable({tabId: tabs[tabIndex]._id });
+    const { tabs } = this.props;
 
+    this.props.setTable({ rows: tabs[tabIndex].rows || [], tabId: tabs[tabIndex]._id });
     this.props.history.push(`/project/${tabs[tabIndex]._id}`);
   }
 
@@ -79,16 +81,31 @@ class TabHeader extends Component {
 
   }
 
-  onTabBlur(tabIndex) {
+  onTabBlur(tabIndex, e) {
+    let tabs = [...this.props.tabs];
+
     this.tabTitleRef[tabIndex].querySelector('div').contentEditable = false;
+
+    if (!e.target.innerHTML) {
+      e.target.innerHTML = tabs[tabIndex].title;
+    }
+    else if (this.state.activeContenteditable !== false) {
+      this.props.setTabTitle({ title: e.target.innerHTML }, this.props.activeTabId);
+    }
 
     this.setState({
       activeContenteditable: false
     })
+
   }
 
   onTabKeyPress(tabIndex, e) {
-    if(e.charCode === 13) {
+    let tabs = [...this.props.tabs];
+
+    if (e.charCode === 13) {
+      if (!e.target.innerHTML) {
+        e.target.innerHTML = tabs[tabIndex].title;
+      }
       this.tabTitleRef[tabIndex].querySelector('div').contentEditable = false;
     }
   }
@@ -109,7 +126,7 @@ class TabHeader extends Component {
   }
 
   getCurrentTabIndex() {
-    const {tabs, tabId} = this.props;
+    const { tabs, tabId } = this.props;
 
     return tabs.findIndex((tab) => {
       return (tab._id === tabId);
@@ -117,47 +134,62 @@ class TabHeader extends Component {
   }
 
   onClickOutside(e) {
-      const tabIndex = this.getCurrentTabIndex();
+    const tabIndex = this.getCurrentTabIndex();
 
-      if(this.tabTitleRef[tabIndex] && !this.tabTitleRef[tabIndex].contains(e.target) ) {
-        this.setState({
-          visibleDropdown: false
-        });
-      }
+    if (this.tabTitleRef[tabIndex] && !this.tabTitleRef[tabIndex].contains(e.target)) {
+      this.setState({
+        visibleDropdown: false
+      });
+    }
+  }
+
+  confirmDeleteTab(i) {
+    this.setState({
+      showConfirmationPopup: true
+    });
+  }
+  backToDropdown() {
+    this.setState({
+      showConfirmationPopup: false
+    });
   }
 
   deleteActiveTab(tabIndex) {
     let tabs = [...this.props.tabs];
     this.props.deleteTab(tabs[tabIndex]._id);
+
     this.setState({
       visibleDropdown: false,
     });
   }
 
   render() {
-    const { activeContenteditable, visibleDropdown } = this.state;
+    const { activeContenteditable, visibleDropdown, showConfirmationPopup } = this.state;
     const { tabs, activeTabId } = this.props;
 
     return (
       <div className="position-relative">
-      <ul className="nav nav-tabs">
-        {tabs.map((tab, i) => {
-          return <Tab key={i}
+        <ul className="nav nav-tabs">
+          {tabs.map((tab, i) => {
+            return <Tab key={i}
               tabRef={tabTitleRef => (this.tabTitleRef[i] = tabTitleRef)}
               isContentEditable={(activeContenteditable === i)}
               isActive={(activeTabId == tab._id)}
               onTabClick={() => this.onTabClick(i)}
               onTabDoubleClick={(e) => this.onTabDoubleClick(i, e)}
               onTabKeyPress={(e) => this.onTabKeyPress(i, e)}
-              onTabBlur={() => this.onTabBlur(i)}
+              onTabBlur={(e) => this.onTabBlur(i, e)}
               title={tab.title}
               showDropdown={this.showDropdown}
               visibleDropdown={visibleDropdown}
               deleteActiveTab={() => this.deleteActiveTab(i)}
               tabLength={tabs.length}
-           />
-        })}
-        <li className="position-relative add-tab-item"><div className="add-tabs" onClick={this.addTabs}>+</div></li>
+              showConfirmationPopup={showConfirmationPopup}
+              confirmDeleteTab={() => this.confirmDeleteTab(i)}
+              backToDropdown={this.backToDropdown}
+            />
+          })}
+          <li className="position-relative add-tab-item"><div className="add-tabs" onClick={this.addTabs}>+</div></li>
         </ul>
       </div>
     )
@@ -165,12 +197,14 @@ class TabHeader extends Component {
 }
 const mapStateToProps = state => {
   return {
+    rows: state.project.rows,
     tabs: state.project.tabs,
     tabId: state.project.tabId,
     projectId: state.project._id,
     activeTabId: state.project.tabId,
     newTabAdded: state.project.newTabAdded,
-    tabDeleted: state.project.tabDeleted
+    tabDeleted: state.project.tabDeleted,
+    updatedTabTitle: state.project.updatedTabTitle
   };
 };
 const mapDispatchToProps = dispatch => {
@@ -179,7 +213,9 @@ const mapDispatchToProps = dispatch => {
     setTab: (data, projectId) => dispatch(setTab(data, projectId)),
     deleteTab: (activeTabId) => dispatch(deleteTab(activeTabId)),
     setTabAdded: (flag) => dispatch(setTabAdded(flag)),
-    setDeletedTab: (flag) => dispatch(setDeletedTab(flag))
+    setDeletedTab: (flag) => dispatch(setDeletedTab(flag)),
+    setTabTitle: (data, activeTabId) => dispatch(setTabTitle(data, activeTabId)),
+    getProjectData: tabId => dispatch(getProjectData(tabId)),
   };
 };
 

@@ -1,98 +1,140 @@
 import React, { Component, Fragment } from "react";
 import { Redirect } from 'react-router-dom';
 import { connect } from "react-redux";
-import classnames from 'classnames';
-import { getProjects, setProject } from "../../store/actions/project";
+import { getProjects, setProject, setRedirect } from "../../store/actions/project";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.types = [
-      {title: 'Expense', type: 'expense'},
-      {title: 'Income', type: 'income'}
+      { title: 'Expense', type: 'expense' },
+      { title: 'Income', type: 'income' }
     ];
     this.state = {
       isAddProject: null,
       activeType: null,
-      projectTitle: ''
+      projectTitle: '',
+      visibleDropdown: false,
+      activeId: null,
+      showConfirmationPopup: false
     }
     this.addProject = this.addProject.bind(this);
     this.editProjectTitle = this.editProjectTitle.bind(this);
     this.saveProject = this.saveProject.bind(this);
     this.closeProjectForm = this.closeProjectForm.bind(this);
     this.onPressKey = this.onPressKey.bind(this);
+    this.showDropdown = this.showDropdown.bind(this);
+    this.deleteProject = this.deleteProject.bind(this);
+    this.confirmDeleteTab = this.confirmDeleteTab.bind(this);
+    this.backToDropdown = this.backToDropdown.bind(this);
   }
 
-    componentDidMount() {
-        this.props.getProjects();
+  componentDidMount() {
+    this.props.getProjects();
+  }
+
+  addProject(index) {
+    this.setState({
+      isAddProject: index,
+    })
+  }
+
+  editProjectTitle(e) {
+    this.setState({
+      projectTitle: e.target.value
+    })
+  }
+
+  onPressKey(type, e) {
+    if (e.charCode === 13 && this.state.projectTitle !== '') {
+      this.props.setProject({
+        type: type,
+        name: this.state.projectTitle,
+        description: 'New title added'
+      });
     }
+  }
 
-    addProject(index) {
-      this.setState({
-        isAddProject: index,
-      })
+  saveProject(type) {
+    if (this.state.projectTitle !== '') {
+      this.props.setProject({
+        type: type,
+        name: this.state.projectTitle,
+        description: 'New title added'
+      });
     }
+    this.closeProjectForm();
 
-    editProjectTitle(e) {
-     this.setState({
-        projectTitle: e.target.value
-      })
+  }
+
+  closeProjectForm() {
+    this.setState({
+      isAddProject: null,
+      projectTitle: ''
+    })
+  }
+
+  showDropdown(id) {
+    this.setState({
+      activeId: id,
+      visibleDropdown: !this.state.visibleDropdown
+    })
+  }
+
+  deleteProject() {
+
+  }
+
+  confirmDeleteTab() {
+    this.setState({
+      showConfirmationPopup: true
+    });
+  }
+  backToDropdown() {
+    this.setState({
+      showConfirmationPopup: false
+    });
+  }
+  componentWillUnmount() {
+    this.props.setRedirect(false);
+  }
+
+  render() {
+    const { list, redirect } = this.props;
+    const { isAddProject, projectTitle, visibleDropdown, activeId, showConfirmationPopup, backToDropdown } = this.state;
+
+    if (redirect) {
+      const project = list[list.length - 1];
+      return <Redirect to={`project/${project.first_tab._id}`} />
     }
-
-    onPressKey(type, e) {
-      if(e.charCode === 13 && this.state.projectTitle !== '') {
-        this.props.setProject({
-          type: type,
-          name: this.state.projectTitle,
-          description: 'New title added'
-        });
-      }
-    }
-
-    saveProject(type) {
-      if(this.state.projectTitle !== ''){
-        this.props.setProject({
-          type: type,
-          name: this.state.projectTitle,
-          description: 'New title added'
-        });
-      }
-      this.closeProjectForm();
-
-    }
-
-    closeProjectForm() {
-      this.setState({
-        isAddProject: null,
-        projectTitle: ''
-      })
-    }
-
-
-    render() {
-        const { list, redirect } = this.props;
-        const { isAddProject, projectTitle } = this.state;
-
-        if(redirect) {
-          const project = list[list.length - 1];
-          return <Redirect to={`project/${project.first_tab._id}`} />
-        }
-        return (
-          <Fragment>
-          <div className="dashboard p-3">
-              {
-                this.types.map((type, i) => {
-                 return <div className="section" key={i}>
-                    <h3 className="mb-5">{type.title}</h3>
-                    <div className="list">
-                    <ul className="ml-3 list-inline unstyled">
-                      {list.map((list) => (
-                        list.type === type.type) && <ProjectCard project={list} key={list._id} />
-                      )}
-                      <li className="list-inline-item">
+    return (
+      <Fragment>
+        <div className="dashboard p-3">
+          {
+            this.types.map((type, i) => {
+              return <div className="section" key={i}>
+                <h3 className="mb-4">{type.title}</h3>
+                <div className="list">
+                  <ul className="ml-3 list-inline unstyled">
+                    {list.map((list, i) => (
+                      list.type === type.type) && <ProjectCard
+                        showDropdown={() => this.showDropdown(i)}
+                        index={i}
+                        activeId={activeId}
+                        visibleDropdown={visibleDropdown}
+                        project={list}
+                        key={list._id}
+                        deleteProject={() => this.deleteProject(i)}
+                        confirmDeleteTab={this.confirmDeleteTab}
+                        showConfirmationPopup={showConfirmationPopup}
+                        backToDropdown={this.backToDropdown}
+                      />
+                    )}
+                    <li className="list-inline-item">
                       {
-                        (isAddProject === i)  ?
+                        (isAddProject === i) ?
                           <ProjectForm
                             projectTitle={projectTitle}
                             editProjectTitle={this.editProjectTitle}
@@ -100,26 +142,54 @@ class Dashboard extends Component {
                             closeProjectForm={this.closeProjectForm}
                             onPressKey={(e) => this.onPressKey(type.type, e)}
                           />
-                        :
-                        <AddButton addProject={this.addProject.bind(this, i)}/>
+                          :
+                          <AddButton addProject={this.addProject.bind(this, i)} />
                       }
-                      </li>
-                    </ul>
-
-                  </div>
-                  </div>
-                })
-              }
-            </div>
-        </Fragment>
-        );
-    }
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            })
+          }
+        </div>
+      </Fragment>
+    );
+  }
 }
 
 const ProjectCard = props => (
+  <Fragment>
     <li className="list-inline-item">
-      <Link to={`project/${props.project.first_tab._id}`}>{props.project.name} </Link>
+      <Link to={`project/${props.project.first_tab._id}`}>{props.project.name}</Link>
+      <button className="btn ellipsis-h" type="button" onClick={props.showDropdown}>
+        <FontAwesomeIcon icon="ellipsis-v" />
+      </button>
+      {
+        (props.visibleDropdown && (props.index === props.activeId)) && <div className="custom-dropdown">
+          {
+            <div className="dropdown-menu show">
+              {
+                props.showConfirmationPopup ?
+                  <div className="popup">
+                    <p className="text-center">Are you sure?</p>
+                    <div className="d-flex justify-content-around px-4">
+                      <button className="btn btn-sm btn--prime" onclick={props.deleteProject}>Yes</button>
+                      <button className="btn btn-sm btn--cancel" onClick={props.backToDropdown}>No</button>
+                    </div>
+                  </div>
+                  :
+                  <Fragment>
+                    <button className="dropdown-item" type="button">Edit</button>
+                    <button className="dropdown-item" type="button" onClick={props.confirmDeleteTab}>Delete</button>
+                  </Fragment>
+              }
+
+            </div>
+          }
+        </div>
+      }
     </li>
+  </Fragment>
 );
 
 const AddButton = props => (
@@ -143,20 +213,21 @@ const ProjectForm = props => (
 )
 
 const mapStateToProps = state => {
-    return {
-        list: state.project.list,
-        redirect: state.project.redirect
-    };
+  return {
+    list: state.project.list,
+    redirect: state.project.redirect
+  };
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-        getProjects: () => dispatch(getProjects()),
-        setProject: (data) => dispatch(setProject(data))
-    };
+  return {
+    getProjects: () => dispatch(getProjects()),
+    setProject: (data) => dispatch(setProject(data)),
+    setRedirect: (data) => dispatch(setRedirect(data))
+  };
 };
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(Dashboard);
