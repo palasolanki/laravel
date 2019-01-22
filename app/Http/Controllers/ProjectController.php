@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\Tab;
 use App\Http\Requests\ProjectRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class ProjectController extends Controller
 {
@@ -37,5 +38,11 @@ class ProjectController extends Controller
     {
         $project->update($request->all());
         return response()->json(['data' => $project]);
+    }
+
+    public function destroy(Project $project): Response
+    {
+        $project->delete();
+        return response()->noContent();
     }
 }
