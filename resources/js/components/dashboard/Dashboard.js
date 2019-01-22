@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { Redirect } from 'react-router-dom';
 import { connect } from "react-redux";
 import classnames from 'classnames';
-import { getProjects, setProject, setRedirect } from "../../store/actions/project";
+import { getProjects, setProject, setRedirect, deleteProject, setDeletedList, setTable, setProjectTitle } from "../../store/actions/project";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -20,7 +20,9 @@ class Dashboard extends Component {
       projectTitle: '',
       visibleDropdown: false,
       activeId: null,
-      showConfirmationPopup: false
+      showConfirmationPopup: false,
+      isTitleEditable: false,
+      editedTitle: null
     }
 
     this.addProject = this.addProject.bind(this);
@@ -33,13 +35,15 @@ class Dashboard extends Component {
     this.confirmDeleteTab = this.confirmDeleteTab.bind(this);
     this.backToDropdown = this.backToDropdown.bind(this);
     this.onClickOutside = this.onClickOutside.bind(this);
+    this.onClickEditBtn = this.onClickEditBtn.bind(this);
+    this.editTitle = this.editTitle.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+    this.changeTitleValue = this.changeTitleValue.bind(this);
   }
 
   componentDidMount() {
-
     this.props.getProjects();
     document.addEventListener('mousedown', this.onClickOutside);
-
   }
 
   addProject(index) {
@@ -73,7 +77,6 @@ class Dashboard extends Component {
       });
     }
     this.closeProjectForm();
-
   }
 
   closeProjectForm() {
@@ -90,8 +93,13 @@ class Dashboard extends Component {
     })
   }
 
-  deleteProject() {
-
+  deleteProject(i) {
+    const { list } = this.props;
+    this.props.deleteProject(list[i]._id);
+    this.setState({
+      visibleDropdown: false,
+      showConfirmationPopup: false
+    })
   }
 
   confirmDeleteTab() {
@@ -106,14 +114,56 @@ class Dashboard extends Component {
   }
 
   onClickOutside(e) {
-
     if (this.dropdownRef && !this.dropdownRef.contains(e.target)) {
       this.setState({
         visibleDropdown: false
       });
     }
-
   }
+
+  onClickEditBtn(i) {
+    this.setState({
+      isTitleEditable: true,
+      visibleDropdown: false
+    })
+  }
+
+  changeTitleValue(i, e) {
+    this.setState({
+      editedTitle: e.target.value
+    });
+  }
+
+  editTitle(i, e) {
+    if (e.charCode === 13) {
+      this.onBlur(i, e);
+    }
+  }
+
+  onBlur(i, e) {
+    const { list } = this.props;
+    if (!this.state.editedTitle) {
+
+      this.props.setProjectTitle({
+        name: list[i].name
+      }, list[i]._id);
+
+    }
+    else {
+      list[i].name = this.state.editedTitle;
+      this.props.setProjectTitle({
+        name: list[i].name
+      }, list[i]._id);
+      this.props.setTable({
+        list: list
+      });
+
+    }
+    this.setState({
+      isTitleEditable: false,
+    })
+  }
+
 
   componentWillUnmount() {
     this.props.setRedirect(false);
@@ -122,7 +172,7 @@ class Dashboard extends Component {
 
   render() {
     const { list, redirect } = this.props;
-    const { isAddProject, projectTitle, visibleDropdown, activeId, showConfirmationPopup } = this.state;
+    const { isAddProject, projectTitle, visibleDropdown, activeId, showConfirmationPopup, isTitleEditable } = this.state;
 
     if (redirect) {
       const project = list[list.length - 1];
@@ -150,6 +200,11 @@ class Dashboard extends Component {
                         showConfirmationPopup={showConfirmationPopup}
                         backToDropdown={this.backToDropdown}
                         dropdownRef={dropdownRef => (this.dropdownRef = dropdownRef)}
+                        onClickEditBtn={() => this.onClickEditBtn(i)}
+                        editTitle={(e) => this.editTitle(i, e)}
+                        isTitleEditable={isTitleEditable}
+                        onBlur={(e) => this.onBlur(i, e)}
+                        changeTitleValue={(e) => this.changeTitleValue(i, e)}
                       />
                     )}
                     <li className="list-inline-item">
@@ -179,8 +234,13 @@ class Dashboard extends Component {
 
 const ProjectCard = props => (
   <Fragment>
-    <li className="list-inline-item">
-      <Link to={`project/${props.project.first_tab._id}`}>{props.project.name}</Link>
+    <li className="list-inline-item title-items">
+      {
+        (props.isTitleEditable && props.index === props.activeId) ? <input type="text" onChange={props.changeTitleValue} defaultValue={props.project.name} onKeyPress={props.editTitle} onBlur={props.onBlur} />
+          :
+          <Link to={`project/${props.project.first_tab._id}`}>{props.project.name}</Link>
+      }
+
       <button className={classnames({ 'd-block': (props.visibleDropdown && (props.index === props.activeId)) }, "btn ellipsis-h")} type="button" onClick={props.showDropdown}>
         <FontAwesomeIcon icon="ellipsis-v" />
       </button>
@@ -199,7 +259,7 @@ const ProjectCard = props => (
                   </div>
                   :
                   <Fragment>
-                    <button className="dropdown-item" type="button">Edit</button>
+                    <button className="dropdown-item" type="button" onClick={props.onClickEditBtn}>Edit</button>
                     <button className="dropdown-item" type="button" onClick={props.confirmDeleteTab}>Delete</button>
                   </Fragment>
               }
@@ -235,7 +295,8 @@ const ProjectForm = props => (
 const mapStateToProps = state => {
   return {
     list: state.project.list,
-    redirect: state.project.redirect
+    redirect: state.project.redirect,
+    listDeleted: state.project.listDeleted
   };
 };
 
@@ -243,7 +304,11 @@ const mapDispatchToProps = dispatch => {
   return {
     getProjects: () => dispatch(getProjects()),
     setProject: (data) => dispatch(setProject(data)),
-    setRedirect: (data) => dispatch(setRedirect(data))
+    setRedirect: (data) => dispatch(setRedirect(data)),
+    deleteProject: (projectId) => dispatch(deleteProject(projectId)),
+    setDeletedList: (flag) => dispatch(setDeletedList(flag)),
+    setTable: data => dispatch(setTable(data)),
+    setProjectTitle: (data, projectId) => dispatch(setProjectTitle(data, projectId)),
   };
 };
 

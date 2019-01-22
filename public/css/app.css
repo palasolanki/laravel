@@ -10808,3 +10808,8 @@ header > a {
   left: 30px;
 }
 
+.dashboard .title-items input {
+  font-size: 14px;
+  max-width: 150px;
+}
+

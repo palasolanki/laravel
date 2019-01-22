@@ -128,6 +128,23 @@ export function setDeletedTab(payload) {
     return { type: RESET_TAB, payload }
 }
 
+export function deleteProject(projectId) {
+    return (dispatch, getState) => {
+        return api.delete(`/projects/${projectId}`)
+            .then((res) => {
+                let list = getState().project.list;
+                list = list.filter((list) => {
+                    return list._id !== projectId;
+                })
+                dispatch(setTable({ list }));
+            })
+    }
+}
+export function setDeletedList(payload) {
+
+    return { type: RESET_LIST, payload }
+}
+
 export function setTabTitle(payload, tabId) {
     return (dispatch) => {
         return api.patch(`/tab/${tabId}`, payload)
