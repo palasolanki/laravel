@@ -180,13 +180,13 @@ class Dashboard extends Component {
     }
     return (
       <Fragment>
-        <div className="dashboard p-3">
+        <div className={classnames({ "overlay": isAddProject !== null }, "dashboard p-3")} >
           {
             this.types.map((type, i) => {
-              return <div className="section" key={i}>
+              return <div className={classnames({ "position-relative": isAddProject !== i }, "section")} key={i}>
                 <h3 className="mb-4">{type.title}</h3>
                 <div className="list">
-                  <ul className="ml-3 list-inline unstyled">
+                  <ul className="ml-md-3 list-inline unstyled">
                     {list.map((list, i) => (
                       list.type === type.type) && <ProjectCard
                         showDropdown={() => this.showDropdown(i)}
@@ -274,8 +274,8 @@ const ProjectCard = props => (
 
 const AddButton = props => (
   <div className="btn__add-project d-inline-flex">
-    <button type="button" className="btn--custom btn btn-prime rounded-circle" onClick={props.addProject}>+</button>
-  </div>
+    <button type="button" className="btn--custom btn btn-prime rounded-circle" onClick={props.addProject}>+ {props.isAddProject}</button>
+  </div >
 )
 
 const ProjectForm = props => (

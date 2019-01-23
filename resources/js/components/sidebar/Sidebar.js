@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Link, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
 import classNames from 'classnames';
 export default class Sidebar extends Component {
   constructor(props) {
     super(props);
     this.navTitles = [
-      {title: 'Dashboard', url: '/'},
-      {title: 'Projects', url: '/project'},
+      { title: 'Dashboard', url: '/' },
+      { title: 'Projects', url: '/project' },
     ];
 
     this.state = {
@@ -17,9 +17,9 @@ export default class Sidebar extends Component {
   }
 
   componentDidMount() {
-      this.setState({
-       activeNav: this.props.match.path
-      })
+    this.setState({
+      activeNav: this.props.match.path
+    })
   }
 
   activeNav(url) {
@@ -34,21 +34,21 @@ export default class Sidebar extends Component {
     const { isSidebarOpen } = this.props;
 
     return (
-      <div className={classNames({'open': isSidebarOpen}, "sidebar")}>
+      <div className={classNames({ 'open': isSidebarOpen }, "sidebar")}>
         <ul className="nav flex-column">
-        {
-          this.navTitles.map((navTitle, i) => {
-            return <li className="nav-item" key={i}>
-              <Link
-                to={`${navTitle.url}`}
-                className={classNames({"active": ( activeNav === navTitle.url )}, "nav-link")}
-                onClick={() => this.activeNav(navTitle.url)}
-              >
-                {navTitle.title}
-              </Link>
-            </li>
-          })
-        }
+          {
+            this.navTitles.map((navTitle, i) => {
+              return <li className="nav-item" key={i}>
+                <Link
+                  to={`${navTitle.url}`}
+                  className={classNames({ "active": (activeNav === navTitle.url) }, "nav-link")}
+                  onClick={() => this.activeNav(navTitle.url)}
+                >
+                  {navTitle.title}
+                </Link>
+              </li>
+            })
+          }
         </ul>
       </div>
     )

@@ -25,6 +25,7 @@ class TabHeader extends Component {
     this.getCurrentTabIndex = this.getCurrentTabIndex.bind(this);
     this.confirmDeleteTab = this.confirmDeleteTab.bind(this);
     this.backToDropdown = this.backToDropdown.bind(this);
+    this.onEditBtn = this.onEditBtn.bind(this);
   }
 
   componentDidMount() {
@@ -71,7 +72,7 @@ class TabHeader extends Component {
     this.props.history.push(`/project/${tabs[tabIndex]._id}`);
   }
 
-  onTabDoubleClick(tabIndex, e) {
+  onTabDoubleClick(tabIndex) {
     this.setState({
       visibleDropdown: false,
       activeContenteditable: tabIndex
@@ -160,7 +161,12 @@ class TabHeader extends Component {
 
     this.setState({
       visibleDropdown: false,
+      showConfirmationPopup: false
     });
+  }
+
+  onEditBtn(tabIndex) {
+    this.onTabDoubleClick(tabIndex);
   }
 
   render() {
@@ -187,6 +193,7 @@ class TabHeader extends Component {
               showConfirmationPopup={showConfirmationPopup}
               confirmDeleteTab={() => this.confirmDeleteTab(i)}
               backToDropdown={this.backToDropdown}
+              onEditBtn={() => this.onEditBtn(i)}
             />
           })}
           <li className="position-relative add-tab-item"><div className="add-tabs" onClick={this.addTabs}>+</div></li>

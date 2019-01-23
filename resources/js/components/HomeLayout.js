@@ -13,12 +13,34 @@ export default class Home extends Component {
       isSidebarOpen: true
     }
     this.toggleSidebar = this.toggleSidebar.bind(this);
+    this.checkSidebarMode = this.checkSidebarMode.bind(this);
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.checkSidebarMode, true);
+    this.checkSidebarMode();
+  }
+
+  checkSidebarMode() {
+    if (window.matchMedia("(max-width: 991px)").matches) {
+      this.setState({
+        isSidebarOpen: false
+      })
+    }
+    else {
+      this.setState({
+        isSidebarOpen: true
+      })
+    }
   }
 
   toggleSidebar() {
     this.setState({
       isSidebarOpen: !this.state.isSidebarOpen
     })
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.checkSidebarMode, true);
   }
 
   render() {
@@ -29,9 +51,9 @@ export default class Home extends Component {
         <Header toggleSidebar={this.toggleSidebar} />
         <Sidebar match={match} isSidebarOpen={isSidebarOpen} />
         <div className={classNames({ "full": !isSidebarOpen }, "main")}>
-        <Switch>
-            <Route exact path={match.url}  component={Dashboard}/>
-         </Switch>
+          <Switch>
+            <Route exact path={match.url} component={Dashboard} />
+          </Switch>
         </div>
       </Fragment>
     )

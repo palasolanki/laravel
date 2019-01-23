@@ -31,43 +31,25 @@ export class ProjectHeader extends Component {
     })
   }
   onPressKey(e) {
-    console.log(e.target.value);
-
     if (e.charCode === 13) {
-      if (!e.target.value) {
-        this.props.setTable({
-          name: this.props.projectName
-        })
-      }
-      else {
-        this.props.setTable({
-          name: e.target.value
-        })
-      }
       this.onBlur(e);
     }
   }
   onBlur(e) {
+    if (!this.state.editedTitle) {
 
-    // if (!this.state.editedTitle) {
-    //   this.props.setTable({
-    //     name: this.props.projectName
-    //   })
-    // }
-    // else {
-    //   this.props.setTable({
-    //     list: newList
-    //   });
-
-    //   this.props.setProjectTitle({
-    //     name: this.props.projectName
-    //   }, this.props.projectId);
-    // }
-
-    this.props.setProjectTitle({
-      name: this.props.projectName
-    }, this.props.projectId);
-
+      this.props.setTable({
+        name: this.props.projectName
+      })
+    }
+    else {
+      this.props.setTable({
+        name: this.state.editedTitle
+      })
+      this.props.setProjectTitle({
+        name: this.state.editedTitle
+      }, this.props.projectId);
+    }
     this.setState({
       contenteditable: false
     })

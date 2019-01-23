@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 export default class Tab extends Component {
 
   render() {
-    const { title, isActive, onTabClick, onTabDoubleClick, tabRef, onTabBlur, onTabKeyPress, showDropdown, visibleDropdown, deleteActiveTab, isContentEditable, tabLength, showConfirmationPopup, confirmDeleteTab, backToDropdown } = this.props;
+    const { title, isActive, onTabClick, onTabDoubleClick, tabRef, onTabBlur, onTabKeyPress, showDropdown, visibleDropdown, deleteActiveTab, isContentEditable, tabLength, showConfirmationPopup, confirmDeleteTab, backToDropdown, onEditBtn } = this.props;
 
     return <li className="nav-item" ref={tabRef}>
       <div
@@ -38,7 +38,7 @@ export default class Tab extends Component {
                   </div>
                   :
                   <Fragment>
-                    <button className="dropdown-item" type="button">Edit</button>
+                    <button className="dropdown-item" type="button" onClick={onEditBtn}>Edit</button>
                     <button className="dropdown-item" type="button" onClick={confirmDeleteTab}>Delete</button>
                   </Fragment>
               }
