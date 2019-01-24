@@ -214,6 +214,7 @@ header input {
   height: 50%;
   overflow: auto;
   padding-bottom: 20px;
+  padding-top: 20px;
 }
 .section h3 {
   display: inline-flex;
@@ -241,32 +242,12 @@ header input {
   height: 80px;
   align-items: center;
   width: 50px;
- // transition: all 0.1s;
 }
-//.d-inline-flex:not(.btn__add-project) {
- // transition: all 0.1s;
- // transform: translate3d(0, 0, 0);
-//}
 header > div,
 header > a {
   position: relative;
   z-index: 1;
 }
-
-// .custom-dropdown .btn {
-//   position: absolute;
-//   right: 5px;
-//   top: 50%;
-//   transform: translateY(-50%);
-//   padding: 0;
-//   line-height: 0;
-//   font-size: 1rem;
-// }
-// .custom-dropdown .btn:focus,
-// .custom-dropdown .btn:hover {
-//   box-shadow: none;
-//   color: #000;
-// }
 .ellipsis-h.btn {
   position: absolute;
   right: 5px;
@@ -302,10 +283,223 @@ header > a {
 .dashboard .custom-dropdown {
     position: absolute;
     top: 29px;
-    left: 30px;
-
+    right: 0px;
+    left: auto;
 }
 .dashboard .title-items input {
   font-size: 14px;
   max-width: 150px;
+}
+.dashboard .dropdown-menu {
+  right: 0;
+  left: auto;
+}
+
+.block__login {
+  border-radius: 6px;
+  overflow: hidden;
+}
+.side--left {
+    background: rgba(123, 123, 123, 0.34);
+
+}
+.side--right {
+  padding: 40px 25px 60px;
+  background-color: #fff;
+}
+.page__login {
+  height: 100vh;
+  background: #32afbc;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to left, #85D8CE, #32afbc);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #85D8CE, #32afbc); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.btn-login {
+    background: #4fc0c7;
+    color: #fff;
+    font-size: 16px;
+}
+.block__login .side--right h3{
+  margin-bottom: 30px;
+}
+
+
+.react-contextmenu {
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  font-size: 16px;
+  color: #373a3c;
+  text-align: left;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
+  outline: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms ease !important;
+}
+
+.react-contextmenu.react-contextmenu--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.react-contextmenu-item {
+  padding: 3px 20px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #373a3c;
+  text-align: inherit;
+  white-space: nowrap;
+  background: 0 0;
+  border: 0;
+  cursor: pointer;
+}
+
+.react-contextmenu-item.react-contextmenu-item--active,
+.react-contextmenu-item.react-contextmenu-item--selected {
+  color: #fff;
+  background-color: #20a0ff;
+  border-color: #20a0ff;
+  text-decoration: none;
+}
+
+.react-contextmenu-item.react-contextmenu-item--disabled,
+.react-contextmenu-item.react-contextmenu-item--disabled:hover {
+  color: #878a8c;
+  background-color: transparent;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.react-contextmenu-item--divider {
+  margin-bottom: 3px;
+  padding: 2px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  cursor: inherit;
+}
+.react-contextmenu-item--divider:hover {
+  background-color: transparent;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.react-contextmenu-item.react-contextmenu-submenu {
+  padding: 0;
+}
+
+.react-contextmenu-item.react-contextmenu-submenu
+  > .react-contextmenu-item:after {
+  content: "▶";
+  display: inline-block;
+  position: absolute;
+  right: 7px;
+}
+
+.example-multiple-targets::after {
+  content: attr(data-count);
+  display: block;
+}
+
+
+@media (min-width: 768px) {
+  .side--left {
+    width: 400px;
+  }
+  .side--right {
+    width: 300px;
+  }
+  .block__login {
+    max-width: 700px;
+  }
+  .login-logo {
+    width: 100px;
+  }
+  .name {
+    font-size: 20px;
+  }
+}
+@media (max-width: 767px) {
+  .section h3 {
+    font-size: 20px;
+  }
+  .dashboard .list .list-inline-item:not(:last-child) {
+    font-size: 16px;
+    margin-right: 0px;
+    width: 240px;
+  }
+  .dashboard .list .list-inline {
+    margin: auto;
+    margin-top: 1rem;
+  }
+  .dashboard .list {
+    text-align: center;
+  }
+
+  .btn-prime {
+    background-color: #32afbc;
+    font-size: 30px;
+    font-weight: bold;
+    height: 40px;
+    width: 40px;
+    line-height: 24px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+  }
+  .btn__add-project {
+    height: 40px;
+    align-items: center;
+    width: 40px;
+    position: absolute;
+    top: 15px;
+    right: 3px;
+  }
+  .form__project {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 9;
+    transform: translate(-50%, -50%);
+  }
+  .overlay {
+    position: relative;
+  }
+  .overlay:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #00000085;
+    z-index: 0;
+  }
+  .block__login {
+    width: 90%;
+    max-width: 400px;
+  }
+  .login-logo {
+    width: 70px;
+  }
+  .side--left {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  .name {
+    font-size: 18px;
+  }
+  .side--right {
+    padding-top: 30px;
+  }
+}
+
+@media (max-width: 767px) and (min-width: 537px) {
+  .dashboard .list .list-inline-item:nth-child(odd){
+    margin-right: 25px !important;
+  }
+}
+@media (max-width: 536px) {
+  .dashboard .list .list-inline-item:not(:last-child) {
+    display: flex;
+  }
 }

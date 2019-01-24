@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from "react";
 import ReactDataGrid from "react-data-grid";
+import { Menu } from "react-data-grid-addons";
 import { connect } from "react-redux";
 import {
     getProjectData,
@@ -8,6 +9,32 @@ import {
     updateTabRows
 
 } from "../../store/actions/project";
+const { ContextMenu, MenuItem, SubMenu, ContextMenuTrigger } = Menu;
+
+function ExampleContextMenu({
+    idx,
+    id,
+    rowIdx,
+    onRowDelete,
+    onRowInsertAbove,
+    onRowInsertBelow
+}) {
+    return (
+        <ContextMenu id={id}>
+            <MenuItem data={{ rowIdx, idx }} onClick={onRowDelete}>
+                Delete Row
+            </MenuItem>
+            <SubMenu title="Insert Row">
+                <MenuItem data={{ rowIdx, idx }} onClick={onRowInsertAbove}>
+                    Above
+                </MenuItem>
+                <MenuItem data={{ rowIdx, idx }} onClick={onRowInsertBelow}>
+                    Below
+                </MenuItem>
+            </SubMenu>
+        </ContextMenu>
+    );
+}
 
 class Project extends Component {
     constructor(props) {
@@ -17,6 +44,9 @@ class Project extends Component {
         };
         this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
         this.addRow = this.addRow.bind(this);
+        this.onRowDelete = this.onRowDelete.bind(this);
+        this.onRowInsertAbove = this.onRowInsertAbove.bind(this);
+        this.onRowInsertBelow = this.onRowInsertBelow.bind(this);
     }
 
     componentDidMount() {
@@ -24,24 +54,62 @@ class Project extends Component {
     }
 
     onGridRowsUpdated({ fromRow, toRow, updated }) {
+
         const rows = this.props.rows.slice();
         for (let i = fromRow; i <= toRow; i++) {
             rows[i] = { ...rows[i], ...updated };
         }
-        this.props.setRows(rows);
-        //save 
-        const savingRows = [...rows];
-        savingRows.pop();
-        updateTabRows(this.props.tabId, savingRows);
-    }
 
+        this.saveRows(rows);
+    }
 
     addRow() {
         const rows = this.props.rows.map((row, index) => {
             return { ...row, id: index + 1 };
         });
 
-        this.props.setRows([...rows, { id: <strong>+</strong> }]);
+        this.props.setRows([...rows, { id: '+' }]);
+    }
+
+    onRowDelete(rowIdx) {
+        const { rows } = this.props;
+
+        let nextRows = [...rows];
+        nextRows.splice(rowIdx, 1);
+
+        nextRows = this.reIndexRows(nextRows);
+
+        this.saveRows(nextRows);
+    }
+
+    insertRows(rowIdx) {
+        const { rows } = this.props;
+        let nextRows = [...rows];
+        nextRows.splice(rowIdx, 0, { id: '-' });
+
+        nextRows = this.reIndexRows(nextRows);
+
+        this.saveRows(nextRows);
+    }
+
+    reIndexRows(nextRows) {
+        return nextRows.map((row, index) => {
+            return { ...row, id: (nextRows.length === index + 1) ? '+' : index + 1 };
+        });
+    }
+
+    saveRows(nextRows) {
+        this.props.setRows(nextRows);
+        const savingRows = [...nextRows];
+        updateTabRows(this.props.tabId, savingRows);
+    }
+
+    onRowInsertAbove(rowIdx) {
+        this.insertRows(rowIdx);
+    }
+
+    onRowInsertBelow(rowIdx) {
+        this.insertRows(rowIdx);
     }
 
     render() {
@@ -67,12 +135,21 @@ class Project extends Component {
                             />
                         )}
                         minHeight={window.visualViewport.height - 56}
+                        contextMenu={
+                            <ExampleContextMenu
+                                onRowDelete={(e, { rowIdx }) => this.onRowDelete(rowIdx)}
+                                onRowInsertAbove={(e, { rowIdx }) => this.onRowInsertAbove(rowIdx)}
+                                onRowInsertBelow={(e, { rowIdx }) => this.onRowInsertBelow(rowIdx + 1)}
+                            />
+                        }
+                        RowsContainer={ContextMenuTrigger}
                     />
                 </div>
             </Fragment>
         );
     }
 }
+
 
 const RowRenderer = ({ renderBaseRow, ...props }) => {
     if (props.idx === props.length - 1) {
