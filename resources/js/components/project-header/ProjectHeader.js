@@ -64,7 +64,7 @@ export class ProjectHeader extends Component {
         <Link to={'/'}>
           <img className="logo rounded-circle" src={logo} alt="Logo" />
         </Link>
-        <div className="ml-sm-4 ml-2" onClick={toggleSidebar}>
+        <div className="ml-sm-4 ml-2 hamburger d-flex" onClick={toggleSidebar}>
           <FontAwesomeIcon className="bars" icon="bars" />
         </div>
         <div className="header__pos-abs">

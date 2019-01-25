@@ -8,12 +8,12 @@ export default class Header extends Component {
     return (
       <header className="header d-flex align-items-center">
         <Link to={'/'}>
-          <img className="logo rounded-circle" src={logo} alt="Logo"/>
+          <img className="logo rounded-circle" src={logo} alt="Logo" />
         </Link>
-        <div className="ml-4" onClick={toggleSidebar}>
+        <div className="ml-4 hamburger d-flex" onClick={toggleSidebar}>
           <FontAwesomeIcon className="bars" icon="bars" />
         </div>
-       </header>
+      </header>
     )
   }
 }

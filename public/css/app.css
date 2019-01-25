@@ -10502,6 +10502,8 @@ a.text-dark:focus {
 header {
   background-color: #32afbc;
   height: 50px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 header h3,
@@ -10550,7 +10552,7 @@ header input {
   justify-content: center;
   align-items: center;
   line-height: 0;
-  padding: 15px 7px 16px 8px;
+  padding: 15px 20px 16px 8px;
   border-radius: 30px;
   color: #fff;
 }
@@ -10630,7 +10632,7 @@ header input {
 }
 
 .logo {
-  width: 45px;
+  width: 40px;
   margin-left: 20px;
 }
 
@@ -10701,6 +10703,8 @@ header input {
 .dashboard .list {
   display: flex;
   align-items: flex-start;
+  overflow-y: auto;
+  height: calc(100% - 50px);
 }
 
 .dashboard .list .list-inline-item:not(:last-child) {
@@ -10722,7 +10726,6 @@ header input {
 
 .section {
   height: 50%;
-  overflow: auto;
   padding-bottom: 20px;
   padding-top: 20px;
 }
@@ -10953,6 +10956,11 @@ header > a {
 }
 
 @media (max-width: 767px) {
+  .hamburger {
+    position: absolute;
+    right: 15px;
+  }
+
   .section h3 {
     font-size: 20px;
   }
@@ -11037,6 +11045,26 @@ header > a {
 
   .side--right {
     padding-top: 30px;
+  }
+
+  .logo {
+    width: 40px;
+    margin-left: 15px;
+  }
+
+  .project-header input,
+  .project-header h3 {
+    max-width: 150px;
+  }
+
+  .project-header h3 {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .main:not(.full) .btn__add-project {
+    display: none !important;
   }
 }
 

@@ -122,7 +122,8 @@ class TabHeader extends Component {
     e.stopPropagation();
 
     this.setState({
-      visibleDropdown: !this.state.visibleDropdown
+      visibleDropdown: !this.state.visibleDropdown,
+      showConfirmationPopup: false
     });
   }
 
@@ -139,7 +140,8 @@ class TabHeader extends Component {
 
     if (this.tabTitleRef[tabIndex] && !this.tabTitleRef[tabIndex].contains(e.target)) {
       this.setState({
-        visibleDropdown: false
+        visibleDropdown: false,
+        showConfirmationPopup: false
       });
     }
   }
