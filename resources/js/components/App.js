@@ -9,6 +9,11 @@ import store from '../store/store.js';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faBars, faEllipsisV } from '@fortawesome/free-solid-svg-icons'
+import { setAuthorizationToken } from '../utils';
+import { setCurrentUser } from '../store/actions/auth';
+import jwt_decode from 'jwt-decode';
+import requireAuth from '../utils/requireAuth'
+
 
 library.add(fab, faBars, faEllipsisV);
 
@@ -19,14 +24,19 @@ export default class App extends Component {
                 <Switch>
                     <Route
                         path="/project"
-                        component={ProjectLayout}
+                        component={requireAuth(ProjectLayout)}
                     />
-                    <Route exact path="/" component={HomeLayout} />
+                    <Route exact path="/" component={requireAuth(HomeLayout)} />
                     <Route path="/login" component={Login} />
                 </Switch>
             </div>
         );
     }
+}
+
+if (localStorage.token) {
+    setAuthorizationToken(localStorage.token);
+    store.dispatch(setCurrentUser(jwt_decode(localStorage.token)));
 }
 
 if (document.getElementById('app')) {
