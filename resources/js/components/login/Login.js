@@ -46,7 +46,7 @@ export class Login extends Component {
           <form onSubmit={this.handleSubmit}>
             <div className="form-group">
               <label htmlFor="email">Email</label>
-              <input type="text" className={classnames({ "border-danger": errors.fields.email }, "form-control")} id="email" onChange={this.handleChange} />
+              <input type="text" className={classnames("form-control")} id="email" onChange={this.handleChange} />
               {
                 errors.fields.email && (
                   <span className="text-danger">{errors.fields.email}</span>
@@ -55,7 +55,7 @@ export class Login extends Component {
             </div>
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <input type="password" className={classnames({ "border-danger": errors.fields.email }, "form-control")} id="password" onChange={this.handleChange} />
+              <input type="password" className={classnames("form-control")} id="password" onChange={this.handleChange} />
               {
                 errors.fields.password && (
                   <span className="text-danger">{errors.fields.password}</span>

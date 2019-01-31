@@ -1,4 +1,4 @@
-import { SET_CURRENT_USER, SET_ERROR } from '../actions/auth';
+import { SET_CURRENT_USER, SET_ERROR, LOGOUT } from '../actions/auth';
 import { isEmpty } from 'lodash';
 
 const initialState = {
@@ -22,6 +22,8 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state, errors: action.errors
       }
+    case LOGOUT:
+      return initialState
     default:
       return state
   }

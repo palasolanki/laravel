@@ -9,7 +9,7 @@ import store from '../store/store.js';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faBars, faEllipsisV } from '@fortawesome/free-solid-svg-icons'
-import { setAuthorizationToken } from '../utils';
+import { setAuthorizationToken, setAxiosInterceptor } from '../utils';
 import { setCurrentUser } from '../store/actions/auth';
 import jwt_decode from 'jwt-decode';
 import requireAuth from '../utils/requireAuth'
@@ -38,6 +38,8 @@ if (localStorage.token) {
     setAuthorizationToken(localStorage.token);
     store.dispatch(setCurrentUser(jwt_decode(localStorage.token)));
 }
+
+setAxiosInterceptor();
 
 if (document.getElementById('app')) {
     ReactDOM.render(

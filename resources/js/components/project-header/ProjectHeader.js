@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from '../../../images/favicon.png';
 import { connect } from 'react-redux';
 import { setProjectTitle, setTable } from '../../store/actions/project';
+import { logout } from '../../store/actions/auth';
 
 export class ProjectHeader extends Component {
   constructor(props) {
@@ -17,6 +18,8 @@ export class ProjectHeader extends Component {
     this.onBlur = this.onBlur.bind(this);
     this.onPressKey = this.onPressKey.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.logout = this.logout.bind(this);
+
   }
 
   editTitle(e) {
@@ -55,18 +58,25 @@ export class ProjectHeader extends Component {
     })
   }
 
+  logout() {
+    this.props.logout();
+  }
+
   render() {
     const { contenteditable } = this.state;
     const { toggleSidebar, projectName } = this.props;
 
     return (
-      <header className="project-header d-flex align-items-center">
-        <Link to={'/'}>
-          <img className="logo rounded-circle" src={logo} alt="Logo" />
-        </Link>
-        <div className="ml-sm-4 ml-2 hamburger d-flex" onClick={toggleSidebar}>
-          <FontAwesomeIcon className="bars" icon="bars" />
+      <header className="project-header d-flex align-items-center justify-content-between">
+        <div className="flex-row d-flex align-items-center">
+          <Link to={'/'}>
+            <img className="logo rounded-circle" src={logo} alt="Logo" />
+          </Link>
+          <div className="ml-sm-4 ml-2 hamburger d-flex" onClick={toggleSidebar}>
+            <FontAwesomeIcon className="bars" icon="bars" />
+          </div>
         </div>
+        <div className="mr-3 text-white font-weight-bold cursor-pointer" onClick={this.logout}>Logout</div>
         <div className="header__pos-abs">
           {contenteditable ? <input
             type="text"
@@ -78,7 +88,7 @@ export class ProjectHeader extends Component {
             ref={this.inputRef}
           /> : <h3 className="mb-0" onDoubleClick={this.editTitle}>{projectName}</h3>}
         </div>
-      </header>
+      </header >
     )
   }
 }
@@ -94,6 +104,7 @@ const mapDispatchToProps = dispatch => {
   return {
     setProjectTitle: (data, projectId) => dispatch(setProjectTitle(data, projectId)),
     setTable: (data) => dispatch(setTable(data)),
+    logout: () => dispatch(logout())
   }
 }
 

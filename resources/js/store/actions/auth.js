@@ -4,6 +4,7 @@ import jwt_decode from 'jwt-decode';
 
 export const SET_CURRENT_USER = "ADMIN | SET_CURRENT_USER";
 export const SET_ERROR = "ADMIN | SET_ERROR";
+export const LOGOUT = "ADMIN | LOGOUT";
 
 export function login(data) {
   return (dispatch) => {
@@ -30,4 +31,10 @@ export function setCurrentUser(user) {
   return {
     type: SET_CURRENT_USER, user: { name: user.name, email: user.email, id: user.sub }
   }
+}
+
+export function logout() {
+  localStorage.removeItem('token');
+  setAuthorizationToken(false);
+  return { type: LOGOUT }
 }

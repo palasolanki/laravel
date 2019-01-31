@@ -1,4 +1,6 @@
 import api from "../helpers/api";
+import store from "../store/store";
+import { logout } from "../store/actions/auth";
 
 export function setAuthorizationToken(token) {
   if (token) {
@@ -15,13 +17,25 @@ export function getFormattedErrors(errors) {
     fields: {}
   }
 
-
   for (let prop in errors.errors) {
     formattedErrors.fields[prop] = errors.errors[prop][0];
   }
 
-
-
   return formattedErrors;
 
 }
+
+export function setAxiosInterceptor() {
+
+
+  api.interceptors.response.use(
+    response => response,
+    error => {
+      if (error.response.status === 401) {
+        store.dispatch(logout());
+      }
+      return Promise.reject(error);
+    }
+  );
+}
+
