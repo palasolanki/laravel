@@ -1,6 +1,6 @@
 import api from "../helpers/api";
 import store from "../store/store";
-import { logout } from "../store/actions/auth";
+import { setLogout } from "../store/actions/auth";
 
 export function setAuthorizationToken(token) {
   if (token) {
@@ -27,12 +27,11 @@ export function getFormattedErrors(errors) {
 
 export function setAxiosInterceptor() {
 
-
   api.interceptors.response.use(
     response => response,
     error => {
       if (error.response.status === 401) {
-        store.dispatch(logout());
+        store.dispatch(setLogout());
       }
       return Promise.reject(error);
     }

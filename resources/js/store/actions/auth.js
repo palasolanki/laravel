@@ -34,6 +34,17 @@ export function setCurrentUser(user) {
 }
 
 export function logout() {
+  return (dispatch) => {
+    return api.post('/logout')
+      .then((res) => {
+        dispatch(setLogout());
+      })
+      .catch((res) => {
+      })
+  }
+}
+
+export function setLogout() {
   localStorage.removeItem('token');
   setAuthorizationToken(false);
   return { type: LOGOUT }

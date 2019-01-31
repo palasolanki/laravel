@@ -72,11 +72,11 @@ export class ProjectHeader extends Component {
           <Link to={'/'}>
             <img className="logo rounded-circle" src={logo} alt="Logo" />
           </Link>
-          <div className="ml-sm-4 ml-2 hamburger d-flex" onClick={toggleSidebar}>
+          <div className="ml-md-4 ml-3 hamburger d-flex" onClick={toggleSidebar}>
             <FontAwesomeIcon className="bars" icon="bars" />
           </div>
         </div>
-        <div className="mr-3 text-white font-weight-bold cursor-pointer" onClick={this.logout}>Logout</div>
+        <div className="mr-3 text-white font-weight-bold cursor-pointer logout" onClick={this.logout}>Logout</div>
         <div className="header__pos-abs">
           {contenteditable ? <input
             type="text"

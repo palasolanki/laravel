@@ -24,11 +24,11 @@ export class Header extends Component {
           <Link to={'/'}>
             <img className="logo rounded-circle" src={logo} alt="Logo" />
           </Link>
-          <div className="ml-4 hamburger d-flex" onClick={toggleSidebar}>
+          <div className="ml-md-4 ml-3 hamburger d-flex" onClick={toggleSidebar}>
             <FontAwesomeIcon className="bars" icon="bars" />
           </div>
         </div>
-        <div className="mr-3 text-white font-weight-bold cursor-pointer" onClick={this.logout}>Logout</div>
+        <div className="mr-3 text-white logout" onClick={this.logout}>Logout</div>
       </header>
     )
   }

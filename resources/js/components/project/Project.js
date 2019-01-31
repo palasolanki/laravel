@@ -2,6 +2,8 @@ import React, { Component, Fragment } from "react";
 import ReactDataGrid from "react-data-grid";
 import { Menu } from "react-data-grid-addons";
 import { connect } from "react-redux";
+import { DateEditor } from "./dateEditor/DateEditor";
+
 import {
     getProjectData,
     setProjectData,
@@ -9,6 +11,7 @@ import {
     updateTabRows
 
 } from "../../store/actions/project";
+
 const { ContextMenu, MenuItem, SubMenu, ContextMenuTrigger } = Menu;
 
 function ExampleContextMenu({
@@ -114,12 +117,22 @@ class Project extends Component {
 
     render() {
         const { rows, columns } = this.props;
+        let newColumn = columns.map((column) => {
+            if (column.key === 'paid_date') {
+                column = { ...column, 'editor': DateEditor }
+            }
+            else {
+                column = { ...column }
+            }
+
+            return column;
+        })
 
         return (
             <Fragment>
                 <div className="grid-table mt-5">
                     <ReactDataGrid
-                        columns={columns}
+                        columns={newColumn}
                         rowGetter={i => rows[i]}
                         rowsCount={rows.length}
                         onGridRowsUpdated={this.onGridRowsUpdated}
