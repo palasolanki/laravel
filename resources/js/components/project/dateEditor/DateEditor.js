@@ -2,37 +2,47 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment";
 
 export class DateEditor extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      startDate: new Date()
-    };
-    this.handleChange = this.handleChange.bind(this);
-  }
+    constructor(props) {
+        super(props);
+        const date = moment(props.value, "DD/MM/YYYY");
 
-  getValue() {
-    return { paid_date: this.state.startDate };
-  }
+        this.state = {
+            startDate: date.isValid() ? new Date(date) : new Date()
+        };
+        this.handleChange = this.handleChange.bind(this);
+    }
 
-  getInputNode() {
-    return ReactDOM.findDOMNode(this).getElementsByTagName("input")[0];
-  }
+    getValue() {
+        return { paid_date: moment(this.state.startDate).format("DD/MM/YYYY") };
+    }
 
-  handleChange(date) {
-    console.log(date);
+    getInputNode() {
+        return ReactDOM.findDOMNode(this).getElementsByTagName("input")[0];
+    }
 
-    this.setState({
-      startDate: date
-    }, () => this.props.onCommit());
-  }
-  render() {
-    return <DatePicker
-      selected={this.state.startDate}
-      onChange={this.handleChange}
-    />
-  }
+    handleChange(date) {
+        this.setState(
+            {
+                startDate: date
+            },
+            () => this.props.onCommit()
+        );
+    }
+
+    render() {
+        return (
+            <div tabIndex="-1">
+                <DatePicker
+                    selected={this.state.startDate}
+                    onChange={this.handleChange}
+                    dateFormat="dd/MM/yyyy"
+                />
+            </div>
+        );
+    }
 }
 
 export default DateEditor;
