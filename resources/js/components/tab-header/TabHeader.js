@@ -9,6 +9,7 @@ class TabHeader extends Component {
   constructor(props) {
     super(props);
     this.tabTitleRef = [];
+    this.isDoubleClick = false;
     this.state = {
       activeContenteditable: false,
       visibleDropdown: false,
@@ -66,13 +67,22 @@ class TabHeader extends Component {
   }
 
   onTabClick(tabIndex) {
+
     const { tabs } = this.props;
 
     this.props.setTable({ rows: tabs[tabIndex].rows || [], tabId: tabs[tabIndex]._id });
-    this.props.history.push(`/project/${tabs[tabIndex]._id}`);
+    setTimeout(() => {
+      if (!this.isDoubleClick) {
+        this.props.history.push(`/project/${tabs[tabIndex]._id}`);
+      }
+      else {
+        this.isDoubleClick = false;
+      }
+    });
   }
 
   onTabDoubleClick(tabIndex) {
+    this.isDoubleClick = true;
     this.setState({
       visibleDropdown: false,
       activeContenteditable: tabIndex

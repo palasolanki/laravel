@@ -16,7 +16,14 @@ export class DateEditor extends Component {
     }
 
     getValue() {
-        return { paid_date: moment(this.state.startDate).format("DD/MM/YYYY") };
+        const { column } = this.props;
+        let newDate = moment(this.state.startDate).format("DD/MM/YYYY");
+        if (column.key === "paid_date") {
+            return { paid_date: newDate };
+        }
+        if (column.key === "paid_by") {
+            return { paid_by: newDate };
+        }
     }
 
     getInputNode() {

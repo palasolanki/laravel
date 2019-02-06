@@ -10938,6 +10938,18 @@ header > a {
   cursor: pointer;
 }
 
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+  display: block !important;
+}
+
+.react-datepicker-ignore-onclickoutside {
+  width: 100%;
+  border: none;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
 @media (min-width: 768px) {
   .side--left {
     width: 400px;

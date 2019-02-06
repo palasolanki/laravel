@@ -121,6 +121,9 @@ class Project extends Component {
             if (column.key === 'paid_date') {
                 column = { ...column, 'editor': DateEditor }
             }
+            else if (column.key === 'paid_by') {
+                column = { ...column, 'editor': DateEditor }
+            }
             else {
                 column = { ...column }
             }
