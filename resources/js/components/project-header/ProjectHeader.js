@@ -64,7 +64,7 @@ export class ProjectHeader extends Component {
 
   render() {
     const { contenteditable } = this.state;
-    const { toggleSidebar, projectName } = this.props;
+    const { toggleSidebar, projectName, projectType } = this.props;
 
     return (
       <header className="project-header d-flex align-items-center justify-content-between">
@@ -76,6 +76,7 @@ export class ProjectHeader extends Component {
             <FontAwesomeIcon className="bars" icon="bars" />
           </div>
         </div>
+        <h4 className="project-type mb-0 text-capitalize">{projectType}</h4>
         <div className="mr-3 text-white font-weight-bold cursor-pointer logout" onClick={this.logout}>Logout</div>
         <div className="header__pos-abs">
           {contenteditable ? <input
@@ -96,7 +97,8 @@ export class ProjectHeader extends Component {
 const mapStateToProps = state => {
   return {
     projectName: state.project.name,
-    projectId: state.project._id
+    projectId: state.project._id,
+    projectType: state.project.type
   };
 };
 

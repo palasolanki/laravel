@@ -3,7 +3,7 @@ import Tab from "./tab/Tab";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
 
-import { setTable, setTab, deleteTab, setTabAdded, setDeletedTab, setTabTitle, getProjectData } from '../../store/actions/project';
+import { setTable, setTab, deleteTab, setTabAdded, setDeletedTab, setTabTitle, getProjectData, resetProject } from '../../store/actions/project';
 class TabHeader extends Component {
 
   constructor(props) {
@@ -15,6 +15,7 @@ class TabHeader extends Component {
       visibleDropdown: false,
       showConfirmationPopup: false
     };
+    this.isOnMounted = true;
     this.onTabClick = this.onTabClick.bind(this);
     this.addTabs = this.addTabs.bind(this);
     this.onTabDoubleClick = this.onTabDoubleClick.bind(this);
@@ -34,6 +35,9 @@ class TabHeader extends Component {
   }
 
   componentWillUnmount() {
+    if (this.isOnMounted) {
+      this.props.resetProject(this.props.project);
+    }
     document.removeEventListener('mousedown', this.onClickOutside, true);
   }
 
@@ -67,16 +71,14 @@ class TabHeader extends Component {
   }
 
   onTabClick(tabIndex) {
-
+    this.isOnMounted = false;
     const { tabs } = this.props;
 
     this.props.setTable({ rows: tabs[tabIndex].rows || [], tabId: tabs[tabIndex]._id });
     setTimeout(() => {
       if (!this.isDoubleClick) {
         this.props.history.push(`/project/${tabs[tabIndex]._id}`);
-      }
-      else {
-        this.isDoubleClick = false;
+        this.isOnMounted = true;
       }
     });
   }
@@ -93,6 +95,7 @@ class TabHeader extends Component {
   }
 
   onTabBlur(tabIndex, e) {
+    this.isDoubleClick = false;
     let tabs = [...this.props.tabs];
 
     this.tabTitleRef[tabIndex].querySelector('div').contentEditable = false;
@@ -101,9 +104,8 @@ class TabHeader extends Component {
       e.target.innerHTML = tabs[tabIndex].title;
     }
     else if (this.state.activeContenteditable !== false) {
-      this.props.setTabTitle({ title: e.target.innerHTML }, this.props.activeTabId);
+      this.props.setTabTitle({ title: (e.target.innerHTML).replace(/&nbsp;/g, '') }, this.props.activeTabId);
     }
-
     this.setState({
       activeContenteditable: false
     })
@@ -111,6 +113,7 @@ class TabHeader extends Component {
   }
 
   onTabKeyPress(tabIndex, e) {
+
     let tabs = [...this.props.tabs];
 
     if (e.charCode === 13) {
@@ -223,7 +226,8 @@ const mapStateToProps = state => {
     activeTabId: state.project.tabId,
     newTabAdded: state.project.newTabAdded,
     tabDeleted: state.project.tabDeleted,
-    updatedTabTitle: state.project.updatedTabTitle
+    updatedTabTitle: state.project.updatedTabTitle,
+    project: state.project
   };
 };
 const mapDispatchToProps = dispatch => {
@@ -235,6 +239,7 @@ const mapDispatchToProps = dispatch => {
     setDeletedTab: (flag) => dispatch(setDeletedTab(flag)),
     setTabTitle: (data, activeTabId) => dispatch(setTabTitle(data, activeTabId)),
     getProjectData: tabId => dispatch(getProjectData(tabId)),
+    resetProject: data => dispatch(resetProject(data)),
   };
 };
 

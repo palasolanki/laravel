@@ -41,7 +41,7 @@ class Dashboard extends Component {
     this.changeTitleValue = this.changeTitleValue.bind(this);
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.getProjects();
     document.addEventListener('mousedown', this.onClickOutside);
   }

@@ -10,6 +10,7 @@ export const RESET_TAB = "PROJECT | RESET_TAB";
 export const SET_PROJECT_ROWS = "PROJECT | SET_ROWS";
 export const SET_NEW_TAB_ADDED = "PROJECT | SET_NEW_TAB_ADDED";
 export const SET_TAB_TITLE = "PROJECT | SET_TAB_TITLE";
+export const RESET_PROJECT = "PROJECT | RESET_PROJECT";
 
 export function setTable(payload) {
     return (dispatch) => {
@@ -19,6 +20,7 @@ export function setTable(payload) {
 }
 
 export function setProjects(payload) {
+
     return { type: SET_PROJECTS, payload };
 }
 
@@ -153,4 +155,8 @@ export function setTabTitle(payload, tabId) {
                 dispatch({ type: SET_TAB_TITLE, payload })
             })
     }
+}
+
+export function resetProject(payload) {
+    return { type: RESET_PROJECT, payload }
 }
