@@ -7,6 +7,7 @@ use App\Models\Tab;
 use App\Http\Requests\ProjectRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Auth;
 
 class ProjectController extends Controller
 {
@@ -19,6 +20,7 @@ class ProjectController extends Controller
     public function store(ProjectRequest $request): JsonResponse
     {
         $data = $request->all();
+        $data['user_id'] = Auth::user()->_id;
         $type = $request->get('type');
         $data['columns'] = config("columns.{$type}", []);
         $project = Project::create($data);
