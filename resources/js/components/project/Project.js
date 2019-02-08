@@ -42,6 +42,8 @@ function ExampleContextMenu({
 class Project extends Component {
     constructor(props) {
         super(props);
+        this.selectedRows = null;
+        this.fromRow = null;
         this.state = {
             rows: []
         };
@@ -50,16 +52,31 @@ class Project extends Component {
         this.onRowDelete = this.onRowDelete.bind(this);
         this.onRowInsertAbove = this.onRowInsertAbove.bind(this);
         this.onRowInsertBelow = this.onRowInsertBelow.bind(this);
+        //   this.onStart = this.onStart.bind(this);
+        //   this.onUpdate = this.onUpdate.bind(this);
+        this.onComplete = this.onComplete.bind(this);
+        this.updateSelectedRows = this.updateSelectedRows.bind(this);
+        this.onkeypress = this.onkeypress.bind(this);
+        this.onCellSelected = this.onCellSelected.bind(this);
+        this.onCellDeSelected = this.onCellDeSelected.bind(this);
     }
 
+    onCellSelected({ rowIdx, idx }) {
+        console.log('select' + rowIdx, idx);
+    }
+    onCellDeSelected({ rowIdx, idx }) {
+        console.log('deselect' + rowIdx, idx);
+        this.fromRow = rowIdx;
+    };
     componentDidMount() {
         this.props.getProjectData(this.props.match.params.id);
     }
 
     onGridRowsUpdated({ fromRow, toRow, updated }) {
+        console.log(fromRow, toRow, updated);
 
         const rows = this.props.rows.slice();
-        for (let i = fromRow; i <= toRow; i++) {
+        for (let i = this.fromRow; i <= this.fromRow; i++) {
             rows[i] = { ...rows[i], ...updated };
         }
 
@@ -75,6 +92,7 @@ class Project extends Component {
     }
 
     onRowDelete(rowIdx) {
+
         const { rows } = this.props;
 
         let nextRows = [...rows];
@@ -115,6 +133,39 @@ class Project extends Component {
         this.insertRows(rowIdx);
     }
 
+    onComplete(e) {
+        // console.log(e);
+
+        //  this.updateSelectedRows(e);
+    }
+
+    updateSelectedRows(selectedRange) {
+        //const { rows, columns } = this.props;
+
+        // this.selectedRows = rows.map((row, index) => {
+        //     let columnIndex;
+        //     for (let i = selectedRange.topLeft.rowIdx; i <= selectedRange.bottomRight.rowIdx; i++) {
+        //         for (let j = selectedRange.topLeft.idx; j <= selectedRange.bottomRight.idx; j++) {
+
+        //             columnIndex = columns[j].key;
+        //         }
+
+        //     }
+        //     row[columnIndex] = '';
+        //     return row;
+        // })
+
+        //  console.log(this.selectedRows);
+
+    }
+
+    onkeypress(e) {
+        // if (e.keyCode === 46) {
+        //     this.saveRows(this.selectedRows);
+        // }
+
+    }
+
     render() {
         const { rows, columns } = this.props;
         let newColumn = columns.map((column) => {
@@ -143,6 +194,14 @@ class Project extends Component {
                         emptyRowsView={() => (
                             <NoRows addCoumns={this.addRows} />
                         )}
+                        onCellSelected={this.onCellSelected}
+                        onCellDeSelected={this.onCellDeSelected}
+                        onGridKeyUp={this.onkeypress}
+                        cellRangeSelection={{
+                            onStart: this.onStart,
+                            onUpdate: this.onUpdate,
+                            onComplete: this.onComplete,
+                        }}
                         rowRenderer={props => (
                             <RowRenderer
                                 {...props}
