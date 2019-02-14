@@ -3,6 +3,7 @@ import ReactDataGrid from "react-data-grid";
 import { Menu } from "react-data-grid-addons";
 import { connect } from "react-redux";
 import { DateEditor } from "./dateEditor/DateEditor";
+import { CustomEditor } from "./customEditor/CustomEditor";
 
 import {
     getProjectData,
@@ -57,26 +58,16 @@ class Project extends Component {
         this.onComplete = this.onComplete.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.onkeypress = this.onkeypress.bind(this);
-        this.onCellSelected = this.onCellSelected.bind(this);
-        this.onCellDeSelected = this.onCellDeSelected.bind(this);
     }
 
-    onCellSelected({ rowIdx, idx }) {
-        console.log('select' + rowIdx, idx);
-    }
-    onCellDeSelected({ rowIdx, idx }) {
-        console.log('deselect' + rowIdx, idx);
-        this.fromRow = rowIdx;
-    };
     componentDidMount() {
         this.props.getProjectData(this.props.match.params.id);
     }
 
     onGridRowsUpdated({ fromRow, toRow, updated }) {
-        console.log(fromRow, toRow, updated);
 
         const rows = this.props.rows.slice();
-        for (let i = this.fromRow; i <= this.fromRow; i++) {
+        for (let i = fromRow; i <= toRow; i++) {
             rows[i] = { ...rows[i], ...updated };
         }
 
@@ -134,36 +125,35 @@ class Project extends Component {
     }
 
     onComplete(e) {
-        // console.log(e);
-
-        //  this.updateSelectedRows(e);
+        this.updateSelectedRows(e);
     }
 
     updateSelectedRows(selectedRange) {
-        //const { rows, columns } = this.props;
+        const { rows, columns } = this.props;
+        const tempRows = [{}, rows];
 
-        // this.selectedRows = rows.map((row, index) => {
-        //     let columnIndex;
-        //     for (let i = selectedRange.topLeft.rowIdx; i <= selectedRange.bottomRight.rowIdx; i++) {
-        //         for (let j = selectedRange.topLeft.idx; j <= selectedRange.bottomRight.idx; j++) {
-
-        //             columnIndex = columns[j].key;
-        //         }
-
-        //     }
-        //     row[columnIndex] = '';
-        //     return row;
-        // })
-
-        //  console.log(this.selectedRows);
-
+        this.selectedRows = tempRows.map((row, index) => {
+            let columnIndex;
+            let i = selectedRange.topLeft.rowIdx;
+            let j = selectedRange.topLeft.idx;
+            let k = selectedRange.bottomRight.rowIdx;
+            let l = selectedRange.bottomRight.idx;
+            if (index === i) {
+                for (i; i <= k; i++) {
+                    for (j; j <= l; j++) {
+                        columnIndex = columns[j].key;
+                    }
+                    row[columnIndex] = '';
+                }
+            }
+            return row;
+        });
     }
 
     onkeypress(e) {
-        // if (e.keyCode === 46) {
-        //     this.saveRows(this.selectedRows);
-        // }
-
+        if (e.keyCode === 46) {
+            this.saveRows(this.selectedRows);
+        }
     }
 
     render() {
@@ -176,7 +166,7 @@ class Project extends Component {
                 column = { ...column, 'editor': DateEditor }
             }
             else {
-                column = { ...column }
+                column = { ...column, 'editor': CustomEditor }
             }
 
             return column;
@@ -194,8 +184,6 @@ class Project extends Component {
                         emptyRowsView={() => (
                             <NoRows addCoumns={this.addRows} />
                         )}
-                        onCellSelected={this.onCellSelected}
-                        onCellDeSelected={this.onCellDeSelected}
                         onGridKeyUp={this.onkeypress}
                         cellRangeSelection={{
                             onStart: this.onStart,
@@ -224,7 +212,6 @@ class Project extends Component {
         );
     }
 }
-
 
 const RowRenderer = ({ renderBaseRow, ...props }) => {
     if (props.idx === props.length - 1) {
