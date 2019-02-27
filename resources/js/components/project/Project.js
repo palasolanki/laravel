@@ -53,15 +53,16 @@ class Project extends Component {
         this.onRowDelete = this.onRowDelete.bind(this);
         this.onRowInsertAbove = this.onRowInsertAbove.bind(this);
         this.onRowInsertBelow = this.onRowInsertBelow.bind(this);
-        //   this.onStart = this.onStart.bind(this);
-        //   this.onUpdate = this.onUpdate.bind(this);
-        this.onComplete = this.onComplete.bind(this);
+        this.onUpdate = this.onUpdate.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.onkeypress = this.onkeypress.bind(this);
     }
 
     componentDidMount() {
         this.props.getProjectData(this.props.match.params.id);
+    }
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.onComplete, true);
     }
 
     onGridRowsUpdated({ fromRow, toRow, updated }) {
@@ -123,27 +124,26 @@ class Project extends Component {
     onRowInsertBelow(rowIdx) {
         this.insertRows(rowIdx);
     }
-
-    onComplete(e) {
-        this.updateSelectedRows(e);
+    onUpdate(selectedRange) {
+        this.updateSelectedRows(selectedRange);
     }
 
     updateSelectedRows(selectedRange) {
         const { rows, columns } = this.props;
-        const tempRows = [{}, rows];
 
-        this.selectedRows = tempRows.map((row, index) => {
+        this.selectedRows = rows.map((row, index) => {
             let columnIndex;
-            let i = selectedRange.topLeft.rowIdx;
-            let j = selectedRange.topLeft.idx;
-            let k = selectedRange.bottomRight.rowIdx;
-            let l = selectedRange.bottomRight.idx;
-            if (index === i) {
-                for (i; i <= k; i++) {
-                    for (j; j <= l; j++) {
-                        columnIndex = columns[j].key;
+            let topLeftRow = selectedRange.topLeft.rowIdx;
+            let topLeftColumn = selectedRange.topLeft.idx;
+            let bottomRightRow = selectedRange.bottomRight.rowIdx;
+            let bottomRightColumn = selectedRange.bottomRight.idx;
+
+            if (index >= topLeftRow && index <= bottomRightRow) {
+                for (topLeftRow; topLeftRow <= bottomRightRow; topLeftRow++) {
+                    for (topLeftColumn; topLeftColumn <= bottomRightColumn; topLeftColumn++) {
+                        columnIndex = columns[topLeftColumn].key;
+                        row[columnIndex] = '';
                     }
-                    row[columnIndex] = '';
                 }
             }
             return row;
@@ -151,7 +151,7 @@ class Project extends Component {
     }
 
     onkeypress(e) {
-        if (e.keyCode === 46) {
+        if (e.keyCode === 46 && this.selectedRows) {
             this.saveRows(this.selectedRows);
         }
     }
@@ -197,7 +197,7 @@ class Project extends Component {
                                 addRow={this.addRow}
                             />
                         )}
-                        minHeight={window.visualViewport.height - 56}
+                        minHeight={window.innerHeight - 120}
                         contextMenu={
                             <ExampleContextMenu
                                 onRowDelete={(e, { rowIdx }) => this.onRowDelete(rowIdx)}
