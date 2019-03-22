@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { Redirect } from 'react-router-dom';
 import { connect } from "react-redux";
 import classnames from 'classnames';
-import { getProjects, setProject, setRedirect, deleteProject, setDeletedList, setTable, setProjectTitle } from "../../store/actions/project";
+import { getProjects, setProject, setRedirect, deleteProject, setDeletedList, setTable, setProjectTitle, resetProject } from "../../store/actions/project";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -42,6 +42,10 @@ class Dashboard extends Component {
   }
 
   componentWillMount() {
+
+    if (this.props.tabId !== null) {
+      this.props.resetProject(this.props.project);
+    }
     this.props.getProjects();
     document.addEventListener('mousedown', this.onClickOutside);
   }
@@ -296,7 +300,8 @@ const mapStateToProps = state => {
   return {
     list: state.project.list,
     redirect: state.project.redirect,
-    listDeleted: state.project.listDeleted
+    listDeleted: state.project.listDeleted,
+    tabId: state.project.tabId
   };
 };
 
@@ -309,6 +314,7 @@ const mapDispatchToProps = dispatch => {
     setDeletedList: (flag) => dispatch(setDeletedList(flag)),
     setTable: data => dispatch(setTable(data)),
     setProjectTitle: (data, projectId) => dispatch(setProjectTitle(data, projectId)),
+    resetProject: data => dispatch(resetProject(data)),
   };
 };
 

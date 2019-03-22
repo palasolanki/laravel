@@ -3,7 +3,7 @@ import Tab from "./tab/Tab";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
 
-import { setTable, setTab, deleteTab, setTabAdded, setDeletedTab, setTabTitle, getProjectData, resetProject } from '../../store/actions/project';
+import { setTable, setTab, deleteTab, setTabAdded, setDeletedTab, setTabTitle, getProjectData } from '../../store/actions/project';
 class TabHeader extends Component {
 
   constructor(props) {
@@ -35,9 +35,6 @@ class TabHeader extends Component {
   }
 
   componentWillUnmount() {
-    if (this.isOnMounted) {
-      this.props.resetProject(this.props.project);
-    }
     document.removeEventListener('mousedown', this.onClickOutside, true);
   }
 
@@ -46,6 +43,7 @@ class TabHeader extends Component {
     const tabIndex = tabs.length - 1;
 
     if (newTabAdded) {
+
       this.props.setTable({ tabId: tabs[tabIndex]._id });
       this.props.history.push(`/project/${tabs[tabIndex]._id}`);
       this.props.setTabAdded(false);
@@ -238,8 +236,7 @@ const mapDispatchToProps = dispatch => {
     setTabAdded: (flag) => dispatch(setTabAdded(flag)),
     setDeletedTab: (flag) => dispatch(setDeletedTab(flag)),
     setTabTitle: (data, activeTabId) => dispatch(setTabTitle(data, activeTabId)),
-    getProjectData: tabId => dispatch(getProjectData(tabId)),
-    resetProject: data => dispatch(resetProject(data)),
+    getProjectData: tabId => dispatch(getProjectData(tabId))
   };
 };
 
