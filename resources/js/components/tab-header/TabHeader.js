@@ -43,7 +43,6 @@ class TabHeader extends Component {
     const tabIndex = tabs.length - 1;
 
     if (newTabAdded) {
-
       this.props.setTable({ tabId: tabs[tabIndex]._id });
       this.props.history.push(`/project/${tabs[tabIndex]._id}`);
       this.props.setTabAdded(false);
@@ -209,7 +208,7 @@ class TabHeader extends Component {
               onEditBtn={() => this.onEditBtn(i)}
             />
           })}
-          <li className="position-relative add-tab-item"><div className="add-tabs" onClick={this.addTabs}>+</div></li>
+          {tabs.length > 0 && <li className="position-relative add-tab-item"><div className="add-tabs" onClick={this.addTabs}>+</div></li>}
         </ul>
       </div>
     )

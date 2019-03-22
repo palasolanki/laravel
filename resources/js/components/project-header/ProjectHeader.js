@@ -26,6 +26,10 @@ export class ProjectHeader extends Component {
     this.setState({
       contenteditable: true,
     });
+    setTimeout(() => {
+      this.inputRef.current.focus();
+    })
+
   }
 
   onChange(e) {
