@@ -85,7 +85,6 @@ export class ProjectHeader extends Component {
           {contenteditable ? <input
             type="text"
             defaultValue={projectName}
-            contentEditable={true}
             onKeyPress={this.onPressKey}
             onBlur={this.onBlur}
             onChange={this.onChange}
