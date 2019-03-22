@@ -11108,3 +11108,7 @@ header > a {
   }
 }
 
+.header__pos-abs h3 {
+  border: 3px solid transparent;
+}
+
