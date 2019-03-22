@@ -15,7 +15,9 @@ export const RESET_PROJECT = "PROJECT | RESET_PROJECT";
 export function setTable(payload) {
     return (dispatch) => {
         dispatch({ type: SET_TABLE, payload });
-        dispatch(setInitialRows(payload.rows));
+        if (payload.rows) {
+            dispatch(setInitialRows(payload.rows));
+        }
     }
 }
 
@@ -94,7 +96,6 @@ export function getProjectData(tabId) {
 }
 
 export function setInitialRows(rows) {
-
     rows = rows || [];
 
     if (rows.length === 0) {

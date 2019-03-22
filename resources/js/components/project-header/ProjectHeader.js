@@ -44,7 +44,6 @@ export class ProjectHeader extends Component {
   }
   onBlur(e) {
     if (!this.state.editedTitle) {
-
       this.props.setTable({
         name: this.props.projectName
       })
