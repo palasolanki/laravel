@@ -1,7 +1,8 @@
 import {
     SET_TABLE, SET_PROJECTS, SET_PROJECT, SET_REDIRECT, SET_PROJECTS_DATA, SET_TAB, SET_PROJECT_TITLE, RESET_TAB, SET_NEW_TAB_ADDED, SET_PROJECT_ROWS,
     SET_TAB_TITLE,
-    RESET_PROJECT
+    RESET_PROJECT,
+    UPDATE_ROWS
 } from "../actions/project";
 
 const initialState = {
@@ -40,6 +41,15 @@ function project(state = initialState, action) {
             return { ...state, newTabAdded: action.payload };
         case RESET_PROJECT:
             return initialState;
+        case UPDATE_ROWS:
+            return {
+                ...state, tabs: state.tabs.map(item => {
+                    if (item._id === action.payload.tabId) {
+                        return { ...item, ...action.payload }
+                    }
+                    return item
+                })
+            };
         case SET_TAB_TITLE:
             return {
                 ...state, tabs: state.tabs.map(item => {

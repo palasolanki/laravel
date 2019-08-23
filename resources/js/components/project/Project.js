@@ -4,7 +4,8 @@ import { Menu } from "react-data-grid-addons";
 import { connect } from "react-redux";
 import { DateEditor } from "./dateEditor/DateEditor";
 import { CustomEditor } from "./customEditor/CustomEditor";
-
+import axios from 'axios';
+import api from '../../helpers/api';
 import {
     getProjectData,
     setProjectData,
@@ -45,6 +46,7 @@ class Project extends Component {
         super(props);
         this.selectedRows = null;
         this.fromRow = null;
+        this.axiosCancelSource = null;
         this.state = {
             rows: []
         };
@@ -59,10 +61,23 @@ class Project extends Component {
     }
 
     componentDidMount() {
-        this.props.getProjectData(this.props.match.params.id);
+        this.axiosCancelSource = axios.CancelToken.source();
+        api
+            .get(`/tab/${this.props.match.params.id}`, { cancelToken: this.axiosCancelSource.token })
+            .then((response) => {
+                this.props.getProjectData(response, this.props.match.params.id);
+            })
+            .catch((res) => {
+
+            })
+
+        // if (!this.props.tabId) {
+        //     this.props.getProjectData(this.props.match.params.id);
+        // }
     }
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.onComplete, true);
+        this.axiosCancelSource.cancel('Component unmounted.')
     }
 
     onGridRowsUpdated({ fromRow, toRow, updated }) {
@@ -114,7 +129,7 @@ class Project extends Component {
     saveRows(nextRows) {
         this.props.setRows(nextRows);
         const savingRows = [...nextRows];
-        updateTabRows(this.props.tabId, savingRows);
+        this.props.updateTabRows(this.props.tabId, { rows: savingRows });
     }
 
     onRowInsertAbove(rowIdx) {
@@ -238,9 +253,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        getProjectData: tabId => dispatch(getProjectData(tabId)),
+        getProjectData: (data, tabId) => dispatch(getProjectData(data, tabId)),
         setProjectData: data => dispatch(setProjectData(data)),
-        setRows: data => dispatch(setRows(data))
+        setRows: data => dispatch(setRows(data)),
+        updateTabRows: (data, tabId) => dispatch(updateTabRows(data, tabId))
     };
 };
 

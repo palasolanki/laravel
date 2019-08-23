@@ -11,6 +11,7 @@ export const SET_PROJECT_ROWS = "PROJECT | SET_ROWS";
 export const SET_NEW_TAB_ADDED = "PROJECT | SET_NEW_TAB_ADDED";
 export const SET_TAB_TITLE = "PROJECT | SET_TAB_TITLE";
 export const RESET_PROJECT = "PROJECT | RESET_PROJECT";
+export const UPDATE_ROWS = "PROJECT | UPDATE_ROWS";
 
 export function setTable(payload) {
     return (dispatch) => {
@@ -22,7 +23,6 @@ export function setTable(payload) {
 }
 
 export function setProjects(payload) {
-
     return { type: SET_PROJECTS, payload };
 }
 
@@ -82,16 +82,10 @@ export function getProjects() {
     }
 }
 
-export function getProjectData(tabId) {
+export function getProjectData(data, tabId) {
     return (dispatch) => {
-        return api.get(`/tab/${tabId}`)
-            .then((res) => {
-                dispatch(setProjectData({ data: res.data.data, tabId: tabId }));
-                dispatch(setInitialRows(res.data.rows));
-            })
-            .catch((res) => {
-
-            })
+        dispatch(setProjectData({ data: data.data.data, tabId: tabId }));
+        dispatch(setInitialRows(data.data.rows));
     }
 }
 
@@ -107,11 +101,15 @@ export function setInitialRows(rows) {
 }
 
 
-export function updateTabRows(tabId, rows) {
-    return api.patch(`/tab/${tabId}`, { rows })
-        .then((res) => {
-            console.log('updated successfully');
-        })
+export function updateTabRows(tabId, payload) {
+
+    return (dispatch) => {
+        return api.patch(`/tab/${tabId}`, payload)
+            .then((res) => {
+                payload.tabId = tabId;
+                dispatch({ type: UPDATE_ROWS, payload })
+            })
+    }
 }
 export function deleteTab(activeTabId) {
     return (dispatch, getState) => {

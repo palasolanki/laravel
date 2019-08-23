@@ -70,8 +70,8 @@ class TabHeader extends Component {
   onTabClick(tabIndex) {
     this.isOnMounted = false;
     const { tabs } = this.props;
+    this.props.setTable({ rows: this.props.tabs[tabIndex].rows || [], tabId: tabs[tabIndex]._id });
 
-    this.props.setTable({ rows: tabs[tabIndex].rows || [], tabId: tabs[tabIndex]._id });
     setTimeout(() => {
       if (!this.isDoubleClick) {
         this.props.history.push(`/project/${tabs[tabIndex]._id}`);
