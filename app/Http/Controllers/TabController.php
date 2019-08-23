@@ -28,11 +28,11 @@ class TabController extends Controller
         return response()->noContent();
     }
 
-    public function update(Request $request, $tabId)
+    public function update(Request $request, $tabId): JsonResponse
     {
         $tab = Tab::findOrFail($tabId);
         $data = $request->all();
         $tab->update($data);
-        return response()->noContent();
+        return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tab->rows : []]);
     }
 }
