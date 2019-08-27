@@ -15,6 +15,7 @@ export class CustomEditor extends Component {
   }
 
   componentWillUnmount() {
+    this.props.onCommitCancel();
     document.removeEventListener('mousedown', this.handleMouseDown, true);
   }
 

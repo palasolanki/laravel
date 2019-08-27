@@ -4,6 +4,8 @@ import { Menu } from "react-data-grid-addons";
 import { connect } from "react-redux";
 import { DateEditor } from "./dateEditor/DateEditor";
 import { CustomEditor } from "./customEditor/CustomEditor";
+import ClientEditor from "./clientEditor/ClientEditor";
+import MediumEditor from "./mediumEditor/MediumEditor";
 import axios from 'axios';
 import api from '../../helpers/api';
 import {
@@ -70,10 +72,6 @@ class Project extends Component {
             .catch((res) => {
 
             })
-
-        // if (!this.props.tabId) {
-        //     this.props.getProjectData(this.props.match.params.id);
-        // }
     }
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.onComplete, true);
@@ -174,17 +172,30 @@ class Project extends Component {
     render() {
         const { rows, columns } = this.props;
         let newColumn = columns.map((column) => {
-            if (column.key === 'paid_date') {
+
+            if (column.key === 'id') {
+                column = {
+                    ...column, editable: false, cellClass: 'is-disable',
+                }
+            }
+            else if (column.key === 'paid_date') {
                 column = { ...column, 'editor': DateEditor }
             }
             else if (column.key === 'paid_by') {
                 column = { ...column, 'editor': DateEditor }
+            }
+            else if (column.key === 'client_name') {
+                column = { ...column, 'editor': ClientEditor }
+            }
+            else if (column.key === 'medium') {
+                column = { ...column, 'editor': MediumEditor }
             }
             else {
                 column = { ...column, 'editor': CustomEditor }
             }
 
             return column;
+
         })
 
         return (
@@ -197,7 +208,7 @@ class Project extends Component {
                         onGridRowsUpdated={this.onGridRowsUpdated}
                         enableCellSelect={true}
                         emptyRowsView={() => (
-                            <NoRows addCoumns={this.addRows} />
+                            <NoRows addColumns={this.addRows} />
                         )}
                         onGridKeyUp={this.onkeypress}
                         cellRangeSelection={{
@@ -223,7 +234,7 @@ class Project extends Component {
                         RowsContainer={ContextMenuTrigger}
                     />
                 </div>
-            </Fragment>
+            </Fragment >
         );
     }
 }

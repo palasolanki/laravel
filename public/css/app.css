@@ -11261,3 +11261,14 @@ header > a {
   border: 3px solid transparent;
 }
 
+.is-disable.react-grid-Cell {
+  background-color: #f7f7f7;
+  cursor: not-allowed;
+}
+
+.select,
+input {
+  width: 100%;
+  height: 35px;
+}
+

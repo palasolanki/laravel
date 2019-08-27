@@ -39,6 +39,10 @@ export class DateEditor extends Component {
         );
     }
 
+    componentWillUnmount() {
+        this.props.onCommitCancel();
+    }
+
     render() {
         return (
             <div tabIndex="-1">
