@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Project;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
+use MongoDB\BSON\ObjectId;
 
 class TabController extends Controller
 {
@@ -28,11 +29,50 @@ class TabController extends Controller
         return response()->noContent();
     }
 
-    public function update(Request $request, $tabId): JsonResponse
+    // public function update(Request $request, $tabId): JsonResponse
+    // {
+    //     $tab = Tab::findOrFail($tabId);
+    //     $data = $request->all();
+    //     $tab->update($data);
+    //     return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tab->rows : []]);
+    // }
+
+    public function update(Request $request, $tabId, $rowId = null): JsonResponse
     {
         $tab = Tab::findOrFail($tabId);
-        $data = $request->all();
-        $tab->update($data);
+        $rowDataArray = $request->only(['title', 'paid_date', 'complete', 'paid_by', 'medium', 'comment']);
+        
+        if($rowId){
+            $rowKey = $this->findRowKey($tab, $rowId);
+            $rowDataArray['_id'] = $request->get('_id');
+            $tab->{"rows.$rowKey"} = $rowDataArray;
+            $tab->save();
+            return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tab->rows : []]);
+        }
+
+        $rowDataArray['_id'] = $this->getNewObjectId();
+        $tab->push("rows", $rowDataArray);
         return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tab->rows : []]);
+        
+    }
+
+    public function findRowKey($tab, $rowId)
+    {
+        foreach ($tab->rows as $rowKey => $rowValue) {
+            if($rowId == $rowValue['id']){
+                return $rowKey;
+            }
+        }
+    }
+
+    protected function getNewObjectId()
+    {
+        return (new ObjectId)->__toString();
+    }
+
+    public function destroyRow($tabId, $rowId)
+    {
+        $tab = Tab::findOrFail($tabId);
+        $tab->pull("rows", ['_id' => $rowId]);
     }
 }
