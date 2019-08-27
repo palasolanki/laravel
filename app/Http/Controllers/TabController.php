@@ -29,31 +29,25 @@ class TabController extends Controller
         return response()->noContent();
     }
 
-    // public function update(Request $request, $tabId): JsonResponse
-    // {
-    //     $tab = Tab::findOrFail($tabId);
-    //     $data = $request->all();
-    //     $tab->update($data);
-    //     return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tab->rows : []]);
-    // }
-
     public function update(Request $request, $tabId, $rowId = null): JsonResponse
     {
         $tab = Tab::findOrFail($tabId);
         $rowDataArray = $request->only(['title', 'paid_date', 'complete', 'paid_by', 'medium', 'comment']);
         
         if($rowId){
+            
             $rowKey = $this->findRowKey($tab, $rowId);
             $rowDataArray['_id'] = $request->get('_id');
             $tab->{"rows.$rowKey"} = $rowDataArray;
             $tab->save();
-            return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tab->rows : []]);
+
+        } else{
+
+            $rowDataArray['_id'] = $this->getNewObjectId();
+            $tab->push("rows", $rowDataArray);
         }
 
-        $rowDataArray['_id'] = $this->getNewObjectId();
-        $tab->push("rows", $rowDataArray);
         return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tab->rows : []]);
-        
     }
 
     public function findRowKey($tab, $rowId)
