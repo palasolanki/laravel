@@ -12,7 +12,8 @@ import {
     getProjectData,
     setProjectData,
     setRows,
-    updateTabRows
+    updateTabRows,
+    deleteRow
 
 } from "../../store/actions/project";
 
@@ -88,31 +89,30 @@ class Project extends Component {
                 return row;
             }
         });
+
         if (newRow.length > 0) {
-            this.saveRows(newRow[0]);
+            this.saveRows(rows, newRow[0]);
         }
     }
 
     addRow() {
-
         const rows = this.props.rows.map((row, i) => {
             return { ...row, index: i + 1 };
         });
-
-
         this.props.setRows([...rows, { index: '+' }]);
     }
 
     onRowDelete(rowIdx) {
 
-        const { rows } = this.props;
+        const { rows, tabId } = this.props;
 
-        let nextRows = [...rows];
-        nextRows.splice(rowIdx, 1);
+        const row = rows.filter((row, index) => {
+            if (index === rowIdx) {
+                return row;
+            }
+        });
 
-        nextRows = this.reIndexRows(nextRows);
-
-        this.saveRows(nextRows);
+        this.props.deleteRow(tabId, row[0].id);
     }
 
     insertRows(rowIdx) {
@@ -121,7 +121,6 @@ class Project extends Component {
         nextRows.splice(rowIdx, 0, { index: '-' });
 
         nextRows = this.reIndexRows(nextRows);
-
         this.saveRows(nextRows);
     }
 
@@ -131,10 +130,10 @@ class Project extends Component {
         });
     }
 
-    saveRows(nextRows) {
-        this.props.setRows(nextRows);
+    saveRows(rows, nextRows) {
         // const savingRows = [...nextRows];
         this.props.updateTabRows(this.props.tabId, nextRows);
+        this.props.setRows(rows);
     }
 
     onRowInsertAbove(rowIdx) {
@@ -247,7 +246,9 @@ class Project extends Component {
 }
 
 const RowRenderer = ({ renderBaseRow, ...props }) => {
+
     if (props.idx === props.length - 1) {
+
         return (
             <div style={{ cursor: "pointer" }} onClick={props.addRow}>
                 {renderBaseRow(props)}
@@ -274,7 +275,8 @@ const mapDispatchToProps = dispatch => {
         getProjectData: (data, tabId) => dispatch(getProjectData(data, tabId)),
         setProjectData: data => dispatch(setProjectData(data)),
         setRows: data => dispatch(setRows(data)),
-        updateTabRows: (tabId, data) => dispatch(updateTabRows(tabId, data))
+        updateTabRows: (tabId, data) => dispatch(updateTabRows(tabId, data)),
+        deleteRow: (tabId, rowId) => dispatch(deleteRow(tabId, rowId))
     };
 };
 

@@ -18,6 +18,7 @@ export function setTable(payload) {
         dispatch({ type: SET_TABLE, payload });
         if (payload.rows) {
             dispatch(setInitialRows(payload.rows));
+
         }
     }
 }
@@ -84,8 +85,13 @@ export function getProjects() {
 
 export function getProjectData(data, tabId) {
     return (dispatch) => {
+
         dispatch(setProjectData({ data: data.data.data, tabId: tabId }));
-        dispatch(setInitialRows(data.data.rows));
+        const rows = data.data.rows.map((row, i) => {
+            return { ...row, index: i + 1 };
+        });
+        dispatch(setInitialRows(rows));
+
     }
 }
 
@@ -94,24 +100,29 @@ export function setInitialRows(rows) {
 
     if (rows.length === 0) {
         rows.push({ index: 1 });
-        rows.push({ index: '+' });
     }
-
+    rows.push({ index: '+' });
     return setRows(rows);
 }
 
 
-export function updateTabRows(tabId, payload) {
-    console.log("payload", payload);
+export function updateTabRows(tabId, data) {
 
     return (dispatch) => {
-        return api.post(`/tab/${tabId}/rows`, payload)
+        return api.post(`/tab/${tabId}/rows`, data)
             .then((res) => {
-                console.log(res);
 
-                // payload.tabId = tabId;
-                // dispatch(setInitialRows(res.data.rows));
-                dispatch({ type: UPDATE_ROWS, payload: res.data.rows });
+                let payload = {};
+                payload.tabId = tabId;
+                const rows = res.data.rows.map((row, i) => {
+                    return { ...row, index: i + 1 };
+                });
+
+                dispatch(setRows([...rows, { index: '+' }]));
+                payload.rows = res.data.rows;
+
+                dispatch({ type: UPDATE_ROWS, payload });
+
             })
     }
 }
@@ -123,6 +134,7 @@ export function deleteTab(activeTabId) {
                 tabs = tabs.filter((tab) => {
                     return tab._id !== activeTabId;
                 })
+
                 dispatch(setTable({ tabs }));
                 dispatch(setDeletedTab(true));
             })
@@ -163,3 +175,24 @@ export function setTabTitle(payload, tabId) {
 export function resetProject(payload) {
     return { type: RESET_PROJECT, payload }
 }
+
+export function deleteRow(tabId, rowId) {
+
+    return (dispatch) => {
+        return api.delete(`/tab/${tabId}/${rowId}`)
+            .then((result) => {
+                let filteredRows = result.data.rows.filter((row) => {
+                    if (row.id !== rowId) {
+                        return row
+                    }
+                })
+
+                let newRows = filteredRows.map((row, i) => {
+                    return { ...row, index: i + 1 };
+                });
+
+                dispatch(setRows([...newRows, { index: '+' }]));
+            })
+    }
+}
+

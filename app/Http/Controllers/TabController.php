@@ -41,7 +41,7 @@ class TabController extends Controller
     {
         $tabId = $request->tab_id;
         $tab = Tab::findOrFail($tabId);        
-        $rowDataArray = $request->except(['id']); 
+        $rowDataArray = $request->except(['index','id']); 
         $rowId = $request->id;
         
         if($rowId){
@@ -76,5 +76,7 @@ class TabController extends Controller
     {
         $tab = Tab::findOrFail($tabId);
         $tab->pull("rows", ['id' => $rowId]);
+
+        return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tab->rows : []]);
     }
 }
