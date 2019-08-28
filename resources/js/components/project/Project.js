@@ -79,21 +79,28 @@ class Project extends Component {
     }
 
     onGridRowsUpdated({ fromRow, toRow, updated }) {
-
         const rows = this.props.rows.slice();
         for (let i = fromRow; i <= toRow; i++) {
             rows[i] = { ...rows[i], ...updated };
         }
-
-        this.saveRows(rows);
+        const newRow = rows.filter((row, index) => {
+            if (index === fromRow) {
+                return row;
+            }
+        });
+        if (newRow.length > 0) {
+            this.saveRows(newRow[0]);
+        }
     }
 
     addRow() {
-        const rows = this.props.rows.map((row, index) => {
-            return { ...row, id: index + 1 };
+
+        const rows = this.props.rows.map((row, i) => {
+            return { ...row, index: i + 1 };
         });
 
-        this.props.setRows([...rows, { id: '+' }]);
+
+        this.props.setRows([...rows, { index: '+' }]);
     }
 
     onRowDelete(rowIdx) {
@@ -111,7 +118,7 @@ class Project extends Component {
     insertRows(rowIdx) {
         const { rows } = this.props;
         let nextRows = [...rows];
-        nextRows.splice(rowIdx, 0, { id: '-' });
+        nextRows.splice(rowIdx, 0, { index: '-' });
 
         nextRows = this.reIndexRows(nextRows);
 
@@ -119,15 +126,15 @@ class Project extends Component {
     }
 
     reIndexRows(nextRows) {
-        return nextRows.map((row, index) => {
-            return { ...row, id: (nextRows.length === index + 1) ? '+' : index + 1 };
+        return nextRows.map((row, i) => {
+            return { ...row, index: (nextRows.length === i + 1) ? '+' : i + 1 };
         });
     }
 
     saveRows(nextRows) {
         this.props.setRows(nextRows);
-        const savingRows = [...nextRows];
-        this.props.updateTabRows(this.props.tabId, { rows: savingRows });
+        // const savingRows = [...nextRows];
+        this.props.updateTabRows(this.props.tabId, nextRows);
     }
 
     onRowInsertAbove(rowIdx) {
@@ -173,7 +180,7 @@ class Project extends Component {
         const { rows, columns } = this.props;
         let newColumn = columns.map((column) => {
 
-            if (column.key === 'id') {
+            if (column.key === 'index') {
                 column = {
                     ...column, editable: false, cellClass: 'is-disable',
                 }
@@ -267,7 +274,7 @@ const mapDispatchToProps = dispatch => {
         getProjectData: (data, tabId) => dispatch(getProjectData(data, tabId)),
         setProjectData: data => dispatch(setProjectData(data)),
         setRows: data => dispatch(setRows(data)),
-        updateTabRows: (data, tabId) => dispatch(updateTabRows(data, tabId))
+        updateTabRows: (tabId, data) => dispatch(updateTabRows(tabId, data))
     };
 };
 

@@ -29,22 +29,30 @@ class TabController extends Controller
         return response()->noContent();
     }
 
-    public function update(Request $request, $tabId, $rowId = null): JsonResponse
+    public function updateTab(Request $request, $tabId): JsonResponse
     {
         $tab = Tab::findOrFail($tabId);
-        $rowDataArray = $request->only(['title', 'paid_date', 'complete', 'paid_by', 'medium', 'comment']);
+        $data = $request->all();
+        $tab->update($data);
+        return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tab->rows : []]);
+    }
+
+    public function update(Request $request): JsonResponse
+    {
+        $tabId = $request->tab_id;
+        $tab = Tab::findOrFail($tabId);        
+        $rowDataArray = $request->except(['id']); 
+        $rowId = $request->id;
         
         if($rowId){
-            
             $rowKey = $this->findRowKey($tab, $rowId);
-            $rowDataArray['_id'] = $request->get('_id');
+            $rowDataArray['id'] = $request->get('id');
             $tab->{"rows.$rowKey"} = $rowDataArray;
             $tab->save();
 
         } else{
-
-            $rowDataArray['_id'] = $this->getNewObjectId();
-            $tab->push("rows", $rowDataArray);
+            $rowDataArray['id'] = $this->getNewObjectId();
+            $tab->push("rows", [$rowDataArray]);
         }
 
         return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tab->rows : []]);
@@ -67,6 +75,6 @@ class TabController extends Controller
     public function destroyRow($tabId, $rowId)
     {
         $tab = Tab::findOrFail($tabId);
-        $tab->pull("rows", ['_id' => $rowId]);
+        $tab->pull("rows", ['id' => $rowId]);
     }
 }

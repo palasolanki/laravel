@@ -93,8 +93,8 @@ export function setInitialRows(rows) {
     rows = rows || [];
 
     if (rows.length === 0) {
-        rows.push({ id: 1 });
-        rows.push({ id: '+' });
+        rows.push({ index: 1 });
+        rows.push({ index: '+' });
     }
 
     return setRows(rows);
@@ -102,12 +102,16 @@ export function setInitialRows(rows) {
 
 
 export function updateTabRows(tabId, payload) {
+    console.log("payload", payload);
 
     return (dispatch) => {
-        return api.patch(`/tab/${tabId}`, payload)
+        return api.post(`/tab/${tabId}/rows`, payload)
             .then((res) => {
-                payload.tabId = tabId;
-                dispatch({ type: UPDATE_ROWS, payload })
+                console.log(res);
+
+                // payload.tabId = tabId;
+                // dispatch(setInitialRows(res.data.rows));
+                dispatch({ type: UPDATE_ROWS, payload: res.data.rows });
             })
     }
 }
