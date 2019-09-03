@@ -13,14 +13,14 @@ import { setAuthorizationToken, setAxiosInterceptor } from '../utils';
 import { setCurrentUser } from '../store/actions/auth';
 import jwt_decode from 'jwt-decode';
 import requireAuth from '../utils/requireAuth'
-
+// import Client from './clients/ClientList'
 
 library.add(fab, faBars, faEllipsisV);
 
 export default class App extends Component {
     render() {
         return (
-            <div className="wrapper">
+            <div className="wrapper"> 
                 <Switch>
                     <Route
                         path="/project"
@@ -28,6 +28,7 @@ export default class App extends Component {
                     />
                     <Route exact path="/" component={requireAuth(HomeLayout)} />
                     <Route path="/login" component={Login} />
+                    <Route exact path="/clients" component={requireAuth(HomeLayout)} />
                 </Switch>
             </div>
         );

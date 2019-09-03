@@ -7,6 +7,7 @@ export default class Sidebar extends Component {
     this.navTitles = [
       { title: 'Dashboard', url: '/' },
       { title: 'Projects', url: '/project' },
+      { title: 'Clients', url: '/clients' },
     ];
 
     this.state = {
