@@ -13,7 +13,6 @@ import { setAuthorizationToken, setAxiosInterceptor } from '../utils';
 import { setCurrentUser } from '../store/actions/auth';
 import jwt_decode from 'jwt-decode';
 import requireAuth from '../utils/requireAuth'
-// import Client from './clients/ClientList'
 
 library.add(fab, faBars, faEllipsisV);
 
@@ -29,6 +28,7 @@ export default class App extends Component {
                     <Route exact path="/" component={requireAuth(HomeLayout)} />
                     <Route path="/login" component={Login} />
                     <Route exact path="/clients" component={requireAuth(HomeLayout)} />
+                    <Route  path="/addClient" component={requireAuth(HomeLayout)} />
                 </Switch>
             </div>
         );

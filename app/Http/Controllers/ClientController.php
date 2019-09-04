@@ -9,8 +9,16 @@ use App\Models\Client;
 
 class ClientController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-
+        $clients = Client::get();
+        return response()->json(['data' => $clients]);
     }
+
+    public function store(Request $request)
+    {
+       dd($request);
+    }
+
+
 }

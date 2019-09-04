@@ -1,20 +1,36 @@
-import React, { Component } from 'react';
-import AddClient from './AddClient';
-import { Link, Route } from "react-router-dom";
+import React, { useState, Fragment,useEffect } from 'react';
+import { Link } from "react-router-dom";
+import AddClient from "./AddClient";
+import api from '../../helpers/api';
 
-class ClientList extends Component {
-    constructor(props) {
-        super(props);
-        this.clientList = [
-            { id: 1, name: 'aaa', company_name: 'a1', country: 'india' },
-            { id: 2, name: 'bbb', company_name: 'a2', country: 'india' }
-        ];
+const ClientList = () => {
+
+    const clientList = [
+        { id: 1, name: 'aaa', company_name: 'a1', country: 'india' },
+        { id: 2, name: 'bbb', company_name: 'a2', country: 'india' }
+    ];
+    
+    const [clients, setClient] = useState(clientList);
+
+    // useEffect(()=>{
+    //     return api.get('/clients')
+    //     .then((res) => {
+    //         console.log(res)
+    //     })
+    //     .catch((err) => {
+    //         console.log(err)
+    //     })
+    // })
+
+    const deleteClient = id => {
+        setClient(clients.filter(client => client.id !== id))
     }
-    render() {
-        return (
+
+    return (
+        <Fragment>
             <div className="bg-white">
                 <h2>Client</h2>
-                <button className="btn btn-sm btn--prime"><Link to="/addClient">New Client</Link></button>
+                <Link to="/addClient" params={{ clients: clients }} className="btn btn-sm btn--prime">New Client</Link>
                 <table className="table">
                     <thead className="thead-light">
                         <tr>
@@ -26,7 +42,7 @@ class ClientList extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.clientList.length > 0 ? (this.clientList.map((client, id) => (
+                        {clients.length > 0 ? (clients.map((client, id) => (
                             <tr key={client.id}>
                                 <td>{id + 1}</td>
                                 <td>{client.name}</td>
@@ -34,7 +50,7 @@ class ClientList extends Component {
                                 <td>{client.country}</td>
                                 <td>
                                     <button className="btn btn-sm btn--prime">Edit</button>&nbsp;
-                                    <button className="btn btn-sm btn--cancel">Delete</button>
+                                    <button className="btn btn-sm btn--cancel" onClick ={()=>deleteClient(client.id)}>Delete</button>
                                 </td>
                             </tr>
                         ))) : (
@@ -45,8 +61,8 @@ class ClientList extends Component {
                     </tbody>
                 </table>
             </div>
-        );
-    }
+        </Fragment>
+    );
 }
 
 export default ClientList
