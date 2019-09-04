@@ -7,6 +7,7 @@ import Dashboard from "./dashboard/Dashboard";
 import Sidebar from "./sidebar/Sidebar";
 import ClientList from "./clients/ClientList";
 import Client from "./clients/AddClient";
+import EditClient from "./clients/EditClient";
 
 
 export default class Home extends Component {
@@ -58,6 +59,7 @@ export default class Home extends Component {
             <Route exact path='/' component={Dashboard} />
             <Route exact path='/clients'  component={ClientList} />
             <Route exact path='/addClient'  component={Client} />
+            <Route exact path='/editClient/:id'  component={EditClient} />
           </Switch>
         </div>
       </Fragment>

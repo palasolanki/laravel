@@ -1,28 +1,35 @@
 import React, { useState, Fragment, useEffect } from 'react';
+import { Link } from "react-router-dom";
 import api from '../../helpers/api';
 
-const AddClient = (props) => {
+const EditClient = (props) => {
     const initialFormState = { name: '', company_name: '', country: '' }
 
     const [client, setClient] = useState(initialFormState)
+
     const [sendRequest, setSendRequest] = useState(false)
 
+    const url = window.location.pathname;
+    const id = (url).substring(url.lastIndexOf('/') + 1);
 
-    const handleInputChange = event => {
-        const { name, value } = event.target
-        setClient({ ...client, [name]: value })
-    }
-    const submitForm = event => {
-        event.preventDefault()
-        
-        if (!client.name || !client.company_name, !client.country) return
-        setSendRequest(true)
+    useEffect(() => {
+        const fetchData = async () => {
+            await api.get(`/client/${id}`)
+                .then((res) => {
+                    setClient(res.data.client)
+                }).catch((err) => {
+                    console.log(err)
+                });
+        };
+        fetchData();
+    }, []);
 
-    }
-
-    const addClient = () => {
-        return api.post('/addClient', client)
+    const editClient = () => {
+        delete client._id;
+        return api.patch(`/client/${id}`, client)
             .then((res) => {
+
+                setSendRequest(false)
                 props.history.push('/clients');
             })
             .catch((err) => {
@@ -32,13 +39,24 @@ const AddClient = (props) => {
 
     useEffect(() => {
         if (!sendRequest) return
-        addClient()
+        editClient()
     })
+
+    const handleInputChange = event => {
+        const { name, value } = event.target
+        setClient({ ...client, [name]: value })
+    }
+    const submitForm = event => {
+        event.preventDefault()
+
+        if (!client.name || !client.company_name, !client.country) return
+        setSendRequest(true)
+    }
 
     return (
         <Fragment>
             <div className="bg-white">
-                <h2>Add Client</h2>
+                <h2>Edit Client</h2>
                 <form onSubmit={submitForm} method="post" className="form-horizontal">
                     <div className="form-group">
                         <label className="control-label col-sm-2" htmlFor="name">Name:</label>
@@ -65,7 +83,8 @@ const AddClient = (props) => {
                     </div>
                     <div className="form-group">
                         <div className="col-sm-offset-2 col-sm-10">
-                            <button type="submit" className="btn btn--prime">Add</button>
+                            <button type="submit" className="btn btn--prime">Edit</button>&nbsp;
+                            <Link to="/clients" className="btn btn--cancel">Cancle</Link>
                         </div>
                     </div>
                 </form>
@@ -73,4 +92,4 @@ const AddClient = (props) => {
 }
 
 
-export default AddClient
+export default EditClient

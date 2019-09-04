@@ -29,6 +29,7 @@ export default class App extends Component {
                     <Route path="/login" component={Login} />
                     <Route exact path="/clients" component={requireAuth(HomeLayout)} />
                     <Route  path="/addClient" component={requireAuth(HomeLayout)} />
+                    <Route  path="/editClient/:id" component={requireAuth(HomeLayout)} />
                 </Switch>
             </div>
         );

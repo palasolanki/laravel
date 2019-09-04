@@ -7,5 +7,5 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 class Client extends Eloquent
 {
     protected $collection = 'clients';
-    protected $guarded = [];
+    protected $fillable = ['name', 'company_name', 'country'];
 }
