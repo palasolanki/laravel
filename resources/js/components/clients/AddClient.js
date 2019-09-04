@@ -1,4 +1,5 @@
 import React, { useState, Fragment, useEffect } from 'react';
+import { Link } from "react-router-dom";
 import api from '../../helpers/api';
 
 const AddClient = (props) => {
@@ -14,7 +15,7 @@ const AddClient = (props) => {
     }
     const submitForm = event => {
         event.preventDefault()
-        
+
         if (!client.name || !client.company_name, !client.country) return
         setSendRequest(true)
 
@@ -65,7 +66,8 @@ const AddClient = (props) => {
                     </div>
                     <div className="form-group">
                         <div className="col-sm-offset-2 col-sm-10">
-                            <button type="submit" className="btn btn--prime">Add</button>
+                            <button type="submit" className="btn btn--prime">Save</button>&nbsp;
+                            <Link to="/clients" className="btn btn--cancel">Cancel</Link>
                         </div>
                     </div>
                 </form>

@@ -83,8 +83,8 @@ const EditClient = (props) => {
                     </div>
                     <div className="form-group">
                         <div className="col-sm-offset-2 col-sm-10">
-                            <button type="submit" className="btn btn--prime">Edit</button>&nbsp;
-                            <Link to="/clients" className="btn btn--cancel">Cancle</Link>
+                            <button type="submit" className="btn btn--prime">Save</button>&nbsp;
+                            <Link to="/clients" className="btn btn--cancel">Cancel</Link>
                         </div>
                     </div>
                 </form>

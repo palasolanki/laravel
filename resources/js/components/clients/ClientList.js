@@ -43,14 +43,26 @@ const ClientList = () => {
         setClientId(id)
     }
 
-    useEffect(() => {
-        if (!deleteRequest) return
-        deleteClientData(clientID)
-    })
-
     return (
         <Fragment>
             <div className="bg-white">
+                {deleteRequest &&
+                    <div className="modal show" style={{ display: "block" }}>
+                        <div className="modal-dialog" role="document">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Are you sure?</h5>
+                                    <button type="button" onClick={() => setDeleteRequest(false)} className="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" onClick={() => deleteClientData(clientID)} className="btn btn-sm btn--prime">Yes</button>
+                                    <button type="button" onClick={() => setDeleteRequest(false)} className="btn btn-sm btn--cancel" data-dismiss="modal">No</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>}
                 <h2>Clients</h2>
                 <Link to="/addClient" className="btn btn-sm btn--prime">New Client</Link>
                 <table className="table">

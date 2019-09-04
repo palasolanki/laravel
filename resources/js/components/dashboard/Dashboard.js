@@ -41,7 +41,7 @@ class Dashboard extends Component {
     this.changeTitleValue = this.changeTitleValue.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
 
     if (this.props.tabId !== null) {
       this.props.resetProject(this.props.project);
