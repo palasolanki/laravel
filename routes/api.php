@@ -24,4 +24,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/tab/{tab_id}/rows', 'TabController@update')->name('tab.update');
     Route::delete('/tab/{id}/{row}', 'TabController@destroyRow')->name('tab.delete');
     // Route::post('/tab/{id}', 'TabController@update')->name('tab.update');
+    Route::get('/tags', 'TagController@index')->name('tag.index');
+    Route::post('/tags', 'TagController@store')->name('tag.store');
+    Route::patch('/tags/{id}', 'TagController@update')->name('tag.update');
+    Route::delete('/tags/{id}', 'TagController@destroy')->name('tag.destroy');
 });

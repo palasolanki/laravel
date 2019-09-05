@@ -8,6 +8,7 @@ export default class Sidebar extends Component {
       { title: 'Dashboard', url: '/' },
       { title: 'Projects', url: '/project' },
       { title: 'Clients', url: '/clients' },
+      { title: 'Tags', url: '/tags' },
     ];
 
     this.state = {

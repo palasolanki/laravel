@@ -6,6 +6,7 @@ import Header from "./header/Header";
 import Dashboard from "./dashboard/Dashboard";
 import Sidebar from "./sidebar/Sidebar";
 import ClientList from "./clients/ClientList";
+import Tags from "./tags/Tags";
 
 export default class Home extends Component {
   constructor(props) {
@@ -55,6 +56,7 @@ export default class Home extends Component {
           <Switch>
             <Route exact path='/' component={Dashboard} />
             <Route exact path='/clients'  component={ClientList} />
+            <Route exact path='/tags'  component={Tags} />
           </Switch>
         </div>
       </Fragment>
