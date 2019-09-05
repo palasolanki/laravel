@@ -18,6 +18,7 @@ class Dashboard extends Component {
       isAddProject: null,
       activeType: null,
       projectTitle: '',
+      finacialYear: '',
       visibleDropdown: false,
       activeId: null,
       showConfirmationPopup: false,
@@ -27,6 +28,7 @@ class Dashboard extends Component {
 
     this.addProject = this.addProject.bind(this);
     this.editProjectTitle = this.editProjectTitle.bind(this);
+    this.getFinacialYear = this.getFinacialYear.bind(this);
     this.saveProject = this.saveProject.bind(this);
     this.closeProjectForm = this.closeProjectForm.bind(this);
     this.onPressKey = this.onPressKey.bind(this);
@@ -62,11 +64,18 @@ class Dashboard extends Component {
     })
   }
 
+  getFinacialYear(e) {
+    this.setState({
+      finacialYear: e.target.value
+    })
+  }
+
   onPressKey(type, e) {
     if (e.charCode === 13 && this.state.projectTitle !== '') {
       this.props.setProject({
         type: type,
         name: this.state.projectTitle,
+        finacial_year: this.state.finacialYear,
         description: 'New title added'
       });
     }
@@ -77,6 +86,7 @@ class Dashboard extends Component {
       this.props.setProject({
         type: type,
         name: this.state.projectTitle,
+        finacial_year: this.state.finacialYear,
         description: 'New title added'
       });
     }
@@ -176,7 +186,7 @@ class Dashboard extends Component {
 
   render() {
     const { list, redirect } = this.props;
-    const { isAddProject, projectTitle, visibleDropdown, activeId, showConfirmationPopup, isTitleEditable } = this.state;
+    const { isAddProject, projectTitle, finacialYear, visibleDropdown, activeId, showConfirmationPopup, isTitleEditable } = this.state;
 
     if (redirect) {
       const project = list[list.length - 1];
@@ -216,6 +226,8 @@ class Dashboard extends Component {
                         (isAddProject === i) ?
                           <ProjectForm
                             projectTitle={projectTitle}
+                            finacialYear={finacialYear}
+                            getFinacialYear={this.getFinacialYear}
                             editProjectTitle={this.editProjectTitle}
                             saveProject={this.saveProject.bind(this, type.type)}
                             closeProjectForm={this.closeProjectForm}
@@ -287,6 +299,13 @@ const ProjectForm = props => (
     <div className="w-100">
       <div className="form-group">
         <input className="form-control" type="text" value={props.projectTitle} onKeyPress={props.onPressKey} onChange={props.editProjectTitle} placeholder="Project Name" />
+        <br />
+        <select className="form-control" name="finacial_year" value={props.finacialYear} onChange={props.getFinacialYear}>
+          <option value="" disabled>Finacial Year</option>
+          <option value="2006-2007">2006-2007</option>
+          <option value="2007-2008">2007-2008</option>
+          <option value="2008-2009">2008-2009</option>
+        </select>
       </div>
       <div className="d-flex justify-content-end mt-2">
         <button type="button" className="btn btn--prime mr-3" onClick={props.saveProject}>Save</button>
