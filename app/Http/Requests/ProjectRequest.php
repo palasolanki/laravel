@@ -25,7 +25,7 @@ class ProjectRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'finacial_year' => 'required'
+            'financial_year' => 'required'
         ];
     }
 }
