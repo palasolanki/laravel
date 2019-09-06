@@ -107,7 +107,9 @@ class Dashboard extends Component {
   showDropdown(id) {
     this.setState({
       activeId: id,
-      visibleDropdown: !this.state.visibleDropdown
+      visibleDropdown: !this.state.visibleDropdown,
+      isAddProject: false,
+      showConfirmationPopup: false
     })
   }
 
@@ -127,14 +129,18 @@ class Dashboard extends Component {
   }
   backToDropdown() {
     this.setState({
-      showConfirmationPopup: false
+      showConfirmationPopup: false,
+      visibleDropdown:false,
+      activeId:null
     });
   }
 
   onClickOutside(e) {
     if (this.dropdownRef && !this.dropdownRef.contains(e.target)) {
       this.setState({
-        visibleDropdown: false
+        visibleDropdown: false,
+        isTitleEditable: false,
+        activeId:null
       });
     }
   }
@@ -179,12 +185,15 @@ class Dashboard extends Component {
     });
     this.setState({
       isTitleEditable: false,
+      visibleDropdown: false,
+      activeId: null
     })
   }
 
   cancelEdit() {
     this.setState({
       isTitleEditable: false,
+      activeId: null
     })
   }
 
@@ -263,7 +272,7 @@ const currentYear = new Date().getFullYear();
 
 const financialYears = [];
 
-for (let year = 2016; year < currentYear; year++) {
+for (let year = 2016; year <= currentYear; year++) {
   let num = 0;
   financialYears.push(`${year - num}-${year - (num - 1)}`);
   num++;
@@ -293,7 +302,7 @@ const ProjectCard = props => (
           <Link to={`project/${props.project.first_tab._id}`}>{props.project.name}</Link>
       }
 
-      {!props.isTitleEditable && <button className={classnames({ 'd-block': (props.visibleDropdown && (props.index === props.activeId)) }, "btn ellipsis-h")} type="button" onClick={props.showDropdown}>
+      {(((props.index !== props.activeId) && props.visibleDropdown) || (!props.visibleDropdown && (props.index !== props.activeId))) && <button className={classnames({ 'd-block': (props.visibleDropdown && (props.index === props.activeId)) }, "btn ellipsis-h")} type="button" onClick={props.showDropdown}>
         <FontAwesomeIcon icon="ellipsis-v" />
       </button>}
       {
