@@ -16,7 +16,8 @@ class TabHeader extends Component {
       showConfirmationPopup: false,
       isOpenAddModel: false,
       month: '',
-      year: ''
+      year: '',
+      isAddTab: false
 
     };
     this.isOnMounted = true;
@@ -35,7 +36,8 @@ class TabHeader extends Component {
     this.closeModel = this.closeModel.bind(this);
     this.setMonth = this.setMonth.bind(this);
     this.setYear = this.setYear.bind(this);
-    this.addTab=this.addTab.bind(this);
+    this.addTab = this.addTab.bind(this);
+    this.editTab = this.editTab.bind(this);
   }
 
   componentDidMount() {
@@ -89,14 +91,32 @@ class TabHeader extends Component {
   }
 
   onTabDoubleClick(tabIndex) {
-    this.isDoubleClick = true;
     this.setState({
-      visibleDropdown: false,
-      activeContenteditable: tabIndex
+      isOpenAddModel: true,
+      month: this.props.tabs[tabIndex].month,
+      year: this.props.tabs[tabIndex].year,
     })
-    this.tabTitleRef[tabIndex].querySelector('div').contentEditable = true;
-    this.tabTitleRef[tabIndex].querySelector('div').focus();
 
+    // this.isDoubleClick = true;
+    // this.setState({
+    //   visibleDropdown: false,
+    //   activeContenteditable: tabIndex
+    // })
+    // this.tabTitleRef[tabIndex].querySelector('div').contentEditable = true;
+    // this.tabTitleRef[tabIndex].querySelector('div').focus();
+  }
+
+  editTab(){
+    this.props.setTabTitle({title: `${this.state.month} ${this.state.year}`,
+    month: this.state.month,
+    year: this.state.year},this.props.activeTabId);
+
+    this.setState({
+      isOpenAddModel: false,
+      month: '',
+      year: ''
+
+    })
   }
 
   onTabBlur(tabIndex, e) {
@@ -131,7 +151,8 @@ class TabHeader extends Component {
 
   openTab() {
     this.setState({
-      isOpenAddModel: true
+      isOpenAddModel: true,
+      isAddTab: true
     })
 
   }
@@ -141,9 +162,13 @@ class TabHeader extends Component {
       month: this.state.month,
       year: this.state.year,
     }, this.props.projectId);
-    
+
     this.setState({
-      isOpenAddModel: false
+      isOpenAddModel: false,
+      month: '',
+      year: '',
+      isAddTab: false
+
     })
   }
 
@@ -155,7 +180,10 @@ class TabHeader extends Component {
 
   closeModel() {
     this.setState({
-      isOpenAddModel: false
+      isOpenAddModel: false,
+      isAddTab: false,
+      month: '',
+      year: ''
     })
   }
 
@@ -226,9 +254,8 @@ class TabHeader extends Component {
   }
 
   render() {
-    const { activeContenteditable, visibleDropdown, showConfirmationPopup, isOpenAddModel, month, year } = this.state;
+    const { activeContenteditable, visibleDropdown, showConfirmationPopup, isOpenAddModel, month, year, isAddTab } = this.state;
     const { tabs, activeTabId } = this.props;
-
     return (
       <Fragment>
         <div className="position-relative">
@@ -259,10 +286,12 @@ class TabHeader extends Component {
         </div>
         {isOpenAddModel && <AddTabModel closeModel={this.closeModel}
           month={month}
+          isAddTab={isAddTab}
           setMonth={(e) => this.setMonth(e)}
           year={year}
           setYear={(e) => this.setYear(e)}
           addTab={this.addTab}
+          editTab={this.editTab}
         />}
 
       </Fragment>
@@ -286,7 +315,7 @@ const AddTabModel = props => (
     <div className="modal-dialog" role="document">
       <div className="modal-content">
         <div className="modal-header">
-          <h5 className="modal-title">Add Tab</h5>
+          <h5 className="modal-title">{props.isAddTab ? 'Add Tab' : 'Edit Tab'}</h5>
           <button type="button" className="close" onClick={props.closeModel} data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -309,7 +338,7 @@ const AddTabModel = props => (
         </div>
 
         <div className="modal-footer">
-          <button type="button" className="btn btn-sm btn--prime" onClick={props.addTab}>Save</button>
+          <button type="button" className="btn btn-sm btn--prime" onClick={props.isAddTab ? props.addTab : props.editTab}>Save</button>
           <button type="button" className="btn btn-sm btn--cancel" onClick={props.closeModel} data-dismiss="modal">Cancel</button>
         </div>
       </div>

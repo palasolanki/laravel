@@ -15,10 +15,18 @@ export const UPDATE_ROWS = "PROJECT | UPDATE_ROWS";
 
 export function setTable(payload) {
     return (dispatch) => {
+        if(payload.rows)
+        {
+            payload.rows = payload.rows.map((row, i) => {
+                return { ...row, index: i + 1 };
+            });
+        }
         dispatch({ type: SET_TABLE, payload });
-        if (payload.rows) {
-            dispatch(setInitialRows(payload.rows));
+        
+        const isPlusAvail = payload.rows.find((row) => row.index === '+');
 
+        if (!isPlusAvail) {
+            dispatch(setInitialRows(payload.rows));
         }
     }
 }
