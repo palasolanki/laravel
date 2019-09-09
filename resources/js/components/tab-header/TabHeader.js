@@ -284,7 +284,7 @@ class TabHeader extends Component {
             {tabs.length > 0 && <li className="position-relative add-tab-item"><div className="add-tabs" onClick={this.openTab}>+</div></li>}
           </ul>
         </div>
-        {isOpenAddModel && <AddTabModel closeModel={this.closeModel}
+        {isOpenAddModel && <TabModel closeModel={this.closeModel}
           month={month}
           isAddTab={isAddTab}
           setMonth={(e) => this.setMonth(e)}
@@ -309,7 +309,7 @@ for (let year = 2016; year <= currentYear; year++) {
   years.push(year);
 }
 
-const AddTabModel = props => (
+const TabModel = props => (
   <div className="modal show" style={{ display: "block" }}>
 
     <div className="modal-dialog" role="document">
