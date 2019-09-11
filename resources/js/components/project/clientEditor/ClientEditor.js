@@ -49,9 +49,9 @@ export class ClientEditor extends Component {
     return await api.get('/clients')
       .then(res => {
         const clientsData = (res.data.data).filter((client) => {
-          client.key = client._id
-          client.id = client._id
-          client.value = client.name
+          client.id = client._id          
+          client.value = client._id
+          client.text = client.name
           return client
         })
         this.setState({
@@ -65,7 +65,7 @@ export class ClientEditor extends Component {
     return (
       <div tabIndex="-1">
         <DropDownEditor
-          value={this.state.value}
+          // value={this.state.value}
           options={this.state.clients}
         />
       </div>

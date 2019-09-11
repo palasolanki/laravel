@@ -94,7 +94,7 @@ export function getProjects() {
 
 export function getProjectData(data, tabId) {
     return (dispatch) => {
-
+        console.log(data.data.data)
         dispatch(setProjectData({ data: data.data.data, tabId: tabId }));
         const rows = data.data.rows.map((row, i) => {
             return { ...row, index: i + 1 };

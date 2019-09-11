@@ -178,7 +178,6 @@ class Project extends Component {
     render() {
         const { rows, columns } = this.props;
         let newColumn = columns.map((column) => {
-
             if (column.key === 'index') {
                 column = {
                     ...column, editable: false, cellClass: 'is-disable',
@@ -190,7 +189,7 @@ class Project extends Component {
             else if (column.key === 'paid_by') {
                 column = { ...column, 'editor': DateEditor }
             }
-            else if (column.key === 'client_name') {
+            else if (column.key === 'client_id') {
                 column = { ...column, 'editor': ClientEditor }
             }
             else if (column.key === 'medium') {

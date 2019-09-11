@@ -10,6 +10,7 @@ export function login(data) {
   return (dispatch) => {
     return api.post('/login', data)
       .then((res) => {
+        console.log(res)
         const token = res.data.access_token;
         localStorage.setItem('token', token);
         setAuthorizationToken(token);
