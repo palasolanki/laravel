@@ -70,21 +70,12 @@ class TabController extends Controller
             $tab->push("rows", [$rowDataArray]);
         }
 
-        $tabData = [];
-
-        foreach ($tab->rows as $key => $row) {
-            $tabData['row'][$key]['client_id'] = $row['client_name'] ?? $row['text'];
-            $tabData['row'][$key]['text'] = $row['client_name'] ?? $row['text'];
-            $tabData['row'][$key]['value'] = $row['client_id'] ?? $row['value'];
-            $tabData['row'][$key]['id'] = $row['id'];
-        }
-
-        return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tabData['row'] : []]);
+        return response()->json(['data' => $tab->project, 'rows' => isset($tab->rows) ? $tab->rows : []]);
     }
 
     public function findRowKey($tab, $rowId)
     {
-        foreach ($tab->rows as $rowKey => $rowValue) {
+        foreach ($tab['rows'] as $rowKey => $rowValue) {
             if($rowId == $rowValue['id']){
                 return $rowKey;
             }
