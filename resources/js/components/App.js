@@ -20,7 +20,7 @@ library.add(fab, faBars, faEllipsisV);
 export default class App extends Component {
     render() {
         return (
-            <div className="wrapper"> 
+            <div className="wrapper">
                 <Switch>
                     <Route
                         path="/project"
@@ -30,6 +30,8 @@ export default class App extends Component {
                     <Route path="/login" component={Login} />
                     <Route exact path="/clients" component={requireAuth(HomeLayout)} />
                     <Route exact path="/tags" component={requireAuth(HomeLayout)} />
+                    <Route exact path="/expenses" component={requireAuth(HomeLayout)} />
+                    <Route exact path="/expenses/add" component={requireAuth(HomeLayout)} />
                 </Switch>
             </div>
         );

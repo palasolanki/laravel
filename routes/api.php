@@ -12,6 +12,8 @@
 |
 */
 
+use Illuminate\Http\Resources\Json\Resource;
+
 Route::post('login', 'LoginController@login');
 
 Route::group(['middleware' => 'auth:api'], function () {
@@ -28,4 +30,5 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/tags', 'TagController@store')->name('tag.store');
     Route::patch('/tags/{id}', 'TagController@update')->name('tag.update');
     Route::delete('/tags/{id}', 'TagController@destroy')->name('tag.destroy');
+    Route::resource('expenses', 'ExpenseController');
 });
