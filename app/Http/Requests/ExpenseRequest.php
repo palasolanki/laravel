@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Expense;
+use Illuminate\Support\Carbon;
 
 class ExpenseRequest extends FormRequest
 {
@@ -25,22 +26,35 @@ class ExpenseRequest extends FormRequest
     public function rules()
     {
         return [
-            'date' => 'required',
-            'item' => 'required',
-            'amount' => 'required|integer',
-            'medium' => 'required',
+            'data.*.date' => 'required',
+            'data.*.item' => 'required',
+            'data.*.amount' => 'required|integer',
+            'data.*.medium' => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'data.*.date.required' => 'Date Filed is required',
+            'data.*.item.required' => 'Item Filed is required',
+            'data.*.amount.required' => 'Amount Filed is required',
+            'data.*.medium.required' => 'Medium Filed is required',
         ];
     }
 
     public function save($expense = null) {
-        if (!$expense) {
-            $expense = new Expense;
+        foreach ($this->data as $value) {
+            if(!$expense) {
+                $expense = new Expense;
+            }
+            $expense->date = Carbon::parse($value['date']);
+            $expense->item = $value['item'];
+            $expense->amount = $value['amount'];
+            $expense->medium = $value['medium'];
+            $expense->save();
+            $expense = null;
         }
-        $expense->date = $this->date;
-        $expense->item = $this->item;
-        $expense->amount = $this->amount;
-        $expense->medium = $this->medium;
-        $expense->save();
-        return $expense;
+        return true;
     }
 }

@@ -51,7 +51,7 @@ class ExpenseController extends Controller
      */
     public function update(ExpenseRequest $request, Expense $expense)
     {
-        $expense = $request->save($expense);
+        $request->save($expense);
         return ['updateExpense' => $expense, 'message' => 'Update Success!'];
     }
 

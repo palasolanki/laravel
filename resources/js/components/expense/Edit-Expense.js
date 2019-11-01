@@ -13,17 +13,18 @@ function EditExpenses(props) {
       const modalHeader = {
         textAlign: 'center',
       };
-
-    const [expense, setExpense] = useState(props.currentExpense)
-
+    const editData = {
+        date: new Date(props.currentExpense.date.date),
+        item: props.currentExpense.item,
+        amount: props.currentExpense.amount,
+        medium: props.currentExpense.medium,
+    }
+    const [expense, setExpense] = useState(editData)
     const handleInputChange = event => {
         const { name, value } = event.target
-        console.log(name);
-
         setExpense({ ...expense, [name]: value })
     }
     const handleDateChange = event => {
-        console.log(event, expense);
         setExpense({ ...expense, ['date']: event })
     }
     return (
@@ -44,8 +45,7 @@ function EditExpenses(props) {
                         <form
                             onSubmit={event => {
                                 event.preventDefault()
-
-                                props.updateExpense(expense._id, expense)
+                                props.updateExpense(props.currentExpense._id, [expense])
                             }}
                         >
                             <div className="form-group">
@@ -56,10 +56,6 @@ function EditExpenses(props) {
                                     onChange={handleDateChange}
                                 />
                             </div>
-                            {/* <div className="form-group">
-                                <label>Date:</label>
-                                <input type="text" className="form-control" name="date" value={expense.date.date} onChange={handleInputChange} />
-                            </div> */}
                             <div className="form-group">
                                 <label>Item:</label>
                                 <input type="text" className="form-control" placeholder="Enter Item" name="item" value={expense.item} onChange={handleInputChange} />

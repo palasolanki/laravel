@@ -1,12 +1,9 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
+import { Link } from "react-router-dom";
 import api from '../../helpers/api';
 
-// import AddTags from "./Add-Tags";
 import EditExpenses from "./Edit-Expense";
 
-function newPath(path) {
-    console.log(path);
-}
 function Expense() {
     const [showEditModal, setEditShow] = useState(false);
     const openShowEdit = () => setEditShow(true);
@@ -34,11 +31,11 @@ function Expense() {
     }
 
     const updateExpense = (expenseId, updatedExpense) => {
-        api.patch(`/expenses/${expenseId}`, updatedExpense)
-        .then((res) => {
-            setExpenses(expenses.map(expense => (expense._id === expenseId ? res.data.updateExpense : expense)))
-            handleCloseEdit();
-        })
+            api.patch(`/expenses/${expenseId}`, {data:updatedExpense})
+            .then((res) => {
+                setExpenses(expenses.map(expense => (expense._id === expenseId ? res.data.updateExpense : expense)))
+                handleCloseEdit();
+            })
     }
 
     const [deleteExpenseId, setDeleteExpenseId] = useState();
@@ -59,8 +56,12 @@ function Expense() {
                 <div className="bg-white">
                     <h2>Expenses</h2>
 
-                    <button style={{ margin: '10px 10px' }} type="button" className="btn btn-info btn-lg" onClick={ () => newPath('expenses/add')}>Add Expense</button>
-
+                    <Link
+                        style= {{ margin: '10px 10px' }}
+                        to="expenses/add"
+                        className="btn btn-info btn-lg">
+                        Add Expense
+                    </Link>
                     <table className="table">
                         <thead className="thead-light">
                             <tr>
@@ -93,7 +94,6 @@ function Expense() {
                         </tbody>
                     </table>
 
-                     {/* {showAddModal && <AddTags handleClose={handleClose} addTag={addTag}/>} */}
                      {showEditModal && <EditExpenses handleCloseEdit={handleCloseEdit} currentExpense={currentExpense} updateExpense={updateExpense} />}
                      {showDeleteModal &&
                          <div>

@@ -8,6 +8,7 @@ import Sidebar from "./sidebar/Sidebar";
 import ClientList from "./clients/ClientList";
 import Tags from "./tags/Tags";
 import Expense from "./expense/Expense";
+import AddExpense from "./expense/Add-Expense";
 
 export default class Home extends Component {
   constructor(props) {
@@ -59,7 +60,7 @@ export default class Home extends Component {
             <Route exact path='/clients'  component={ClientList} />
             <Route exact path='/tags'  component={Tags} />
             <Route exact path='/expenses'  component={Expense} />
-            <Route exact path='/expenses/add'  component={Expense} />
+            <Route exact path='/expenses/add'  component={AddExpense} />
           </Switch>
         </div>
       </Fragment>
