@@ -14,6 +14,7 @@ function Expense() {
     const handleCloseDelete = () => setDeleteShow(false);
 
     const expenseData = [];
+    const [mediums, setMediums] = useState([]);
     const [expenses, setExpenses] = useState(expenseData);
     useEffect( () => {
       api.get('/expenses')
@@ -21,6 +22,12 @@ function Expense() {
             setExpenses(res.data);
           })
           .catch((res) => {
+        }),
+        api.get('/getMedium')
+        .then((res) => {
+            setMediums(res.data.medium);
+        })
+            .catch((res) => {
         })
     }, [] );
 
@@ -79,7 +86,7 @@ function Expense() {
                                     <td>{expense.date.date}</td>
                                     <td>{expense.item}</td>
                                     <td>{expense.amount}</td>
-                                    <td>{expense.medium}</td>
+                                    <td>{mediums[expense.medium]}</td>
                                     <td>
                                         <button className="btn btn-sm btn--prime" onClick={() => editRow(expense)}>Edit</button>&nbsp;
                                         <button className="btn btn-sm btn--cancel" onClick={() => setDeleteExpenseIdFunction(expense._id)}>Delete</button>
@@ -94,7 +101,7 @@ function Expense() {
                         </tbody>
                     </table>
 
-                     {showEditModal && <EditExpenses handleCloseEdit={handleCloseEdit} currentExpense={currentExpense} updateExpense={updateExpense} />}
+                     {showEditModal && <EditExpenses handleCloseEdit={handleCloseEdit} currentExpense={currentExpense} mediums={mediums} updateExpense={updateExpense} />}
                      {showDeleteModal &&
                          <div>
                            <div style={{ display: 'block' }} className="modal">

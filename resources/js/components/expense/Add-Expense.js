@@ -1,16 +1,31 @@
-import React, { Component, Fragment, useState } from 'react'
+import React, { Component, Fragment, useState, useEffect } from 'react'
 import DatePicker from "react-datepicker";
 import api from '../../helpers/api';
 
 function AddExpense() {
+    let errorArray = [];
+    const [isErrorArray, setErrorArray] = useState(errorArray);
     const data = {
         date: new Date(),
         item: '',
         amount: '',
         medium: ''
     };
+
+    const [mediums, setMediums] = useState([]);
+    useEffect( () => {
+        api.get('/getMedium')
+        .then((res) => {
+            setMediums(res.data.medium);
+        })
+            .catch((res) => {
+        })
+    }, [] );
     const [expenseData, setExpenseData] = useState([data]);
 
+    const mediumList = Object.keys(mediums).map((key) => {
+        return <option value={key} key={key}>{mediums[key]}</option>
+    })
     const handleInputChange = key => event => {
         const rows = [...expenseData];
         if (event instanceof Date) {
@@ -40,11 +55,29 @@ function AddExpense() {
             .then((res) => {
                 setExpenseData([data]);
             })
+            .catch(function (error) {
+                const errors = error.response.data.errors;
+                for (const key in errors) {
+                    if (!errorArray.includes(errors[key][0])) {
+                        errorArray.push(errors[key][0]);
+                    }
+                }
+                setErrorArray(errorArray);
+            });
     }
     return  (
         <Fragment>
             <div className="bg-white">
                 <h2>Add-Expenses</h2>
+                {
+                    (isErrorArray.length > 0) ?
+                        <div className="alert alert-danger">
+                            {isErrorArray.map((value, key) =>
+                                <p key={key}>{value}</p>
+                            )}
+                        </div>
+                    : ''
+                }
                 {
                     expenseData.map((expenseItem, key) =>
                         <div className="row ml-2" key={key}>
@@ -65,8 +98,9 @@ function AddExpense() {
                             <div className="col-md-2 form-group">
                                 <select name="medium" className="form-control" onChange={handleInputChange(key)} value={expenseItem.medium}>
                                     <option value="">SELECT</option>
-                                    <option value="Hindi">Hindi</option>
-                                    <option value="Guj">Guj</option>
+                                    {
+                                        mediumList
+                                    }
                                 </select>
                             </div>
                             {

@@ -27,6 +27,9 @@ function EditExpenses(props) {
     const handleDateChange = event => {
         setExpense({ ...expense, ['date']: event })
     }
+    const mediumList = Object.keys(props.mediums).map((key) => {
+        return <option value={key} key={key}>{props.mediums[key]}</option>
+    })
     return (
         <Fragment>
         <div
@@ -68,8 +71,9 @@ function EditExpenses(props) {
                                 <label>Medium:</label>
                                 <select className="form-control" name="medium" onChange={handleInputChange} value={expense.medium}>
                                     <option value="">Select Type</option>
-                                    <option value="Hindi">Hindi</option>
-                                    <option value="Guj">Guj</option>
+                                    {
+                                        mediumList
+                                    }
                                 </select>
                             </div>
                             <div className="form-group">

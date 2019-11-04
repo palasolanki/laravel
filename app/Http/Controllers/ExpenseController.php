@@ -66,4 +66,8 @@ class ExpenseController extends Controller
         $expense->delete();
         return ['message' => 'Delete Success!'];
     }
+
+    public function getMedium() {
+        return ['medium' => config('expense.medium')];
+    }
 }

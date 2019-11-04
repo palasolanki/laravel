@@ -39,6 +39,7 @@ class ExpenseRequest extends FormRequest
             'data.*.date.required' => 'Date Filed is required',
             'data.*.item.required' => 'Item Filed is required',
             'data.*.amount.required' => 'Amount Filed is required',
+            'data.*.amount.integer' => 'Amount Filed is Must Number',
             'data.*.medium.required' => 'Medium Filed is required',
         ];
     }
