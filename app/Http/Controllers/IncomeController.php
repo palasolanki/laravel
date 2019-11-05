@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IncomeRequest;
 use App\Income;
+use App\Models\Client;
 
 class IncomeController extends Controller
 {
@@ -86,6 +87,6 @@ class IncomeController extends Controller
         return ['message' => 'Delete Success!'];
     }
     public function getClients() {
-        return ['clients' => config('expense.clients')];
+        return ['clients' => Client::all()];
     }
 }

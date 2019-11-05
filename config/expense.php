@@ -7,5 +7,4 @@ return [
         'db_card' => "DB card",
         'cc' => "CC card"
     ],
-    'clients' => ['abc', 'xyz', 'pqr']
 ];

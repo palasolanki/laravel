@@ -7,7 +7,7 @@ import AddTags from "./Add-Tags";
 import EditTags from "./Edit-Tags";
 
 
-function Tags() { 
+function Tags() {
   //For modal open/close
   const [showAddModal, setShow] = useState(false);
   const [showEditModal, setEditShow] = useState(false);
@@ -25,7 +25,7 @@ function Tags() {
   const tagsData = [];
 
   const [tags, setTags] = useState(tagsData);
-  useEffect( () => { 
+  useEffect( () => {
     api.get('/tags')
         .then((res) => {
            setTags(res.data);
@@ -33,7 +33,7 @@ function Tags() {
         .catch((res) => {
       })
    }, [] );
-  
+
 //For add new tag in database
   const addTag = tag => {
      api.post(`/tags`, tag)
@@ -43,20 +43,20 @@ function Tags() {
      })
   }
 
-  //For delete tag 
+  //For delete tag
   const [deleteTagId, setDeleteTagId] = useState();
 
   const setDeleteTagIdFunction = currentDeleteTagId =>{
     setDeleteTagId(currentDeleteTagId);
     openShowDelete();
   }
-  
+
   const deleteTag = tagId => {
     api.delete(`/tags/${tagId}`)
       .then((res) => {
         console.log(res.data);
-        setTags(tags.filter(tag => tag._id !== tagId)) 
-        handleCloseDelete();     
+        setTags(tags.filter(tag => tag._id !== tagId))
+        handleCloseDelete();
       })
   }
 
@@ -72,14 +72,14 @@ function Tags() {
   const updateTag = (tagId, updatedTag) => {
     api.patch(`/tags/${tagId}`, updatedTag)
       .then((res) => {
-        setTags(tags.map(tag => (tag._id === tagId ? res.data.updatedTag : tag)))   
-        handleCloseEdit();   
+        setTags(tags.map(tag => (tag._id === tagId ? res.data.updatedTag : tag)))
+        handleCloseEdit();
       })
   }
 
     return (
         <div className="bg-white">
-            <h2>Client</h2>
+            <h2>Tags</h2>
 
             <button style={{ margin: '10px 10px' }} type="button" className="btn btn-info btn-lg" onClick={openShow}>Add Tag</button>
 
@@ -87,7 +87,7 @@ function Tags() {
 
               <div className="modal fade" id="myModal" role="dialog">
                 <div className="modal-dialog">
-                
+
                   <div className="modal-content">
                     <div className="modal-header">
                       <button type="button" className="close" data-dismiss="modal">&times;</button>
@@ -100,10 +100,10 @@ function Tags() {
                       <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                   </div>
-                    
+
                 </div>
               </div>
-                
+
             </div>
             <table className="table">
                 <thead className="thead-light">

@@ -65,7 +65,7 @@ function EditIncome(props) {
                                     <option value="">Select Type</option>
                                     {
                                         props.clients.map((client, index) =>
-                                            <option value={client} key={index}>{client}</option>
+                                            <option value={client.name} key={index}>{client.name}</option>
                                         )
                                     }
                                 </select>

@@ -33,8 +33,8 @@ function AddIncome() {
     const mediumList = Object.keys(mediums).map((key) => {
         return <option value={key} key={key}>{mediums[key]}</option>
     })
-    const clientList = clients.map((value, key) => {
-        return <option value={value} key={key}>{value}</option>
+    const clientList = clients.map((client, key) => {
+        return <option value={client.name} key={key}>{client.name}</option>
     })
     const handleInputChange = key => event => {
         const rows = [...incomeData];
