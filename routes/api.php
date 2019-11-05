@@ -34,4 +34,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::resource('incomes', 'IncomeController');
     Route::get('/getMedium', 'ExpenseController@getMedium');
     Route::get('/getClients', 'IncomeController@getClients');
+    Route::get('/clients', 'ClientController@index');
+    Route::post('/addClient', 'ClientController@store');
+    Route::get('/client/{client}', 'ClientController@show');
+    Route::patch('/client/{client}', 'ClientController@update');
+    Route::delete('/client/{client}', 'ClientController@destroy');
 });

@@ -11,6 +11,9 @@ import Expense from "./expense/Expense";
 import Income from "./income/Income";
 import AddExpense from "./expense/Add-Expense";
 import AddIncome from "./income/Add-Income";
+import Client from "./clients/AddClient";
+import EditClient from "./clients/EditClient";
+
 
 export default class Home extends Component {
   constructor(props) {
@@ -60,6 +63,8 @@ export default class Home extends Component {
           <Switch>
             <Route exact path='/' component={Dashboard} />
             <Route exact path='/clients'  component={ClientList} />
+            <Route exact path='/addClient'  component={Client} />
+            <Route exact path='/editClient/:id'  component={EditClient} />
             <Route exact path='/tags'  component={Tags} />
             <Route exact path='/expenses'  component={Expense} />
             <Route exact path='/expenses/add'  component={AddExpense} />

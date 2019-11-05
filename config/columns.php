@@ -12,7 +12,7 @@ return [
     ],
     'income' => [
         ['key' => 'index', 'name' => '#', 'width' => 50],
-        ['key' => 'client_name', 'name' => 'Client', 'editable' => true],
+        ['key' => 'client_id', 'name' => 'Client', 'editable' => true],
         ['key' => 'paid_date', 'name' => 'Payment Date', 'editable' => true],
         ['key' => 'payment_received', 'name' => 'Amount', 'editable' => true],
         ['key' => 'medium', 'name' => 'Medium', 'editable' => true],
