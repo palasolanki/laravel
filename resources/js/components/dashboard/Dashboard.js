@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { Redirect } from 'react-router-dom';
 import { connect } from "react-redux";
 import classnames from 'classnames';
-import { getProjects, setProject, setRedirect, deleteProject, setDeletedList, setTable, setProjectTitle, resetProject } from "../../store/actions/project";
+import { getProjects, setProject, setRedirect, deleteProject, setDeletedList, setTable, setProjectData, resetProject } from "../../store/actions/project";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -18,15 +18,18 @@ class Dashboard extends Component {
       isAddProject: null,
       activeType: null,
       projectTitle: '',
+      financialYear: '',
       visibleDropdown: false,
       activeId: null,
       showConfirmationPopup: false,
       isTitleEditable: false,
-      editedTitle: null
+      editedTitle: null,
+      editedFinancialYear: ''
     }
 
     this.addProject = this.addProject.bind(this);
     this.editProjectTitle = this.editProjectTitle.bind(this);
+    this.getFinancialYear = this.getFinancialYear.bind(this);
     this.saveProject = this.saveProject.bind(this);
     this.closeProjectForm = this.closeProjectForm.bind(this);
     this.onPressKey = this.onPressKey.bind(this);
@@ -36,12 +39,14 @@ class Dashboard extends Component {
     this.backToDropdown = this.backToDropdown.bind(this);
     this.onClickOutside = this.onClickOutside.bind(this);
     this.onClickEditBtn = this.onClickEditBtn.bind(this);
-    this.editTitle = this.editTitle.bind(this);
-    this.onBlur = this.onBlur.bind(this);
+    // this.editTitle = this.editTitle.bind(this);
+    this.saveEditedData = this.saveEditedData.bind(this);
     this.changeTitleValue = this.changeTitleValue.bind(this);
+    this.changeFinancialYear = this.changeFinancialYear.bind(this);
+    this.cancelEdit = this.cancelEdit.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
 
     if (this.props.tabId !== null) {
       this.props.resetProject(this.props.project);
@@ -53,6 +58,7 @@ class Dashboard extends Component {
   addProject(index) {
     this.setState({
       isAddProject: index,
+      isTitleEditable: false
     })
   }
 
@@ -62,11 +68,18 @@ class Dashboard extends Component {
     })
   }
 
+  getFinancialYear(e) {
+    this.setState({
+      financialYear: e.target.value
+    })
+  }
+
   onPressKey(type, e) {
     if (e.charCode === 13 && this.state.projectTitle !== '') {
       this.props.setProject({
         type: type,
         name: this.state.projectTitle,
+        financial_year: this.state.financialYear,
         description: 'New title added'
       });
     }
@@ -77,6 +90,7 @@ class Dashboard extends Component {
       this.props.setProject({
         type: type,
         name: this.state.projectTitle,
+        financial_year: this.state.financialYear,
         description: 'New title added'
       });
     }
@@ -93,7 +107,9 @@ class Dashboard extends Component {
   showDropdown(id) {
     this.setState({
       activeId: id,
-      visibleDropdown: !this.state.visibleDropdown
+      visibleDropdown: !this.state.visibleDropdown,
+      isAddProject: false,
+      showConfirmationPopup: false
     })
   }
 
@@ -113,14 +129,18 @@ class Dashboard extends Component {
   }
   backToDropdown() {
     this.setState({
-      showConfirmationPopup: false
+      showConfirmationPopup: false,
+      visibleDropdown:false,
+      activeId:null
     });
   }
 
   onClickOutside(e) {
     if (this.dropdownRef && !this.dropdownRef.contains(e.target)) {
       this.setState({
-        visibleDropdown: false
+        visibleDropdown: false,
+        isTitleEditable: false,
+        activeId:null
       });
     }
   }
@@ -128,7 +148,8 @@ class Dashboard extends Component {
   onClickEditBtn(i) {
     this.setState({
       isTitleEditable: true,
-      visibleDropdown: false
+      visibleDropdown: false,
+      editedFinancialYear: this.props.list[i].financial_year
     })
   }
 
@@ -138,36 +159,43 @@ class Dashboard extends Component {
     });
   }
 
-  editTitle(i, e) {
-    if (e.charCode === 13) {
-      this.onBlur(i, e);
-    }
-  }
-
-  onBlur(i, e) {
-    const { list } = this.props;
-    if (!this.state.editedTitle) {
-
-      this.props.setProjectTitle({
-        name: list[i].name
-      }, list[i]._id);
-
-    }
-    else {
-      list[i].name = this.state.editedTitle;
-      this.props.setProjectTitle({
-        name: list[i].name
-      }, list[i]._id);
-      this.props.setTable({
-        list: list
-      });
-
-    }
+  changeFinancialYear(i, e) {
     this.setState({
-      isTitleEditable: false,
+      editedFinancialYear: e.target.value
     })
   }
 
+  // editTitle(i, e) {
+  //   if (e.charCode === 13) {
+  //     this.onBlur(i, e);
+  //   }
+  // }
+
+  saveEditedData(i, e) {
+    const { list } = this.props;
+    list[i].name = (this.state.editedTitle) ? this.state.editedTitle : list[i].name;
+    list[i].financial_year = (this.state.editedFinancialYear) ? this.state.editedFinancialYear : list[i].financial_year;
+    this.props.setProjectData({
+      name: list[i].name,
+      financial_year: list[i].financial_year
+    }, list[i]._id);
+
+    this.props.setTable({
+      list: list
+    });
+    this.setState({
+      isTitleEditable: false,
+      visibleDropdown: false,
+      activeId: null
+    })
+  }
+
+  cancelEdit() {
+    this.setState({
+      isTitleEditable: false,
+      activeId: null
+    })
+  }
 
   componentWillUnmount() {
     this.props.setRedirect(false);
@@ -176,7 +204,7 @@ class Dashboard extends Component {
 
   render() {
     const { list, redirect } = this.props;
-    const { isAddProject, projectTitle, visibleDropdown, activeId, showConfirmationPopup, isTitleEditable } = this.state;
+    const { isAddProject, projectTitle, financialYear, editedFinancialYear, visibleDropdown, activeId, showConfirmationPopup, isTitleEditable } = this.state;
 
     if (redirect) {
       const project = list[list.length - 1];
@@ -207,15 +235,20 @@ class Dashboard extends Component {
                         onClickEditBtn={() => this.onClickEditBtn(i)}
                         editTitle={(e) => this.editTitle(i, e)}
                         isTitleEditable={isTitleEditable}
-                        onBlur={(e) => this.onBlur(i, e)}
+                        saveEditedData={(e) => this.saveEditedData(i, e)}
                         changeTitleValue={(e) => this.changeTitleValue(i, e)}
+                        changeFinancialYear={(e) => this.changeFinancialYear(i, e)}
+                        editedFinancialYear={editedFinancialYear}
+                        cancelEdit={this.cancelEdit}
                       />
                     )}
                     <li className="list-inline-item">
                       {
-                        (isAddProject === i) ?
+                        (isAddProject === i && !isTitleEditable) ?
                           <ProjectForm
                             projectTitle={projectTitle}
+                            financialYear={financialYear}
+                            getFinancialYear={this.getFinancialYear}
                             editProjectTitle={this.editProjectTitle}
                             saveProject={this.saveProject.bind(this, type.type)}
                             closeProjectForm={this.closeProjectForm}
@@ -235,19 +268,43 @@ class Dashboard extends Component {
     );
   }
 }
+const currentYear = new Date().getFullYear();
+
+const financialYears = [];
+
+for (let year = 2016; year <= currentYear; year++) {
+  let num = 0;
+  financialYears.push(`${year - num}-${year - (num - 1)}`);
+  num++;
+}
 
 const ProjectCard = props => (
   <Fragment>
     <li className="list-inline-item title-items">
       {
-        (props.isTitleEditable && props.index === props.activeId) ? <input type="text" onChange={props.changeTitleValue} defaultValue={props.project.name} onKeyPress={props.editTitle} onBlur={props.onBlur} />
+        (props.isTitleEditable && props.index === props.activeId && !props.visibleDropdown) ?
+          // <input type="text" onChange={props.changeTitleValue} defaultValue={props.project.name} onKeyPress={props.editTitle} onBlur={props.onBlur} />
+          <div>
+            <div className="form-group">
+              <input type="text" onChange={props.changeTitleValue} defaultValue={props.project.name} />
+              <br />
+              <select className="form-control" name="financial_year" value={props.editedFinancialYear} onChange={props.changeFinancialYear}>
+                <option value="" disabled>Financial Year</option>
+                {financialYears.map((year, key) => <option key={key} value={year}>{year}</option>)}
+              </select>
+            </div>
+            <div className="d-flex justify-content-end mt-2">
+              <button type="button" className="btn btn-sm btn--prime mr-3" onClick={props.saveEditedData}>Save</button>
+              <button type="button" className="btn btn-sm btn--cancel" onClick={props.cancelEdit}>Cancel</button>
+            </div>
+          </div>
           :
           <Link to={`project/${props.project.first_tab._id}`}>{props.project.name}</Link>
       }
 
-      <button className={classnames({ 'd-block': (props.visibleDropdown && (props.index === props.activeId)) }, "btn ellipsis-h")} type="button" onClick={props.showDropdown}>
+      {(((props.index !== props.activeId) && props.visibleDropdown) || (!props.visibleDropdown && (props.index !== props.activeId))) && <button className={classnames({ 'd-block': (props.visibleDropdown && (props.index === props.activeId)) }, "btn ellipsis-h")} type="button" onClick={props.showDropdown}>
         <FontAwesomeIcon icon="ellipsis-v" />
-      </button>
+      </button>}
       {
         (props.visibleDropdown && (props.index === props.activeId)) && <div className="custom-dropdown" ref={props.dropdownRef}>
           {
@@ -287,10 +344,15 @@ const ProjectForm = props => (
     <div className="w-100">
       <div className="form-group">
         <input className="form-control" type="text" value={props.projectTitle} onKeyPress={props.onPressKey} onChange={props.editProjectTitle} placeholder="Project Name" />
+        <br />
+        <select className="form-control" name="financial_year" value={props.financialYear} onChange={props.getFinancialYear}>
+          <option value="" disabled>Financial Year</option>
+          {financialYears.map((year, key) => <option key={key} value={year}>{year}</option>)}
+        </select>
       </div>
       <div className="d-flex justify-content-end mt-2">
-        <button type="button" className="btn btn--prime mr-3" onClick={props.saveProject}>Save</button>
-        <button type="button" className="btn btn--cancel" onClick={props.closeProjectForm}>Cancel</button>
+        <button type="button" className="btn btn-sm btn--prime mr-3" onClick={props.saveProject}>Save</button>
+        <button type="button" className="btn btn-sm btn--cancel" onClick={props.closeProjectForm}>Cancel</button>
       </div>
     </div>
   </div>
@@ -313,7 +375,7 @@ const mapDispatchToProps = dispatch => {
     deleteProject: (projectId) => dispatch(deleteProject(projectId)),
     setDeletedList: (flag) => dispatch(setDeletedList(flag)),
     setTable: data => dispatch(setTable(data)),
-    setProjectTitle: (data, projectId) => dispatch(setProjectTitle(data, projectId)),
+    setProjectData: (data, projectId) => dispatch(setProjectData(data, projectId)),
     resetProject: data => dispatch(resetProject(data)),
   };
 };

@@ -1,11 +1,11 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
-class Client extends Model
+class Client extends Eloquent
 {
     protected $collection = 'clients';
-    protected $guarded = [];
+    protected $fillable = ['name', 'company_name', 'country'];
 }

@@ -7,6 +7,9 @@ import Dashboard from "./dashboard/Dashboard";
 import Sidebar from "./sidebar/Sidebar";
 import ClientList from "./clients/ClientList";
 import Tags from "./tags/Tags";
+import Client from "./clients/AddClient";
+import EditClient from "./clients/EditClient";
+
 
 export default class Home extends Component {
   constructor(props) {
@@ -56,6 +59,8 @@ export default class Home extends Component {
           <Switch>
             <Route exact path='/' component={Dashboard} />
             <Route exact path='/clients'  component={ClientList} />
+            <Route exact path='/addClient'  component={Client} />
+            <Route exact path='/editClient/:id'  component={EditClient} />
             <Route exact path='/tags'  component={Tags} />
           </Switch>
         </div>

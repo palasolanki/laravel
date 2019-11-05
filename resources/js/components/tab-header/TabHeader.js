@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Tab from "./tab/Tab";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
@@ -13,11 +13,16 @@ class TabHeader extends Component {
     this.state = {
       activeContenteditable: false,
       visibleDropdown: false,
-      showConfirmationPopup: false
+      showConfirmationPopup: false,
+      isOpenAddModel: false,
+      month: '',
+      year: '',
+      isAddTab: false
+
     };
     this.isOnMounted = true;
     this.onTabClick = this.onTabClick.bind(this);
-    this.addTabs = this.addTabs.bind(this);
+    this.openTab = this.openTab.bind(this);
     this.onTabDoubleClick = this.onTabDoubleClick.bind(this);
     this.onTabKeyPress = this.onTabKeyPress.bind(this);
 
@@ -28,6 +33,11 @@ class TabHeader extends Component {
     this.confirmDeleteTab = this.confirmDeleteTab.bind(this);
     this.backToDropdown = this.backToDropdown.bind(this);
     this.onEditBtn = this.onEditBtn.bind(this);
+    this.closeModel = this.closeModel.bind(this);
+    this.setMonth = this.setMonth.bind(this);
+    this.setYear = this.setYear.bind(this);
+    this.addTab = this.addTab.bind(this);
+    this.editTab = this.editTab.bind(this);
   }
 
   componentDidMount() {
@@ -81,14 +91,32 @@ class TabHeader extends Component {
   }
 
   onTabDoubleClick(tabIndex) {
-    this.isDoubleClick = true;
     this.setState({
-      visibleDropdown: false,
-      activeContenteditable: tabIndex
+      isOpenAddModel: true,
+      month: this.props.tabs[tabIndex].month,
+      year: this.props.tabs[tabIndex].year,
     })
-    this.tabTitleRef[tabIndex].querySelector('div').contentEditable = true;
-    this.tabTitleRef[tabIndex].querySelector('div').focus();
 
+    // this.isDoubleClick = true;
+    // this.setState({
+    //   visibleDropdown: false,
+    //   activeContenteditable: tabIndex
+    // })
+    // this.tabTitleRef[tabIndex].querySelector('div').contentEditable = true;
+    // this.tabTitleRef[tabIndex].querySelector('div').focus();
+  }
+
+  editTab(){
+    this.props.setTabTitle({title: `${this.state.month} ${this.state.year}`,
+    month: this.state.month,
+    year: this.state.year},this.props.activeTabId);
+
+    this.setState({
+      isOpenAddModel: false,
+      month: '',
+      year: ''
+
+    })
   }
 
   onTabBlur(tabIndex, e) {
@@ -121,10 +149,54 @@ class TabHeader extends Component {
     }
   }
 
-  addTabs() {
+  openTab() {
+    this.setState({
+      isOpenAddModel: true,
+      isAddTab: true
+    })
+
+  }
+  addTab() {
     this.props.setTab({
-      title: `Tab ${this.props.tabs.length + 1}`,
+      title: `${this.state.month} ${this.state.year}`,
+      month: this.state.month,
+      year: this.state.year,
     }, this.props.projectId);
+
+    this.setState({
+      isOpenAddModel: false,
+      month: '',
+      year: '',
+      isAddTab: false
+
+    })
+  }
+
+  // addTabs() {
+  //   this.props.setTab({
+  //     title: `Tab ${this.props.tabs.length + 1}`,
+  //   }, this.props.projectId);
+  // }
+
+  closeModel() {
+    this.setState({
+      isOpenAddModel: false,
+      isAddTab: false,
+      month: '',
+      year: ''
+    })
+  }
+
+  setMonth(e) {
+    this.setState({
+      month: e.target.value
+    })
+  }
+
+  setYear(e) {
+    this.setState({
+      year: e.target.value
+    })
   }
 
   showDropdown(e) {
@@ -182,38 +254,98 @@ class TabHeader extends Component {
   }
 
   render() {
-    const { activeContenteditable, visibleDropdown, showConfirmationPopup } = this.state;
+    const { activeContenteditable, visibleDropdown, showConfirmationPopup, isOpenAddModel, month, year, isAddTab } = this.state;
     const { tabs, activeTabId } = this.props;
-
     return (
-      <div className="position-relative">
-        <ul className="nav nav-tabs">
-          {tabs.map((tab, i) => {
-            return <Tab key={i}
-              tabRef={tabTitleRef => (this.tabTitleRef[i] = tabTitleRef)}
-              isContentEditable={(activeContenteditable === i)}
-              isActive={(activeTabId == tab._id)}
-              onTabClick={() => this.onTabClick(i)}
-              onTabDoubleClick={(e) => this.onTabDoubleClick(i, e)}
-              onTabKeyPress={(e) => this.onTabKeyPress(i, e)}
-              onTabBlur={(e) => this.onTabBlur(i, e)}
-              title={tab.title}
-              showDropdown={this.showDropdown}
-              visibleDropdown={visibleDropdown}
-              deleteActiveTab={() => this.deleteActiveTab(i)}
-              tabLength={tabs.length}
-              showConfirmationPopup={showConfirmationPopup}
-              confirmDeleteTab={() => this.confirmDeleteTab(i)}
-              backToDropdown={this.backToDropdown}
-              onEditBtn={() => this.onEditBtn(i)}
-            />
-          })}
-          {tabs.length > 0 && <li className="position-relative add-tab-item"><div className="add-tabs" onClick={this.addTabs}>+</div></li>}
-        </ul>
-      </div>
+      <Fragment>
+        <div className="position-relative">
+          <ul className="nav nav-tabs">
+            {tabs.map((tab, i) => {
+              return <Tab key={i}
+                tabRef={tabTitleRef => (this.tabTitleRef[i] = tabTitleRef)}
+                isContentEditable={(activeContenteditable === i)}
+                isActive={(activeTabId == tab._id)}
+                onTabClick={() => this.onTabClick(i)}
+                onTabDoubleClick={(e) => this.onTabDoubleClick(i, e)}
+                onTabKeyPress={(e) => this.onTabKeyPress(i, e)}
+                onTabBlur={(e) => this.onTabBlur(i, e)}
+                title={tab.title}
+                showDropdown={this.showDropdown}
+                visibleDropdown={visibleDropdown}
+                deleteActiveTab={() => this.deleteActiveTab(i)}
+                tabLength={tabs.length}
+                showConfirmationPopup={showConfirmationPopup}
+                confirmDeleteTab={() => this.confirmDeleteTab(i)}
+                backToDropdown={this.backToDropdown}
+                onEditBtn={() => this.onEditBtn(i)}
+                closeModel={this.closeModel}
+              />
+            })}
+            {tabs.length > 0 && <li className="position-relative add-tab-item"><div className="add-tabs" onClick={this.openTab}>+</div></li>}
+          </ul>
+        </div>
+        {isOpenAddModel && <TabModel closeModel={this.closeModel}
+          month={month}
+          isAddTab={isAddTab}
+          setMonth={(e) => this.setMonth(e)}
+          year={year}
+          setYear={(e) => this.setYear(e)}
+          addTab={this.addTab}
+          editTab={this.editTab}
+        />}
+
+      </Fragment>
     )
   }
 }
+
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+  "November", "December"];
+
+const years = [];
+const currentYear = new Date().getFullYear();
+
+for (let year = 2016; year <= currentYear; year++) {
+  years.push(year);
+}
+
+const TabModel = props => (
+  <div className="modal show" style={{ display: "block" }}>
+
+    <div className="modal-dialog" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">{props.isAddTab ? 'Add Tab' : 'Edit Tab'}</h5>
+          <button type="button" className="close" onClick={props.closeModel} data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div className="modal-body">
+          <div className="form-group">
+            <div className="col-sm-6">
+              <select className="form-control" name="year" value={props.year} onChange={props.setYear}>
+                <option value="" disabled>Year</option>
+                {years.map((year, key) => <option key={key} value={year}>{year}</option>)}
+              </select>
+            </div>
+            <div className="col-sm-6">
+              <select className="form-control" name="month" value={props.month} onChange={props.setMonth}>
+                <option value="" disabled>Month</option>
+                {months.map((month, key) => <option key={key} value={month}>{month}</option>)}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="modal-footer">
+          <button type="button" className="btn btn-sm btn--prime" onClick={props.isAddTab ? props.addTab : props.editTab}>Save</button>
+          <button type="button" className="btn btn-sm btn--cancel" onClick={props.closeModel} data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+)
+
 const mapStateToProps = state => {
   return {
     rows: state.project.rows,

@@ -28,4 +28,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/tags', 'TagController@store')->name('tag.store');
     Route::patch('/tags/{id}', 'TagController@update')->name('tag.update');
     Route::delete('/tags/{id}', 'TagController@destroy')->name('tag.destroy');
+    Route::get('/clients', 'ClientController@index');
+    Route::post('/addClient', 'ClientController@store');
+    Route::get('/client/{client}', 'ClientController@show');
+    Route::patch('/client/{client}', 'ClientController@update');
+    Route::delete('/client/{client}', 'ClientController@destroy');
 });

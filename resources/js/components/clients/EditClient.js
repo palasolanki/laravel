@@ -2,12 +2,45 @@ import React, { useState, Fragment, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
 
-const AddClient = (props) => {
+const EditClient = (props) => {
     const initialFormState = { name: '', company_name: '', country: '' }
 
     const [client, setClient] = useState(initialFormState)
+
     const [sendRequest, setSendRequest] = useState(false)
 
+    const url = window.location.pathname;
+    const id = (url).substring(url.lastIndexOf('/') + 1);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await api.get(`/client/${id}`)
+                .then((res) => {
+                    setClient(res.data.client)
+                }).catch((err) => {
+                    console.log(err)
+                });
+        };
+        fetchData();
+    }, []);
+
+    const editClient = () => {
+        delete client._id;
+        return api.patch(`/client/${id}`, client)
+            .then((res) => {
+
+                setSendRequest(false)
+                props.history.push('/clients');
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }
+
+    useEffect(() => {
+        if (!sendRequest) return
+        editClient()
+    })
 
     const handleInputChange = event => {
         const { name, value } = event.target
@@ -18,28 +51,12 @@ const AddClient = (props) => {
 
         if (!client.name || !client.company_name, !client.country) return
         setSendRequest(true)
-
     }
-
-    const addClient = () => {
-        return api.post('/addClient', client)
-            .then((res) => {
-                props.history.push('/clients');
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }
-
-    useEffect(() => {
-        if (!sendRequest) return
-        addClient()
-    })
 
     return (
         <Fragment>
             <div className="bg-white">
-                <h2>Add Client</h2>
+                <h2>Edit Client</h2>
                 <form onSubmit={submitForm} method="post" className="form-horizontal">
                     <div className="form-group">
                         <label className="control-label col-sm-2" htmlFor="name">Name:</label>
@@ -75,4 +92,4 @@ const AddClient = (props) => {
 }
 
 
-export default AddClient
+export default EditClient
