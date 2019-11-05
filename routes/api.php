@@ -31,5 +31,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::patch('/tags/{id}', 'TagController@update')->name('tag.update');
     Route::delete('/tags/{id}', 'TagController@destroy')->name('tag.destroy');
     Route::resource('expenses', 'ExpenseController');
+    Route::resource('incomes', 'IncomeController');
     Route::get('/getMedium', 'ExpenseController@getMedium');
+    Route::get('/getClients', 'IncomeController@getClients');
 });
