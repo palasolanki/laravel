@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\IncomeRequest;
-use App\Income;
+use App\Hardware;
+use App\Http\Requests\HardwareRequest;
 
-class IncomeController extends Controller
+class HardwareController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class IncomeController extends Controller
      */
     public function index()
     {
-        return Income::all();
+        return Hardware::all();
     }
 
     /**
@@ -33,7 +33,7 @@ class IncomeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(IncomeRequest $request)
+    public function store(HardwareRequest $request)
     {
         $request->save();
         return ['message' => 'Add Success!'];
@@ -42,10 +42,10 @@ class IncomeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Income  $income
+     * @param  \App\Hardware  $hardware
      * @return \Illuminate\Http\Response
      */
-    public function show(Income $income)
+    public function show(Hardware $hardware)
     {
         //
     }
@@ -53,10 +53,10 @@ class IncomeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Income  $income
+     * @param  \App\Hardware  $hardware
      * @return \Illuminate\Http\Response
      */
-    public function edit(Income $income)
+    public function edit(Hardware $hardware)
     {
         //
     }
@@ -65,24 +65,27 @@ class IncomeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Income  $income
+     * @param  \App\Hardware  $hardware
      * @return \Illuminate\Http\Response
      */
-    public function update(IncomeRequest $request, Income $income)
+    public function update(HardwareRequest $request, Hardware $hardware)
     {
-        $request->save($income);
-        return ['updateIncome' => $income, 'message' => 'Update Success!'];
+        $request->save($hardware);
+        return ['updateHardware' => $hardware, 'message' => 'Update Success!'];
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Income  $income
+     * @param  \App\Hardware  $hardware
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Income $income)
+    public function destroy(Hardware $hardware)
     {
-        $income->delete();
+        $hardware->delete();
         return ['message' => 'Delete Success!'];
+    }
+    public function getHardwareType() {
+        return ['type' => config('expense.hardware_type')];
     }
 }

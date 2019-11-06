@@ -32,8 +32,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::delete('/tags/{id}', 'TagController@destroy')->name('tag.destroy');
     Route::resource('expenses', 'ExpenseController');
     Route::resource('incomes', 'IncomeController');
+    Route::resource('hardwares', 'HardwareController');
     Route::get('/getMedium', 'ExpenseController@getMedium');
-    Route::get('/getClients', 'IncomeController@getClients');
+    Route::get('/getClients', 'ClientController@getClients');
+    Route::get('/getHardwareType', 'HardwareController@getHardwareType');
     Route::get('/clients', 'ClientController@index');
     Route::post('/addClient', 'ClientController@store');
     Route::get('/client/{client}', 'ClientController@show');

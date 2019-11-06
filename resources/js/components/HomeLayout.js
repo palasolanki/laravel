@@ -13,6 +13,8 @@ import AddExpense from "./expense/Add-Expense";
 import AddIncome from "./income/Add-Income";
 import Client from "./clients/AddClient";
 import EditClient from "./clients/EditClient";
+import Hardware from "./hardwares/Hardware";
+import AddHardware from "./hardwares/Add-Hardware";
 
 
 export default class Home extends Component {
@@ -70,6 +72,8 @@ export default class Home extends Component {
             <Route exact path='/expenses/add'  component={AddExpense} />
             <Route exact path='/incomes'  component={Income} />
             <Route exact path='/incomes/add'  component={AddIncome} />
+            <Route exact path='/hardwares'  component={Hardware} />
+            <Route exact path='/hardwares/add'  component={AddHardware} />
           </Switch>
         </div>
       </Fragment>
