@@ -42,7 +42,7 @@ function AddHardware() {
                 [name]:value
             }
         }
-        setHardwareData(rows)
+        setHardwareData(rows);
     }
     const addHardware = () => {
         setHardwareData([...hardwareData, data]);
@@ -52,8 +52,27 @@ function AddHardware() {
         array.splice(event.target.value, 1);
         setHardwareData([...array]);
     }
+    const createdateString = (selectedDate) => {
+        let day = selectedDate.getDate();
+        let month = selectedDate.getMonth() + 1;
+        let year = selectedDate.getFullYear();
+        return day+"/"+month+"/"+year;
+    }
+    const changeDateFormat = () => {
+        const newData = hardwareData.map((value, key) => {
+            if(value['date']) {
+                let newDate = createdateString(value['date']);
+                return {
+                    ...value,
+                    date: newDate
+                }
+            }
+            return value;
+        });
+        return newData;
+    }
     const saveHardwares = () => {
-            api.post(`/hardwares`, {data: hardwareData})
+            api.post(`/hardwares`, {data: changeDateFormat()})
             .then((res) => {
                 setHardwareData([data]);
             })
@@ -88,6 +107,7 @@ function AddHardware() {
                                     placeholder="Enter Purchase date"
                                     className="form-control"
                                     name="date"
+                                    dateFormat="dd/MM/yyyy"
                                     selected={hardwareItem.date}
                                     onChange={handleInputChange(key)}
                                 />

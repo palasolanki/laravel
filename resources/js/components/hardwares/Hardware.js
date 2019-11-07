@@ -37,9 +37,27 @@ function Hardware() {
         setCurrentHardware(hardware)
         openShowEdit();
     }
-
+    const createdateString = (selectedDate) => {
+        let day = selectedDate.getDate();
+        let month = selectedDate.getMonth() + 1;
+        let year = selectedDate.getFullYear();
+        return day+"/"+month+"/"+year;
+    }
+    const changeDateFormat = (updatedHardware) => {
+        const newData = updatedHardware.map((value, key) => {
+            if(value['date']) {
+                let newDate = createdateString(value['date']);
+                return {
+                    ...value,
+                    date: newDate
+                }
+            }
+            return value;
+        });
+        return newData;
+    }
     const updateHardware = (hardwareId, updatedHardware) => {
-        api.patch(`/hardwares/${hardwareId}`, {data:updatedHardware})
+        api.patch(`/hardwares/${hardwareId}`, {data:changeDateFormat(updatedHardware)})
         .then((res) => {
             setHardwares(hardwares.map(hardware => (hardware._id === hardwareId ? res.data.updateHardware : hardware)))
             handleCloseEdit();

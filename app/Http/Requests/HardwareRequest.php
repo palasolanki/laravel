@@ -48,7 +48,7 @@ class HardwareRequest extends FormRequest
             if(!$hardware) {
                 $hardware = new Hardware;
             }
-            $hardware->date = ($value['date']) ? Carbon::parse($value['date']) : null;
+            $hardware->date = ($value['date']) ? Carbon::createFromFormat("d/m/Y",$value['date'])->startOfDay() : null;
             $hardware->item = $value['item'];
             $hardware->type = $value['type'];
             $hardware->serial_number = $value['serial_number'];
