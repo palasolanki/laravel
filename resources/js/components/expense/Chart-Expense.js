@@ -3,12 +3,12 @@ import Chart from '../dashboard/Chart';
 
 export default function expenseChart(props) {
     const currentdata = {
-        lableName: 'Expense',
-        titleName: 'Monthly Expense',
+        label: 'Expense',
+        title: 'Monthly Expense',
     }
     return (
         <div>
-            <Chart currentdata={currentdata} chartData={props.expesedata} chartyear={props.chartyear} lablesName={props.lablesName}/>
+            <Chart currentdata={currentdata} chartData={props.expesedata} labels={props.labels}/>
         </div>
     );
   }

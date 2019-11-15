@@ -3,12 +3,12 @@ import Chart from '../dashboard/Chart';
 
 export default function incomeChart(props) {
     const currentdata = {
-        lableName: 'Income',
-        titleName: 'Monthly Income',
+        label: 'Income',
+        title: 'Monthly Income',
     }
     return (
         <div>
-            <Chart currentdata={currentdata} chartData={props.incomedata} chartyear={props.chartyear} lablesName={props.lablesName}/>
+            <Chart currentdata={currentdata} chartData={props.incomedata} labels={props.labels}/>
         </div>
     );
   }

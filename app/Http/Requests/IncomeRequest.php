@@ -36,11 +36,11 @@ class IncomeRequest extends FormRequest
     public function messages()
     {
         return [
-            'data.*.date.required' => 'Date Filed is required',
-            'data.*.client.required' => 'Client Filed is required',
-            'data.*.amount.required' => 'Amount Filed is required',
-            'data.*.amount.integer' => 'Amount Filed is Must Number',
-            'data.*.medium.required' => 'Medium Filed is required',
+            'data.*.date.required' => 'Date Field is required',
+            'data.*.client.required' => 'Client Field is required',
+            'data.*.amount.required' => 'Amount Field is required',
+            'data.*.amount.integer' => 'Amount Field is Must Number',
+            'data.*.medium.required' => 'Medium Field is required',
         ];
     }
 

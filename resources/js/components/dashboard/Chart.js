@@ -3,10 +3,10 @@ import { Bar, Line, Pie } from 'react-chartjs-2';
 
 export default function Chart(props) {
     const data = {
-        labels:props.lablesName,
+        labels:props.labels,
         datasets:[
             {
-                label:props.currentdata.lableName,
+                label:props.currentdata.label,
                 data:props.chartData,
             },
         ],
@@ -18,7 +18,7 @@ export default function Chart(props) {
               <Bar data={data} options={{
                 title:{
                   display:true,
-                  text:props.currentdata.titleName,
+                  text:props.currentdata.title,
                   fontSize:25,
                   fontColor:'green'
                 },

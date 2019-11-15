@@ -30,10 +30,10 @@ class Dashboard extends Component {
       editedFinancialYear: ''
     }
     this.state = {
-        chartyear:'current_year',
-        setIncomeData: [this.setMonthlyIncomeDataChart('current_year')],
-        setExpenseData: [this.setMonthlyExpenseDataChart('current_year')],
-        setLablesName: []
+        chart_range:'current_year',
+        incomeChartData: [this.setMonthlyIncomeChart('current_year')],
+        expenseChartData: [this.setMonthlyExpenseChart('current_year')],
+        labels: []
     }
 
     this.addProject = this.addProject.bind(this);
@@ -54,8 +54,8 @@ class Dashboard extends Component {
     this.changeFinancialYear = this.changeFinancialYear.bind(this);
     this.cancelEdit = this.cancelEdit.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.setMonthlyIncomeDataChart = this.setMonthlyIncomeDataChart.bind(this);
-    this.setMonthlyExpenseDataChart = this.setMonthlyExpenseDataChart.bind(this);
+    this.setMonthlyIncomeChart = this.setMonthlyIncomeChart.bind(this);
+    this.setMonthlyExpenseChart = this.setMonthlyExpenseChart.bind(this);
   }
 
   componentDidMount() {
@@ -214,37 +214,34 @@ class Dashboard extends Component {
     document.removeEventListener('mousedown', this.onClickOutside, true);
   }
 
-  setMonthlyIncomeDataChart(url) {
-      api.post('/getMonthlyIncome', {chartyear: url})
+  setMonthlyIncomeChart(url) {
+      api.post('/monthlyIncomeChart', {chart_range: url})
       .then((res) => {
-        let tmp = res.data.monthlyIncome;
-        let lable = res.data.lablesName;
         this.setState({
-          setIncomeData: [...tmp]
+          incomeChartData: res.data.monthlyIncome
         });
         this.setState({
-          setLablesName: [...lable]
+          labels: res.data.labels
         })
-        return this.state.setIncomeData;
+        return this.state.incomeChartData;
       })
   }
-  setMonthlyExpenseDataChart(url) {
-    api.post('/getMonthlyExpenses', {chartyear: url})
+  setMonthlyExpenseChart(url) {
+    api.post('/monthlyExpenseChart', {chart_range: url})
     .then((res) => {
-      let tmp = res.data.monthlyExpense;
       this.setState({
-        setExpenseData: [...tmp]
+        expenseChartData: res.data.monthlyExpense
       });
-      return this.state.setExpenseData;
+      return this.state.expenseChartData;
     })
 }
 
   handleInputChange(e) {
     this.setState({
-      chartyear:e.target.value
+      chart_range:e.target.value
     });
-    this.setMonthlyIncomeDataChart(e.target.value);
-    this.setMonthlyExpenseDataChart(e.target.value);
+    this.setMonthlyIncomeChart(e.target.value);
+    this.setMonthlyExpenseChart(e.target.value);
   }
 
   render() {
@@ -258,7 +255,7 @@ class Dashboard extends Component {
     return (
       <Fragment>
         <div className="row form-group">
-            <select name="chartyear" className="form-control" onChange={(e) => this.handleInputChange(e)} value={this.state.chartyear}>
+            <select className="form-control" onChange={(e) => this.handleInputChange(e)} value={this.state.chart_range}>
                 <option value="current_year">Current-Year</option>
                 <option value="past_year">Past-Year</option>
                 <option value="last_12_month">Last-12 Month</option>
@@ -266,13 +263,13 @@ class Dashboard extends Component {
         </div>
         <div style={{display:'flex', width:1600}} className="row">
           <div className="col-md-6">
-            { this.state.setExpenseData.length > 0 && this.state.setLablesName.length > 0 &&
-                <ChartExpense expesedata={this.state.setExpenseData} chartyear={this.state.chartyear} lablesName={this.state.setLablesName}/>
+            { this.state.expenseChartData.length > 0 && this.state.labels.length > 0 &&
+                <ChartExpense expesedata={this.state.expenseChartData} labels={this.state.labels}/>
             }
           </div>
           <div className="col-md-6">
-            { this.state.setIncomeData.length > 0 && this.state.setLablesName.length > 0 &&
-              <ChartIncome incomedata={this.state.setIncomeData} chartyear={this.state.chartyear} lablesName={this.state.setLablesName}/>
+            { this.state.incomeChartData.length > 0 && this.state.labels.length > 0 &&
+              <ChartIncome incomedata={this.state.incomeChartData} labels={this.state.labels}/>
             }
           </div>
         </div>

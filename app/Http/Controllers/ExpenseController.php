@@ -71,17 +71,17 @@ class ExpenseController extends Controller
         return ['medium' => config('expense.medium')];
     }
 
-    public function getMonthlyExpenses(Request $request) {
+    public function monthlyExpenseChart(Request $request) {
         $today = Carbon::now();
         $current_date = $today->day;
         $current_month = $today->month;
         $current_year = $today->year;
 
-        if($request->chartyear == 'current_year') {
+        if($request->chart_range == 'current_year') {
 
             $querydate = $this->getCurrentYearQuerydate($current_month, $current_year, $current_date);
 
-        } elseif ($request->chartyear == 'past_year') {
+        } elseif ($request->chart_range == 'past_year') {
 
             $querydate = $this->getPastYearQuerydate($current_month, $current_year);
 
@@ -92,8 +92,8 @@ class ExpenseController extends Controller
             ];
         }
         $monthData = $this->getMonthData($querydate);
-        $monthData = ($request->chartyear != 'current_year') ? $monthData : $this->getMonthDataForCurrentYear($monthData, $current_month);
-        $monthData = ($request->chartyear != 'last_12_month') ? $monthData : $this->getMonthDataForLastYear($monthData, $querydate);
+        $monthData = ($request->chart_range != 'current_year') ? $monthData : $this->getMonthDataForCurrentYear($monthData, $current_month);
+        $monthData = ($request->chart_range != 'last_12_month') ? $monthData : $this->getMonthDataForLastYear($monthData, $querydate);
 
         return ['monthlyExpense' => array_values($monthData)];
     }

@@ -88,39 +88,39 @@ class IncomeController extends Controller
         return ['message' => 'Delete Success!'];
     }
 
-    public function getMonthlyIncome(Request $request) {
+    public function monthlyIncomeChart(Request $request) {
         $today = Carbon::now();
         $current_date = $today->day;
         $current_month = $today->month;
         $current_month_name = substr($today->format('F'), 0, 3);
         $current_year = $today->year;
         $monthName = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
-        $lablesName = [];
+        $labels = [];
 
-        if($request->chartyear == 'current_year') {
+        if($request->chart_range == 'current_year') {
 
             $querydate = $this->getCurrentYearQuerydate($current_month, $current_year, $current_date);
-            $lablesName = $this->getCurrentYearLablesName($current_month, $monthName, $current_year, $current_month_name);
+            $labels = $this->getCurrentYearLablesName($current_month, $monthName, $current_year, $current_month_name);
 
-        } elseif ($request->chartyear == 'past_year') {
+        } elseif ($request->chart_range == 'past_year') {
 
             $querydate = $this->getPastYearQuerydate($current_month, $current_year);
-            $lablesName = $this->getPastYearLablesName($current_month, $current_year, $monthName);
+            $labels = $this->getPastYearLablesName($current_month, $current_year, $monthName);
 
         } else {
             $querydate = [
                 Carbon::createFromDate($current_year-1, $current_month+1, 1)->startOfMonth(),
                 Carbon::createFromDate($current_year, $current_month, 1)->endOfMonth()
             ];
-            $lablesName = $this->getLastYearLablesName($querydate, $monthName);
+            $labels = $this->getLastYearLablesName($querydate, $monthName);
         }
 
         $monthData = $this->getMonthData($querydate);
 
-        $monthData = ($request->chartyear != 'current_year') ? $monthData : $this->getMonthDataForCurrentYear($monthData, $current_month);
-        $monthData = ($request->chartyear != 'last_12_month') ? $monthData : $this->getMonthDataForLastYear($monthData, $querydate);
+        $monthData = ($request->chart_range != 'current_year') ? $monthData : $this->getMonthDataForCurrentYear($monthData, $current_month);
+        $monthData = ($request->chart_range != 'last_12_month') ? $monthData : $this->getMonthDataForLastYear($monthData, $querydate);
 
-        return ['monthlyIncome' => array_values($monthData), 'lablesName' => $lablesName];
+        return ['monthlyIncome' => array_values($monthData), 'labels' => $labels];
     }
 
     public function getCurrentYearQuerydate($current_month, $current_year, $current_date) {
