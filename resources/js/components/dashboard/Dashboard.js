@@ -5,6 +5,9 @@ import classnames from 'classnames';
 import { getProjects, setProject, setRedirect, deleteProject, setDeletedList, setTable, setProjectData, resetProject } from "../../store/actions/project";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ChartExpense from '../expense/Chart-Expense';
+import ChartIncome from '../income/Chart-Income';
+import api from '../../helpers/api';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -26,6 +29,12 @@ class Dashboard extends Component {
       editedTitle: null,
       editedFinancialYear: ''
     }
+    this.state = {
+        chartyear:'current_year',
+        setIncomeData: [this.setMonthlyIncomeDataChart('current_year')],
+        setExpenseData: [this.setMonthlyExpenseDataChart('current_year')],
+        setLablesName: []
+    }
 
     this.addProject = this.addProject.bind(this);
     this.editProjectTitle = this.editProjectTitle.bind(this);
@@ -44,6 +53,9 @@ class Dashboard extends Component {
     this.changeTitleValue = this.changeTitleValue.bind(this);
     this.changeFinancialYear = this.changeFinancialYear.bind(this);
     this.cancelEdit = this.cancelEdit.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.setMonthlyIncomeDataChart = this.setMonthlyIncomeDataChart.bind(this);
+    this.setMonthlyExpenseDataChart = this.setMonthlyExpenseDataChart.bind(this);
   }
 
   componentDidMount() {
@@ -202,6 +214,39 @@ class Dashboard extends Component {
     document.removeEventListener('mousedown', this.onClickOutside, true);
   }
 
+  setMonthlyIncomeDataChart(url) {
+      api.post('/getMonthlyIncome', {chartyear: url})
+      .then((res) => {
+        let tmp = res.data.monthlyIncome;
+        let lable = res.data.lablesName;
+        this.setState({
+          setIncomeData: [...tmp]
+        });
+        this.setState({
+          setLablesName: [...lable]
+        })
+        return this.state.setIncomeData;
+      })
+  }
+  setMonthlyExpenseDataChart(url) {
+    api.post('/getMonthlyExpenses', {chartyear: url})
+    .then((res) => {
+      let tmp = res.data.monthlyExpense;
+      this.setState({
+        setExpenseData: [...tmp]
+      });
+      return this.state.setExpenseData;
+    })
+}
+
+  handleInputChange(e) {
+    this.setState({
+      chartyear:e.target.value
+    });
+    this.setMonthlyIncomeDataChart(e.target.value);
+    this.setMonthlyExpenseDataChart(e.target.value);
+  }
+
   render() {
     const { list, redirect } = this.props;
     const { isAddProject, projectTitle, financialYear, editedFinancialYear, visibleDropdown, activeId, showConfirmationPopup, isTitleEditable } = this.state;
@@ -212,6 +257,25 @@ class Dashboard extends Component {
     }
     return (
       <Fragment>
+        <div className="row form-group">
+            <select name="chartyear" className="form-control" onChange={(e) => this.handleInputChange(e)} value={this.state.chartyear}>
+                <option value="current_year">Current-Year</option>
+                <option value="past_year">Past-Year</option>
+                <option value="last_12_month">Last-12 Month</option>
+            </select>
+        </div>
+        <div style={{display:'flex', width:1600}} className="row">
+          <div className="col-md-6">
+            { this.state.setExpenseData.length > 0 && this.state.setLablesName.length > 0 &&
+                <ChartExpense expesedata={this.state.setExpenseData} chartyear={this.state.chartyear} lablesName={this.state.setLablesName}/>
+            }
+          </div>
+          <div className="col-md-6">
+            { this.state.setIncomeData.length > 0 && this.state.setLablesName.length > 0 &&
+              <ChartIncome incomedata={this.state.setIncomeData} chartyear={this.state.chartyear} lablesName={this.state.setLablesName}/>
+            }
+          </div>
+        </div>
         <div className={classnames({ "overlay": isAddProject !== null }, "dashboard p-3")} >
           {
             this.types.map((type, i) => {

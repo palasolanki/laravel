@@ -34,6 +34,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::resource('incomes', 'IncomeController');
     Route::resource('hardwares', 'HardwareController');
     Route::get('/getMedium', 'ExpenseController@getMedium');
+    Route::post('/getMonthlyExpenses', 'ExpenseController@getMonthlyExpenses');
+    Route::post('/getMonthlyIncome', 'IncomeController@getMonthlyIncome');
     Route::get('/getClients', 'ClientController@getClients');
     Route::get('/getHardwareType', 'HardwareController@getHardwareType');
     Route::get('/clients', 'ClientController@index');
