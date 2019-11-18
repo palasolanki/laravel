@@ -3,8 +3,8 @@ import DatePicker from "react-datepicker";
 import api from '../../helpers/api';
 
 function AddExpense() {
-    let errorArray = [];
-    const [isErrorArray, setErrorArray] = useState(errorArray);
+    let errors = [];
+    const [errorList, setErrorList] = useState(errors);
     const data = {
         date: new Date(),
         item: '',
@@ -56,13 +56,13 @@ function AddExpense() {
                 setExpenseData([data]);
             })
             .catch(function (error) {
-                const errors = error.response.data.errors;
-                for (const key in errors) {
-                    if (!errorArray.includes(errors[key][0])) {
-                        errorArray.push(errors[key][0]);
+                const tmp = error.response.data.errors;
+                for (const key in tmp) {
+                    if (!errors.includes(tmp[key][0])) {
+                        errors.push(tmp[key][0]);
                     }
                 }
-                setErrorArray(errorArray);
+                setErrorList(errors);
             });
     }
     return  (
@@ -70,9 +70,9 @@ function AddExpense() {
             <div className="bg-white">
                 <h2>Add-Expenses</h2>
                 {
-                    (isErrorArray.length > 0) ?
+                    (errorList.length > 0) ?
                         <div className="alert alert-danger">
-                            {isErrorArray.map((value, key) =>
+                            {errorList.map((value, key) =>
                                 <p key={key}>{value}</p>
                             )}
                         </div>

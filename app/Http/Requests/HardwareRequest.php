@@ -36,10 +36,10 @@ class HardwareRequest extends FormRequest
     public function messages()
     {
         return [
-            'data.*.item.required' => 'Item Filed is required',
-            'data.*.type.required' => 'Type Filed is required',
-            'data.*.status.required' => 'Status Filed is required',
-            'data.*.notes.required' => 'Notes Filed is required',
+            'data.*.item.required' => 'Item Field is required',
+            'data.*.type.required' => 'Type Field is required',
+            'data.*.status.required' => 'Status Field is required',
+            'data.*.notes.required' => 'Notes Field is required',
         ];
     }
 
