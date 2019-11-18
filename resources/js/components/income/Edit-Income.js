@@ -14,7 +14,7 @@ function EditIncome(props) {
         textAlign: 'center',
       };
     const editData = {
-        date: new Date(props.currentIncome.date.date),
+        date: new Date(props.currentIncome.date),
         client: props.currentIncome.client,
         amount: props.currentIncome.amount,
         medium: props.currentIncome.medium,

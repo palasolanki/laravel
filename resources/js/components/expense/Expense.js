@@ -83,7 +83,7 @@ function Expense() {
                         {expenses.length > 0 ? (
                           expenses.map(expense => (
                                 <tr key={expense._id}>
-                                    <td>{expense.date.date}</td>
+                                    <td>{expense.date}</td>
                                     <td>{expense.item}</td>
                                     <td>{expense.amount}</td>
                                     <td>{mediums[expense.medium]}</td>

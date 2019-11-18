@@ -115,10 +115,10 @@ trait Chartdata {
     public function getMonthData($querydate, $from) {
         $monthData = ['4' => 0, '5' => 0, '6' => 0, '7' => 0, '8' => 0, '9' => 0, '10' => 0, '11' => 0, '12' => 0, '1' => 0, '2' => 0, '3' => 0];
 
-        $data = ($from == 'income') ? Income::whereBetween('created_at', $querydate)->get() : Expense::whereBetween('created_at', $querydate)->get();
+        $data = ($from == 'income') ? Income::whereBetween('date', $querydate)->get() : Expense::whereBetween('date', $querydate)->get();
 
-        foreach ($data as $key => $value) {
-            $date = Carbon::parse($value->date['date']);
+        foreach ($data as $value) {
+            $date = Carbon::parse($value->date);
             $month = $date->month;
 
             if (in_array($month, array_keys($monthData))) {

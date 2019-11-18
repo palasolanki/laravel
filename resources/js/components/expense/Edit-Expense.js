@@ -14,7 +14,7 @@ function EditExpenses(props) {
         textAlign: 'center',
       };
     const editData = {
-        date: new Date(props.currentExpense.date.date),
+        date: new Date(props.currentExpense.date),
         item: props.currentExpense.item,
         amount: props.currentExpense.amount,
         medium: props.currentExpense.medium,

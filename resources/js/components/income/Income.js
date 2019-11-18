@@ -86,7 +86,7 @@ function Income() {
                         {incomes.length > 0 ? (
                           incomes.map(income => (
                                 <tr key={income._id}>
-                                    <td>{income.date.date}</td>
+                                    <td>{income.date}</td>
                                     <td>{income.client}</td>
                                     <td>{income.amount}</td>
                                     <td>{mediums[income.medium]}</td>
