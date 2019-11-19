@@ -33,7 +33,8 @@ class Dashboard extends Component {
         chart_range:'current_year',
         incomeChartData: [this.setMonthlyIncomeChart('current_year')],
         expenseChartData: [this.setMonthlyExpenseChart('current_year')],
-        labels: []
+        incomeLabels: [],
+        expenseLabels: []
     }
 
     this.addProject = this.addProject.bind(this);
@@ -221,7 +222,7 @@ class Dashboard extends Component {
           incomeChartData: res.data.monthlyIncome
         });
         this.setState({
-          labels: res.data.labels
+          incomeLabels: res.data.labels
         })
         return this.state.incomeChartData;
       })
@@ -232,6 +233,9 @@ class Dashboard extends Component {
       this.setState({
         expenseChartData: res.data.monthlyExpense
       });
+      this.setState({
+        expenseLabels: res.data.labels
+      })
       return this.state.expenseChartData;
     })
 }
@@ -263,13 +267,13 @@ class Dashboard extends Component {
         </div>
         <div style={{display:'flex', width:1600}} className="row">
           <div className="col-md-6">
-            { this.state.expenseChartData.length > 0 && this.state.labels.length > 0 &&
-                <ChartExpense expesedata={this.state.expenseChartData} labels={this.state.labels}/>
+            { this.state.expenseChartData.length > 0 && this.state.expenseLabels.length > 0 &&
+                <ChartExpense expesedata={this.state.expenseChartData} labels={this.state.expenseLabels}/>
             }
           </div>
           <div className="col-md-6">
-            { this.state.incomeChartData.length > 0 && this.state.labels.length > 0 &&
-              <ChartIncome incomedata={this.state.incomeChartData} labels={this.state.labels}/>
+            { this.state.incomeChartData.length > 0 && this.state.incomeLabels.length > 0 &&
+              <ChartIncome incomedata={this.state.incomeChartData} labels={this.state.incomeLabels}/>
             }
           </div>
         </div>
