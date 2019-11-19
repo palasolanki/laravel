@@ -25,7 +25,7 @@ function Income() {
           })
           .catch((res) => {
         }),
-        api.get('/getMedium')
+        api.get('/getIncomeMediumList')
         .then((res) => {
             setMediums(res.data.medium);
         }),

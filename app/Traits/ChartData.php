@@ -6,7 +6,7 @@ use App\Expense;
 use App\Income;
 use Illuminate\Support\Carbon;
 
-trait Chartdata {
+trait ChartData {
     public function getChartData($chart_range, $from) {
         $today = Carbon::now();
         $labels = [];
@@ -14,19 +14,19 @@ trait Chartdata {
         if($chart_range == 'current_year') {
 
             $querydate = $this->getCurrentYearQuerydate($today);
-            $labels = $this->getCurrentYearLablesName($today);
+            $labels = $this->getCurrentYearLabelsName($today);
 
         } elseif ($chart_range == 'past_year') {
 
             $querydate = $this->getPastYearQuerydate($today);
-            $labels = $this->getPastYearLablesName($today);
+            $labels = $this->getPastYearLabelsName($today);
 
         } else {
             $querydate = [
                 Carbon::createFromDate($today->year-1, $today->month+1, 1)->startOfMonth(),
                 Carbon::createFromDate($today->year, $today->month, 1)->endOfMonth()
             ];
-            $labels = $this->getLastYearLablesName($querydate);
+            $labels = $this->getLastYearLabelsName($querydate);
         }
 
         $monthData = $this->getMonthData($querydate, $from);
@@ -48,12 +48,12 @@ trait Chartdata {
         return $querydate;
     }
 
-    public function getCurrentYearLablesName($today) {
+    public function getCurrentYearLabelsName($today) {
         $current_year = $today->year;
-        $currentLableYearForStart = (in_array($today->month, [1,2,3])) ? substr($current_year-1, 2) : substr($current_year, 2);
-        $currentLableYearForEnd = (in_array($today->month, [1,2,3])) ? substr($current_year, 2) : substr($current_year + 1, 2);
+        $currentLabelYearForStart = (in_array($today->month, [1,2,3])) ? substr($current_year-1, 2) : substr($current_year, 2);
+        $currentLabelYearForEnd = (in_array($today->month, [1,2,3])) ? substr($current_year, 2) : substr($current_year + 1, 2);
 
-        return $this->getLablesNameForChart($currentLableYearForStart, $currentLableYearForEnd, substr($today->format('F'), 0, 3));
+        return $this->getLabelsNameForChart($currentLabelYearForStart, $currentLabelYearForEnd, substr($today->format('F'), 0, 3));
     }
 
     public function getPastYearQuerydate($today) {
@@ -67,16 +67,16 @@ trait Chartdata {
         return $querydate;
     }
 
-    public function getPastYearLablesName($today) {
+    public function getPastYearLabelsName($today) {
         $current_year = $today->year;
-        $pastLableYearForStart = (in_array($today->month, [1,2,3])) ? substr($current_year-2, 2) : substr($current_year-1, 2);
-        $pastLableYearForEnd = (in_array($today->month, [1,2,3])) ? substr($current_year-1, 2) : substr($current_year, 2);
+        $pastLabelYearForStart = (in_array($today->month, [1,2,3])) ? substr($current_year-2, 2) : substr($current_year-1, 2);
+        $pastLabelYearForEnd = (in_array($today->month, [1,2,3])) ? substr($current_year-1, 2) : substr($current_year, 2);
 
-        return $this->getLablesNameForChart($pastLableYearForStart, $pastLableYearForEnd);
+        return $this->getLabelsNameForChart($pastLabelYearForStart, $pastLabelYearForEnd);
     }
 
-    public function getLastYearLablesName($querydate) {
-        $lastYearLablesName = [];
+    public function getLastYearLabelsName($querydate) {
+        $lastYearLabelsName = [];
         $monthName = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
         $oldYear = substr($querydate[0]->year, 2);
         $newYear = substr($querydate[1]->year, 2);
@@ -89,14 +89,14 @@ trait Chartdata {
         }
         $monthName = array_values($monthName);
         foreach ($monthName as $key => $value) {
-            array_push($lastYearLablesName, $value.'-'.$oldYear);
+            array_push($lastYearLabelsName, $value.'-'.$oldYear);
             if ($key >= array_search('Jan', $monthName)) {
-                $lastYearLablesName[$key] = $value.'-'.$newYear;
+                $lastYearLabelsName[$key] = $value.'-'.$newYear;
             }
         }
-        return $lastYearLablesName;
+        return $lastYearLabelsName;
     }
-    public function getLablesNameForChart($start, $end, $current_month_name = null) {
+    public function getLabelsNameForChart($start, $end, $current_month_name = null) {
         $tmp = [];
         $monthName = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
         foreach ($monthName as $key => $value) {

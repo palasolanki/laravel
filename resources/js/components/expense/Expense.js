@@ -23,7 +23,7 @@ function Expense() {
           })
           .catch((res) => {
         }),
-        api.get('/getMedium')
+        api.get('/getExpenseMediumList')
         .then((res) => {
             setMediums(res.data.medium);
         })

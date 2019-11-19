@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IncomeRequest;
 use App\Income;
 use Symfony\Component\HttpFoundation\Request;
-use App\Traits\Chartdata;
+use App\Traits\ChartData;
 
 class IncomeController extends Controller
 {
-    use Chartdata;
+    use ChartData;
     /**
      * Display a listing of the resource.
      *
@@ -87,6 +87,10 @@ class IncomeController extends Controller
     {
         $income->delete();
         return ['message' => 'Delete Success!'];
+    }
+
+    public function getIncomeMediumList() {
+        return ['medium' => config('expense.medium')];
     }
 
     public function monthlyIncomeChart(Request $request) {

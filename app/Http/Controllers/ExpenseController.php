@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Expense;
 use Illuminate\Http\Request;
 use App\Http\Requests\ExpenseRequest;
-use App\Traits\Chartdata;
+use App\Traits\ChartData;
 
 class ExpenseController extends Controller
 {
-    use Chartdata;
+    use ChartData;
     /**
      * Display a listing of the resource.
      *
@@ -68,7 +68,7 @@ class ExpenseController extends Controller
         return ['message' => 'Delete Success!'];
     }
 
-    public function getMedium() {
+    public function getExpenseMediumList() {
         return ['medium' => config('expense.medium')];
     }
 

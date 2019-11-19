@@ -14,7 +14,7 @@ function AddExpense() {
 
     const [mediums, setMediums] = useState([]);
     useEffect( () => {
-        api.get('/getMedium')
+        api.get('/getExpenseMediumList')
         .then((res) => {
             setMediums(res.data.medium);
         })

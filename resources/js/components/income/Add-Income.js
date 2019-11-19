@@ -15,7 +15,7 @@ function AddIncome() {
     const [mediums, setMediums] = useState([]);
     const [clients, setClients] = useState([]);
     useEffect( () => {
-        api.get('/getMedium')
+        api.get('/getIncomeMediumList')
         .then((res) => {
             setMediums(res.data.medium);
         })
