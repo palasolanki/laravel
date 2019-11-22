@@ -1,5 +1,6 @@
 import React, { Component, Fragment, useState } from 'react'
 import DatePicker from "react-datepicker";
+import Select from 'react-select';
 
 function EditExpenses(props) {
 
@@ -18,6 +19,7 @@ function EditExpenses(props) {
         item: props.currentExpense.item,
         amount: props.currentExpense.amount,
         medium: props.currentExpense.medium,
+        tags: props.currentExpense.tags
     }
     const [expense, setExpense] = useState(editData)
     const handleInputChange = event => {
@@ -26,6 +28,9 @@ function EditExpenses(props) {
     }
     const handleDateChange = event => {
         setExpense({ ...expense, ['date']: event })
+    }
+    const handleSelectChange = event => {
+        setExpense({ ...expense, ['tags']: (event) ? event : [] })
     }
     const mediumList = Object.keys(props.mediums).map((key) => {
         return <option value={key} key={key}>{props.mediums[key]}</option>
@@ -75,6 +80,14 @@ function EditExpenses(props) {
                                         mediumList
                                     }
                                 </select>
+                            </div>
+                            <div className="form-group">
+                                <Select
+                                    value={expense.tags}
+                                    onChange={handleSelectChange}
+                                    isMulti
+                                    options={props.options}
+                                />
                             </div>
                             <div className="form-group">
                                 <button type="submit" style={{ margin: '0 10px 0 0' }} className="btn btn-success">Submit</button>

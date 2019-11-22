@@ -27,10 +27,23 @@ function Expense() {
         .then((res) => {
             setMediums(res.data.medium);
         })
-            .catch((res) => {
+
+        api.get('/getTagList')
+        .then((res) => {
+            createTagOptions(res.data.tags);
         })
     }, [] );
 
+    const [options, setOptions] = useState([]);
+    const createTagOptions = data => {
+        const tagOptions = data.map(value => {
+            return {
+                value: value,
+                label: value
+            }
+        });
+        setOptions(tagOptions);
+    }
     const [currentExpense, setCurrentExpense] = useState()
     const editRow = expense => {
         setCurrentExpense(expense)
@@ -59,6 +72,13 @@ function Expense() {
         })
     }
 
+    const getTags = data => {
+        const tags = data.map(value => {
+            return value.label;
+        });
+        return tags.toString();
+    }
+
     return  (
                 <div className="bg-white">
                     <h2>Expenses</h2>
@@ -76,6 +96,7 @@ function Expense() {
                                 <th>Item</th>
                                 <th>Amount</th>
                                 <th>Medium</th>
+                                <th>Tags</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -87,6 +108,9 @@ function Expense() {
                                     <td>{expense.item}</td>
                                     <td>{expense.amount}</td>
                                     <td>{mediums[expense.medium]}</td>
+                                    <td>
+                                        { (expense.tags.length > 0) ? getTags(expense.tags) : '-' }
+                                    </td>
                                     <td>
                                         <button className="btn btn-sm btn--prime" onClick={() => editRow(expense)}>Edit</button>&nbsp;
                                         <button className="btn btn-sm btn--cancel" onClick={() => setDeleteExpenseIdFunction(expense._id)}>Delete</button>
@@ -101,7 +125,7 @@ function Expense() {
                         </tbody>
                     </table>
 
-                     {showEditModal && <EditExpenses handleCloseEdit={handleCloseEdit} currentExpense={currentExpense} mediums={mediums} updateExpense={updateExpense} />}
+                     {showEditModal && <EditExpenses handleCloseEdit={handleCloseEdit} currentExpense={currentExpense} mediums={mediums} options={options} updateExpense={updateExpense} />}
                      {showDeleteModal &&
                          <div>
                            <div style={{ display: 'block' }} className="modal">

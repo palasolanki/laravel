@@ -33,6 +33,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::resource('expenses', 'ExpenseController');
     Route::resource('incomes', 'IncomeController');
     Route::resource('hardwares', 'HardwareController');
+    Route::get('/getTagList', 'ExpenseController@getTagList');
     Route::get('/getExpenseMediumList', 'ExpenseController@getExpenseMediumList');
     Route::get('/getIncomeMediumList', 'IncomeController@getIncomeMediumList');
     Route::post('/monthlyExpenseChart', 'ExpenseController@monthlyExpenseChart');

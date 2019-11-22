@@ -1,6 +1,7 @@
-import React, { Component, Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import DatePicker from "react-datepicker";
 import api from '../../helpers/api';
+import Select from 'react-select';
 
 function AddExpense() {
     let errors = [];
@@ -9,8 +10,10 @@ function AddExpense() {
         date: new Date(),
         item: '',
         amount: '',
-        medium: ''
+        medium: '',
+        tags: []
     };
+    const [options, setOptions] = useState([]);
 
     const [mediums, setMediums] = useState([]);
     useEffect( () => {
@@ -18,9 +21,21 @@ function AddExpense() {
         .then((res) => {
             setMediums(res.data.medium);
         })
-            .catch((res) => {
+
+        api.get('/getTagList')
+        .then((res) => {
+            createTagOptions(res.data.tags);
         })
     }, [] );
+    const createTagOptions = data => {
+        const tagOption = data.map(value => {
+            return {
+                value:value,
+                label:value
+            }
+        });
+        setOptions(tagOption);
+    }
     const [expenseData, setExpenseData] = useState([data]);
 
     const mediumList = Object.keys(mediums).map((key) => {
@@ -39,6 +54,14 @@ function AddExpense() {
                 ...rows[key],
                 [name]:value
             }
+        }
+        setExpenseData(rows)
+    }
+    const handleSelectChange = key => event => {
+        const rows = [...expenseData];
+        rows[key] = {
+            ...rows[key],
+            ['tags']: (event) ? event : []
         }
         setExpenseData(rows)
     }
@@ -81,7 +104,7 @@ function AddExpense() {
                 {
                     expenseData.map((expenseItem, key) =>
                         <div className="row ml-2" key={key}>
-                            <div className="col-md-3 form-group">
+                            <div className="col-md-2 form-group">
                                 <DatePicker
                                     className="form-control"
                                     name="date"
@@ -89,7 +112,7 @@ function AddExpense() {
                                     onChange={handleInputChange(key)}
                                 />
                             </div>
-                            <div className="col-md-3 form-group">
+                            <div className="col-md-2 form-group">
                                 <input type="text" name="item" placeholder="Enter Item" onChange={handleInputChange(key)} value={expenseItem.item} className="form-control"/>
                             </div>
                             <div className="col-md-2 form-group">
@@ -102,6 +125,14 @@ function AddExpense() {
                                         mediumList
                                     }
                                 </select>
+                            </div>
+                            <div className="col-md-2 form-group">
+                                <Select
+                                    value={expenseItem.tags}
+                                    onChange={handleSelectChange(key)}
+                                    isMulti
+                                    options={options}
+                                />
                             </div>
                             {
                                 (expenseData.length > 1 && key != 0) ?

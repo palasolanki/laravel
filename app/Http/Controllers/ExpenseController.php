@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Expense;
 use Illuminate\Http\Request;
 use App\Http\Requests\ExpenseRequest;
+use App\Tag;
 use App\Traits\ChartData;
 
 class ExpenseController extends Controller
@@ -70,6 +71,10 @@ class ExpenseController extends Controller
 
     public function getExpenseMediumList() {
         return ['medium' => config('expense.medium')];
+    }
+    public function getTagList() {
+        $tags = Tag::where('type', 'expense')->get()->pluck('tag');
+        return ['tags' => $tags];
     }
 
     public function monthlyExpenseChart(Request $request) {
