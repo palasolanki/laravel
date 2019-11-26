@@ -1,69 +1,43 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import logo from '../../../images/favicon.png';
+import { connect } from 'react-redux';
+import { logout } from '../../store/actions/auth';
 
-export default class Header extends Component {
+export class Header extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      contenteditable: false,
-      projectTitle: 'Project Title'
-    }
-    this.inputRef = React.createRef();
-    this.editTitle = this.editTitle.bind(this);
-    this.setTitle = this.setTitle.bind(this);
-    this.onBlur = this.onBlur.bind(this);
-   // this.handleClickOutside = this.handleClickOutside.bind(this);
+
+    this.logout = this.logout.bind(this);
   }
 
-  editTitle(e) {
-
-    // if(!this.state.contenteditable) {
-    //   document.addEventListener('click', this.handleClickOutside, false);
-    // }
-    // else {
-    //   document.removeEventListener('click', this.handleClickOutside, false);
-    // }
-   // setTimeout(() => {
-      this.setState({
-        contenteditable: true,
-      });
-   // }, 200);
+  logout() {
+    this.props.logout();
   }
-
-  setTitle(e) {
-    this.setState({
-      projectTitle: e.target.value
-    })
-  }
-  onBlur(e) {
-    this.setState({
-      contenteditable: false
-    })
-  }
-
-  // handleClickOutside(e) {
-  //   if (this.projectTitleRef.contains(e.target)) {
-  //     return;
-  //   }
-  //   else {
-  //     this.setState({
-  //       contenteditable: false,
-  //     })
-  //   }
-  // }
 
   render() {
-    const { contenteditable, projectTitle } = this.state;
+    const { toggleSidebar } = this.props;
     return (
-      <header className="d-flex align-items-center justify-content-center">
-        { contenteditable ? <input
-        type="text"
-        value={projectTitle}
-        contentEditable={true}
-        onChange={this.setTitle}
-        onBlur={this.onBlur}
-        ref={this.inputRef}
-        /> : <h3 className="mb-0" onDoubleClick={this.editTitle}>{projectTitle}</h3> }
+      <header className="header d-flex align-items-center justify-content-between">
+        <div className="flex-row d-flex align-items-center">
+          <Link to={'/'}>
+            <img className="logo rounded-circle" src={logo} alt="Logo" />
+          </Link>
+          <div className="ml-md-4 ml-3 hamburger d-flex" onClick={toggleSidebar}>
+            <FontAwesomeIcon className="bars" icon="bars" />
+          </div>
+        </div>
+        <div className="mr-3 text-white logout" onClick={this.logout}>Logout</div>
       </header>
     )
   }
 }
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logout: () => dispatch(logout())
+  }
+}
+
+export default connect(null, mapDispatchToProps)(Header);
