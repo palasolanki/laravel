@@ -9,6 +9,9 @@ export default class Sidebar extends Component {
       { title: 'Projects', url: '/project' },
       { title: 'Clients', url: '/clients' },
       { title: 'Tags', url: '/tags' },
+      { title: 'Income', url: '/incomes' },
+      { title: 'Expense', url: '/expenses' },
+      { title: 'Hardware', url: '/hardwares' },
     ];
 
     this.state = {

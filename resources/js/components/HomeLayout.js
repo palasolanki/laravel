@@ -7,8 +7,14 @@ import Dashboard from "./dashboard/Dashboard";
 import Sidebar from "./sidebar/Sidebar";
 import ClientList from "./clients/ClientList";
 import Tags from "./tags/Tags";
+import Expense from "./expense/Expense";
+import Income from "./income/Income";
+import AddExpense from "./expense/Add-Expense";
+import AddIncome from "./income/Add-Income";
 import Client from "./clients/AddClient";
 import EditClient from "./clients/EditClient";
+import Hardware from "./hardwares/Hardware";
+import AddHardware from "./hardwares/Add-Hardware";
 
 
 export default class Home extends Component {
@@ -62,6 +68,12 @@ export default class Home extends Component {
             <Route exact path='/addClient'  component={Client} />
             <Route exact path='/editClient/:id'  component={EditClient} />
             <Route exact path='/tags'  component={Tags} />
+            <Route exact path='/expenses'  component={Expense} />
+            <Route exact path='/expenses/add'  component={AddExpense} />
+            <Route exact path='/incomes'  component={Income} />
+            <Route exact path='/incomes/add'  component={AddIncome} />
+            <Route exact path='/hardwares'  component={Hardware} />
+            <Route exact path='/hardwares/add'  component={AddHardware} />
           </Switch>
         </div>
       </Fragment>

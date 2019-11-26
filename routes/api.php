@@ -12,6 +12,8 @@
 |
 */
 
+use Illuminate\Http\Resources\Json\Resource;
+
 Route::post('login', 'LoginController@login');
 
 Route::group(['middleware' => 'auth:api'], function () {
@@ -28,6 +30,16 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/tags', 'TagController@store')->name('tag.store');
     Route::patch('/tags/{id}', 'TagController@update')->name('tag.update');
     Route::delete('/tags/{id}', 'TagController@destroy')->name('tag.destroy');
+    Route::resource('expenses', 'ExpenseController');
+    Route::resource('incomes', 'IncomeController');
+    Route::resource('hardwares', 'HardwareController');
+    Route::get('/getTagList', 'ExpenseController@getTagList');
+    Route::get('/getExpenseMediumList', 'ExpenseController@getExpenseMediumList');
+    Route::get('/getIncomeMediumList', 'IncomeController@getIncomeMediumList');
+    Route::post('/monthlyExpenseChart', 'ExpenseController@monthlyExpenseChart');
+    Route::post('/monthlyIncomeChart', 'IncomeController@monthlyIncomeChart');
+    Route::get('/getClients', 'ClientController@getClients');
+    Route::get('/getHardwareType', 'HardwareController@getHardwareType');
     Route::get('/clients', 'ClientController@index');
     Route::post('/addClient', 'ClientController@store');
     Route::get('/client/{client}', 'ClientController@show');
