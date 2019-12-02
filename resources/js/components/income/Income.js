@@ -1,7 +1,7 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
-
+import {ToastsContainer, ToastsStore, ToastsContainerPosition} from 'react-toasts';
 import EditIncomes from "./Edit-Income";
 
 function Income() {
@@ -45,6 +45,7 @@ function Income() {
         .then((res) => {
             setIncomes(incomes.map(income => (income._id === incomeId ? res.data.updateIncome : income)))
             handleCloseEdit();
+            ToastsStore.success(res.data.message);
         })
     }
 
@@ -59,13 +60,19 @@ function Income() {
         .then((res) => {
             setIncomes(incomes.filter(income => income._id !== incomeId))
             handleCloseDelete();
+            ToastsStore.error(res.data.message);
         })
     }
 
+    const getClientName = (clientId) => {
+        return clients.map(client => {
+            return (client._id == clientId) ? client.name : ''
+        })
+    }
     return  (
                 <div className="bg-white">
                     <h2>Income</h2>
-
+                    <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_RIGHT}/>
                     <Link
                         style= {{ margin: '10px 10px' }}
                         to="incomes/add"
@@ -87,7 +94,7 @@ function Income() {
                           incomes.map(income => (
                                 <tr key={income._id}>
                                     <td>{income.date}</td>
-                                    <td>{income.client}</td>
+                                    <td>{getClientName(income.client)}</td>
                                     <td>{income.amount}</td>
                                     <td>{mediums[income.medium]}</td>
                                     <td>

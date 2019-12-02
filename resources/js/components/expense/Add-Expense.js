@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react'
 import DatePicker from "react-datepicker";
 import api from '../../helpers/api';
 import Select from 'react-select';
+import {ToastsContainer, ToastsStore, ToastsContainerPosition} from 'react-toasts';
 
 function AddExpense() {
     let errors = [];
@@ -77,6 +78,8 @@ function AddExpense() {
             api.post(`/expenses`, {data: expenseData})
             .then((res) => {
                 setExpenseData([data]);
+                setErrorList([]);
+                ToastsStore.success(res.data.message);
             })
             .catch(function (error) {
                 const tmp = error.response.data.errors;
@@ -92,6 +95,7 @@ function AddExpense() {
         <Fragment>
             <div className="bg-white">
                 <h2>Add-Expenses</h2>
+                <ToastsContainer position={ToastsContainerPosition.TOP_RIGHT} store={ToastsStore}/>
                 {
                     (errorList.length > 0) ?
                         <div className="alert alert-danger">
