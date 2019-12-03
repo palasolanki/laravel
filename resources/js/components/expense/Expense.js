@@ -52,12 +52,12 @@ function Expense() {
     }
 
     const updateExpense = (expenseId, updatedExpense) => {
-            api.patch(`/expenses/${expenseId}`, {data:updatedExpense})
-            .then((res) => {
-                setExpenses(expenses.map(expense => (expense._id === expenseId ? res.data.updateExpense : expense)))
-                handleCloseEdit();
-                ToastsStore.success(res.data.message);
-            })
+        api.patch(`/expenses/${expenseId}`, {data:updatedExpense})
+        .then((res) => {
+            setExpenses(expenses.map(expense => (expense._id === expenseId ? res.data.updateExpense : expense)))
+            handleCloseEdit();
+            ToastsStore.success(res.data.message);
+        })
     }
 
     const [deleteExpenseId, setDeleteExpenseId] = useState();
@@ -73,13 +73,6 @@ function Expense() {
             handleCloseDelete();
             ToastsStore.error(res.data.message);
         })
-    }
-
-    const getTags = data => {
-        const tags = data.map(value => {
-            return value.label;
-        });
-        return tags.toString();
     }
 
     return  (
@@ -112,7 +105,7 @@ function Expense() {
                                     <td>{expense.amount}</td>
                                     <td>{mediums[expense.medium]}</td>
                                     <td>
-                                        { (expense.tags.length > 0) ? getTags(expense.tags) : '-' }
+                                        { (expense.tags.length > 0) ? expense.tags.toString() : '-' }
                                     </td>
                                     <td>
                                         <button className="btn btn-sm btn--prime" onClick={() => editRow(expense)}>Edit</button>&nbsp;

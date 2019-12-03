@@ -53,7 +53,7 @@ class ExpenseRequest extends FormRequest
             $expense->item = $value['item'];
             $expense->amount = $value['amount'];
             $expense->medium = $value['medium'];
-            $expense->tags = $value['tags'];
+            $expense->tags = $value['tagsArray'];
             $expense->save();
             $expense = null;
         }
