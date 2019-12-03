@@ -1,7 +1,7 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import DatePicker from "react-datepicker";
 import api from '../../helpers/api';
-import {ToastsContainer, ToastsStore, ToastsContainerPosition} from 'react-toasts';
+import {ToastsStore} from 'react-toasts';
 
 function AddIncome() {
     let errors = [];
@@ -82,7 +82,6 @@ function AddIncome() {
         <Fragment>
             <div className="bg-white">
                 <h2>Add-Income</h2>
-                <ToastsContainer position={ToastsContainerPosition.TOP_RIGHT} store={ToastsStore}/>
                 {
                     (errorList.length > 0) ?
                         <div className="alert alert-danger">

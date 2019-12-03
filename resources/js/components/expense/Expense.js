@@ -1,7 +1,7 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
-import {ToastsContainer, ToastsStore, ToastsContainerPosition} from 'react-toasts';
+import {ToastsStore} from 'react-toasts';
 
 import EditExpenses from "./Edit-Expense";
 
@@ -78,7 +78,6 @@ function Expense() {
     return  (
                 <div className="bg-white">
                     <h2>Expenses</h2>
-                    <ToastsContainer position={ToastsContainerPosition.TOP_RIGHT} store={ToastsStore}/>
                     <Link
                         style= {{ margin: '10px 10px' }}
                         to="expenses/add"

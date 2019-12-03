@@ -1,7 +1,7 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
-import {ToastsContainer, ToastsStore, ToastsContainerPosition} from 'react-toasts';
+import {ToastsStore} from 'react-toasts';
 import EditIncomes from "./Edit-Income";
 
 function Income() {
@@ -72,7 +72,6 @@ function Income() {
     return  (
                 <div className="bg-white">
                     <h2>Income</h2>
-                    <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_RIGHT}/>
                     <Link
                         style= {{ margin: '10px 10px' }}
                         to="incomes/add"

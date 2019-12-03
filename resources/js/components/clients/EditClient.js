@@ -1,6 +1,7 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
+import {ToastsStore} from 'react-toasts';
 
 const EditClient = (props) => {
     const initialFormState = { name: '', company_name: '', country: '' }
@@ -30,6 +31,7 @@ const EditClient = (props) => {
             .then((res) => {
 
                 setSendRequest(false)
+                ToastsStore.success(res.data.message);
                 props.history.push('/clients');
             })
             .catch((err) => {
