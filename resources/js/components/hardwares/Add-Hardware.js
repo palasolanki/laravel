@@ -1,6 +1,7 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import DatePicker from "react-datepicker";
 import api from '../../helpers/api';
+import {ToastsStore} from 'react-toasts';
 
 function AddHardware() {
     let errors = [];
@@ -75,6 +76,8 @@ function AddHardware() {
             api.post(`/hardwares`, {data: changeDateFormat()})
             .then((res) => {
                 setHardwareData([data]);
+                setErrorList([]);
+                ToastsStore.success(res.data.message);
             })
             .catch(function (error) {
                 const tmp = error.response.data.errors;

@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react'
 import DatePicker from "react-datepicker";
 import api from '../../helpers/api';
 import Select from 'react-select';
+import {ToastsStore} from 'react-toasts';
 
 function AddExpense() {
     let errors = [];
@@ -11,7 +12,8 @@ function AddExpense() {
         item: '',
         amount: '',
         medium: '',
-        tags: []
+        tags: [],
+        tagsArray: []
     };
     const [options, setOptions] = useState([]);
 
@@ -59,9 +61,13 @@ function AddExpense() {
     }
     const handleSelectChange = key => event => {
         const rows = [...expenseData];
+        const tmp = event.map(value => {
+            return value['label'];
+        })
         rows[key] = {
             ...rows[key],
-            ['tags']: (event) ? event : []
+            ['tags']: (event) ? event : [],
+            ['tagsArray']: (event) ? tmp : []
         }
         setExpenseData(rows)
     }
@@ -77,16 +83,18 @@ function AddExpense() {
             api.post(`/expenses`, {data: expenseData})
             .then((res) => {
                 setExpenseData([data]);
-            })
-            .catch(function (error) {
-                const tmp = error.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
+            setErrorList([]);
+            ToastsStore.success(res.data.message);
+        })
+        .catch(function (error) {
+            const tmp = error.response.data.errors;
+            for (const key in tmp) {
+                if (!errors.includes(tmp[key][0])) {
+                    errors.push(tmp[key][0]);
                 }
-                setErrorList(errors);
-            });
+            }
+            setErrorList(errors);
+        });
     }
     return  (
         <Fragment>

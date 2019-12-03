@@ -1,6 +1,7 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import DatePicker from "react-datepicker";
 import api from '../../helpers/api';
+import {ToastsStore} from 'react-toasts';
 
 function AddIncome() {
     let errors = [];
@@ -34,7 +35,7 @@ function AddIncome() {
         return <option value={key} key={key}>{mediums[key]}</option>
     })
     const clientList = clients.map((client, key) => {
-        return <option value={client.name} key={key}>{client.name}</option>
+        return <option value={client._id} key={key}>{client.name}</option>
     })
     const handleInputChange = key => event => {
         const rows = [...incomeData];
@@ -64,6 +65,8 @@ function AddIncome() {
             api.post(`/incomes`, {data: incomeData})
             .then((res) => {
                 setIncomeData([data]);
+                setErrorList([]);
+                ToastsStore.success(res.data.message);
             })
             .catch(function (error) {
                 const tmp = error.response.data.errors;

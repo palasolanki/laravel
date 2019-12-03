@@ -15,7 +15,7 @@ import Client from "./clients/AddClient";
 import EditClient from "./clients/EditClient";
 import Hardware from "./hardwares/Hardware";
 import AddHardware from "./hardwares/Add-Hardware";
-
+import {ToastsContainer, ToastsStore, ToastsContainerPosition} from 'react-toasts';
 
 export default class Home extends Component {
   constructor(props) {
@@ -61,6 +61,7 @@ export default class Home extends Component {
       <Fragment>
         <Header toggleSidebar={this.toggleSidebar} />
         <Sidebar match={match} isSidebarOpen={isSidebarOpen} />
+        <ToastsContainer position={ToastsContainerPosition.TOP_RIGHT} store={ToastsStore}/>
         <div className={classNames({ "full": !isSidebarOpen }, "main")}>
           <Switch>
             <Route exact path='/' component={Dashboard} />

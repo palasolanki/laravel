@@ -1,6 +1,7 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
+import {ToastsStore} from 'react-toasts';
 
 import EditHardwares from "./Edit-Hardware";
 
@@ -60,6 +61,7 @@ function Hardware() {
         api.patch(`/hardwares/${hardwareId}`, {data:changeDateFormat(updatedHardware)})
         .then((res) => {
             setHardwares(hardwares.map(hardware => (hardware._id === hardwareId ? res.data.updateHardware : hardware)))
+            ToastsStore.success(res.data.message);
             handleCloseEdit();
         })
     }
@@ -75,13 +77,13 @@ function Hardware() {
         .then((res) => {
             setHardwares(hardwares.filter(hardware => hardware._id !== hardwareId))
             handleCloseDelete();
+            ToastsStore.error(res.data.message);
         })
     }
 
     return  (
                 <div className="bg-white">
                     <h2>Hardwares</h2>
-
                     <Link
                         style= {{ margin: '10px 10px' }}
                         to="hardwares/add"
@@ -104,7 +106,7 @@ function Hardware() {
                         {hardwares.length > 0 ? (
                           hardwares.map(hardware => (
                                 <tr key={hardware._id}>
-                                    <td>{(hardware.date) ? hardware.date.date : 'Not available'}</td>
+                                    <td>{(hardware.date) ? hardware.date : 'Not available'}</td>
                                     <td>{hardware.item}</td>
                                     <td>{types[hardware.type]}</td>
                                     <td>{(hardware.serial_number)? hardware.serial_number: 'Not available'}</td>

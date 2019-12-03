@@ -6,7 +6,7 @@ export default class Sidebar extends Component {
     super(props);
     this.navTitles = [
       { title: 'Dashboard', url: '/' },
-      { title: 'Projects', url: '/project' },
+      // { title: 'Projects', url: '/project' },
       { title: 'Clients', url: '/clients' },
       { title: 'Tags', url: '/tags' },
       { title: 'Income', url: '/incomes' },

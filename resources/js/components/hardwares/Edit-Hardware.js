@@ -14,7 +14,7 @@ function EditHardware(props) {
         textAlign: 'center',
     };
     const editData = {
-        date: (props.currentHardware.date) ? new Date(props.currentHardware.date.date) : '',
+        date: (props.currentHardware.date) ? new Date(props.currentHardware.date) : '',
         item: props.currentHardware.item,
         type: props.currentHardware.type,
         serial_number: (props.currentHardware.serial_number)? props.currentHardware.serial_number : '',
