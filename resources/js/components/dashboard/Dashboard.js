@@ -258,26 +258,22 @@ class Dashboard extends Component {
     }
     return (
       <Fragment>
-        <div className="row form-group">
-            <select className="form-control" onChange={(e) => this.handleInputChange(e)} value={this.state.chart_range}>
-                <option value="current_year">Current-Year</option>
-                <option value="past_year">Past-Year</option>
-                <option value="last_12_month">Last-12 Month</option>
-            </select>
+        <select className="form-control col-md-2" style={{margin:20}} onChange={(e) => this.handleInputChange(e)} value={this.state.chart_range}>
+            <option value="current_year">Current-Year</option>
+            <option value="past_year">Past-Year</option>
+            <option value="last_12_month">Last-12 Month</option>
+        </select>
+        <div className="col-md-6">
+          { this.state.expenseChartData.length > 0 && this.state.expenseLabels.length > 0 &&
+              <ChartExpense expesedata={this.state.expenseChartData} labels={this.state.expenseLabels}/>
+          }
         </div>
-        <div style={{display:'flex', width:1600}} className="row">
-          <div className="col-md-6">
-            { this.state.expenseChartData.length > 0 && this.state.expenseLabels.length > 0 &&
-                <ChartExpense expesedata={this.state.expenseChartData} labels={this.state.expenseLabels}/>
-            }
-          </div>
-          <div className="col-md-6">
-            { this.state.incomeChartData.length > 0 && this.state.incomeLabels.length > 0 &&
-              <ChartIncome incomedata={this.state.incomeChartData} labels={this.state.incomeLabels}/>
-            }
-          </div>
+        <div className="col-md-6">
+          { this.state.incomeChartData.length > 0 && this.state.incomeLabels.length > 0 &&
+            <ChartIncome incomedata={this.state.incomeChartData} labels={this.state.incomeLabels}/>
+          }
         </div>
-        <div className={classnames({ "overlay": isAddProject !== null }, "dashboard p-3")} >
+        {/* <div className={classnames({ "overlay": isAddProject !== null }, "dashboard p-3")} >
           {
             this.types.map((type, i) => {
               return <div className={classnames({ "position-relative": isAddProject !== i }, "section")} key={i}>
@@ -328,7 +324,7 @@ class Dashboard extends Component {
               </div>
             })
           }
-        </div>
+        </div> */}
       </Fragment>
     );
   }

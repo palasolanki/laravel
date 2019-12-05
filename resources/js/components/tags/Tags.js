@@ -5,7 +5,7 @@ import api from '../../helpers/api';
 // import Modal from 'react-bootstrap-modal';
 import AddTags from "./Add-Tags";
 import EditTags from "./Edit-Tags";
-
+import {ToastsStore} from 'react-toasts';
 
 function Tags() {
   //For modal open/close
@@ -39,6 +39,7 @@ function Tags() {
      api.post(`/tags`, tag)
      .then((res) => {
         setTags([...tags, res.data.addedTag]);
+        ToastsStore.success(res.data.message);
         handleClose();
      })
   }
@@ -56,6 +57,7 @@ function Tags() {
       .then((res) => {
         console.log(res.data);
         setTags(tags.filter(tag => tag._id !== tagId))
+        ToastsStore.error(res.data.message);
         handleCloseDelete();
       })
   }
@@ -73,6 +75,7 @@ function Tags() {
     api.patch(`/tags/${tagId}`, updatedTag)
       .then((res) => {
         setTags(tags.map(tag => (tag._id === tagId ? res.data.updatedTag : tag)))
+        ToastsStore.success(res.data.message);
         handleCloseEdit();
       })
   }

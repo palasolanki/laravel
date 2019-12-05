@@ -1,6 +1,7 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
+import {ToastsStore} from 'react-toasts';
 
 const AddClient = (props) => {
     const initialFormState = { name: '', company_name: '', country: '' }
@@ -25,6 +26,7 @@ const AddClient = (props) => {
         return api.post('/addClient', client)
             .then((res) => {
                 props.history.push('/clients');
+                ToastsStore.success(res.data.message);
             })
             .catch((err) => {
                 console.log(err)

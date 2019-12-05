@@ -39,7 +39,7 @@ class ClientController extends Controller
         return response()->json(['message' => 'Client deleted Successfully...']);
     }
     public function getClients() {
-        return ['clients' => Client::all()];
+        return ['clients' => Client::select('_id', 'name')->get()];
     }
 
 }

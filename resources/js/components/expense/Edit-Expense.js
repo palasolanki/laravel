@@ -14,12 +14,22 @@ function EditExpenses(props) {
       const modalHeader = {
         textAlign: 'center',
       };
+    const tmpTagsList = (data) => {
+        const tmpTagOptions = data.map(value => {
+            return {
+                value: value,
+                label: value
+            }
+        });
+        return tmpTagOptions;
+    }
     const editData = {
         date: new Date(props.currentExpense.date),
         item: props.currentExpense.item,
         amount: props.currentExpense.amount,
         medium: props.currentExpense.medium,
-        tags: props.currentExpense.tags
+        tags: tmpTagsList(props.currentExpense.tags),
+        tagsArray: props.currentExpense.tags
     }
     const [expense, setExpense] = useState(editData)
     const handleInputChange = event => {
@@ -30,7 +40,14 @@ function EditExpenses(props) {
         setExpense({ ...expense, ['date']: event })
     }
     const handleSelectChange = event => {
-        setExpense({ ...expense, ['tags']: (event) ? event : [] })
+        const tmp = event.map(value => {
+            return value['label'];
+        })
+        setExpense({
+            ...expense,
+            ['tags']: (event) ? event : [],
+            ['tagsArray']: (event) ? tmp : []
+        })
     }
     const mediumList = Object.keys(props.mediums).map((key) => {
         return <option value={key} key={key}>{props.mediums[key]}</option>

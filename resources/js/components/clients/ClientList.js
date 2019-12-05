@@ -1,6 +1,7 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
+import {ToastsStore} from 'react-toasts';
 
 const ClientList = () => {
 
@@ -31,6 +32,7 @@ const ClientList = () => {
             .then((res) => {
                 setDeleteRequest(false)
                 setMount(true)
+                ToastsStore.error(res.data.message);
             })
             .catch((err) => {
                 console.log(err)
