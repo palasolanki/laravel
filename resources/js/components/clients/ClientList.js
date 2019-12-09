@@ -1,5 +1,9 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faPlus
+} from '@fortawesome/free-solid-svg-icons';
 import api from '../../helpers/api';
 import {ToastsStore} from 'react-toasts';
 
@@ -47,7 +51,7 @@ const ClientList = () => {
 
     return (
         <Fragment>
-            <div className="bg-white">
+            <div className="bg-white p-3">
                 {deleteRequest &&
                     <div className="modal show" style={{ display: "block" }}>
                         <div className="modal-dialog" role="document">
@@ -65,8 +69,10 @@ const ClientList = () => {
                             </div>
                         </div>
                     </div>}
-                <h2>Clients</h2>
-                <Link to="/addClient" className="btn btn-sm btn--prime">New Client</Link>
+                <div className="d-flex align-items-center pb-2">
+                    <h2 className="heading">Clients</h2>
+                    <Link to="/addClient" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} /> Add Client</Link>
+                </div>
                 <table className="table">
                     <thead className="thead-light">
                         <tr>

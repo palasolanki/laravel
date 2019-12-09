@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import api from '../../helpers/api';
 import {ToastsStore} from 'react-toasts';
 import EditIncomes from "./Edit-Income";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faPlus
+} from '@fortawesome/free-solid-svg-icons';
 
 function Income() {
     const incomesData = [];
@@ -70,14 +74,18 @@ function Income() {
         })
     }
     return  (
-                <div className="bg-white">
-                    <h2>Income</h2>
+                <div className="bg-white p-3">
+                    <div className="d-flex align-items-center pb-2">
+                        <h2 className="heading">Income</h2>
+                <Link to="incomes/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Income</Link>
+                    </div>
+                    {/* <h2>Income</h2>
                     <Link
                         style= {{ margin: '10px 10px' }}
                         to="incomes/add"
                         className="btn btn-info btn-lg">
                         Add Income
-                    </Link>
+                    </Link> */}
                     <table className="table">
                         <thead className="thead-light">
                             <tr>

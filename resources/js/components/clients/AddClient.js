@@ -40,7 +40,7 @@ const AddClient = (props) => {
 
     return (
         <Fragment>
-            <div className="bg-white">
+            <div className="bg-white p-3">
                 <h2>Add Client</h2>
                 <form onSubmit={submitForm} method="post" className="form-horizontal">
                     <div className="form-group">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import Chart from '../dashboard/Chart';
 
 export default function expenseChart(props) {
@@ -7,8 +7,8 @@ export default function expenseChart(props) {
         title: 'Monthly Expense',
     }
     return (
-        <div>
+        <Fragment>
             <Chart currentdata={currentdata} chartData={props.expesedata} labels={props.labels}/>
-        </div>
+        </Fragment>
     );
   }

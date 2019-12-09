@@ -138,10 +138,16 @@ header input {
     left: 0;
     transform: translate3d(0, 0, 0);
 }
-
-.sidebar .nav-link.active {
+.sidebar .nav-link.active svg,
+.sidebar .nav-link:hover svg {
+    color: #3cafbb;
+    transition: 0.5s;
+}
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
     background-color: #ececec; // #3acbda;
     color: #000;
+    transition: 0.5s;
 }
 
 .sidebar .nav-link {
@@ -152,7 +158,7 @@ header input {
 
 .logo {
     width: 40px;
-    margin-left: 20px;
+    margin-left: 13px;
 }
 
 .bars {
@@ -644,4 +650,12 @@ header>a {
 input {
     width: 100%;
     height: 35px;
+}
+
+
+
+/* custum css*/
+.heading {
+    font-size: 24px;
+    @extend .mb-0;
 }

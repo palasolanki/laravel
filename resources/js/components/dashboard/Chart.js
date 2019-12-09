@@ -19,8 +19,8 @@ export default function Chart(props) {
                 title:{
                   display:true,
                   text:props.currentdata.title,
-                  fontSize:25,
-                  fontColor:'green'
+                  fontSize:24,
+                  fontColor:'#32afbc'
                 },
                 legend:{
                   display:true,

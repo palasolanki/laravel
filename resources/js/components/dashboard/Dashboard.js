@@ -222,7 +222,7 @@ class Dashboard extends Component {
           incomeChartData: res.data.monthlyIncome
         });
         this.setState({
-          incomeLabels: res.data.labels
+          incomeLabels: res.data.labels,
         })
         return this.state.incomeChartData;
       })
@@ -258,17 +258,20 @@ class Dashboard extends Component {
     }
     return (
       <Fragment>
-        <select className="form-control col-md-2" style={{margin:20}} onChange={(e) => this.handleInputChange(e)} value={this.state.chart_range}>
-            <option value="current_year">Current-Year</option>
-            <option value="past_year">Past-Year</option>
-            <option value="last_12_month">Last-12 Month</option>
-        </select>
-        <div className="col-md-6">
+        <div className="form-group d-flex align-items-center pl-4 mt-3">
+          <label htmlFor="filterlabel" className="mb-0 font-weight-bold">Filter</label>
+          <select aria-label="filterlabel" className="form-control col-xl-2 col-md-3" style={{margin:20}} onChange={(e) => this.handleInputChange(e)} value={this.state.chart_range}>
+              <option value="current_year">Current-Year</option>
+              <option value="past_year">Past-Year</option>
+              <option value="last_12_month">Last-12 Month</option>
+          </select>
+        </div>
+        <div className="col-xl-6">
           { this.state.expenseChartData.length > 0 && this.state.expenseLabels.length > 0 &&
               <ChartExpense expesedata={this.state.expenseChartData} labels={this.state.expenseLabels}/>
           }
         </div>
-        <div className="col-md-6">
+        <div className="col-xl-6 mt-md-5 mt-4">
           { this.state.incomeChartData.length > 0 && this.state.incomeLabels.length > 0 &&
             <ChartIncome incomedata={this.state.incomeChartData} labels={this.state.incomeLabels}/>
           }

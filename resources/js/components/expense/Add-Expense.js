@@ -98,8 +98,10 @@ function AddExpense() {
     }
     return  (
         <Fragment>
-            <div className="bg-white">
-                <h2>Add-Expenses</h2>
+            <div className="bg-white p-3">
+                <div className="row mx-0 pl-3">
+                    <h2 className="heading">Add-Expenses</h2>
+                </div>
                 {
                     (errorList.length > 0) ?
                         <div className="alert alert-danger">
@@ -111,8 +113,8 @@ function AddExpense() {
                 }
                 {
                     expenseData.map((expenseItem, key) =>
-                        <div className="row ml-2" key={key}>
-                            <div className="col-md-2 form-group">
+                        <div className="row mx-0 align-items-center" key={key}>
+                            <div className="col-md-2 form-group mt-3">
                                 <DatePicker
                                     className="form-control"
                                     name="date"
@@ -120,13 +122,13 @@ function AddExpense() {
                                     onChange={handleInputChange(key)}
                                 />
                             </div>
-                            <div className="col-md-2 form-group">
+                            <div className="col-md-2 form-group mt-3">
                                 <input type="text" name="item" placeholder="Enter Item" onChange={handleInputChange(key)} value={expenseItem.item} className="form-control"/>
                             </div>
-                            <div className="col-md-2 form-group">
+                            <div className="col-md-2 form-group mt-3">
                                 <input type="text" name="amount" placeholder="Enter Amount" onChange={handleInputChange(key)} value={expenseItem.amount} className="form-control"/>
                             </div>
-                            <div className="col-md-2 form-group">
+                            <div className="col-md-2 form-group mt-3">
                                 <select name="medium" className="form-control" onChange={handleInputChange(key)} value={expenseItem.medium}>
                                     <option value="">SELECT</option>
                                     {
@@ -134,7 +136,7 @@ function AddExpense() {
                                     }
                                 </select>
                             </div>
-                            <div className="col-md-2 form-group">
+                            <div className="col-md-2 form-group mt-3">
                                 <Select
                                     value={expenseItem.tags}
                                     onChange={handleSelectChange(key)}
@@ -152,9 +154,9 @@ function AddExpense() {
                         </div>
                   )
                 }
-                <div className="row ml-4">
-                    <button className="col-md-1 btn btn-success" onClick={addExpense}><i aria-hidden="true" className="fa fa-plus-circle"></i> Add New</button>
-                    <button className="col-md-1 btn btn-primary" onClick={saveExpenses}> Save </button>
+                <div className="row mx-0 pl-3">
+                    <button className="col-md-1 btn btn-success mr-2" onClick={addExpense}><i aria-hidden="true" className="fa fa-plus-circle"></i> Add New</button>
+                    <button className="col-md-1 btn btn-primary ml-2" onClick={saveExpenses}> Save </button>
                 </div>
 
             </div>

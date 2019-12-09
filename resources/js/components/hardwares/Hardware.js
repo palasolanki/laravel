@@ -2,8 +2,11 @@ import React, { Component, Fragment, useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
 import {ToastsStore} from 'react-toasts';
-
 import EditHardwares from "./Edit-Hardware";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faPlus
+} from '@fortawesome/free-solid-svg-icons';
 
 function Hardware() {
     const [hardwares, setHardwares] = useState([]);
@@ -82,14 +85,18 @@ function Hardware() {
     }
 
     return  (
-                <div className="bg-white">
-                    <h2>Hardwares</h2>
+                <div className="bg-white p-3">
+                    <div className="d-flex align-items-center pb-2">
+                        <h2 className="heading">Hardwares</h2>
+                <Link to="hardwares/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Hardwares</Link>
+                    </div>
+                    {/* <h2>Hardwares</h2>
                     <Link
                         style= {{ margin: '10px 10px' }}
                         to="hardwares/add"
                         className="btn btn-info btn-lg">
                         Add Hardware
-                    </Link>
+                    </Link> */}
                     <table className="table">
                         <thead className="thead-light">
                             <tr>

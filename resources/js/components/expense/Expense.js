@@ -2,8 +2,11 @@ import React, { Component, Fragment, useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
 import {ToastsStore} from 'react-toasts';
-
 import EditExpenses from "./Edit-Expense";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faPlus
+} from '@fortawesome/free-solid-svg-icons';
 
 function Expense() {
     const [showEditModal, setEditShow] = useState(false);
@@ -76,14 +79,18 @@ function Expense() {
     }
 
     return  (
-                <div className="bg-white">
-                    <h2>Expenses</h2>
+                <div className="bg-white p-3">
+                    <div className="d-flex align-items-center pb-2">
+                        <h2 className="heading">Expenses</h2>
+                <Link to="expenses/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Expenses</Link>
+                    </div>
+                    {/* <h2>Expenses</h2>
                     <Link
                         style= {{ margin: '10px 10px' }}
                         to="expenses/add"
                         className="btn btn-info btn-lg">
                         Add Expense
-                    </Link>
+                    </Link> */}
                     <table className="table">
                         <thead className="thead-light">
                             <tr>
