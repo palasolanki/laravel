@@ -89,7 +89,7 @@ function Tags() {
         <div className="bg-white p-3">
           <div className="d-flex align-items-center pb-2">
             <h2 className="heading">Tags</h2>
-          <button to="/" className="btn btn--prime ml-auto" onClick={openShow}><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Tags</button>
+            <button to="/" className="btn btn--prime ml-auto" onClick={openShow}><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Tag</button>
           </div>
             {/* <h2>Tags</h2>
             <button style={{ margin: '10px 10px' }} type="button" className="btn btn-info btn-lg" onClick={openShow}>Add Tag</button> */}

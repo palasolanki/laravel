@@ -656,6 +656,11 @@ input {
 
 /* custum css*/
 .heading {
-    font-size: 24px;
+    font-size: 22px;
     @extend .mb-0;
+}
+@media(max-width: 767px){
+    .heading {
+        font-size: 18px;
+    }
 }

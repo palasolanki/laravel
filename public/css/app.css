@@ -11284,6 +11284,12 @@ input {
 /* custum css*/
 
 .heading {
-  font-size: 24px;
+  font-size: 22px;
+}
+
+@media (max-width: 767px) {
+  .heading {
+    font-size: 18px;
+  }
 }
 

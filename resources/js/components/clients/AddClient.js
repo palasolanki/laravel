@@ -41,23 +41,23 @@ const AddClient = (props) => {
     return (
         <Fragment>
             <div className="bg-white p-3">
-                <h2>Add Client</h2>
-                <form onSubmit={submitForm} method="post" className="form-horizontal">
+                <h2 className="heading mb-3">Add Client</h2>
+                <form onSubmit={submitForm} method="post" className="form-horizontal col-lg-6 col-12 px-0">
                     <div className="form-group">
-                        <label className="control-label col-sm-2" htmlFor="name">Name:</label>
-                        <div className="col-sm-10">
+                        <label className="control-label col-auto px-0" htmlFor="name">Name:</label>
+                        <div className="col-sm-10 pl-0">
                             <input type="text" className="form-control" placeholder="Enter Name" name="name" value={client.name} onChange={handleInputChange} />
                         </div>
                     </div>
                     <div className="form-group">
-                        <label className="control-label col-sm-2" htmlFor="company_name">Company Name:</label>
-                        <div className="col-sm-10">
+                        <label className="control-label col-auto px-0" htmlFor="company_name">Company Name:</label>
+                        <div className="col-sm-10 pl-0">
                             <input type="text" className="form-control" placeholder="Enter Company Name" name="company_name" value={client.company_name} onChange={handleInputChange} />
                         </div>
                     </div>
                     <div className="form-group">
-                        <label className="control-label col-sm-2" htmlFor="country">Country:</label>
-                        <div className="col-sm-10">
+                        <label className="control-label col-auto px-0" htmlFor="country">Country:</label>
+                        <div className="col-sm-10 pl-0">
                             <select className="form-control" name="country" value={client.country} onChange={handleInputChange}>
                                 <option value="" disabled>Country</option>
                                 <option value="India">India</option>
@@ -67,9 +67,9 @@ const AddClient = (props) => {
                         </div>
                     </div>
                     <div className="form-group">
-                        <div className="col-sm-offset-2 col-sm-10">
-                            <button type="submit" className="btn btn--prime">Save</button>&nbsp;
-                            <Link to="/clients" className="btn btn--cancel">Cancel</Link>
+                        <div className="col-sm-offset-2 col-sm-10 pl-0">
+                            <button type="submit" className="btn btn--prime mr-1">Save</button>&nbsp;
+                            <Link to="/clients" className="btn btn--cancel ml-1">Cancel</Link>
                         </div>
                     </div>
                 </form>

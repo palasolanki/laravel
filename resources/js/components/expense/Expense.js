@@ -82,7 +82,7 @@ function Expense() {
                 <div className="bg-white p-3">
                     <div className="d-flex align-items-center pb-2">
                         <h2 className="heading">Expenses</h2>
-                <Link to="expenses/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Expenses</Link>
+                        <Link to="expenses/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Expense</Link>
                     </div>
                     {/* <h2>Expenses</h2>
                     <Link

@@ -88,7 +88,7 @@ function Hardware() {
                 <div className="bg-white p-3">
                     <div className="d-flex align-items-center pb-2">
                         <h2 className="heading">Hardwares</h2>
-                <Link to="hardwares/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Hardwares</Link>
+                        <Link to="hardwares/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Hardware</Link>
                     </div>
                     {/* <h2>Hardwares</h2>
                     <Link
