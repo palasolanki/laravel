@@ -7,13 +7,12 @@ function EditExpenses(props) {
     const closeModalSpanStyle = {
         color: '#000',
         float: 'right',
-        padding: '10px 15px',
         fontSize: '20px',
         cursor: 'pointer'
       };
-      const modalHeader = {
-        textAlign: 'center',
-      };
+    //   const modalHeader = {
+    //     textAlign: 'center',
+    //   };
     const tmpTagsList = (data) => {
         const tmpTagOptions = data.map(value => {
             return {
@@ -58,13 +57,13 @@ function EditExpenses(props) {
             className="modal"
             style={{ display: "block", transition: 'display 1s' }}
         >
-            <div className="modal-dialog register-modal-dialog">
-                <div className="modal-content gradient_border modal-background">
-                    <div className="gradient_border-2">
-                        <span onClick={props.handleCloseEdit} style={closeModalSpanStyle}>X</span>
-                    </div>
-                    <div style={modalHeader}>
-                        <h3>Edit Expense</h3>
+            <div className="modal-dialog modal-dialog-centered register-modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header align-items-center">
+                        <h3 className="heading">Edit Expense</h3>
+                        <div className="gradient_border-2">
+                            <span onClick={props.handleCloseEdit} style={closeModalSpanStyle}>X</span>
+                        </div>
                     </div>
                     <div className="modal-body">
                         <form
@@ -77,6 +76,7 @@ function EditExpenses(props) {
                                 <label>Date:</label>
                                 <DatePicker
                                     name="date"
+                                    className="form-control"
                                     selected={expense.date}
                                     onChange={handleDateChange}
                                 />
@@ -98,7 +98,7 @@ function EditExpenses(props) {
                                     }
                                 </select>
                             </div>
-                            <div className="form-group">
+                            <div className="form-group pt-1">
                                 <Select
                                     value={expense.tags}
                                     onChange={handleSelectChange}
@@ -106,9 +106,9 @@ function EditExpenses(props) {
                                     options={props.options}
                                 />
                             </div>
-                            <div className="form-group">
-                                <button type="submit" style={{ margin: '0 10px 0 0' }} className="btn btn-success">Submit</button>
-                                <button onClick={props.handleCloseEdit} className="btn btn-danger">Cancel</button>
+                            <div className="form-group text-right">
+                                <button type="submit" className="btn btn--prime mr-1">Submit</button>
+                                <button onClick={props.handleCloseEdit} className="btn btn--cancel ml-1">Cancel</button>
                             </div>
                         </form>
                     </div>

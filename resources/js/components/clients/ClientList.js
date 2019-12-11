@@ -53,55 +53,58 @@ const ClientList = () => {
         <Fragment>
             <div className="bg-white p-3">
                 {deleteRequest &&
-                    <div className="modal show" style={{ display: "block" }}>
-                        <div className="modal-dialog" role="document">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Are you sure?</h5>
-                                    <button type="button" onClick={() => setDeleteRequest(false)} className="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" onClick={() => deleteClientData(clientID)} className="btn btn-sm btn--prime">Yes</button>
-                                    <button type="button" onClick={() => setDeleteRequest(false)} className="btn btn-sm btn--cancel" data-dismiss="modal">No</button>
+                    <div>
+                        <div style={{ display: 'block' }} className="modal">
+                            <div className="modal-dialog modal-dialog-centered register-modal-dialog">
+                                <div className="modal-content" style={{ padding: '25px', }}>
+                                    <div className="text-center">
+                                        <h3 className="heading">Are you sure?</h3>
+                                    </div>
+                                    <div style={{ textAlign: 'center', }} className="modal-body">
+                                        <button type="button" onClick={() => deleteClientData(clientID)} className="btn mr-1 btn--prime">Yes</button>
+                                        <button type="button" onClick={() => setDeleteRequest(false)} className="btn ml-1 btn--cancel" data-dismiss="modal">No</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>}
+                        <div className="modal-backdrop show" />
+                    </div>
+                    }
                 <div className="d-flex align-items-center pb-2">
                     <h2 className="heading">Clients</h2>
                     <Link to="/addClient" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} /> Add Client</Link>
                 </div>
-                <table className="table">
-                    <thead className="thead-light">
-                        <tr>
-                            <th >#</th>
-                            <th>Name</th>
-                            <th>Company</th>
-                            <th>Country</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {clients.length > 0 ? (clients.map((client, id) => (
-                            <tr key={client._id}>
-                                <td>{id + 1}</td>
-                                <td>{client.name}</td>
-                                <td>{client.company_name}</td>
-                                <td>{client.country}</td>
-                                <td>
-                                    <Link to={`editClient/${client._id}`} className="btn btn-sm btn--prime">Edit</Link>&nbsp;
-                                    <button className="btn btn-sm btn--cancel" onClick={() => deleteClient(client._id)}>Delete</button>
-                                </td>
+                <div className="table-responsive">
+                    <table className="table">
+                        <thead className="thead-light">
+                            <tr>
+                                <th >#</th>
+                                <th>Name</th>
+                                <th>Company</th>
+                                <th>Country</th>
+                                <th>Action</th>
                             </tr>
-                        ))) : (
-                                <tr>
-                                    <td colSpan={3}>No clients</td>
+                        </thead>
+                        <tbody>
+                            {clients.length > 0 ? (clients.map((client, id) => (
+                                <tr key={client._id}>
+                                    <td>{id + 1}</td>
+                                    <td>{client.name}</td>
+                                    <td>{client.company_name}</td>
+                                    <td>{client.country}</td>
+                                    <td>
+                                        <Link to={`editClient/${client._id}`} className="btn btn-sm btn--prime">Edit</Link>&nbsp;
+                                        <button className="btn btn-sm btn--cancel ml-1" onClick={() => deleteClient(client._id)}>Delete</button>
+                                    </td>
                                 </tr>
-                            )}
-                    </tbody>
-                </table>
+                            ))) : (
+                                    <tr>
+                                        <td colSpan={3}>No clients</td>
+                                    </tr>
+                                )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </Fragment>
     );

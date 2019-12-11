@@ -90,61 +90,56 @@ function Hardware() {
                         <h2 className="heading">Hardwares</h2>
                         <Link to="hardwares/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Hardware</Link>
                     </div>
-                    {/* <h2>Hardwares</h2>
-                    <Link
-                        style= {{ margin: '10px 10px' }}
-                        to="hardwares/add"
-                        className="btn btn-info btn-lg">
-                        Add Hardware
-                    </Link> */}
-                    <table className="table">
-                        <thead className="thead-light">
-                            <tr>
-                                <th>Date of Purchase</th>
-                                <th>Item</th>
-                                <th>Type</th>
-                                <th>Serial Number</th>
-                                <th>Status</th>
-                                <th>Notes</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {hardwares.length > 0 ? (
-                          hardwares.map(hardware => (
-                                <tr key={hardware._id}>
-                                    <td>{(hardware.date) ? hardware.date : 'Not available'}</td>
-                                    <td>{hardware.item}</td>
-                                    <td>{types[hardware.type]}</td>
-                                    <td>{(hardware.serial_number)? hardware.serial_number: 'Not available'}</td>
-                                    <td>{status[hardware.status]}</td>
-                                    <td>{hardware.notes}</td>
-                                    <td>
-                                        <button className="btn btn-sm btn--prime" onClick={() => editRow(hardware)}>Edit</button>&nbsp;
-                                        <button className="btn btn-sm btn--cancel" onClick={() => setDeleteHardwareIdFunction(hardware._id)}>Delete</button>
-                                    </td>
-                                </tr>
-                          ))
-                        ) : (
+                    <div className="table-responsive">
+                        <table className="table">
+                            <thead className="thead-light">
                                 <tr>
-                                  <td colSpan={3}>No Hardwares</td>
+                                    <th>Date of Purchase</th>
+                                    <th>Item</th>
+                                    <th>Type</th>
+                                    <th>Serial Number</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                    <th>Action</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            {hardwares.length > 0 ? (
+                            hardwares.map(hardware => (
+                                    <tr key={hardware._id}>
+                                        <td>{(hardware.date) ? hardware.date : 'Not available'}</td>
+                                        <td>{hardware.item}</td>
+                                        <td>{types[hardware.type]}</td>
+                                        <td>{(hardware.serial_number)? hardware.serial_number: 'Not available'}</td>
+                                        <td>{status[hardware.status]}</td>
+                                        <td>{hardware.notes}</td>
+                                        <td>
+                                            <button className="btn btn-sm btn--prime" onClick={() => editRow(hardware)}>Edit</button>&nbsp;
+                                            <button className="btn btn-sm btn--cancel ml-1" onClick={() => setDeleteHardwareIdFunction(hardware._id)}>Delete</button>
+                                        </td>
+                                    </tr>
+                            ))
+                            ) : (
+                                    <tr>
+                                    <td colSpan={3}>No Hardwares</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
 
                      {showEditModal && <EditHardwares handleCloseEdit={handleCloseEdit} currentHardware={currentHardware} types={types} updateHardware={updateHardware} />}
                      {showDeleteModal &&
                          <div>
                            <div style={{ display: 'block' }} className="modal">
-                             <div className="modal-dialog register-modal-dialog">
+                             <div className="modal-dialog  modal-dialog-centered register-modal-dialog">
                                <div style={{padding:'25px',}} className="modal-content gradient_border modal-background">
                                    <div style={{textAlign: 'center',}}>
-                                       <h3>Are you sure to delete this Hardware?</h3>
+                                       <h3 className="heading">Are you sure to delete this Hardware?</h3>
                                    </div>
                                    <div style={{textAlign: 'center',}} className="modal-body">
-                                         <button style={{color: '#fff',}} className="btn btn-info" onClick={handleCloseDelete}>Cancel</button>&nbsp;
-                                         <button className="btn btn-danger" onClick={() => deleteHardware(deleteHardwareId)}>Delete</button>
+                                         <button style={{color: '#fff',}} className="btn btn--prime mr-1" onClick={handleCloseDelete}>Cancel</button>&nbsp;
+                                         <button className="btn btn--cancel ml-1" onClick={() => deleteHardware(deleteHardwareId)}>Delete</button>
                                    </div>
                                </div>
                              </div>

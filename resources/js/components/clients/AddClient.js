@@ -67,8 +67,8 @@ const AddClient = (props) => {
                         </div>
                     </div>
                     <div className="form-group">
-                        <div className="col-sm-offset-2 col-sm-10 pl-0">
-                            <button type="submit" className="btn btn--prime mr-1">Save</button>&nbsp;
+                        <div>
+                            <button type="submit" className="btn btn--prime mr-1">Save</button>
                             <Link to="/clients" className="btn btn--cancel ml-1">Cancel</Link>
                         </div>
                     </div>

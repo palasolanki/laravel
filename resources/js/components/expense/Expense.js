@@ -84,61 +84,56 @@ function Expense() {
                         <h2 className="heading">Expenses</h2>
                         <Link to="expenses/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Expense</Link>
                     </div>
-                    {/* <h2>Expenses</h2>
-                    <Link
-                        style= {{ margin: '10px 10px' }}
-                        to="expenses/add"
-                        className="btn btn-info btn-lg">
-                        Add Expense
-                    </Link> */}
-                    <table className="table">
-                        <thead className="thead-light">
-                            <tr>
-                                <th>Date</th>
-                                <th>Item</th>
-                                <th>Amount</th>
-                                <th>Medium</th>
-                                <th>Tags</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {expenses.length > 0 ? (
-                          expenses.map(expense => (
-                                <tr key={expense._id}>
-                                    <td>{expense.date}</td>
-                                    <td>{expense.item}</td>
-                                    <td>{expense.amount}</td>
-                                    <td>{mediums[expense.medium]}</td>
-                                    <td>
-                                        { (expense.tags.length > 0) ? expense.tags.toString() : '-' }
-                                    </td>
-                                    <td>
-                                        <button className="btn btn-sm btn--prime" onClick={() => editRow(expense)}>Edit</button>&nbsp;
-                                        <button className="btn btn-sm btn--cancel" onClick={() => setDeleteExpenseIdFunction(expense._id)}>Delete</button>
-                                    </td>
-                                </tr>
-                          ))
-                        ) : (
+                    <div className="table-responsive">
+                        <table className="table">
+                            <thead className="thead-light">
                                 <tr>
-                                  <td colSpan={3}>No Expenses</td>
+                                    <th>Date</th>
+                                    <th>Item</th>
+                                    <th>Amount</th>
+                                    <th>Medium</th>
+                                    <th>Tags</th>
+                                    <th>Action</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            {expenses.length > 0 ? (
+                            expenses.map(expense => (
+                                    <tr key={expense._id}>
+                                        <td>{expense.date}</td>
+                                        <td>{expense.item}</td>
+                                        <td>{expense.amount}</td>
+                                        <td>{mediums[expense.medium]}</td>
+                                        <td>
+                                            { (expense.tags.length > 0) ? expense.tags.toString() : '-' }
+                                        </td>
+                                        <td>
+                                            <button className="btn btn-sm btn--prime" onClick={() => editRow(expense)}>Edit</button>&nbsp;
+                                            <button className="btn btn-sm btn--cancel ml-1" onClick={() => setDeleteExpenseIdFunction(expense._id)}>Delete</button>
+                                        </td>
+                                    </tr>
+                            ))
+                            ) : (
+                                    <tr>
+                                    <td colSpan={3}>No Expenses</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
 
                      {showEditModal && <EditExpenses handleCloseEdit={handleCloseEdit} currentExpense={currentExpense} mediums={mediums} options={options} updateExpense={updateExpense} />}
                      {showDeleteModal &&
                          <div>
                            <div style={{ display: 'block' }} className="modal">
-                             <div className="modal-dialog register-modal-dialog">
+                             <div className="modal-dialog modal-dialog-centered register-modal-dialog">
                                <div style={{padding:'25px',}} className="modal-content gradient_border modal-background">
                                    <div style={{textAlign: 'center',}}>
-                                       <h3>Are you sure to delete this expense?</h3>
+                                       <h3 className="heading">Are you sure to delete this expense?</h3>
                                    </div>
                                    <div style={{textAlign: 'center',}} className="modal-body">
-                                         <button style={{color: '#fff',}} className="btn btn-info" onClick={handleCloseDelete}>Cancel</button>&nbsp;
-                                         <button className="btn btn-danger" onClick={() => deleteExpense(deleteExpenseId)}>Delete</button>
+                                         <button style={{color: '#fff',}} className="btn btn--prime mr-1" onClick={handleCloseDelete}>Cancel</button>&nbsp;
+                                         <button className="btn btn--cancel ml-1" onClick={() => deleteExpense(deleteExpenseId)}>Delete</button>
                                    </div>
                                </div>
                              </div>
