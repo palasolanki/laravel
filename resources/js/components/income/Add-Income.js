@@ -80,8 +80,8 @@ function AddIncome() {
     }
     return  (
         <Fragment>
-            <div className="bg-white">
-                <h2>Add-Income</h2>
+            <div className="bg-white p-3">
+                <h2 className="heading mb-3">Add-Income</h2>
                 {
                     (errorList.length > 0) ?
                         <div className="alert alert-danger">
@@ -93,8 +93,8 @@ function AddIncome() {
                 }
                 {
                     incomeData.map((incomeItem, key) =>
-                        <div className="row ml-2" key={key}>
-                            <div className="col-md-3 form-group">
+                        <div className="row mx-0 mb-2" key={key}>
+                            <div className="col-md-3 form-group px-0 pr-md-3">
                                 <DatePicker
                                     className="form-control"
                                     name="date"
@@ -102,7 +102,7 @@ function AddIncome() {
                                     onChange={handleInputChange(key)}
                                 />
                             </div>
-                            <div className="col-md-3 form-group">
+                            <div className="col-md-3 form-group px-0 px-md-3">
                                 <select name="client" className="form-control" onChange={handleInputChange(key)} value={incomeItem.client}>
                                     <option value="">SELECT</option>
                                     {
@@ -110,10 +110,10 @@ function AddIncome() {
                                     }
                                 </select>
                             </div>
-                            <div className="col-md-2 form-group">
+                            <div className="col-xl-2 col-md-3 form-group px-0 px-md-3">
                                 <input type="text" name="amount" placeholder="Enter Amount" onChange={handleInputChange(key)} value={incomeItem.amount} className="form-control"/>
                             </div>
-                            <div className="col-md-2 form-group">
+                            <div className="col-xl-2 col-md-3 form-group px-0 px-md-3">
                                 <select name="medium" className="form-control" onChange={handleInputChange(key)} value={incomeItem.medium}>
                                     <option value="">SELECT</option>
                                     {
@@ -131,9 +131,13 @@ function AddIncome() {
                         </div>
                   )
                 }
-                <div className="row ml-4">
-                    <button className="col-md-1 btn btn-success" onClick={addIncome}><i aria-hidden="true" className="fa fa-plus-circle"></i> Add New</button>
-                    <button className="col-md-1 btn btn-primary" onClick={saveIncomes}> Save </button>
+                <div className="row mx-0">
+                    <div className="col-12 px-0">
+                        <button className="btn btn-success mr-2" onClick={addIncome}> Add New</button>
+                    </div>
+                    <div className="col-12 px-0 mt-4">
+                        <button className="btn btn--prime" onClick={saveIncomes}> Save </button>
+                    </div>
                 </div>
 
             </div>

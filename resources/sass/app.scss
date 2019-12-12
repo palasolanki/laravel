@@ -138,10 +138,16 @@ header input {
     left: 0;
     transform: translate3d(0, 0, 0);
 }
-
-.sidebar .nav-link.active {
+.sidebar .nav-link.active svg,
+.sidebar .nav-link:hover svg {
+    color: #3cafbb;
+    transition: 0.5s;
+}
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
     background-color: #ececec; // #3acbda;
     color: #000;
+    transition: 0.5s;
 }
 
 .sidebar .nav-link {
@@ -152,7 +158,7 @@ header input {
 
 .logo {
     width: 40px;
-    margin-left: 20px;
+    margin-left: 13px;
 }
 
 .bars {
@@ -644,4 +650,57 @@ header>a {
 input {
     width: 100%;
     height: 35px;
+}
+
+
+
+/* custum css*/
+.heading {
+    font-size: 22px;
+    @extend .mb-0;
+}
+@media(max-width: 767px){
+    .heading {
+        font-size: 18px;
+    }
+}
+.table th,
+.table td {
+    white-space: nowrap;
+}
+.logout {
+    &__dropdown {
+        display: none;
+        li {
+            @extend .p-2;
+            a {
+                color: #333131;
+                white-space: nowrap;
+            }
+            &:hover a {
+                transition: 0.45s;
+                color: #3cafbb !important;
+            }
+        }
+    }
+    a {
+        @extend .d-flex;
+        @extend .align-items-center;
+        @extend .text-decoration-none;
+    }
+    &__link {
+        @extend .d-flex;
+        @extend .align-items-center;
+        @extend .text-decoration-none;
+        &:hover .logout__dropdown {
+            display : block !important;
+            position: absolute;
+            right: 0;
+            top: 50px;
+            min-width: 200px;
+            background: #ececec;
+            box-shadow: 5px 5px 6px 0px rgba(82, 63, 105, 0.15);
+        }
+    }
+
 }

@@ -1,17 +1,17 @@
 import React, { Component, Fragment, useState } from 'react'
 
-function AddTags(props) { 
+function AddTags(props) {
 
     const closeModalSpanStyle = {
         color: '#000',
         float: 'right',
-        padding: '10px 15px',
+        padding: '0px 15px',
         fontSize: '20px',
         cursor: 'pointer'
       };
-      const modalHeader = {
-        textAlign: 'center',
-      };
+    //   const modalHeader = {
+    //     textAlign: 'center',
+    //   };
 
     const initialFormState = {}
     const [tag, setTag] = useState(initialFormState)
@@ -25,13 +25,13 @@ function AddTags(props) {
     return (
         <Fragment>
         <div style={{ display: 'block' }} className="modal">
-            <div className="modal-dialog register-modal-dialog">
+            <div className="modal-dialog modal-dialog-centered register-modal-dialog">
                 <div className="modal-content gradient_border modal-background">
-                    <div className="gradient_border-2">
-                        <span onClick={props.handleClose} style={closeModalSpanStyle}>X</span>
-                    </div>
-                    <div style={modalHeader}>
-                        <h3>Add New Tag</h3>
+                    <div class="modal-header align-items-center">
+                        <h2 className="heading mb-0">Add New Tag</h2>
+                        <div className="gradient_border-2">
+                            <span onClick={props.handleClose} style={closeModalSpanStyle}>X</span>
+                        </div>
                     </div>
                     <div className="modal-body">
                         <form
@@ -55,9 +55,9 @@ function AddTags(props) {
                                     <option value="income">Income</option>
                                 </select>
                             </div>
-                            <div className="form-group">        
-                                    <button type="submit" style={{ margin: '0 10px 0 0' }} className="btn btn-success">Submit</button>
-                                    <button onClick={props.handleClose} className="btn btn-danger">Cancel</button>
+                            <div className="form-group text-right">
+                                <button type="submit" style={{ margin: '0 10px 0 0' }} className="btn btn--prime">Submit</button>
+                                <button onClick={props.handleClose} className="btn btn--cancel">Cancel</button>
                             </div>
                         </form>
                     </div>

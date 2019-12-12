@@ -91,8 +91,8 @@ function AddHardware() {
     }
     return  (
         <Fragment>
-            <div className="bg-white">
-                <h2>Add-Hardware</h2>
+            <div className="bg-white p-3">
+                <h2 className="heading mb-3">Add-Hardware</h2>
                 {
                     (errorList.length > 0) ?
                         <div className="alert alert-danger">
@@ -104,57 +104,73 @@ function AddHardware() {
                 }
                 {
                     hardwareData.map((hardwareItem, key) =>
-                        <div className="row ml-2" key={key}>
-                            <div className="col-md-2 form-group">
-                                <DatePicker
-                                    placeholder="Enter Purchase date"
-                                    className="form-control"
-                                    name="date"
-                                    dateFormat="dd/MM/yyyy"
-                                    selected={hardwareItem.date}
-                                    onChange={handleInputChange(key)}
-                                />
-                            </div>
-                            <div className="col-md-2 form-group">
-                                <input type="text" name="item" placeholder="Enter Item" onChange={handleInputChange(key)} value={hardwareItem.item} className="form-control"/>
-                            </div>
-                            <div className="col-md-1 form-group">
-                                <select name="type" className="form-control" onChange={handleInputChange(key)} value={hardwareItem.type}>
-                                    <option value="">SELECT</option>
-                                    {
-                                        typeList
-                                    }
-                                </select>
-                            </div>
-                            <div className="col-md-2 form-group">
-                                <input type="text" name="serial_number" placeholder="Enter Serial Number" onChange={handleInputChange(key)} value={hardwareItem.serial_number} className="form-control"/>
-                            </div>
-                            <div className="form-group">
-                                <select className="form-control" name="status" onChange={handleInputChange(key)} value={hardwareItem.status}>
-                                    <option value="">Select Type</option>
-                                    <option value="in_use">In-use</option>
-                                    <option value="spare">Spare</option>
-                                    <option value="needs_repair">Needs-Repair</option>
-                                </select>
-                            </div>
-                            <div className="col-md-2 form-group">
-                                <textarea placeholder="Enter Notes" name="notes" onChange={handleInputChange(key)}  value={hardwareItem.notes} />
-                            </div>
-                            {
-                                (hardwareData.length > 1 && key != 0) ?
-                                    <div className="col-md-1 form-group">
-                                        <button className="btn btn-danger" value={key} onClick={removeHardware}> Remove </button>
+                        <div className="" key={key}>
+                            <div className="row mx-0">
+                                <div className="col-xl-6 col-md-8 border p-xl-4 p-3 mb-3">
+                                    <div className="row mx-0 mt-2 flex-column flex-md-row">
+                                        <div className="col form-group px-0 px-lg-3 px-md-2">
+                                            <DatePicker
+                                                placeholder="Enter Purchase date"
+                                                className="form-control"
+                                                name="date"
+                                                dateFormat="dd/MM/yyyy"
+                                                selected={hardwareItem.date}
+                                                onChange={handleInputChange(key)}
+                                            />
+                                        </div>
+                                        <div className="col form-group px-0 px-lg-3 px-md-2">
+                                            <input type="text" name="item" placeholder="Enter Item" onChange={handleInputChange(key)} value={hardwareItem.item} className="form-control"/>
+                                        </div>
+                                        <div className="col form-group px-0 px-lg-3 px-md-2">
+                                            <select name="type" className="form-control" onChange={handleInputChange(key)} value={hardwareItem.type}>
+                                                <option value="">SELECT</option>
+                                                {
+                                                    typeList
+                                                }
+                                            </select>
+                                        </div>
                                     </div>
-                                : ''
-                            }
+                                    <div className="row mx-0 align-items-center flex-column flex-md-row">
+                                        <div className="col form-group px-0 px-lg-3 px-md-2 mb-md-0">
+                                            <input type="text" name="serial_number" placeholder="Enter Serial Number" onChange={handleInputChange(key)} value={hardwareItem.serial_number} className="form-control" />
+                                        </div>
+                                        <div className="form-group mb-md-0 col px-0 px-lg-3 px-md-2">
+                                            <select className="form-control" name="status" onChange={handleInputChange(key)} value={hardwareItem.status}>
+                                                <option value="">Select Type</option>
+                                                <option value="in_use">In-use</option>
+                                                <option value="spare">Spare</option>
+                                                <option value="needs_repair">Needs-Repair</option>
+                                            </select>
+                                        </div>
+                                        <div className="col form-group px-0 px-lg-3 px-md-2 mb-0">
+                                            <textarea className="w-100 form-control" placeholder="Enter Notes" name="notes" onChange={handleInputChange(key)} value={hardwareItem.notes} />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col row mx-0 px-0">
+                                    {
+                                    (hardwareData.length > 1 && key != 0) ?
+                                        <div className="col-md-3 px-0 px-md-3 form-group mb-md-0">
+                                            <button className="btn btn--cancel" value={key} onClick={removeHardware}> Remove </button>
+                                        </div>
+                                        : ''
+                                    }
+                                </div>
+                            </div>
+                            {/* <div className="row mx-0 col-6 px-0">
+
+                            </div> */}
                         </div>
                   )
                 }
-                <div className="row ml-4">
-                    <button className="col-md-1 btn btn-success" onClick={addHardware}><i aria-hidden="true" className="fa fa-plus-circle"></i> Add New</button>
-                    <button className="col-md-1 btn btn-primary" onClick={saveHardwares}> Save </button>
+                <div className="row mx-0">
+                    <div className="col-12 px-0 mt-2">
+                        <button className="btn btn-success mr-2" onClick={addHardware}> Add New</button>
+                    </div>
+                    <div className="col-12 px-0 mt-4">
+                        <button className="btn btn--prime" onClick={saveHardwares}> Save </button>
+                    </div>
                 </div>
-
             </div>
         </Fragment>
     )

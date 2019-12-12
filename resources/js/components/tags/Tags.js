@@ -1,11 +1,16 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import api from '../../helpers/api';
+import { Link } from "react-router-dom";
 // import { Switch, Route } from "react-router-dom";
 // import { Link, Route } from "react-router-dom";
 // import Modal from 'react-bootstrap-modal';
 import AddTags from "./Add-Tags";
 import EditTags from "./Edit-Tags";
 import {ToastsStore} from 'react-toasts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faPlus
+} from '@fortawesome/free-solid-svg-icons';
 
 function Tags() {
   //For modal open/close
@@ -81,13 +86,12 @@ function Tags() {
   }
 
     return (
-        <div className="bg-white">
-            <h2>Tags</h2>
-
-            <button style={{ margin: '10px 10px' }} type="button" className="btn btn-info btn-lg" onClick={openShow}>Add Tag</button>
-
+        <div className="bg-white p-3">
+          <div className="d-flex align-items-center pb-2">
+            <h2 className="heading">Tags</h2>
+            <button to="/" className="btn btn--prime ml-auto" onClick={openShow}><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Tag</button>
+          </div>
             <div className="container">
-
               <div className="modal fade" id="myModal" role="dialog">
                 <div className="modal-dialog">
 
@@ -124,7 +128,7 @@ function Tags() {
                             <td>{tag.type}</td>
                             <td>
                                 <button className="btn btn-sm btn--prime" onClick={() => editRow(tag)}>Edit</button>&nbsp;
-                                <button className="btn btn-sm btn--cancel" onClick={() => setDeleteTagIdFunction(tag._id)}>Delete</button>
+                                <button className="btn btn-sm btn--cancel ml-1" onClick={() => setDeleteTagIdFunction(tag._id)}>Delete</button>
                             </td>
                         </tr>
                   ))
@@ -141,14 +145,14 @@ function Tags() {
             {showDeleteModal &&
                 <div>
                   <div style={{ display: 'block' }} className="modal">
-                    <div className="modal-dialog register-modal-dialog">
+                    <div className="modal-dialog modal-dialog-centered register-modal-dialog">
                       <div style={{padding:'25px',}} className="modal-content gradient_border modal-background">
                           <div style={{textAlign: 'center',}}>
-                              <h3>Are you sure to delete this tag?</h3>
+                              <h3 className="heading">Are you sure to delete this tag?</h3>
                           </div>
                           <div style={{textAlign: 'center',}} className="modal-body">
-                                <button style={{color: '#fff',}} className="btn btn-info" onClick={handleCloseDelete}>Cancel</button>&nbsp;
-                                <button className="btn btn-danger" onClick={() => deleteTag(deleteTagId)}>Delete</button>
+                                <button style={{color: '#fff',}} className="btn btn--prime mr-1" onClick={handleCloseDelete}>Cancel</button>&nbsp;
+                                <button className="btn btn--cancel ml-1" onClick={() => deleteTag(deleteTagId)}>Delete</button>
                           </div>
                       </div>
                     </div>

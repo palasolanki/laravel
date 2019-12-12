@@ -1,17 +1,16 @@
 import React, { Component, Fragment, useState } from 'react'
 
-function EditTags(props) { 
+function EditTags(props) {
 
     const closeModalSpanStyle = {
         color: '#000',
         float: 'right',
-        padding: '10px 15px',
         fontSize: '20px',
         cursor: 'pointer'
       };
-      const modalHeader = {
-        textAlign: 'center',
-      };
+    //   const modalHeader = {
+    //     textAlign: 'center',
+    //   };
 
     const [tag, setTag] = useState(props.currentTag)
 
@@ -27,19 +26,19 @@ function EditTags(props) {
             className="modal"
             style={{ display: "block", transition: 'display 1s' }}
         >
-            <div className="modal-dialog register-modal-dialog">
-                <div className="modal-content gradient_border modal-background">
-                    <div className="gradient_border-2">
-                        <span onClick={props.handleCloseEdit} style={closeModalSpanStyle}>X</span>
-                    </div>
-                    <div style={modalHeader}>
-                        <h3>Edit Tag</h3>
+            <div className="modal-dialog modal-dialog-centered register-modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header align-items-center">
+                        <h3 className="heading mb-0">Edit Tag</h3>
+                        <div className="gradient_border-2">
+                            <span onClick={props.handleCloseEdit} style={closeModalSpanStyle}>X</span>
+                        </div>
                     </div>
                     <div className="modal-body">
                         <form
                             onSubmit={event => {
                                 event.preventDefault()
-                        
+
                                 props.updateTag(tag._id, tag)
                             }}
                         >
@@ -55,9 +54,9 @@ function EditTags(props) {
                                     <option value="income">Income</option>
                                 </select>
                             </div>
-                            <div className="form-group">        
-                                    <button type="submit" style={{ margin: '0 10px 0 0' }} className="btn btn-success">Submit</button>
-                                    <button onClick={props.handleCloseEdit} className="btn btn-danger">Cancel</button>
+                            <div className="form-group text-right">
+                                <button type="submit" className="btn btn--prime mr-1">Submit</button>
+                                <button onClick={props.handleCloseEdit} className="btn btn--cancel ml-1">Cancel</button>
                             </div>
                         </form>
                     </div>
