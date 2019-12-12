@@ -4,11 +4,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from '../../../images/favicon.png';
 import { connect } from 'react-redux';
 import { logout } from '../../store/actions/auth';
+import {
+  faUserCircle,
+  faSignOutAlt,
+  faUser
+} from '@fortawesome/free-solid-svg-icons';
 
 export class Header extends Component {
   constructor(props) {
     super(props);
-
     this.logout = this.logout.bind(this);
   }
 
@@ -19,7 +23,7 @@ export class Header extends Component {
   render() {
     const { toggleSidebar } = this.props;
     return (
-      <header className="header d-flex align-items-center justify-content-between">
+      <header className="header d-flex align-items-center justify-content-between py-0">
         <div className="flex-row d-flex align-items-center">
           <Link to={'/'}>
             <img className="logo rounded-circle" src={logo} alt="Logo" />
@@ -28,7 +32,22 @@ export class Header extends Component {
             <FontAwesomeIcon className="bars" icon="bars" />
           </div>
         </div>
-        <div className="mr-3 text-white logout" onClick={this.logout}>Logout</div>
+        <div className="mr-3 h-100 logout">
+          <div className="logout__link h-100">
+            <Link to={'/'} className="text-white"><FontAwesomeIcon size="2x" icon={faUserCircle} /><span className="ml-2">John</span></Link>
+            <ul className="logout__dropdown pl-0 list-unstyled px-3 mb-0">
+              <li>
+                <Link to={'/'}><FontAwesomeIcon size="1x" icon={faUser} /><span className="ml-2">Account</span></Link>
+              </li>
+              <li>
+                <Link to={'/'} className="logout" onClick={this.logout}>
+                <FontAwesomeIcon size="1x" icon={faSignOutAlt} />
+                  <span className="ml-2">Logout</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
       </header>
     )
   }

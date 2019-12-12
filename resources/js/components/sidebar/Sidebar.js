@@ -1,17 +1,31 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 import classNames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+// import {
+//   faBars,
+// } from '@fortawesome/free-solid-svg-icons';
+// library.add(faHome);
+import {
+  faHome,
+  faUsers,
+  faTags,
+  faDollarSign,
+  faCoins,
+  faMicrochip
+ } from '@fortawesome/free-solid-svg-icons';
 export default class Sidebar extends Component {
   constructor(props) {
     super(props);
     this.navTitles = [
-      { title: 'Dashboard', url: '/' },
+      { brandicon: faHome, title: 'Dashboard', url: '/' },
       // { title: 'Projects', url: '/project' },
-      { title: 'Clients', url: '/clients' },
-      { title: 'Tags', url: '/tags' },
-      { title: 'Income', url: '/incomes' },
-      { title: 'Expense', url: '/expenses' },
-      { title: 'Hardware', url: '/hardwares' },
+      { brandicon: faUsers, title: 'Clients', url: '/clients' },
+      { brandicon: faTags, title: 'Tags', url: '/tags' },
+      { brandicon: faDollarSign, title: 'Income', url: '/incomes' },
+      { brandicon: faCoins, title: 'Expense', url: '/expenses' },
+      { brandicon: faMicrochip, title: 'Hardware', url: '/hardwares' },
     ];
 
     this.state = {
@@ -49,6 +63,7 @@ export default class Sidebar extends Component {
                   className={classNames({ "active": (activeNav === navTitle.url) }, "nav-link")}
                   onClick={() => this.activeNav(navTitle.url)}
                 >
+                  <FontAwesomeIcon className="mr-2" icon={navTitle.brandicon} />
                   {navTitle.title}
                 </Link>
               </li>
