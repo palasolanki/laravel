@@ -11,9 +11,7 @@ const $ = require('jquery')
 $.DataTable = require('datatables.net')
 
 function Income(props) {
-    const incomesData = [];
     const [dataTable, setDataTable] = useState(null);
-    // const [incomes, setIncomes] = useState(incomesData);
     const [mediums, setMediums] = useState([]);
     const [clients, setClients] = useState([]);
 
@@ -26,12 +24,6 @@ function Income(props) {
     const handleCloseDelete = () => setDeleteShow(false);
 
     useEffect( () => {
-      api.get('/incomes')
-          .then((res) => {
-            setIncomes(res.data.data);
-          })
-          .catch((res) => {
-        }),
         api.get('/getIncomeMediumList')
         .then((res) => {
             setMediums(res.data.medium);
@@ -42,6 +34,7 @@ function Income(props) {
         }),
         registerEvent();
     }, [] );
+
     const [currentIncome, setCurrentIncome] = useState()
     const editRow = income => {
         setCurrentIncome(income)
@@ -51,7 +44,6 @@ function Income(props) {
     const updateIncome = (incomeId, updatedIncome) => {
         api.patch(`/incomes/${incomeId}`, {data:updatedIncome})
         .then((res) => {
-            // setIncomes(incomes.map(income => (income._id === incomeId ? res.data.updateIncome : income)))
             handleCloseEdit();
             ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
@@ -73,11 +65,6 @@ function Income(props) {
         })
     }
 
-    const getClientName = (clientId) => {
-        return clients.map(client => {
-            return (client._id == clientId) ? client.name : ''
-        })
-    }
     const registerEvent = () => {
         var table = $('#datatable').DataTable();
         setDataTable(table);
@@ -85,11 +72,9 @@ function Income(props) {
             var income = table.row( $(e.target).parents('tr') ).data();
             editRow(income)
         });
-
         $("#datatable").on("click", "tbody .deletData", function (e) {
             setDeleteIncomeIdFunction($(e.target).attr('id'));
         });
-
     }
     return  (
                 <div className="bg-white p-3">
@@ -128,7 +113,7 @@ export default class DataTable extends React.Component {
     componentDidMount() {
         this.el = $(this.el).DataTable({
             ajax: {
-                "url": 'http://dev.expensetracker.com/api/incomes',
+                "url": '/api/incomes',
                 "dataType": 'json',
                 "type": 'get',
                 "beforeSend": function (xhr) {
