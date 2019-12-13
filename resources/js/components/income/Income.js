@@ -7,10 +7,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faPlus
 } from '@fortawesome/free-solid-svg-icons';
+const $ = require('jquery')
+$.DataTable = require('datatables.net')
 
-function Income() {
+function Income(props) {
     const incomesData = [];
-    const [incomes, setIncomes] = useState(incomesData);
+    const [dataTable, setDataTable] = useState(null);
+    // const [incomes, setIncomes] = useState(incomesData);
     const [mediums, setMediums] = useState([]);
     const [clients, setClients] = useState([]);
 
@@ -25,7 +28,7 @@ function Income() {
     useEffect( () => {
       api.get('/incomes')
           .then((res) => {
-            setIncomes(res.data);
+            setIncomes(res.data.data);
           })
           .catch((res) => {
         }),
@@ -36,7 +39,8 @@ function Income() {
         api.get('/getClients')
         .then((res) => {
             setClients(res.data.clients);
-        })
+        }),
+        registerEvent();
     }, [] );
     const [currentIncome, setCurrentIncome] = useState()
     const editRow = income => {
@@ -47,9 +51,10 @@ function Income() {
     const updateIncome = (incomeId, updatedIncome) => {
         api.patch(`/incomes/${incomeId}`, {data:updatedIncome})
         .then((res) => {
-            setIncomes(incomes.map(income => (income._id === incomeId ? res.data.updateIncome : income)))
+            // setIncomes(incomes.map(income => (income._id === incomeId ? res.data.updateIncome : income)))
             handleCloseEdit();
             ToastsStore.success(res.data.message);
+            dataTable.ajax.reload();
         })
     }
 
@@ -62,9 +67,9 @@ function Income() {
     const deleteIncome = incomeId => {
         api.delete(`/incomes/${incomeId}`)
         .then((res) => {
-            setIncomes(incomes.filter(income => income._id !== incomeId))
             handleCloseDelete();
             ToastsStore.error(res.data.message);
+            dataTable.ajax.reload();
         })
     }
 
@@ -73,68 +78,83 @@ function Income() {
             return (client._id == clientId) ? client.name : ''
         })
     }
+    const registerEvent = () => {
+        var table = $('#datatable').DataTable();
+        setDataTable(table);
+        $("#datatable").on("click", "tbody .editData", function (e) {
+            var income = table.row( $(e.target).parents('tr') ).data();
+            editRow(income)
+        });
+
+        $("#datatable").on("click", "tbody .deletData", function (e) {
+            setDeleteIncomeIdFunction($(e.target).attr('id'));
+        });
+
+    }
     return  (
                 <div className="bg-white p-3">
                     <div className="d-flex align-items-center pb-2">
                         <h2 className="heading">Income</h2>
                         <Link to="incomes/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Income</Link>
                     </div>
-                    <div className="table-responsive">
-                        <table className="table">
-                            <thead className="thead-light">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Client</th>
-                                    <th>Amount</th>
-                                    <th>Medium</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {incomes.length > 0 ? (
-                            incomes.map(income => (
-                                    <tr key={income._id}>
-                                        <td>{income.date}</td>
-                                        <td>{getClientName(income.client)}</td>
-                                        <td>{income.amount}</td>
-                                        <td>{mediums[income.medium]}</td>
-                                        <td>
-                                            <button className="btn btn-sm btn--prime" onClick={() => editRow(income)}>Edit</button>&nbsp;
-                                            <button className="btn btn-sm btn--cancel ml-1" onClick={() => setDeleteIncomeIdFunction(income._id)}>Delete</button>
-                                        </td>
-                                    </tr>
-                            ))
-                            ) : (
-                                    <tr>
-                                    <td colSpan={3}>No Incomes</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
 
-                     {showEditModal && <EditIncomes handleCloseEdit={handleCloseEdit} currentIncome={currentIncome} mediums={mediums} clients={clients} updateIncome={updateIncome} />}
-                     {showDeleteModal &&
-                         <div>
-                           <div style={{ display: 'block' }} className="modal">
-                             <div className="modal-dialog modal-dialog-centered register-modal-dialog">
-                               <div style={{padding:'25px',}} className="modal-content gradient_border modal-background">
-                                   <div style={{textAlign: 'center',}}>
-                                       <h3 className="heading">Are you sure to delete this Income?</h3>
-                                   </div>
-                                   <div style={{textAlign: 'center',}} className="modal-body">
+                    <table id="datatable" className="display" width="100%" ref={props.inputRef}></table>
+
+                    {showEditModal && <EditIncomes handleCloseEdit={handleCloseEdit} currentIncome={currentIncome} mediums={mediums} clients={clients} updateIncome={updateIncome} />}
+
+                    {showDeleteModal &&
+                        <div>
+                            <div style={{ display: 'block' }} className="modal">
+                                <div className="modal-dialog modal-dialog-centered register-modal-dialog">
+                                <div style={{padding:'25px',}} className="modal-content gradient_border modal-background">
+                                    <div style={{textAlign: 'center',}}>
+                                        <h3 className="heading">Are you sure to delete this Income?</h3>
+                                    </div>
+                                    <div style={{textAlign: 'center',}} className="modal-body">
                                         <button style={{color: '#fff',}} className="btn btn--prime mr-1" onClick={handleCloseDelete}>Cancel</button>&nbsp;
                                         <button className="btn btn--cancel ml-1" onClick={() => deleteIncome(deleteIncomeId)}>Delete</button>
-                                   </div>
-                               </div>
-                             </div>
-                           </div>
-                           <div className="modal-backdrop show" />
-                         </div>
-                     }
-
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div className="modal-backdrop show" />
+                        </div>
+                    }
                 </div>
             )
 }
 
-export default Income;
+export default class DataTable extends React.Component {
+    componentDidMount() {
+        this.el = $(this.el).DataTable({
+            ajax: {
+                "url": 'http://dev.expensetracker.com/api/incomes',
+                "dataType": 'json',
+                "type": 'get',
+                "beforeSend": function (xhr) {
+                    xhr.setRequestHeader('Authorization',
+                        "Bearer " + localStorage.getItem('token'));
+                },
+            },
+            columns: [
+                { title: "Date", data: 'date' },
+                { title: "Client", data: 'client' },
+                { title: "Amount", data: 'amount' },
+                { title: "Medium", data: 'medium' },
+                { title: "Action", data: 'null', defaultContent: 'N/A' }
+            ],
+            rowCallback: function( row, data, index ) {
+                let action = '<button data-index="' + index + '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' + data._id + '" class="btn btn-sm btn--cancel deletData" >Delete</button>'
+                $('td:eq(4)', row).html( action );
+            }
+        })
+    }
+
+    render() {
+      return (
+        <Income
+          inputRef={el => this.el = el}
+        />
+      );
+    }
+}

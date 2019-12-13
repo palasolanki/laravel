@@ -10,4 +10,7 @@ class Income extends Eloquent
     protected $casts = [
         'date' => 'datetime:Y-m-d',
     ];
+    // public function client() {
+    //     return $this->hasOne('App\clients')
+    // }
 }

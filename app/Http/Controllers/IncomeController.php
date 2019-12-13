@@ -6,6 +6,7 @@ use App\Http\Requests\IncomeRequest;
 use App\Income;
 use Symfony\Component\HttpFoundation\Request;
 use App\Traits\ChartData;
+use Yajra\DataTables\DataTables;
 
 class IncomeController extends Controller
 {
@@ -17,7 +18,8 @@ class IncomeController extends Controller
      */
     public function index()
     {
-        return Income::all();
+        $income = Income::all();
+        return Datatables::of($income)->make(true);
     }
 
     /**
