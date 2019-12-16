@@ -10,10 +10,8 @@ import {
 const $ = require('jquery')
 $.DataTable = require('datatables.net')
 
-function Income(props) {
-    const incomesData = [];
+export default function Income() {
     const [dataTable, setDataTable] = useState(null);
-    // const [incomes, setIncomes] = useState(incomesData);
     const [mediums, setMediums] = useState([]);
     const [clients, setClients] = useState([]);
 
@@ -22,7 +20,6 @@ function Income(props) {
     const handleCloseEdit = () => setEditShow(false);
 
     const [showDeleteModal, setDeleteShow] = useState(false);
-    const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
 
     useEffect( () => {
@@ -39,8 +36,7 @@ function Income(props) {
         api.get('/getClients')
         .then((res) => {
             setClients(res.data.clients);
-        }),
-        registerEvent();
+        });
     }, [] );
     const [currentIncome, setCurrentIncome] = useState()
     const editRow = income => {
@@ -48,10 +44,41 @@ function Income(props) {
         openShowEdit();
     }
 
+    useEffect(() => {
+        var table = $('#datatable').DataTable({
+            ajax: {
+                "url": '/api/incomes',
+                "dataType": 'json',
+                "type": 'get',
+                "beforeSend": function (xhr) {
+                    xhr.setRequestHeader('Authorization',
+                        "Bearer " + localStorage.getItem('token'));
+                },
+            },
+            columns: [
+                { title: "Date", data: 'date' },
+                { title: "Client", data: 'client' },
+                { title: "Amount", data: 'amount' },
+                { title: "Medium", data: 'medium' },
+                { title: "Action", data: 'null', defaultContent: 'N/A' }
+            ],
+            rowCallback: function( row, data, index ) {
+                let action = '<button data-index="' + index + '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' + data._id + '" class="btn btn-sm btn--cancel deletData" >Delete</button>'
+                $('td:eq(4)', row).html( action );
+            }
+        });
+        setDataTable(table);        
+    }, []);
+
+    useEffect(() => {
+        if(dataTable) {
+            registerEvent();
+        }
+    }, [dataTable]);
+
     const updateIncome = (incomeId, updatedIncome) => {
         api.patch(`/incomes/${incomeId}`, {data:updatedIncome})
         .then((res) => {
-            // setIncomes(incomes.map(income => (income._id === incomeId ? res.data.updateIncome : income)))
             handleCloseEdit();
             ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
@@ -59,10 +86,6 @@ function Income(props) {
     }
 
     const [deleteIncomeId, setDeleteIncomeId] = useState();
-    const setDeleteIncomeIdFunction = currentDeleteIncomeId =>{
-        setDeleteIncomeId(currentDeleteIncomeId);
-        openShowDelete();
-    }
 
     const deleteIncome = incomeId => {
         api.delete(`/incomes/${incomeId}`)
@@ -79,15 +102,14 @@ function Income(props) {
         })
     }
     const registerEvent = () => {
-        var table = $('#datatable').DataTable();
-        setDataTable(table);
         $("#datatable").on("click", "tbody .editData", function (e) {
-            var income = table.row( $(e.target).parents('tr') ).data();
+            var income = dataTable.row( $(e.target).parents('tr') ).data();
             editRow(income)
         });
 
         $("#datatable").on("click", "tbody .deletData", function (e) {
-            setDeleteIncomeIdFunction($(e.target).attr('id'));
+            setDeleteIncomeId($(e.target).attr('id'));
+            setDeleteShow(true);
         });
 
     }
@@ -98,7 +120,7 @@ function Income(props) {
                         <Link to="incomes/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Income</Link>
                     </div>
 
-                    <table id="datatable" className="display" width="100%" ref={props.inputRef}></table>
+                    <table id="datatable" className="display" width="100%"></table>
 
                     {showEditModal && <EditIncomes handleCloseEdit={handleCloseEdit} currentIncome={currentIncome} mediums={mediums} clients={clients} updateIncome={updateIncome} />}
 
@@ -122,39 +144,4 @@ function Income(props) {
                     }
                 </div>
             )
-}
-
-export default class DataTable extends React.Component {
-    componentDidMount() {
-        this.el = $(this.el).DataTable({
-            ajax: {
-                "url": 'http://dev.expensetracker.com/api/incomes',
-                "dataType": 'json',
-                "type": 'get',
-                "beforeSend": function (xhr) {
-                    xhr.setRequestHeader('Authorization',
-                        "Bearer " + localStorage.getItem('token'));
-                },
-            },
-            columns: [
-                { title: "Date", data: 'date' },
-                { title: "Client", data: 'client' },
-                { title: "Amount", data: 'amount' },
-                { title: "Medium", data: 'medium' },
-                { title: "Action", data: 'null', defaultContent: 'N/A' }
-            ],
-            rowCallback: function( row, data, index ) {
-                let action = '<button data-index="' + index + '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' + data._id + '" class="btn btn-sm btn--cancel deletData" >Delete</button>'
-                $('td:eq(4)', row).html( action );
-            }
-        })
-    }
-
-    render() {
-      return (
-        <Income
-          inputRef={el => this.el = el}
-        />
-      );
-    }
 }
