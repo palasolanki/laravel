@@ -23,12 +23,6 @@ export default function Income() {
     const handleCloseDelete = () => setDeleteShow(false);
 
     useEffect( () => {
-      api.get('/incomes')
-          .then((res) => {
-            setIncomes(res.data.data);
-          })
-          .catch((res) => {
-        }),
         api.get('/getIncomeMediumList')
         .then((res) => {
             setMediums(res.data.medium);
@@ -38,6 +32,7 @@ export default function Income() {
             setClients(res.data.clients);
         });
     }, [] );
+
     const [currentIncome, setCurrentIncome] = useState()
     const editRow = income => {
         setCurrentIncome(income)
@@ -96,22 +91,15 @@ export default function Income() {
         })
     }
 
-    const getClientName = (clientId) => {
-        return clients.map(client => {
-            return (client._id == clientId) ? client.name : ''
-        })
-    }
     const registerEvent = () => {
         $("#datatable").on("click", "tbody .editData", function (e) {
             var income = dataTable.row( $(e.target).parents('tr') ).data();
             editRow(income)
         });
-
         $("#datatable").on("click", "tbody .deletData", function (e) {
             setDeleteIncomeId($(e.target).attr('id'));
             setDeleteShow(true);
         });
-
     }
     return  (
                 <div className="bg-white p-3">
