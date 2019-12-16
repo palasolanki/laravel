@@ -1,4 +1,4 @@
-import React, { Component, Fragment, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
 import {ToastsStore} from 'react-toasts';
@@ -12,8 +12,6 @@ $.DataTable = require('datatables.net')
 
 export default function Income() {
     const [dataTable, setDataTable] = useState(null);
-    const [mediums, setMediums] = useState([]);
-    const [clients, setClients] = useState([]);
 
     const [showEditModal, setEditShow] = useState(false);
     const openShowEdit = () => setEditShow(true);
@@ -22,16 +20,6 @@ export default function Income() {
     const [showDeleteModal, setDeleteShow] = useState(false);
     const handleCloseDelete = () => setDeleteShow(false);
 
-    useEffect( () => {
-        api.get('/getIncomeMediumList')
-        .then((res) => {
-            setMediums(res.data.medium);
-        }),
-        api.get('/getClients')
-        .then((res) => {
-            setClients(res.data.clients);
-        });
-    }, [] );
 
     const [currentIncome, setCurrentIncome] = useState()
     const editRow = income => {
@@ -52,9 +40,9 @@ export default function Income() {
             },
             columns: [
                 { title: "Date", data: 'date' },
-                { title: "Client", data: 'client' },
+                { title: "Client", data: 'clientname' },
                 { title: "Amount", data: 'amount' },
-                { title: "Medium", data: 'medium' },
+                { title: "Medium", data: 'mediumvalue' },
                 { title: "Action", data: 'null', defaultContent: 'N/A' }
             ],
             rowCallback: function( row, data, index ) {
@@ -62,7 +50,7 @@ export default function Income() {
                 $('td:eq(4)', row).html( action );
             }
         });
-        setDataTable(table);        
+        setDataTable(table);
     }, []);
 
     useEffect(() => {
@@ -110,7 +98,7 @@ export default function Income() {
 
                     <table id="datatable" className="display" width="100%"></table>
 
-                    {showEditModal && <EditIncomes handleCloseEdit={handleCloseEdit} currentIncome={currentIncome} mediums={mediums} clients={clients} updateIncome={updateIncome} />}
+                    {showEditModal && <EditIncomes handleCloseEdit={handleCloseEdit} currentIncome={currentIncome} updateIncome={updateIncome} />}
 
                     {showDeleteModal &&
                         <div>

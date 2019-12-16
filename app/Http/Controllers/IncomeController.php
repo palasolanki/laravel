@@ -18,8 +18,15 @@ class IncomeController extends Controller
      */
     public function index()
     {
-        $income = Income::all();
-        return Datatables::of($income)->make(true);
+        $income = Income::with('clients')->get();
+
+        return Datatables::of($income)
+            ->addColumn('mediumvalue', function ($income) {
+                return config('expense.medium')[$income->medium];
+            })
+            ->addColumn('clientname', function ($income) {
+                return  $income->clients->name;
+            })->make(true);
     }
 
     /**

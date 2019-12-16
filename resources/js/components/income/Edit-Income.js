@@ -1,17 +1,26 @@
-import React, { Component, Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
+import api from '../../helpers/api';
 import DatePicker from "react-datepicker";
 
 function EditIncome(props) {
-
+    const [mediums, setMediums] = useState([]);
+    const [clients, setClients] = useState([]);
     const closeModalSpanStyle = {
         color: '#000',
         float: 'right',
         fontSize: '20px',
         cursor: 'pointer'
       };
-    //   const modalHeader = {
-    //     textAlign: 'center',
-    //   };
+    useEffect( () => {
+        api.get('/getIncomeMediumList')
+        .then((res) => {
+            setMediums(res.data.medium);
+        }),
+        api.get('/getClients')
+        .then((res) => {
+            setClients(res.data.clients);
+        })
+    }, [] );
     const editData = {
         date: new Date(props.currentIncome.date),
         client: props.currentIncome.client,
@@ -26,8 +35,8 @@ function EditIncome(props) {
     const handleDateChange = event => {
         setIncome({ ...income, ['date']: event })
     }
-    const mediumList = Object.keys(props.mediums).map((key) => {
-        return <option value={key} key={key}>{props.mediums[key]}</option>
+    const mediumList = Object.keys(mediums).map((key) => {
+        return <option value={key} key={key}>{mediums[key]}</option>
     })
     return (
         <Fragment>
@@ -64,7 +73,7 @@ function EditIncome(props) {
                                 <select className="form-control" name="client" onChange={handleInputChange} value={income.client}>
                                     <option value="">Select Type</option>
                                     {
-                                        props.clients.map((client, index) =>
+                                        clients.map((client, index) =>
                                             <option value={client._id} key={index}>{client.name}</option>
                                         )
                                     }
