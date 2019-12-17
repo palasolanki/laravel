@@ -29,7 +29,7 @@ function EditHardware(props) {
     const handleDateChange = event => {
         setHardware({ ...hardware, ['date']: event })
     }
-    const typeList = Object.keys(props.types).map((key) => {
+    const typeList = props.types && Object.keys(props.types).map((key) => {
         return <option value={key} key={key}>{props.types[key]}</option>
     })
     return (

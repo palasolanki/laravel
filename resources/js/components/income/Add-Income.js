@@ -31,10 +31,10 @@ function AddIncome() {
     }, [] );
     const [incomeData, setIncomeData] = useState([data]);
 
-    const mediumList = Object.keys(mediums).map((key) => {
+    const mediumList = mediums && Object.keys(mediums).map((key) => {
         return <option value={key} key={key}>{mediums[key]}</option>
     })
-    const clientList = clients.map((client, key) => {
+    const clientList = clients && clients.map((client, key) => {
         return <option value={client._id} key={key}>{client.name}</option>
     })
     const handleInputChange = key => event => {
