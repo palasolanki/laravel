@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\ExpenseRequest;
 use App\Tag;
 use App\Traits\ChartData;
+use Carbon\Carbon;
 use Yajra\DataTables\DataTables;
 
 class ExpenseController extends Controller
@@ -19,11 +20,24 @@ class ExpenseController extends Controller
      */
     public function index(Request $request)
     {
-        $expense = Expense::all();
+        $from = ($request->daterange[0]) ? $this->getDateObject($request->daterange[0])->startOfDay() : null;
+        $to = ($request->daterange[1]) ? $this->getDateObject($request->daterange[1])->endOfDay() : null;
+
+        $expense = Expense::where(function($expense) use ($from, $to)  {
+            if(isset($from)) {
+                $expense->whereBetween('date', [$from, $to]);
+            }
+        })->get();
+
         return Datatables::of($expense)
             ->addColumn('mediumvalue', function ($expense) {
                 return config('expense.medium')[$expense->medium];
             })->make(true);
+    }
+
+    public function getDateObject($string) {
+        $date = trim(str_replace('(India Standard Time)', '', $string));
+        return Carbon::parse($date);
     }
 
     /**

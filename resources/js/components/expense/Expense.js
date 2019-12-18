@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from '../../helpers/api';
 import {ToastsStore} from 'react-toasts';
 import EditExpenses from "./Edit-Expense";
+import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faPlus
@@ -14,6 +15,7 @@ function Expense() {
     const [dataTable, setDataTable] = useState(null);
     const [showEditModal, setEditShow] = useState(false);
     const [showDeleteModal, setDeleteShow] = useState(false);
+    const [date, setDate] = useState([null, null]);
 
     const openShowEdit = () => setEditShow(true);
     const handleCloseEdit = () => setEditShow(false);
@@ -39,6 +41,7 @@ function Expense() {
                 "url": `/api/getExpenseData`,
                 "dataType": 'json',
                 "type": 'post',
+                "data": {'daterange': date},
                 "beforeSend": function (xhr) {
                     xhr.setRequestHeader('Authorization',
                         "Bearer " + localStorage.getItem('token'));
@@ -73,8 +76,10 @@ function Expense() {
 
     const [currentExpense, setCurrentExpense] = useState()
     const editRow = expense => {
-        setCurrentExpense(expense)
-        openShowEdit();
+        if (expense) {
+            setCurrentExpense(expense)
+            openShowEdit();
+        }
     }
 
     const updateExpense = (expenseId, updatedExpense) => {
@@ -99,10 +104,27 @@ function Expense() {
         })
     }
 
+    const onDateChange = datevalue => {
+        setDate(datevalue);
+    }
+
+    useEffect(() => {
+        if(dataTable && date) {
+            dataTable.destroy();
+            initDatatables();
+        }
+    }, [date]);
+
     return  (
                 <div className="bg-white p-3">
                     <div className="d-flex align-items-center pb-2">
                         <h2 className="heading">Expenses</h2>
+                        <div className="col-md-2">
+                            <DateRangePicker
+                                onChange={onDateChange}
+                                value={date}
+                            />
+                        </div>
                         <Link to="expenses/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Expense</Link>
                     </div>
 

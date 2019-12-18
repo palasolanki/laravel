@@ -25,8 +25,10 @@ export default function Income() {
 
     const [currentIncome, setCurrentIncome] = useState()
     const editRow = income => {
-        setCurrentIncome(income)
-        openShowEdit();
+        if(income) {
+            setCurrentIncome(income)
+            openShowEdit();
+        }
     }
     const initDatatables = () => {
         var table = $('#datatable').DataTable({
@@ -101,7 +103,7 @@ export default function Income() {
             setDeleteShow(true);
         });
     }
-    function onDateChange(datevalue){
+    const onDateChange = datevalue => {
         setDate(datevalue);
     }
     const handleInputChange = () => {
