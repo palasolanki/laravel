@@ -4,6 +4,7 @@ import api from '../../helpers/api';
 import {ToastsStore} from 'react-toasts';
 import EditIncomes from "./Edit-Income";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import {
     faPlus
 } from '@fortawesome/free-solid-svg-icons';
@@ -12,7 +13,7 @@ $.DataTable = require('datatables.net')
 
 export default function Income() {
     const [dataTable, setDataTable] = useState(null);
-
+    const [date, setDate] = useState([null, null]);
     const [showEditModal, setEditShow] = useState(false);
     const openShowEdit = () => setEditShow(true);
     const handleCloseEdit = () => setEditShow(false);
@@ -20,19 +21,20 @@ export default function Income() {
     const [showDeleteModal, setDeleteShow] = useState(false);
     const handleCloseDelete = () => setDeleteShow(false);
 
-
     const [currentIncome, setCurrentIncome] = useState()
     const editRow = income => {
         setCurrentIncome(income)
         openShowEdit();
     }
-
-    useEffect(() => {
+    const initDatatables = () => {
         var table = $('#datatable').DataTable({
+            serverSide: true,
+            processing: true,
             ajax: {
-                "url": '/api/incomes',
+                "url": `/api/getIncomeData`,
                 "dataType": 'json',
-                "type": 'get',
+                "type": 'post',
+                "data": {'daterange': date},
                 "beforeSend": function (xhr) {
                     xhr.setRequestHeader('Authorization',
                         "Bearer " + localStorage.getItem('token'));
@@ -51,6 +53,10 @@ export default function Income() {
             }
         });
         setDataTable(table);
+    }
+
+    useEffect(() => {
+        initDatatables();
     }, []);
 
     useEffect(() => {
@@ -89,10 +95,27 @@ export default function Income() {
             setDeleteShow(true);
         });
     }
+    function onDateChange(datevalue){
+        setDate(datevalue);
+    }
+
+    useEffect(() => {
+        if(dataTable && date) {
+            dataTable.destroy();
+            initDatatables();
+        }
+    }, [date]);
+
     return  (
                 <div className="bg-white p-3">
                     <div className="d-flex align-items-center pb-2">
                         <h2 className="heading">Income</h2>
+                        <div className="col-md-2">
+                            <DateRangePicker
+                                onChange={onDateChange}
+                                value={date}
+                            />
+                            </div>
                         <Link to="incomes/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Income</Link>
                     </div>
 

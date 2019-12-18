@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::delete('/tags/{id}', 'TagController@destroy')->name('tag.destroy');
     Route::resource('expenses', 'ExpenseController');
     Route::resource('incomes', 'IncomeController');
+    Route::post('getIncomeData', 'IncomeController@index');
     Route::resource('hardwares', 'HardwareController');
     Route::get('/getTagList', 'ExpenseController@getTagList');
     Route::get('/getExpenseMediumList', 'ExpenseController@getExpenseMediumList');
