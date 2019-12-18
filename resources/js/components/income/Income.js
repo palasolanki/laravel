@@ -14,6 +14,8 @@ $.DataTable = require('datatables.net')
 export default function Income() {
     const [dataTable, setDataTable] = useState(null);
     const [date, setDate] = useState([null, null]);
+    const [clients, setClients] = useState([]);
+    const [filterClient, setFilterClient] = useState('all');
     const [showEditModal, setEditShow] = useState(false);
     const openShowEdit = () => setEditShow(true);
     const handleCloseEdit = () => setEditShow(false);
@@ -34,7 +36,7 @@ export default function Income() {
                 "url": `/api/getIncomeData`,
                 "dataType": 'json',
                 "type": 'post',
-                "data": {'daterange': date},
+                "data": {'daterange': date, 'client': filterClient},
                 "beforeSend": function (xhr) {
                     xhr.setRequestHeader('Authorization',
                         "Bearer " + localStorage.getItem('token'));
@@ -57,6 +59,10 @@ export default function Income() {
 
     useEffect(() => {
         initDatatables();
+        api.get('/getClients')
+        .then((res) => {
+            setClients(res.data.clients);
+        })
     }, []);
 
     useEffect(() => {
@@ -98,13 +104,16 @@ export default function Income() {
     function onDateChange(datevalue){
         setDate(datevalue);
     }
+    const handleInputChange = () => {
+        setFilterClient(event.target.value)
+    }
 
     useEffect(() => {
         if(dataTable && date) {
             dataTable.destroy();
             initDatatables();
         }
-    }, [date]);
+    }, [date, filterClient]);
 
     return  (
                 <div className="bg-white p-3">
@@ -115,7 +124,17 @@ export default function Income() {
                                 onChange={onDateChange}
                                 value={date}
                             />
-                            </div>
+                        </div>
+                        <div className="col-md-2">
+                            <select className="form-control" onChange={handleInputChange} value={filterClient}>
+                                <option value="all">All Clients</option>
+                                {
+                                    clients && clients.map((client) =>
+                                        <option value={client._id} key={client._id}>{client.name}</option>
+                                    )
+                                }
+                            </select>
+                        </div>
                         <Link to="incomes/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Income</Link>
                     </div>
 

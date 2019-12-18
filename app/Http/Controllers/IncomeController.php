@@ -21,13 +21,16 @@ class IncomeController extends Controller
     {
         $from = ($request->daterange[0]) ? $this->getDateObject($request->daterange[0])->startOfDay() : null;
         $to = ($request->daterange[1]) ? $this->getDateObject($request->daterange[1])->endOfDay() : null;
-
+        $selectedClient = $request->client;
         $income = Income::with('clients')
-                ->where(function($income) use ($from, $to)  {
+                ->where(function($income) use ($from, $to, $selectedClient)  {
                     if(isset($from)) {
                         $income->whereBetween('date', [$from, $to]);
                     }
-                 })
+                    if($selectedClient != "all") {
+                        $income->where('client', $selectedClient);
+                    }
+                })
                 ->get();
 
         return Datatables::of($income)
