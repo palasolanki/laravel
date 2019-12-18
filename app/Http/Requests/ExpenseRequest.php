@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Expense;
+use File;
 use Illuminate\Support\Carbon;
 
 class ExpenseRequest extends FormRequest
@@ -55,6 +56,29 @@ class ExpenseRequest extends FormRequest
             $expense->medium = $value['medium'];
             $expense->tags = $value['tagsArray'];
             $expense->save();
+
+            if ( key_exists('file', $value)) {
+                $uploadedFile = $value['file'];
+                
+                if(!File::exists(storage_path('uploads/expense/' . $expense->_id))){
+                    File::makeDirectory(storage_path('uploads/expense/' . $expense->_id), $mode = 0777, true, true);
+                }
+                $file = $uploadedFile->getClientOriginalName();
+                $originalFileName = pathinfo($file, PATHINFO_FILENAME);
+                $fileName = $originalFileName . '-' . time() . '.' . $uploadedFile->getClientOriginalExtension();
+                $uploadedFile->move(storage_path('uploads/expense/' . $expense->_id), $fileName);
+
+                $filesArray = [];
+                if($expense->file_attachments){
+                    $filesArray = $expense->file_attachments;
+                    array_push($filesArray,['type' => 'invoice', 'filename' => $fileName]);
+                } else{
+                    $filesArray = [['type' => 'invoice', 'filename' => $fileName]];
+                }
+                
+                $expense->file_attachments = $filesArray;
+                $expense->save();
+            }
             $expense = null;
         }
         return true;

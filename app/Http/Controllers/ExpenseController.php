@@ -6,7 +6,10 @@ use App\Expense;
 use Illuminate\Http\Request;
 use App\Http\Requests\ExpenseRequest;
 use App\Tag;
+use File;
+use DB;
 use App\Traits\ChartData;
+use PHPUnit\Util\Json;
 
 class ExpenseController extends Controller
 {
@@ -65,6 +68,7 @@ class ExpenseController extends Controller
      */
     public function destroy(Expense $expense)
     {
+        File::deleteDirectory(storage_path('uploads/expense/' . $expense->_id));
         $expense->delete();
         return ['message' => 'Delete Success!'];
     }
@@ -80,5 +84,13 @@ class ExpenseController extends Controller
     public function monthlyExpenseChart(Request $request) {
         $chartData = $this->getChartData($request->chart_range, 'expense');
         return ['monthlyExpense' => $chartData[0], 'labels' => $chartData[1]];
+    }
+
+    public function deleteFileAttachment($deleteFile, $expenseId)
+    {
+        DB::collection('expenses')->where('_id', $expenseId)->pull('file_attachments', ['type' => 'invoice', 'filename' => $deleteFile]);
+        $fileName = storage_path('uploads/expense/' . $expenseId . '/'. $deleteFile);
+        File::delete($fileName);
+        return ['message' => 'File Delete Success!'];
     }
 }
