@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\ExpenseRequest;
 use App\Tag;
 use App\Traits\ChartData;
+use Yajra\DataTables\DataTables;
 
 class ExpenseController extends Controller
 {
@@ -16,9 +17,13 @@ class ExpenseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Expense::all();
+        $expense = Expense::all();
+        return Datatables::of($expense)
+            ->addColumn('mediumvalue', function ($expense) {
+                return config('expense.medium')[$expense->medium];
+            })->make(true);
     }
 
     /**

@@ -47,7 +47,7 @@ export default function Income() {
                 { title: "Client", data: 'clientname' },
                 { title: "Amount", data: 'amount' },
                 { title: "Medium", data: 'mediumvalue' },
-                { title: "Action", data: 'null', defaultContent: 'N/A' }
+                { title: "Action", data: 'null', defaultContent: 'N/A', orderable: false }
             ],
             rowCallback: function( row, data, index ) {
                 let action = '<button data-index="' + index + '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' + data._id + '" class="btn btn-sm btn--cancel deletData" >Delete</button>'

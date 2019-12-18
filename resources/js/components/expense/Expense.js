@@ -7,47 +7,70 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faPlus
 } from '@fortawesome/free-solid-svg-icons';
+const $ = require('jquery')
+$.DataTable = require('datatables.net')
 
 function Expense() {
+    const [dataTable, setDataTable] = useState(null);
     const [showEditModal, setEditShow] = useState(false);
+    const [showDeleteModal, setDeleteShow] = useState(false);
+
     const openShowEdit = () => setEditShow(true);
     const handleCloseEdit = () => setEditShow(false);
 
-    const [showDeleteModal, setDeleteShow] = useState(false);
     const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
 
-    const expenseData = [];
-    const [mediums, setMediums] = useState([]);
-    const [expenses, setExpenses] = useState(expenseData);
     useEffect( () => {
-      api.get('/expenses')
-          .then((res) => {
-            setExpenses(res.data);
-          })
-          .catch((res) => {
-        }),
-        api.get('/getExpenseMediumList')
-        .then((res) => {
-            setMediums(res.data.medium);
-        })
-
-        api.get('/getTagList')
-        .then((res) => {
-            createTagOptions(res.data.tags);
-        })
+        initDatatables();
     }, [] );
 
-    const [options, setOptions] = useState([]);
-    const createTagOptions = data => {
-        const tagOptions = data.map(value => {
-            return {
-                value: value,
-                label: value
+    useEffect(() => {
+        if(dataTable) {
+            registerEvent();
+        }
+    }, [dataTable]);
+
+    const initDatatables = () => {
+        var table = $('#datatable').DataTable({
+            serverSide: true,
+            processing: true,
+            ajax: {
+                "url": `/api/getExpenseData`,
+                "dataType": 'json',
+                "type": 'post',
+                "beforeSend": function (xhr) {
+                    xhr.setRequestHeader('Authorization',
+                        "Bearer " + localStorage.getItem('token'));
+                },
+            },
+            columns: [
+                { title: "Date", data: 'date' },
+                { title: "Item", data: 'item' },
+                { title: "Amount", data: 'amount' },
+                { title: "Medium", data: 'mediumvalue' },
+                { title: "Tags", data: 'tags', orderable: false },
+                { title: "Action", data: 'null', orderable: false, defaultContent: 'N/A' }
+            ],
+            rowCallback: function( row, data, index ) {
+                let action = '<button data-index="' + index + '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' + data._id + '" class="btn btn-sm btn--cancel deletData" >Delete</button>'
+                $('td:eq(5)', row).html( action );
             }
         });
-        setOptions(tagOptions);
+        setDataTable(table);
     }
+
+    const registerEvent = () => {
+        $("#datatable").on("click", "tbody .editData", function (e) {
+            var expense = dataTable.row( $(e.target).parents('tr') ).data();
+            editRow(expense)
+        });
+        $("#datatable").on("click", "tbody .deletData", function (e) {
+            setDeleteExpenseIdFunction($(e.target).attr('id'));
+            setDeleteShow(true);
+        });
+    }
+
     const [currentExpense, setCurrentExpense] = useState()
     const editRow = expense => {
         setCurrentExpense(expense)
@@ -55,11 +78,10 @@ function Expense() {
     }
 
     const updateExpense = (expenseId, updatedExpense) => {
-        api.patch(`/expenses/${expenseId}`, {data:updatedExpense})
-        .then((res) => {
-            setExpenses(expenses.map(expense => (expense._id === expenseId ? res.data.updateExpense : expense)))
+        api.patch(`/expenses/${expenseId}`, {data:updatedExpense}).then((res) => {
             handleCloseEdit();
             ToastsStore.success(res.data.message);
+            dataTable.ajax.reload();
         })
     }
 
@@ -70,11 +92,10 @@ function Expense() {
     }
 
     const deleteExpense = expenseId => {
-        api.delete(`/expenses/${expenseId}`)
-        .then((res) => {
-            setExpenses(expenses.filter(expense => expense._id !== expenseId))
+        api.delete(`/expenses/${expenseId}`).then((res) => {
             handleCloseDelete();
             ToastsStore.error(res.data.message);
+            dataTable.ajax.reload();
         })
     }
 
@@ -84,64 +105,28 @@ function Expense() {
                         <h2 className="heading">Expenses</h2>
                         <Link to="expenses/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Expense</Link>
                     </div>
-                    <div className="table-responsive">
-                        <table className="table">
-                            <thead className="thead-light">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Item</th>
-                                    <th>Amount</th>
-                                    <th>Medium</th>
-                                    <th>Tags</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {expenses.length > 0 ? (
-                            expenses.map(expense => (
-                                    <tr key={expense._id}>
-                                        <td>{expense.date}</td>
-                                        <td>{expense.item}</td>
-                                        <td>{expense.amount}</td>
-                                        <td>{mediums[expense.medium]}</td>
-                                        <td>
-                                            { (expense.tags.length > 0) ? expense.tags.toString() : '-' }
-                                        </td>
-                                        <td>
-                                            <button className="btn btn-sm btn--prime" onClick={() => editRow(expense)}>Edit</button>&nbsp;
-                                            <button className="btn btn-sm btn--cancel ml-1" onClick={() => setDeleteExpenseIdFunction(expense._id)}>Delete</button>
-                                        </td>
-                                    </tr>
-                            ))
-                            ) : (
-                                    <tr>
-                                    <td colSpan={3}>No Expenses</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
 
-                     {showEditModal && <EditExpenses handleCloseEdit={handleCloseEdit} currentExpense={currentExpense} mediums={mediums} options={options} updateExpense={updateExpense} />}
-                     {showDeleteModal &&
-                         <div>
-                           <div style={{ display: 'block' }} className="modal">
-                             <div className="modal-dialog modal-dialog-centered register-modal-dialog">
-                               <div style={{padding:'25px',}} className="modal-content gradient_border modal-background">
-                                   <div style={{textAlign: 'center',}}>
-                                       <h3 className="heading">Are you sure to delete this expense?</h3>
-                                   </div>
-                                   <div style={{textAlign: 'center',}} className="modal-body">
-                                         <button style={{color: '#fff',}} className="btn btn--prime mr-1" onClick={handleCloseDelete}>Cancel</button>&nbsp;
-                                         <button className="btn btn--cancel ml-1" onClick={() => deleteExpense(deleteExpenseId)}>Delete</button>
-                                   </div>
-                               </div>
-                             </div>
-                           </div>
-                           <div className="modal-backdrop show" />
-                         </div>
-                     }
+                    <table id="datatable" className="display" width="100%"></table>
 
+                    {showEditModal && <EditExpenses handleCloseEdit={handleCloseEdit} currentExpense={currentExpense} updateExpense={updateExpense} />}
+                    {showDeleteModal &&
+                        <div>
+                            <div style={{ display: 'block' }} className="modal">
+                                <div className="modal-dialog modal-dialog-centered register-modal-dialog">
+                                <div style={{padding:'25px',}} className="modal-content gradient_border modal-background">
+                                    <div style={{textAlign: 'center',}}>
+                                        <h3 className="heading">Are you sure to delete this expense?</h3>
+                                    </div>
+                                    <div style={{textAlign: 'center',}} className="modal-body">
+                                            <button style={{color: '#fff',}} className="btn btn--prime mr-1" onClick={handleCloseDelete}>Cancel</button>&nbsp;
+                                            <button className="btn btn--cancel ml-1" onClick={() => deleteExpense(deleteExpenseId)}>Delete</button>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div className="modal-backdrop show" />
+                        </div>
+                    }
                 </div>
             )
 }
