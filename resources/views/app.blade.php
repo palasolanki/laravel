@@ -9,7 +9,6 @@
     <title>Expense Tracker</title>
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet">
 </head>
 <body>
     <div id="app"></div>

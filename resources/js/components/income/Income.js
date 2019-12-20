@@ -106,7 +106,7 @@ export default function Income() {
     const onDateChange = datevalue => {
         setDate(datevalue);
     }
-    const handleInputChange = () => {
+    const handleClientFilterChange = () => {
         setFilterClient(event.target.value)
     }
 
@@ -128,7 +128,7 @@ export default function Income() {
                             />
                         </div>
                         <div className="col-md-2">
-                            <select className="form-control" onChange={handleInputChange} value={filterClient}>
+                            <select className="form-control" onChange={handleClientFilterChange} value={filterClient}>
                                 <option value="all">All Clients</option>
                                 {
                                     clients && clients.map((client) =>
