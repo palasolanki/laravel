@@ -11,6 +11,6 @@ class Income extends Eloquent
         'date' => 'datetime:Y-m-d',
     ];
     public function clients() {
-        return $this->belongsTo('App\Models\Client', 'client');
+        return $this->hasOne('App\Models\Client', '_id', 'client');
     }
 }

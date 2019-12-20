@@ -8,6 +8,7 @@ import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import {
     faPlus
 } from '@fortawesome/free-solid-svg-icons';
+import ConfirmationComponent from '../ConfirmationComponent';
 const $ = require('jquery')
 $.DataTable = require('datatables.net')
 
@@ -15,6 +16,7 @@ export default function Income() {
     const [dataTable, setDataTable] = useState(null);
     const [date, setDate] = useState([null, null]);
     const [clients, setClients] = useState([]);
+    const [mediums, setMediums] = useState([]);
     const [filterClient, setFilterClient] = useState('all');
     const [showEditModal, setEditShow] = useState(false);
     const openShowEdit = () => setEditShow(true);
@@ -64,6 +66,10 @@ export default function Income() {
         api.get('/getClients')
         .then((res) => {
             setClients(res.data.clients);
+        })
+        api.get('/getIncomeMediumList')
+        .then((res) => {
+            setMediums(res.data.medium);
         })
     }, []);
 
@@ -142,26 +148,19 @@ export default function Income() {
 
                     <table id="datatable" className="display" width="100%"></table>
 
-                    {showEditModal && <EditIncomes handleCloseEdit={handleCloseEdit} currentIncome={currentIncome} updateIncome={updateIncome} />}
-
-                    {showDeleteModal &&
-                        <div>
-                            <div style={{ display: 'block' }} className="modal">
-                                <div className="modal-dialog modal-dialog-centered register-modal-dialog">
-                                <div style={{padding:'25px',}} className="modal-content gradient_border modal-background">
-                                    <div style={{textAlign: 'center',}}>
-                                        <h3 className="heading">Are you sure to delete this Income?</h3>
-                                    </div>
-                                    <div style={{textAlign: 'center',}} className="modal-body">
-                                        <button style={{color: '#fff',}} className="btn btn--prime mr-1" onClick={handleCloseDelete}>Cancel</button>&nbsp;
-                                        <button className="btn btn--cancel ml-1" onClick={() => deleteIncome(deleteIncomeId)}>Delete</button>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div className="modal-backdrop show" />
-                        </div>
-                    }
+                    {showEditModal && <EditIncomes
+                                        handleCloseEdit={handleCloseEdit}
+                                        currentIncome={currentIncome}
+                                        mediums={mediums}
+                                        clients={clients}
+                                        updateIncome={updateIncome}
+                                    />}
+                    {showDeleteModal && <ConfirmationComponent
+                                            title="Are you sure to delete this Income?"
+                                            handleCloseDelete={handleCloseDelete}
+                                            btnName="Delete"
+                                            action={() => deleteIncome(deleteIncomeId)}
+                                        /> }
                 </div>
             )
 }

@@ -1,26 +1,14 @@
-import React, { Fragment, useState, useEffect } from 'react'
-import api from '../../helpers/api';
+import React, { Fragment, useState } from 'react'
 import DatePicker from "react-datepicker";
 
 function EditIncome(props) {
-    const [mediums, setMediums] = useState([]);
-    const [clients, setClients] = useState([]);
+    const {clients, mediums} = props;
     const closeModalSpanStyle = {
         color: '#000',
         float: 'right',
         fontSize: '20px',
         cursor: 'pointer'
       };
-    useEffect( () => {
-        api.get('/getIncomeMediumList')
-        .then((res) => {
-            setMediums(res.data.medium);
-        }),
-        api.get('/getClients')
-        .then((res) => {
-            setClients(res.data.clients);
-        })
-    }, [] );
     const editData = {
         date: new Date(props.currentIncome.date),
         client: props.currentIncome.client,
