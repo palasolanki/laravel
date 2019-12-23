@@ -10,4 +10,5 @@ class Expense extends Eloquent
     protected $casts = [
         'date' => 'datetime:Y-m-d',
     ];
+    const FILE_TYPE_INVOICE = 'invoice';
 }

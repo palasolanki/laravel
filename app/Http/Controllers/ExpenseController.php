@@ -88,7 +88,7 @@ class ExpenseController extends Controller
 
     public function deleteFileAttachment($deleteFile, $expenseId)
     {
-        DB::collection('expenses')->where('_id', $expenseId)->pull('file_attachments', ['type' => 'invoice', 'filename' => $deleteFile]);
+        DB::collection('expenses')->where('_id', $expenseId)->pull('file_attachments', ['type' => Expense::FILE_TYPE_INVOICE, 'filename' => $deleteFile]);
         $fileName = storage_path('uploads/expense/' . $expenseId . '/'. $deleteFile);
         File::delete($fileName);
         return ['message' => 'File Delete Success!'];
