@@ -55,7 +55,12 @@ function Expense() {
     }
 
     const updateExpense = (expenseId, updatedExpense) => {
-        api.patch(`/expenses/${expenseId}`, {data:updatedExpense})
+        var formData = new FormData();
+        Object.keys(updatedExpense[0]).map((key) => {
+                formData.append("data["+0+"]["+key+"]", updatedExpense[0][key]);
+        });
+        formData.append('_method', 'put');
+        api.post(`/expenses/${expenseId}`, formData)
         .then((res) => {
             setExpenses(expenses.map(expense => (expense._id === expenseId ? res.data.updateExpense : expense)))
             handleCloseEdit();
@@ -105,7 +110,7 @@ function Expense() {
                                         <td>{expense.amount}</td>
                                         <td>{mediums[expense.medium]}</td>
                                         <td>
-                                            { (expense.tags.length > 0) ? expense.tags.toString() : '-' }
+                                            { (expense.tags && expense.tags.length > 0) ? expense.tags.toString() : '-' }
                                         </td>
                                         <td>
                                             <button className="btn btn-sm btn--prime" onClick={() => editRow(expense)}>Edit</button>&nbsp;

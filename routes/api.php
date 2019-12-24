@@ -31,6 +31,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::patch('/tags/{id}', 'TagController@update')->name('tag.update');
     Route::delete('/tags/{id}', 'TagController@destroy')->name('tag.destroy');
     Route::resource('expenses', 'ExpenseController');
+    Route::delete('expenses/file_attachment/{deleteFile}/{expenseId}', 'ExpenseController@deleteFileAttachment');
     Route::resource('incomes', 'IncomeController');
     Route::resource('hardwares', 'HardwareController');
     Route::get('/getTagList', 'ExpenseController@getTagList');

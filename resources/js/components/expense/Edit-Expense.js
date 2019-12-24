@@ -1,9 +1,11 @@
 import React, { Component, Fragment, useState } from 'react'
 import DatePicker from "react-datepicker";
+import api from '../../helpers/api';
 import Select from 'react-select';
+import {ToastsStore} from 'react-toasts';
 
 function EditExpenses(props) {
-
+    const [fileAttachments, setFileAttachments] = useState(props.currentExpense.file_attachments);
     const closeModalSpanStyle = {
         color: '#000',
         float: 'right',
@@ -23,17 +25,22 @@ function EditExpenses(props) {
         return tmpTagOptions;
     }
     const editData = {
+        id: props.currentExpense._id,
         date: new Date(props.currentExpense.date),
         item: props.currentExpense.item,
         amount: props.currentExpense.amount,
         medium: props.currentExpense.medium,
         tags: tmpTagsList(props.currentExpense.tags),
-        tagsArray: props.currentExpense.tags
+        tagsArray: props.currentExpense.tags,
+        file_attachments: props.currentExpense.file_attachments
     }
     const [expense, setExpense] = useState(editData)
     const handleInputChange = event => {
         const { name, value } = event.target
         setExpense({ ...expense, [name]: value })
+    }
+    const handleFileChange = event => {
+        setExpense({ ...expense, [event.target.name]:event.target.files[0] })
     }
     const handleDateChange = event => {
         setExpense({ ...expense, ['date']: event })
@@ -51,6 +58,28 @@ function EditExpenses(props) {
     const mediumList = Object.keys(props.mediums).map((key) => {
         return <option value={key} key={key}>{props.mediums[key]}</option>
     })
+
+    const deleteExpenseFile = (expenseId,deleteFile) => {
+        api.delete(`/expenses/file_attachment/${deleteFile}/${expenseId}`)
+        .then((res) => {
+            setFileAttachments(fileAttachments.filter(expenseFile => expenseFile.filename !== deleteFile));
+            ToastsStore.error(res.data.message);
+        })
+    }
+    const deleteFileDiv = {
+        width: '100%',
+        background: '#e8e8e8',
+        padding: '10px',
+        borderRadius: '5px',
+        margin: '5px 0px',
+    }
+    const deleteFileCross = {
+        paddingLeft: '10px',
+        cursor: 'pointer',
+        float: 'right',
+        borderLeft: '1px solid #000',
+        color: '#000',
+    }
     return (
         <Fragment>
         <div
@@ -106,6 +135,18 @@ function EditExpenses(props) {
                                     options={props.options}
                                 />
                             </div>
+                                <div className="form-group">
+                                <label>File:</label>
+                                    <br></br>
+                                    { fileAttachments.map((expenseFiles, key) => 
+                                        <div style={deleteFileDiv} key={key}>
+                                            <span>{expenseFiles.filename}</span><span style={deleteFileCross}
+                                            onClick={() => deleteExpenseFile(editData.id, expenseFiles.filename)}>X</span>
+                                        </div>
+                                    )}  
+                                    <input style={{paddingTop: "8px"}} type="file" name="file" onChange={handleFileChange}/>
+                                </div>
+
                             <div className="form-group text-right">
                                 <button type="submit" className="btn btn--prime mr-1">Submit</button>
                                 <button onClick={props.handleCloseEdit} className="btn btn--cancel ml-1">Cancel</button>
