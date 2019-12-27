@@ -2,7 +2,6 @@ import React, { Component, Fragment, useState, useEffect } from 'react'
 import DatePicker from "react-datepicker";
 import api from '../../helpers/api';
 import Select from 'react-select';
-import api from '../../helpers/api';
 import {ToastsStore} from 'react-toasts';
 
 function EditExpenses(props) {
