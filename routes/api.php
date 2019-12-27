@@ -33,6 +33,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::resource('expenses', 'ExpenseController');
     Route::delete('expenses/file_attachment/{deleteFile}/{expenseId}', 'ExpenseController@deleteFileAttachment');
     Route::resource('incomes', 'IncomeController');
+    Route::post('getIncomeData', 'IncomeController@index');
+    Route::post('getExpenseData', 'ExpenseController@index');
     Route::resource('hardwares', 'HardwareController');
     Route::get('/getTagList', 'ExpenseController@getTagList');
     Route::get('/getExpenseMediumList', 'ExpenseController@getExpenseMediumList');

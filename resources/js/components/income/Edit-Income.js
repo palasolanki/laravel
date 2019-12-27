@@ -1,17 +1,14 @@
-import React, { Component, Fragment, useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import DatePicker from "react-datepicker";
 
 function EditIncome(props) {
-
+    const {clients, mediums} = props;
     const closeModalSpanStyle = {
         color: '#000',
         float: 'right',
         fontSize: '20px',
         cursor: 'pointer'
       };
-    //   const modalHeader = {
-    //     textAlign: 'center',
-    //   };
     const editData = {
         date: new Date(props.currentIncome.date),
         client: props.currentIncome.client,
@@ -26,8 +23,8 @@ function EditIncome(props) {
     const handleDateChange = event => {
         setIncome({ ...income, ['date']: event })
     }
-    const mediumList = Object.keys(props.mediums).map((key) => {
-        return <option value={key} key={key}>{props.mediums[key]}</option>
+    const mediumList = mediums && Object.keys(mediums).map((key) => {
+        return <option value={key} key={key}>{mediums[key]}</option>
     })
     return (
         <Fragment>
@@ -64,7 +61,7 @@ function EditIncome(props) {
                                 <select className="form-control" name="client" onChange={handleInputChange} value={income.client}>
                                     <option value="">Select Type</option>
                                     {
-                                        props.clients.map((client, index) =>
+                                        clients && clients.map((client, index) =>
                                             <option value={client._id} key={index}>{client.name}</option>
                                         )
                                     }

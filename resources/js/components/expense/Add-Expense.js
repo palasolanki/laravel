@@ -40,7 +40,7 @@ function AddExpense() {
     }
     const [expenseData, setExpenseData] = useState([data]);
 
-    const mediumList = Object.keys(mediums).map((key) => {
+    const mediumList = mediums && Object.keys(mediums).map((key) => {
         return <option value={key} key={key}>{mediums[key]}</option>
     })
     const handleInputChange = key => event => {

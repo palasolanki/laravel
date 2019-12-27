@@ -109,7 +109,7 @@ function Hardware() {
                                     <tr key={hardware._id}>
                                         <td>{(hardware.date) ? hardware.date : 'Not available'}</td>
                                         <td>{hardware.item}</td>
-                                        <td>{types[hardware.type]}</td>
+                                        <td>{types && types[hardware.type]}</td>
                                         <td>{(hardware.serial_number)? hardware.serial_number: 'Not available'}</td>
                                         <td>{status[hardware.status]}</td>
                                         <td>{hardware.notes}</td>

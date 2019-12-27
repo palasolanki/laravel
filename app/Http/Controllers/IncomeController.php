@@ -6,6 +6,8 @@ use App\Http\Requests\IncomeRequest;
 use App\Income;
 use Symfony\Component\HttpFoundation\Request;
 use App\Traits\ChartData;
+use Carbon\Carbon;
+use Yajra\DataTables\DataTables;
 
 class IncomeController extends Controller
 {
@@ -15,9 +17,32 @@ class IncomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Income::all();
+        $from = ($request->daterange[0]) ? $this->getDateObject($request->daterange[0])->startOfDay() : null;
+        $to = ($request->daterange[1]) ? $this->getDateObject($request->daterange[1])->endOfDay() : null;
+        $selectedClient = $request->client;
+        $income = Income::with('clients')
+                ->when($from, function ($income) use ($from, $to) {
+                    return $income->whereBetween('date', [$from, $to]);
+                })
+                ->when($selectedClient != "all", function ($income) use ($selectedClient) {
+                    return $income->where('client', $selectedClient);
+                })
+                ->get();
+
+        return Datatables::of($income)
+            ->addColumn('mediumvalue', function ($income) {
+                return config('expense.medium')[$income->medium];
+            })
+            ->addColumn('clientname', function ($income) {
+                return  $income->clients->name;
+            })->make(true);
+    }
+
+    public function getDateObject($string) {
+        $date = trim(str_replace('(India Standard Time)', '', $string));
+        return Carbon::parse($date);
     }
 
     /**
