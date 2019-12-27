@@ -50,6 +50,11 @@ function AddExpense() {
                 ...rows[key],
                 ['date']:event
             }
+        } else if(event.target.name == "file") {
+            rows[key] = {
+                ...rows[key],
+                [event.target.name]:event.target.files[0]
+            }
         } else {
             const { name, value } = event.target;
             rows[key] = {
@@ -80,7 +85,15 @@ function AddExpense() {
         setExpenseData([...array]);
     }
     const saveExpenses = () => {
-            api.post(`/expenses`, {data: expenseData})
+        var formData = new FormData();
+
+        Object.keys(expenseData).map((key) => {
+            Object.keys(expenseData[key]).map((fieldName) => {
+                formData.append("data["+key+"]["+fieldName+"]", expenseData[key][fieldName])
+            }) 
+        })
+
+            api.post(`/expenses`, formData)
             .then((res) => {
                 setExpenseData([data]);
             setErrorList([]);
@@ -114,40 +127,45 @@ function AddExpense() {
                 {
                     expenseData.map((expenseItem, key) =>
                         <div className="row mx-0 align-items-center mb-md-3" key={key}>
-                            <div className="col-md-2 form-group mb-md-0 px-0 pl-md-0">
-                                <DatePicker
-                                    className="form-control"
-                                    name="date"
-                                    selected={expenseItem.date}
-                                    onChange={handleInputChange(key)}
-                                />
-                            </div>
-                            <div className="col-md-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
-                                <input type="text" name="item" placeholder="Enter Item" onChange={handleInputChange(key)} value={expenseItem.item} className="form-control"/>
-                            </div>
-                            <div className="col-md-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
-                                <input type="text" name="amount" placeholder="Enter Amount" onChange={handleInputChange(key)} value={expenseItem.amount} className="form-control"/>
-                            </div>
-                            <div className="col-md-3 col-xl-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
-                                <select name="medium" className="form-control" onChange={handleInputChange(key)} value={expenseItem.medium}>
-                                    <option value="">SELECT</option>
+                            <div className="row w-100 flex-nowrap mx-0 align-items-center">
+                                <div className="col-md-2 form-group mb-md-0 px-0 pl-md-0">
+                                    <DatePicker
+                                        className="form-control"
+                                        name="date"
+                                        selected={expenseItem.date}
+                                        onChange={handleInputChange(key)}
+                                    />
+                                </div>
+                                <div className="col-md-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
+                                    <input type="text" name="item" placeholder="Enter Item" onChange={handleInputChange(key)} value={expenseItem.item} className="form-control"/>
+                                </div>
+                                <div className="col-md-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
+                                    <input type="text" name="amount" placeholder="Enter Amount" onChange={handleInputChange(key)} value={expenseItem.amount} className="form-control"/>
+                                </div>
+                                <div className="col-md-3 col-xl-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
+                                    <select name="medium" className="form-control" onChange={handleInputChange(key)} value={expenseItem.medium}>
+                                        <option value="">SELECT</option>
                                     {
                                         mediumList
                                     }
-                                </select>
-                            </div>
-                            <div className="col-md-3 col-xl-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
-                                <Select
-                                    value={expenseItem.tags}
-                                    onChange={handleSelectChange(key)}
-                                    isMulti
-                                    options={options}
-                                />
+                                    </select>
+                                </div>
+                                <div className="col-md-3 col-xl-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
+                                    <Select
+                                        value={expenseItem.tags}
+                                        onChange={handleSelectChange(key)}
+                                        isMulti
+                                        options={options}
+                                    />
+                                </div>
+                                <input className="h-100" type="file" name="file" onChange={handleInputChange(key)}/>
                             </div>
                             {
                                 (expenseData.length > 1 && key != 0) ?
-                                    <div className="col-md-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
-                                        <button className="btn btn-danger" value={key} onClick={removeExpense}> Remove </button>
+                                    <div className="col-12 px-0">
+                                        <div className="form-group mb-md-0 mt-3">
+                                            <button className="btn btn-danger" value={key} onClick={removeExpense}> Remove </button>
+                                        </div>
                                     </div>
                                 : ''
                             }

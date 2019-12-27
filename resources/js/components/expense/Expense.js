@@ -83,7 +83,14 @@ function Expense() {
     }
 
     const updateExpense = (expenseId, updatedExpense) => {
-        api.patch(`/expenses/${expenseId}`, {data:updatedExpense}).then((res) => {
+        var formData = new FormData();
+        Object.keys(updatedExpense[0]).map((key) => {
+                formData.append("data["+0+"]["+key+"]", updatedExpense[0][key]);
+        });
+        formData.append('_method', 'put');
+        api.post(`/expenses/${expenseId}`, formData)
+        .then((res) => {
+            setExpenses(expenses.map(expense => (expense._id === expenseId ? res.data.updateExpense : expense)))
             handleCloseEdit();
             ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
@@ -126,6 +133,43 @@ function Expense() {
                             />
                         </div>
                         <Link to="expenses/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Expense</Link>
+                    </div>
+                    <div className="table-responsive">
+                        <table className="table">
+                            <thead className="thead-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Item</th>
+                                    <th>Amount</th>
+                                    <th>Medium</th>
+                                    <th>Tags</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {expenses.length > 0 ? (
+                            expenses.map(expense => (
+                                    <tr key={expense._id}>
+                                        <td>{expense.date}</td>
+                                        <td>{expense.item}</td>
+                                        <td>{expense.amount}</td>
+                                        <td>{mediums[expense.medium]}</td>
+                                        <td>
+                                            { (expense.tags && expense.tags.length > 0) ? expense.tags.toString() : '-' }
+                                        </td>
+                                        <td>
+                                            <button className="btn btn-sm btn--prime" onClick={() => editRow(expense)}>Edit</button>&nbsp;
+                                            <button className="btn btn-sm btn--cancel ml-1" onClick={() => setDeleteExpenseIdFunction(expense._id)}>Delete</button>
+                                        </td>
+                                    </tr>
+                            ))
+                            ) : (
+                                    <tr>
+                                    <td colSpan={3}>No Expenses</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
                     </div>
 
                     <table id="datatable" className="display" width="100%"></table>
