@@ -89,11 +89,15 @@ function AddExpense() {
 
         Object.keys(expenseData).map((key) => {
             Object.keys(expenseData[key]).map((fieldName) => {
-                formData.append("data["+key+"]["+fieldName+"]", expenseData[key][fieldName])
-            }) 
+                if(fieldName == 'date') {
+                    const isoDate = new Date(expenseData[key][fieldName]).toISOString();
+                    formData.append("data["+key+"]["+fieldName+"]", isoDate)
+                } else {
+                    formData.append("data["+key+"]["+fieldName+"]", expenseData[key][fieldName])
+                }
+            })
         })
-
-            api.post(`/expenses`, formData)
+        api.post(`/expenses`, formData)
             .then((res) => {
                 setExpenseData([data]);
             setErrorList([]);

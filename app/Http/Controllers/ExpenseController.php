@@ -25,10 +25,8 @@ class ExpenseController extends Controller
         $from = ($request->daterange[0]) ? $this->getDateObject($request->daterange[0])->startOfDay() : null;
         $to = ($request->daterange[1]) ? $this->getDateObject($request->daterange[1])->endOfDay() : null;
 
-        $expense = Expense::where(function($expense) use ($from, $to)  {
-            if(isset($from)) {
-                $expense->whereBetween('date', [$from, $to]);
-            }
+        $expense = Expense::when($from, function ($expense) use ($from, $to) {
+            return $expense->whereBetween('date', [$from, $to]);
         })->get();
 
         return Datatables::of($expense)
