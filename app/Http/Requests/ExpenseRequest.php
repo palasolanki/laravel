@@ -54,7 +54,7 @@ class ExpenseRequest extends FormRequest
             $expense->item = $value['item'];
             $expense->amount = $value['amount'];
             $expense->medium = $value['medium'];
-            $expense->tags = $value['tagsArray'];
+            $expense->tags = explode(',', $value['tagsArray']);
             $expense->save();
 
             $this->addFileAttachment($value, $expense);

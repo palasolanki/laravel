@@ -1,12 +1,13 @@
-import React, { Component, Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState } from 'react'
 import DatePicker from "react-datepicker";
 import api from '../../helpers/api';
 import Select from 'react-select';
-import api from '../../helpers/api';
 import {ToastsStore} from 'react-toasts';
 
 function EditExpenses(props) {
-    const [fileAttachments, setFileAttachments] = useState(props.currentExpense.file_attachments);
+    const selectedFile = (props.currentExpense.file_attachments) ? props.currentExpense.file_attachments : [];
+    const [fileAttachments, setFileAttachments] = useState(selectedFile);
+    const {mediums, options} = props;
     const closeModalSpanStyle = {
         color: '#000',
         float: 'right',
@@ -24,27 +25,14 @@ function EditExpenses(props) {
     }
     const editData = {
         id: props.currentExpense._id,
-        date: new Date(props.currentExpense.date),
+        date: new Date(props.currentExpense.selectedDateForEdit),
         item: props.currentExpense.item,
         amount: props.currentExpense.amount,
         medium: props.currentExpense.medium,
         tags: tmpTagsList(props.currentExpense.tags),
         tagsArray: props.currentExpense.tags,
-        file_attachments: props.currentExpense.file_attachments
+        file_attachments: selectedFile
     }
-    const [mediums, setMediums] = useState([]);
-    const [options, setOptions] = useState([]);
-
-    useEffect( () => {
-        api.get('/getExpenseMediumList').then((res) => {
-            if (res.data.medium) {
-                setMediums(res.data.medium);
-            }
-        }),
-        api.get('/getTagList').then((res) => {
-            createTagOptions(res.data.tags);
-        })
-    }, [] );
 
     const [expense, setExpense] = useState(editData)
     const handleInputChange = event => {
@@ -66,15 +54,6 @@ function EditExpenses(props) {
             ['tags']: (event) ? event : [],
             ['tagsArray']: (event) ? tmp : []
         })
-    }
-    const createTagOptions = data => {
-        const tagOptions = data.map(value => {
-            return {
-                value: value,
-                label: value
-            }
-        });
-        setOptions(tagOptions);
     }
     const mediumList = mediums && Object.keys(mediums).map((key) => {
         return <option value={key} key={key}>{mediums[key]}</option>
@@ -129,6 +108,7 @@ function EditExpenses(props) {
                                     className="form-control"
                                     selected={expense.date}
                                     onChange={handleDateChange}
+                                    dateFormat="dd-MM-yyyy"
                                 />
                             </div>
                             <div className="form-group">

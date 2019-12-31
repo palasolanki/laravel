@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faPlus
 } from '@fortawesome/free-solid-svg-icons';
+import ConfirmationComponent from '../ConfirmationComponent';
 const $ = require('jquery')
 $.DataTable = require('datatables.net')
 
@@ -16,6 +17,9 @@ function Expense() {
     const [showEditModal, setEditShow] = useState(false);
     const [showDeleteModal, setDeleteShow] = useState(false);
     const [date, setDate] = useState([null, null]);
+    const [dateRange, setDateRange] = useState([null, null]);
+    const [mediums, setMediums] = useState([]);
+    const [options, setOptions] = useState([]);
 
     const openShowEdit = () => setEditShow(true);
     const handleCloseEdit = () => setEditShow(false);
@@ -30,6 +34,14 @@ function Expense() {
     useEffect(() => {
         if(dataTable) {
             registerEvent();
+            api.get('/getExpenseMediumList').then((res) => {
+                if (res.data.medium) {
+                    setMediums(res.data.medium);
+                }
+            }),
+            api.get('/getTagList').then((res) => {
+                createTagOptions(res.data.tags);
+            })
         }
     }, [dataTable]);
 
@@ -41,7 +53,7 @@ function Expense() {
                 "url": `/api/getExpenseData`,
                 "dataType": 'json',
                 "type": 'post',
-                "data": {'daterange': date},
+                "data": {'daterange': dateRange},
                 "beforeSend": function (xhr) {
                     xhr.setRequestHeader('Authorization',
                         "Bearer " + localStorage.getItem('token'));
@@ -73,6 +85,15 @@ function Expense() {
             setDeleteShow(true);
         });
     }
+    const createTagOptions = data => {
+        const tagOptions = data.map(value => {
+            return {
+                value: value,
+                label: value
+            }
+        });
+        setOptions(tagOptions);
+    }
 
     const [currentExpense, setCurrentExpense] = useState()
     const editRow = expense => {
@@ -85,12 +106,16 @@ function Expense() {
     const updateExpense = (expenseId, updatedExpense) => {
         var formData = new FormData();
         Object.keys(updatedExpense[0]).map((key) => {
+            if(key == 'date') {
+                const isoDate = new Date(updatedExpense[0][key]).toISOString();
+                formData.append("data["+0+"]["+key+"]", isoDate)
+            } else {
                 formData.append("data["+0+"]["+key+"]", updatedExpense[0][key]);
+            }
         });
         formData.append('_method', 'put');
         api.post(`/expenses/${expenseId}`, formData)
         .then((res) => {
-            setExpenses(expenses.map(expense => (expense._id === expenseId ? res.data.updateExpense : expense)))
             handleCloseEdit();
             ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
@@ -112,7 +137,10 @@ function Expense() {
     }
 
     const onDateChange = datevalue => {
-        setDate(datevalue);
+        const dateForDateRangePicker = (datevalue) ? datevalue : [null, null];
+        const data = (datevalue) ? [datevalue[0].toISOString(), datevalue[1].toISOString()] : [null, null];
+        setDate(dateForDateRangePicker);
+        setDateRange(data);
     }
 
     useEffect(() => {
@@ -134,65 +162,22 @@ function Expense() {
                         </div>
                         <Link to="expenses/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Expense</Link>
                     </div>
-                    <div className="table-responsive">
-                        <table className="table">
-                            <thead className="thead-light">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Item</th>
-                                    <th>Amount</th>
-                                    <th>Medium</th>
-                                    <th>Tags</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {expenses.length > 0 ? (
-                            expenses.map(expense => (
-                                    <tr key={expense._id}>
-                                        <td>{expense.date}</td>
-                                        <td>{expense.item}</td>
-                                        <td>{expense.amount}</td>
-                                        <td>{mediums[expense.medium]}</td>
-                                        <td>
-                                            { (expense.tags && expense.tags.length > 0) ? expense.tags.toString() : '-' }
-                                        </td>
-                                        <td>
-                                            <button className="btn btn-sm btn--prime" onClick={() => editRow(expense)}>Edit</button>&nbsp;
-                                            <button className="btn btn-sm btn--cancel ml-1" onClick={() => setDeleteExpenseIdFunction(expense._id)}>Delete</button>
-                                        </td>
-                                    </tr>
-                            ))
-                            ) : (
-                                    <tr>
-                                    <td colSpan={3}>No Expenses</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
 
                     <table id="datatable" className="display" width="100%"></table>
 
-                    {showEditModal && <EditExpenses handleCloseEdit={handleCloseEdit} currentExpense={currentExpense} updateExpense={updateExpense} />}
-                    {showDeleteModal &&
-                        <div>
-                            <div style={{ display: 'block' }} className="modal">
-                                <div className="modal-dialog modal-dialog-centered register-modal-dialog">
-                                <div style={{padding:'25px',}} className="modal-content gradient_border modal-background">
-                                    <div style={{textAlign: 'center',}}>
-                                        <h3 className="heading">Are you sure to delete this expense?</h3>
-                                    </div>
-                                    <div style={{textAlign: 'center',}} className="modal-body">
-                                            <button style={{color: '#fff',}} className="btn btn--prime mr-1" onClick={handleCloseDelete}>Cancel</button>&nbsp;
-                                            <button className="btn btn--cancel ml-1" onClick={() => deleteExpense(deleteExpenseId)}>Delete</button>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            <div className="modal-backdrop show" />
-                        </div>
-                    }
+                    {showEditModal && <EditExpenses
+                                        handleCloseEdit={handleCloseEdit}
+                                        currentExpense={currentExpense}
+                                        mediums={mediums}
+                                        options={options}
+                                        updateExpense={updateExpense}
+                                    />}
+                    {showDeleteModal && <ConfirmationComponent
+                                            title="Are you sure to delete this Expense?"
+                                            handleCloseDelete={handleCloseDelete}
+                                            btnName="Delete"
+                                            action={() => deleteExpense(deleteExpenseId)}
+                                        /> }
                 </div>
             )
 }

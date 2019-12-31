@@ -8,7 +8,7 @@ class Expense extends Eloquent
 {
     protected $dates=['date'];
     protected $casts = [
-        'date' => 'datetime:Y-m-d',
+        'date' => 'datetime:d-m-Y',
     ];
     const FILE_TYPE_INVOICE = 'invoice';
 }

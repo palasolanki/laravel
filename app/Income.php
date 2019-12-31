@@ -8,7 +8,7 @@ class Income extends Eloquent
 {
     protected $dates=['date'];
     protected $casts = [
-        'date' => 'datetime:Y-m-d',
+        'date' => 'datetime:d-m-Y',
     ];
     public function clients() {
         return $this->hasOne('App\Models\Client', '_id', 'client');

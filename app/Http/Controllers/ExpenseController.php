@@ -22,24 +22,20 @@ class ExpenseController extends Controller
      */
     public function index(Request $request)
     {
-        $from = ($request->daterange[0]) ? $this->getDateObject($request->daterange[0])->startOfDay() : null;
-        $to = ($request->daterange[1]) ? $this->getDateObject($request->daterange[1])->endOfDay() : null;
+        $from = ($request->daterange[0]) ? Carbon::parse($request->daterange[0]) : null;
+        $to = ($request->daterange[1]) ? Carbon::parse($request->daterange[1]) : null;
 
-        $expense = Expense::where(function($expense) use ($from, $to)  {
-            if(isset($from)) {
-                $expense->whereBetween('date', [$from, $to]);
-            }
+        $expense = Expense::when($from, function ($expense) use ($from, $to) {
+            return $expense->whereBetween('date', [$from, $to]);
         })->get();
 
         return Datatables::of($expense)
+            ->addColumn('selectedDateForEdit', function ($expense) {
+                return $expense->date;
+            })
             ->addColumn('mediumvalue', function ($expense) {
                 return config('expense.medium')[$expense->medium];
             })->make(true);
-    }
-
-    public function getDateObject($string) {
-        $date = trim(str_replace('(India Standard Time)', '', $string));
-        return Carbon::parse($date);
     }
 
     /**

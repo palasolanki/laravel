@@ -10,7 +10,7 @@ function EditIncome(props) {
         cursor: 'pointer'
       };
     const editData = {
-        date: new Date(props.currentIncome.date),
+        date: new Date(props.currentIncome.selectedDateForEdit),
         client: props.currentIncome.client,
         amount: props.currentIncome.amount,
         medium: props.currentIncome.medium,
@@ -54,6 +54,7 @@ function EditIncome(props) {
                                     className="form-control"
                                     selected={income.date}
                                     onChange={handleDateChange}
+                                    dateFormat="dd-MM-yyyy"
                                 />
                             </div>
                             <div className="form-group">

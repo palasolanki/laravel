@@ -89,11 +89,15 @@ function AddExpense() {
 
         Object.keys(expenseData).map((key) => {
             Object.keys(expenseData[key]).map((fieldName) => {
-                formData.append("data["+key+"]["+fieldName+"]", expenseData[key][fieldName])
-            }) 
+                if(fieldName == 'date') {
+                    const isoDate = new Date(expenseData[key][fieldName]).toISOString();
+                    formData.append("data["+key+"]["+fieldName+"]", isoDate)
+                } else {
+                    formData.append("data["+key+"]["+fieldName+"]", expenseData[key][fieldName])
+                }
+            })
         })
-
-            api.post(`/expenses`, formData)
+        api.post(`/expenses`, formData)
             .then((res) => {
                 setExpenseData([data]);
             setErrorList([]);
@@ -134,6 +138,7 @@ function AddExpense() {
                                         name="date"
                                         selected={expenseItem.date}
                                         onChange={handleInputChange(key)}
+                                        dateFormat="dd-MM-yyyy"
                                     />
                                 </div>
                                 <div className="col-md-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">

@@ -100,6 +100,7 @@ function AddIncome() {
                                     name="date"
                                     selected={incomeItem.date}
                                     onChange={handleInputChange(key)}
+                                    dateFormat="dd-MM-yyyy"
                                 />
                             </div>
                             <div className="col-md-3 form-group px-0 px-md-3">
