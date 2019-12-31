@@ -5,7 +5,8 @@ import Select from 'react-select';
 import {ToastsStore} from 'react-toasts';
 
 function EditExpenses(props) {
-    const [fileAttachments, setFileAttachments] = useState(props.currentExpense.file_attachments);
+    const selectedFile = (props.currentExpense.file_attachments) ? props.currentExpense.file_attachments : [];
+    const [fileAttachments, setFileAttachments] = useState(selectedFile);
     const {mediums, options} = props;
     const closeModalSpanStyle = {
         color: '#000',
@@ -24,13 +25,13 @@ function EditExpenses(props) {
     }
     const editData = {
         id: props.currentExpense._id,
-        date: new Date(props.currentExpense.date),
+        date: new Date(props.currentExpense.selectedDateForEdit),
         item: props.currentExpense.item,
         amount: props.currentExpense.amount,
         medium: props.currentExpense.medium,
         tags: tmpTagsList(props.currentExpense.tags),
         tagsArray: props.currentExpense.tags,
-        file_attachments: props.currentExpense.file_attachments
+        file_attachments: selectedFile
     }
 
     const [expense, setExpense] = useState(editData)
@@ -107,6 +108,7 @@ function EditExpenses(props) {
                                     className="form-control"
                                     selected={expense.date}
                                     onChange={handleDateChange}
+                                    dateFormat="dd-MM-yyyy"
                                 />
                             </div>
                             <div className="form-group">

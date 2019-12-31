@@ -17,6 +17,7 @@ function Expense() {
     const [showEditModal, setEditShow] = useState(false);
     const [showDeleteModal, setDeleteShow] = useState(false);
     const [date, setDate] = useState([null, null]);
+    const [dateRange, setDateRange] = useState([null, null]);
     const [mediums, setMediums] = useState([]);
     const [options, setOptions] = useState([]);
 
@@ -52,7 +53,7 @@ function Expense() {
                 "url": `/api/getExpenseData`,
                 "dataType": 'json',
                 "type": 'post',
-                "data": {'daterange': date},
+                "data": {'daterange': dateRange},
                 "beforeSend": function (xhr) {
                     xhr.setRequestHeader('Authorization',
                         "Bearer " + localStorage.getItem('token'));
@@ -136,7 +137,10 @@ function Expense() {
     }
 
     const onDateChange = datevalue => {
-        setDate(datevalue);
+        const dateForDateRangePicker = (datevalue) ? datevalue : [null, null];
+        const data = (datevalue) ? [datevalue[0].toISOString(), datevalue[1].toISOString()] : [null, null];
+        setDate(dateForDateRangePicker);
+        setDateRange(data);
     }
 
     useEffect(() => {

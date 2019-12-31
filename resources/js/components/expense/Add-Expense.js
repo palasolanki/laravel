@@ -138,6 +138,7 @@ function AddExpense() {
                                         name="date"
                                         selected={expenseItem.date}
                                         onChange={handleInputChange(key)}
+                                        dateFormat="dd-MM-yyyy"
                                     />
                                 </div>
                                 <div className="col-md-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
