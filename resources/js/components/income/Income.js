@@ -15,6 +15,7 @@ $.DataTable = require('datatables.net')
 export default function Income() {
     const [dataTable, setDataTable] = useState(null);
     const [date, setDate] = useState([null, null]);
+    const [dateRange, setDateRange] = useState([null, null]);
     const [clients, setClients] = useState([]);
     const [mediums, setMediums] = useState([]);
     const [filterClient, setFilterClient] = useState('all');
@@ -40,7 +41,7 @@ export default function Income() {
                 "url": `/api/getIncomeData`,
                 "dataType": 'json',
                 "type": 'post',
-                "data": {'daterange': date, 'client': filterClient},
+                "data": {'daterange': dateRange, 'client': filterClient},
                 "beforeSend": function (xhr) {
                     xhr.setRequestHeader('Authorization',
                         "Bearer " + localStorage.getItem('token'));
@@ -110,7 +111,10 @@ export default function Income() {
         });
     }
     const onDateChange = datevalue => {
-        setDate(datevalue);
+        const dateForDateRangePicker = (datevalue) ? datevalue : [null, null];
+        const data = (datevalue) ? [datevalue[0].toISOString(), datevalue[1].toISOString()] : [null, null];
+        setDate(dateForDateRangePicker);
+        setDateRange(data);
     }
     const handleClientFilterChange = () => {
         setFilterClient(event.target.value)

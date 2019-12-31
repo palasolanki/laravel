@@ -19,8 +19,9 @@ class IncomeController extends Controller
      */
     public function index(Request $request)
     {
-        $from = ($request->daterange[0]) ? $this->getDateObject($request->daterange[0])->startOfDay() : null;
-        $to = ($request->daterange[1]) ? $this->getDateObject($request->daterange[1])->endOfDay() : null;
+        $from = ($request->daterange[0]) ? Carbon::parse($request->daterange[0]) : null;
+        $to = ($request->daterange[1]) ? Carbon::parse($request->daterange[1]) : null;
+
         $selectedClient = $request->client;
         $income = Income::with('clients')
                 ->when($from, function ($income) use ($from, $to) {
@@ -32,17 +33,15 @@ class IncomeController extends Controller
                 ->get();
 
         return Datatables::of($income)
+            ->addColumn('selectedDateForEdit', function ($income) {
+                return $income->date;
+            })
             ->addColumn('mediumvalue', function ($income) {
                 return config('expense.medium')[$income->medium];
             })
             ->addColumn('clientname', function ($income) {
                 return  $income->clients->name;
             })->make(true);
-    }
-
-    public function getDateObject($string) {
-        $date = trim(str_replace('(India Standard Time)', '', $string));
-        return Carbon::parse($date);
     }
 
     /**
