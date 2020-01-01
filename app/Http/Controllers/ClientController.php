@@ -12,7 +12,9 @@ class ClientController extends Controller
 {
     public function index(): JsonResponse
     {
-        $clients = Client::get();
+        $clients = Client::with(['country'=>function($query){
+            $query->select('country');
+        }])->get();
         return response()->json(['data' => $clients]);
     }
 

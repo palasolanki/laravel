@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\Client;
 
-class ClientRequest extends FormRequest
+class CountryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,19 +24,12 @@ class ClientRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'company_name' => 'required',
-            'country_id' => 'required'
+            'country' => 'required'
         ];
     }
-
-    public function save($id = null)
-    {
-        if (!$id) {
-            return Client::create($this->all());
-        }
-        
-        return Client::where('_id', $id)
-            ->update($this->all());
+    public function save($countryObj) {
+        $countryObj->country = $this->country;
+        $countryObj->save();
+        return $countryObj;
     }
 }

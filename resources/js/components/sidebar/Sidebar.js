@@ -23,6 +23,7 @@ export default class Sidebar extends Component {
       // { title: 'Projects', url: '/project' },
       { brandicon: faUsers, title: 'Clients', url: '/clients' },
       { brandicon: faTags, title: 'Tags', url: '/tags' },
+      { brandicon: faTags, title: 'Country', url: '/country' },
       { brandicon: faDollarSign, title: 'Income', url: '/incomes' },
       { brandicon: faCoins, title: 'Expense', url: '/expenses' },
       { brandicon: faMicrochip, title: 'Hardware', url: '/hardwares' },

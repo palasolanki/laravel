@@ -4,11 +4,17 @@ import api from '../../helpers/api';
 import {ToastsStore} from 'react-toasts';
 
 const AddClient = (props) => {
-    const initialFormState = { name: '', company_name: '', country: '' }
+    const initialFormState = { name: '', company_name: '', country_id: '' }
 
     const [client, setClient] = useState(initialFormState)
+    const [countries, setCountries] = useState([])
     const [sendRequest, setSendRequest] = useState(false)
 
+    useEffect( () => {
+        api.get('/countries').then((res) => {
+            setCountries(res.data.country);
+        })
+    }, [] );
 
     const handleInputChange = event => {
         const { name, value } = event.target
@@ -17,7 +23,7 @@ const AddClient = (props) => {
     const submitForm = event => {
         event.preventDefault()
 
-        if (!client.name || !client.company_name, !client.country) return
+        if (!client.name || !client.company_name, !client.country_id) return
         setSendRequest(true)
 
     }
@@ -56,13 +62,15 @@ const AddClient = (props) => {
                         </div>
                     </div>
                     <div className="form-group">
-                        <label className="control-label col-auto px-0" htmlFor="country">Country:</label>
+                        <label className="control-label col-auto px-0" htmlFor="countryid">Country:</label>
                         <div className="col-sm-10 pl-0">
-                            <select className="form-control" name="country" value={client.country} onChange={handleInputChange}>
+                            <select className="form-control" name="country_id" value={client.country_id} onChange={handleInputChange}>
                                 <option value="" disabled>Country</option>
-                                <option value="India">India</option>
-                                <option value="USA">USA</option>
-                                <option value="Canada">Canada</option>
+                                {
+                                    countries.map(value => {
+                                        return <option value={value._id} key={value._id}>{value.country}</option>
+                                    })
+                                }
                             </select>
                         </div>
                     </div>
