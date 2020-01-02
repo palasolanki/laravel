@@ -95,7 +95,7 @@ export default function Income() {
         api.delete(`/incomes/${incomeId}`)
         .then((res) => {
             handleCloseDelete();
-            ToastsStore.error(res.data.message);
+            ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
         })
     }

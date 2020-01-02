@@ -14,7 +14,7 @@ function EditCountry(props) {
     const handleInputChange = event => {
         setCountry({
             ...country,
-            'country': event.target.value
+            'name': event.target.value
         })
     }
 
@@ -36,7 +36,7 @@ function EditCountry(props) {
                         <form
                             onSubmit={event => {
                                 event.preventDefault()
-                                if (!country.country) {
+                                if (!country.name) {
                                     ToastsStore.error('Country Field is required');
                                     return
                                 }
@@ -45,7 +45,7 @@ function EditCountry(props) {
                         >
                             <div className="form-group">
                                 <label>Country Name:</label>
-                                <input type="text" className="form-control" placeholder="Enter Country" value={country.country} onChange={handleInputChange} />
+                                <input type="text" className="form-control" placeholder="Enter Country" value={country.name} onChange={handleInputChange} />
                             </div>
                             <div className="form-group text-right">
                                 <button type="submit" className="btn btn--prime mr-1">Submit</button>

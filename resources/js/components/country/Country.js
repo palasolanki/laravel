@@ -30,7 +30,7 @@ function Country() {
     }, [] );
 
   const addCountry = addcountry => {
-    api.post(`/countries`, {'country': addcountry}).then((res) => {
+    api.post(`/countries`, {'name': addcountry}).then((res) => {
         setCountry([
             ...country,
             res.data.country
@@ -49,7 +49,7 @@ function Country() {
   const deleteCountry = countryId => {
     api.delete(`/countries/${countryId}`).then((res) => {
         setCountry(country.filter(value => value._id !== countryId))
-        ToastsStore.error(res.data.message);
+        ToastsStore.success(res.data.message);
         handleCloseDelete();
     })
   }
@@ -85,7 +85,7 @@ function Country() {
                 {country.length > 0 ? (
                   country.map((value, index) => (
                         <tr key={index}>
-                            <td>{value.country}</td>
+                            <td>{value.name}</td>
                             <td>
                                 <button className="btn btn-sm btn--prime" onClick={() => editRow(value)}>Edit</button>&nbsp;
                                 <button className="btn btn-sm btn--cancel ml-1" onClick={() => setDeleteCountryIdFunction(value._id)}>Delete</button>

@@ -24,11 +24,11 @@ class CountryRequest extends FormRequest
     public function rules()
     {
         return [
-            'country' => 'required'
+            'name' => 'required'
         ];
     }
     public function save($countryObj) {
-        $countryObj->country = $this->country;
+        $countryObj->name = $this->name;
         $countryObj->save();
         return $countryObj;
     }

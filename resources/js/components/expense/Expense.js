@@ -131,7 +131,7 @@ function Expense() {
     const deleteExpense = expenseId => {
         api.delete(`/expenses/${expenseId}`).then((res) => {
             handleCloseDelete();
-            ToastsStore.error(res.data.message);
+            ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
         })
     }

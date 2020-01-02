@@ -82,7 +82,7 @@ const EditClient = (props) => {
                                 <option value="" disabled>Country</option>
                                 {
                                     countries.map(value => {
-                                        return <option value={value._id} key={value._id}>{value.country}</option>
+                                        return <option value={value._id} key={value._id}>{value.name}</option>
                                     })
                                 }
                             </select>
