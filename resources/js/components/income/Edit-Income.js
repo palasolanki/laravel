@@ -11,7 +11,7 @@ function EditIncome(props) {
       };
     const editData = {
         date: new Date(props.currentIncome.selectedDateForEdit),
-        client: props.currentIncome.client,
+        client_id: props.currentIncome.client_id,
         amount: props.currentIncome.amount,
         medium: props.currentIncome.medium,
     }
@@ -59,7 +59,7 @@ function EditIncome(props) {
                             </div>
                             <div className="form-group">
                                 <label>Client:</label>
-                                <select className="form-control" name="client" onChange={handleInputChange} value={income.client}>
+                                <select className="form-control" name="client_id" onChange={handleInputChange} value={income.client_id}>
                                     <option value="">Select Type</option>
                                     {
                                         clients && clients.map((client, index) =>
