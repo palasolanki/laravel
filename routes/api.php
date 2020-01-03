@@ -48,4 +48,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/client/{client}', 'ClientController@show');
     Route::patch('/client/{client}', 'ClientController@update');
     Route::delete('/client/{client}', 'ClientController@destroy');
+
+    Route::post('/profile','ProfileController@update');
+
 });
