@@ -4,16 +4,19 @@ import api from '../../helpers/api';
 import {ToastsStore} from 'react-toasts';
 
 const EditClient = (props) => {
-    const initialFormState = { name: '', company_name: '', country: '' }
+    const initialFormState = { name: '', company_name: '', country_id: '' }
 
     const [client, setClient] = useState(initialFormState)
-
+    const [countries, setCountries] = useState([])
     const [sendRequest, setSendRequest] = useState(false)
 
     const url = window.location.pathname;
     const id = (url).substring(url.lastIndexOf('/') + 1);
 
     useEffect(() => {
+        api.get('/countries').then((res) => {
+            setCountries(res.data.country);
+        })
         const fetchData = async () => {
             await api.get(`/client/${id}`)
                 .then((res) => {
@@ -51,7 +54,7 @@ const EditClient = (props) => {
     const submitForm = event => {
         event.preventDefault()
 
-        if (!client.name || !client.company_name, !client.country) return
+        if (!client.name || !client.company_name, !client.country_id) return
         setSendRequest(true)
     }
 
@@ -75,11 +78,13 @@ const EditClient = (props) => {
                     <div className="form-group">
                         <label className="control-label" htmlFor="country">Country:</label>
                         <div className="col-sm-10 pl-0">
-                            <select className="form-control" name="country" value={client.country} onChange={handleInputChange}>
+                            <select className="form-control" name="country_id" value={client.country_id} onChange={handleInputChange}>
                                 <option value="" disabled>Country</option>
-                                <option value="India">India</option>
-                                <option value="USA">USA</option>
-                                <option value="Canada">Canada</option>
+                                {
+                                    countries.map(value => {
+                                        return <option value={value._id} key={value._id}>{value.name}</option>
+                                    })
+                                }
                             </select>
                         </div>
                     </div>

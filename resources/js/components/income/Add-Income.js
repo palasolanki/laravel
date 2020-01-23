@@ -8,7 +8,7 @@ function AddIncome() {
     const [errorList, setErrorList] = useState(errors);
     const data = {
         date: new Date(),
-        client: '',
+        client_id: '',
         amount: '',
         medium: ''
     };
@@ -104,7 +104,7 @@ function AddIncome() {
                                 />
                             </div>
                             <div className="col-md-3 form-group px-0 px-md-3">
-                                <select name="client" className="form-control" onChange={handleInputChange(key)} value={incomeItem.client}>
+                                <select name="client_id" className="form-control" onChange={handleInputChange(key)} value={incomeItem.client_id}>
                                     <option value="">SELECT</option>
                                     {
                                         clientList

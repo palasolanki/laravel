@@ -40,7 +40,7 @@ class IncomeController extends Controller
                 return config('expense.medium')[$income->medium];
             })
             ->addColumn('clientname', function ($income) {
-                return  $income->clients->name;
+                return ($income->clients) ? $income->clients->name : $income->client_name;
             })->make(true);
     }
 

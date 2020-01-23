@@ -7,6 +7,7 @@ import Dashboard from "./dashboard/Dashboard";
 import Sidebar from "./sidebar/Sidebar";
 import ClientList from "./clients/ClientList";
 import Tags from "./tags/Tags";
+import Country from "./country/Country"
 import Expense from "./expense/Expense";
 import Income from "./income/Income";
 import AddExpense from "./expense/Add-Expense";
@@ -69,6 +70,7 @@ export default class Home extends Component {
             <Route exact path='/addClient'  component={Client} />
             <Route exact path='/editClient/:id'  component={EditClient} />
             <Route exact path='/tags'  component={Tags} />
+            <Route exact path='/country'  component={Country} />
             <Route exact path='/expenses'  component={Expense} />
             <Route exact path='/expenses/add'  component={AddExpense} />
             <Route exact path='/incomes'  component={Income} />

@@ -6,13 +6,16 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use App\Models\Client;
 use App\Http\Requests\ClientRequest;
+use App\Income;
 use Auth;
 
 class ClientController extends Controller
 {
     public function index(): JsonResponse
     {
-        $clients = Client::get();
+        $clients = Client::with(['country'=>function($query){
+            $query->select('name');
+        }])->get();
         return response()->json(['data' => $clients]);
     }
 
@@ -35,11 +38,25 @@ class ClientController extends Controller
 
     public function destroy(Client $client): JsonResponse
     {
+        $incomes = Income::where('client_id', $client->_id)->get();
+        if ($incomes->count() > 0) {
+            $this->setClientIdNullForDeletedClient($incomes, $client->name);
+        }
         $client->delete();
         return response()->json(['message' => 'Client deleted Successfully...']);
     }
+
     public function getClients() {
         return ['clients' => Client::select('_id', 'name')->get()];
     }
 
+    public function setClientIdNullForDeletedClient($incomes, $clientName)
+    {
+        foreach ($incomes as $income) {
+            $income->client_id = null;
+            $income->client_name = $clientName;
+            $income->save();
+        }
+        return true;
+    }
 }

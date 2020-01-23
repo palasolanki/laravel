@@ -27,7 +27,7 @@ class IncomeRequest extends FormRequest
     {
         return [
             'data.*.date' => 'required',
-            'data.*.client' => 'required',
+            'data.*.client_id' => 'required',
             'data.*.amount' => 'required|integer',
             'data.*.medium' => 'required',
         ];
@@ -37,7 +37,7 @@ class IncomeRequest extends FormRequest
     {
         return [
             'data.*.date.required' => 'Date Field is required',
-            'data.*.client.required' => 'Client Field is required',
+            'data.*.client_id.required' => 'Client Field is required',
             'data.*.amount.required' => 'Amount Field is required',
             'data.*.amount.integer' => 'Amount Field is Must Number',
             'data.*.medium.required' => 'Medium Field is required',
@@ -50,7 +50,7 @@ class IncomeRequest extends FormRequest
                 $income = new Income;
             }
             $income->date = Carbon::parse($value['date']);
-            $income->client = $value['client'];
+            $income->client_id = $value['client_id'];
             $income->amount = $value['amount'];
             $income->medium = $value['medium'];
             $income->save();

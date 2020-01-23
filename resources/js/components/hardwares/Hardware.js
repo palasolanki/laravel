@@ -80,7 +80,7 @@ function Hardware() {
         .then((res) => {
             setHardwares(hardwares.filter(hardware => hardware._id !== hardwareId))
             handleCloseDelete();
-            ToastsStore.error(res.data.message);
+            ToastsStore.success(res.data.message);
         })
     }
 

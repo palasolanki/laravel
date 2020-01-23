@@ -31,6 +31,7 @@ export default class App extends Component {
                     <Route  path="/addClient" component={requireAuth(HomeLayout)} />
                     <Route  path="/editClient/:id" component={requireAuth(HomeLayout)} />
                     <Route exact path="/tags" component={requireAuth(HomeLayout)} />
+                    <Route exact path="/country" component={requireAuth(HomeLayout)} />
                     <Route exact path="/expenses" component={requireAuth(HomeLayout)} />
                     <Route exact path="/incomes" component={requireAuth(HomeLayout)} />
                     <Route exact path="/expenses/add" component={requireAuth(HomeLayout)} />
