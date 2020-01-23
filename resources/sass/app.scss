@@ -653,7 +653,11 @@ input {
     height: 35px;
 }
 
-
+input[name="change_password"] {
+    width: initial;
+    height: initial;
+    margin-left: 10px;
+}
 
 /* custum css*/
 .heading {

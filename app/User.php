@@ -29,6 +29,11 @@ class User extends Authenticatable implements JWTSubject
         return ['name' => $this->name, 'email' => $this->email, 'id' => $this->id];
     }
 
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = bcrypt($value);
+    }
+
     /**
      * The attributes that should be hidden for arrays.
      *

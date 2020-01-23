@@ -10,16 +10,19 @@ export function login(data) {
   return (dispatch) => {
     return api.post('/login', data)
       .then((res) => {
-        console.log(res)
-        const token = res.data.access_token;
-        localStorage.setItem('token', token);
-        setAuthorizationToken(token);
-        dispatch(setCurrentUser(jwt_decode(token)));
+        setMe(res, dispatch);
       })
       .catch((err) => {
         dispatch(setErrors(getFormattedErrors(err.response.data)));
       })
   }
+}
+
+export function setMe(res, dispatch) {
+  const token = res.data.data.access_token;
+  localStorage.setItem('token', token);
+  setAuthorizationToken(token);
+  dispatch(setCurrentUser(jwt_decode(token)));
 }
 
 export function setErrors(error) {

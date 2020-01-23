@@ -11,14 +11,13 @@ export default function (ComposedComponent) {
       }
     }
 
-    componentDidUpdate(nextProps) {
-      if (!nextProps.isAuthenticated) {
-        nextProps.history.push('/login');
+    componentDidUpdate(prevProps) {
+      if ((prevProps.isAuthenticated != this.props.isAuthenticated) && !this.props.isAuthenticated ) {
+        this.props.history.push('/login');
       }
     }
 
     render() {
-
       return <ComposedComponent {...this.props} />;
     }
   }
