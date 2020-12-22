@@ -65,11 +65,16 @@ function Expense() {
                 { title: "Amount", data: 'amount' },
                 { title: "Medium", data: 'mediumvalue' },
                 { title: "Tags", data: 'tags', orderable: false },
+                { title: "Notes", data: 'notes', orderable: false, defaultContent: 'N/A' },
                 { title: "Action", data: 'null', orderable: false, defaultContent: 'N/A' }
             ],
             rowCallback: function( row, data, index ) {
                 let action = '<button data-index="' + index + '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' + data._id + '" class="btn btn-sm btn--cancel deletData" >Delete</button>'
-                $('td:eq(5)', row).html( action );
+                $('td:eq(6)', row).html( action );
+                if (data.notes) {
+                    let notes = (data.notes.length > 20) ? data.notes.substring(0,20) + '...' : data.notes;
+                    $('td:eq(5)', row).html( notes );
+                }
             }
         });
         setDataTable(table);
