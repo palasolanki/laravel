@@ -14,6 +14,7 @@ function EditIncome(props) {
         client_id: props.currentIncome.client_id,
         amount: props.currentIncome.amount,
         medium: props.currentIncome.medium,
+        notes: props.currentIncome.notes,
     }
     const [income, setIncome] = useState(editData)
     const handleInputChange = event => {
@@ -80,6 +81,10 @@ function EditIncome(props) {
                                         mediumList
                                     }
                                 </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Notes:</label>
+                                <textarea className="form-control" placeholder="Enter Notes" name="notes" onChange={handleInputChange} value={income.notes || ''} />
                             </div>
                             <div className="form-group text-right">
                                 <button type="submit" className="btn btn--prime mr-1">Submit</button>

@@ -10,7 +10,8 @@ function AddIncome() {
         date: new Date(),
         client_id: '',
         amount: '',
-        medium: ''
+        medium: '',
+        notes: ''
     };
 
     const [mediums, setMediums] = useState([]);
@@ -105,7 +106,7 @@ function AddIncome() {
                             </div>
                             <div className="col-md-3 form-group px-0 px-md-3">
                                 <select name="client_id" className="form-control" onChange={handleInputChange(key)} value={incomeItem.client_id}>
-                                    <option value="">SELECT</option>
+                                    <option value="">Select Client</option>
                                     {
                                         clientList
                                     }
@@ -116,11 +117,14 @@ function AddIncome() {
                             </div>
                             <div className="col-xl-2 col-md-3 form-group px-0 px-md-3">
                                 <select name="medium" className="form-control" onChange={handleInputChange(key)} value={incomeItem.medium}>
-                                    <option value="">SELECT</option>
+                                    <option value="">Select Medium</option>
                                     {
                                         mediumList
                                     }
                                 </select>
+                            </div>
+                            <div className="col-xl-2 col-md-3 form-group px-0 px-md-3">
+                                <textarea className="w-100 form-control" rows="1" placeholder="Enter Notes" name="notes" onChange={handleInputChange(key)} value={incomeItem.notes} />
                             </div>
                             {
                                 (incomeData.length > 1 && key != 0) ?

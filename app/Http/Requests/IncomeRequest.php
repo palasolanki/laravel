@@ -53,6 +53,7 @@ class IncomeRequest extends FormRequest
             $income->client_id = $value['client_id'];
             $income->amount = $value['amount'];
             $income->medium = $value['medium'];
+            $income->notes = $value['notes'];
             $income->save();
             $income = null;
         }

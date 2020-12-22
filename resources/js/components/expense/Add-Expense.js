@@ -13,7 +13,8 @@ function AddExpense() {
         amount: '',
         medium: '',
         tags: [],
-        tagsArray: []
+        tagsArray: [],
+        notes: ''
     };
     const [options, setOptions] = useState([]);
 
@@ -149,7 +150,7 @@ function AddExpense() {
                                 </div>
                                 <div className="col-md-3 col-xl-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
                                     <select name="medium" className="form-control" onChange={handleInputChange(key)} value={expenseItem.medium}>
-                                        <option value="">SELECT</option>
+                                        <option value="">Select Medium</option>
                                     {
                                         mediumList
                                     }
@@ -161,7 +162,11 @@ function AddExpense() {
                                         onChange={handleSelectChange(key)}
                                         isMulti
                                         options={options}
+                                        placeholder='Select Tags'
                                     />
+                                </div>
+                                <div className="col-md-3 col-xl-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
+                                    <textarea className="w-100 form-control" placeholder="Enter Notes" name="notes" onChange={handleInputChange(key)} value={expenseItem.notes} />
                                 </div>
                                 <input className="h-100" type="file" name="file" onChange={handleInputChange(key)}/>
                             </div>

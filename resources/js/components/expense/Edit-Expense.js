@@ -31,7 +31,8 @@ function EditExpenses(props) {
         medium: props.currentExpense.medium,
         tags: tmpTagsList(props.currentExpense.tags),
         tagsArray: props.currentExpense.tags,
-        file_attachments: selectedFile
+        file_attachments: selectedFile,
+        notes: props.currentExpense.notes,
     }
 
     const [expense, setExpense] = useState(editData)
@@ -135,6 +136,10 @@ function EditExpenses(props) {
                                     isMulti
                                     options={options}
                                 />
+                            </div>
+                            <div className="form-group">
+                                <label>Notes:</label>
+                                <textarea className="form-control" placeholder="Enter Notes" name="notes" onChange={handleInputChange} value={expense.notes || ''} />
                             </div>
                                 <div className="form-group">
                                 <label>File:</label>
