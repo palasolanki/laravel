@@ -165,7 +165,7 @@ function AddExpense() {
                                         placeholder='Select Tags'
                                     />
                                 </div>
-                                <div className="col-xl-2 col-md-3 form-group px-0 px-md-3">
+                                <div className="col-md-3 col-xl-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
                                     <textarea className="w-100 form-control" placeholder="Enter Notes" name="notes" onChange={handleInputChange(key)} value={expenseItem.notes} />
                                 </div>
                                 <input className="h-100" type="file" name="file" onChange={handleInputChange(key)}/>
