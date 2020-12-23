@@ -53,6 +53,9 @@ class IncomeRequest extends FormRequest
             $income->client_id = $value['client_id'];
             $income->amount = $value['amount'];
             $income->medium = $value['medium'];
+            if (array_key_exists('tagsArray', $value)) {
+                $income->tags = $value['tagsArray'];
+            }
             $income->notes = $value['notes'];
             $income->save();
             $income = null;

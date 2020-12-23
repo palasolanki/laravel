@@ -20,6 +20,7 @@ export default function Income() {
     const [mediums, setMediums] = useState([]);
     const [filterClient, setFilterClient] = useState('all');
     const [showEditModal, setEditShow] = useState(false);
+    const [tagOptions, setTagOptions] = useState([]);
     const openShowEdit = () => setEditShow(true);
     const handleCloseEdit = () => setEditShow(false);
 
@@ -52,15 +53,19 @@ export default function Income() {
                 { title: "Client", data: 'clientname' },
                 { title: "Amount", data: 'amount' },
                 { title: "Medium", data: 'mediumvalue' },
+                { title: "Tags", data: 'tags', defaultContent: 'N/A' },
                 { title: "Notes", data: 'notes', defaultContent: 'N/A'},
                 { title: "Action", data: 'null', defaultContent: 'N/A', orderable: false }
             ],
             rowCallback: function( row, data, index ) {
                 let action = '<button data-index="' + index + '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' + data._id + '" class="btn btn-sm btn--cancel deletData" >Delete</button>'
-                $('td:eq(5)', row).html( action );
+                $('td:eq(6)', row).html( action );
                 if (data.notes) {
                     let notes = (data.notes.length > 20) ? data.notes.substring(0,20) + '...' : data.notes;
-                    $('td:eq(4)', row).html( notes );
+                    $('td:eq(5)', row).html( notes );
+                }
+                if (data.tags && data.tags.length) {
+                    $('td:eq(4)', row).html( data.tags.toString() );
                 }
             }
         });
@@ -77,7 +82,20 @@ export default function Income() {
         .then((res) => {
             setMediums(res.data.medium);
         })
+        api.get('/getTagList').then((res) => {
+            createTagOptions(res.data.tags);
+        })
     }, []);
+
+    const createTagOptions = data => {
+        const options = data.map(value => {
+            return {
+                value: value,
+                label: value
+            }
+        });
+        setTagOptions(options);
+    }
 
     useEffect(() => {
         if(dataTable) {
@@ -162,6 +180,7 @@ export default function Income() {
                                         currentIncome={currentIncome}
                                         mediums={mediums}
                                         clients={clients}
+                                        tagOptions={tagOptions}
                                         updateIncome={updateIncome}
                                     />}
                     {showDeleteModal && <ConfirmationComponent

@@ -2,6 +2,7 @@ import React, { Component, Fragment, useState, useEffect } from 'react'
 import DatePicker from "react-datepicker";
 import api from '../../helpers/api';
 import {ToastsStore} from 'react-toasts';
+import Select from 'react-select';
 
 function AddIncome() {
     let errors = [];
@@ -11,11 +12,13 @@ function AddIncome() {
         client_id: '',
         amount: '',
         medium: '',
+        tags: [],
         notes: ''
     };
 
     const [mediums, setMediums] = useState([]);
     const [clients, setClients] = useState([]);
+    const [tagOptions, setTagOptions] = useState([]);
     useEffect( () => {
         api.get('/getIncomeMediumList')
         .then((res) => {
@@ -29,8 +32,26 @@ function AddIncome() {
         })
             .catch((res) => {
         })
+        api.get('/getTagList')
+        .then((res) => {
+            createTagOptions(res.data.tags);
+        })
     }, [] );
     const [incomeData, setIncomeData] = useState([data]);
+
+    useEffect(() => {
+        console.log(incomeData.tags);
+    }, [incomeData.tags]);
+
+    const createTagOptions = data => {
+        const options = data.map(value => {
+            return {
+                value:value,
+                label:value
+            }
+        });
+        setTagOptions(options);
+    }
 
     const mediumList = mediums && Object.keys(mediums).map((key) => {
         return <option value={key} key={key}>{mediums[key]}</option>
@@ -54,6 +75,20 @@ function AddIncome() {
         }
         setIncomeData(rows)
     }
+
+    const handleSelectChange = key => event => {
+        const rows = [...incomeData];
+        const tmp = event ? event.map(value => {
+            return value['label'];
+        }) : [];
+        rows[key] = {
+            ...rows[key],
+            ['tags']: (event) ? event : [],
+            ['tagsArray']: (event) ? tmp : []
+        }
+        setIncomeData(rows);
+    }
+
     const addIncome = () => {
         setIncomeData([...incomeData, data]);
     }
@@ -122,6 +157,15 @@ function AddIncome() {
                                         mediumList
                                     }
                                 </select>
+                            </div>
+                            <div className="col-md-3 col-xl-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
+                                <Select
+                                    value={incomeData.tags}
+                                    onChange={handleSelectChange(key)}
+                                    isMulti
+                                    options={tagOptions}
+                                    placeholder='Select Tags'
+                                />
                             </div>
                             <div className="col-xl-2 col-md-3 form-group px-0 px-md-3">
                                 <textarea className="w-100 form-control" rows="1" placeholder="Enter Notes" name="notes" onChange={handleInputChange(key)} value={incomeItem.notes} />
