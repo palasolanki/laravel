@@ -28,7 +28,7 @@ class IncomeController extends Controller
                     return $income->whereBetween('date', [$from, $to]);
                 })
                 ->when($selectedClient != "all", function ($income) use ($selectedClient) {
-                    return $income->where('client', $selectedClient);
+                    return $income->where('client_id', $selectedClient);
                 })
                 ->get();
 
