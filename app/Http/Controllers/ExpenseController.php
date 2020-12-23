@@ -25,7 +25,7 @@ class ExpenseController extends Controller
         $from = ($request->daterange[0]) ? Carbon::parse($request->daterange[0]) : null;
         $to = ($request->daterange[1]) ? Carbon::parse($request->daterange[1]) : null;
 
-        $expense = Expense::when($from, function ($expense) use ($from, $to) {
+        $expense = Expense::with('mediums')->when($from, function ($expense) use ($from, $to) {
             return $expense->whereBetween('date', [$from, $to]);
         })->get();
 
@@ -34,7 +34,7 @@ class ExpenseController extends Controller
                 return $expense->date;
             })
             ->addColumn('mediumvalue', function ($expense) {
-                return config('expense.medium')[$expense->medium];
+                return optional($expense->mediums)->medium;
             })->make(true);
     }
 
@@ -87,9 +87,6 @@ class ExpenseController extends Controller
         return ['message' => 'Delete Success!'];
     }
 
-    public function getExpenseMediumList() {
-        return ['medium' => config('expense.medium')];
-    }
     public function getTagList() {
         $tags = Tag::where('type', 'expense')->get()->pluck('tag');
         return ['tags' => $tags];

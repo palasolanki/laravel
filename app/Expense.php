@@ -11,4 +11,8 @@ class Expense extends Eloquent
         'date' => 'datetime:d-m-Y',
     ];
     const FILE_TYPE_INVOICE = 'invoice';
+
+    public function mediums() {
+        return $this->hasOne('App\Models\Medium', '_id', 'medium');
+    }
 }

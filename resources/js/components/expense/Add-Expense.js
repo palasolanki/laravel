@@ -20,7 +20,7 @@ function AddExpense() {
 
     const [mediums, setMediums] = useState([]);
     useEffect( () => {
-        api.get('/getExpenseMediumList')
+        api.get('/get-expense-mediums')
         .then((res) => {
             setMediums(res.data.medium);
         })
@@ -41,8 +41,8 @@ function AddExpense() {
     }
     const [expenseData, setExpenseData] = useState([data]);
 
-    const mediumList = mediums && Object.keys(mediums).map((key) => {
-        return <option value={key} key={key}>{mediums[key]}</option>
+    const mediumList = mediums && mediums.map((medium, key) => {
+        return <option value={medium._id} key={key}>{medium.medium}</option>
     })
     const handleInputChange = key => event => {
         const rows = [...expenseData];

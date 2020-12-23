@@ -52,12 +52,13 @@ export default function Income() {
                 { title: "Date", data: 'date' },
                 { title: "Client", data: 'clientname' },
                 { title: "Amount", data: 'amount' },
-                { title: "Medium", data: 'mediumvalue' },
+                { title: "Medium", data: 'mediumvalue', defaultContent: 'N/A' },
                 { title: "Tags", data: 'tags', defaultContent: 'N/A' },
                 { title: "Notes", data: 'notes', defaultContent: 'N/A'},
                 { title: "Action", data: 'null', defaultContent: 'N/A', orderable: false }
             ],
             rowCallback: function( row, data, index ) {
+                console.log(data);
                 let action = '<button data-index="' + index + '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' + data._id + '" class="btn btn-sm btn--cancel deletData" >Delete</button>'
                 $('td:eq(6)', row).html( action );
                 if (data.notes) {
@@ -78,7 +79,7 @@ export default function Income() {
         .then((res) => {
             setClients(res.data.clients);
         })
-        api.get('/getIncomeMediumList')
+        api.get('/get-income-mediums')
         .then((res) => {
             setMediums(res.data.medium);
         })

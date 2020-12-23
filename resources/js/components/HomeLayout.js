@@ -7,6 +7,7 @@ import Dashboard from "./dashboard/Dashboard";
 import Sidebar from "./sidebar/Sidebar";
 import ClientList from "./clients/ClientList";
 import Tags from "./tags/Tags";
+import Mediums from "./mediums/Mediums";
 import Country from "./country/Country"
 import Expense from "./expense/Expense";
 import Income from "./income/Income";
@@ -79,6 +80,7 @@ export default class Home extends Component {
             <Route exact path='/hardwares/add' component={AddHardware} />
             <Route exact path='/profile' component={Profile} />
             <Route exact path='/country'  component={Country} />
+            <Route exact path='/mediums'  component={Mediums} />
           </Switch>
         </div>
       </Fragment>

@@ -34,7 +34,7 @@ function Expense() {
     useEffect(() => {
         if(dataTable) {
             registerEvent();
-            api.get('/getExpenseMediumList').then((res) => {
+            api.get('/get-expense-mediums').then((res) => {
                 if (res.data.medium) {
                     setMediums(res.data.medium);
                 }
@@ -63,7 +63,7 @@ function Expense() {
                 { title: "Date", data: 'date' },
                 { title: "Item", data: 'item' },
                 { title: "Amount", data: 'amount' },
-                { title: "Medium", data: 'mediumvalue' },
+                { title: "Medium", data: 'mediumvalue', defaultContent: 'N/A' },
                 { title: "Tags", data: 'tags', orderable: false },
                 { title: "Notes", data: 'notes', orderable: false, defaultContent: 'N/A' },
                 { title: "Action", data: 'null', orderable: false, defaultContent: 'N/A' }

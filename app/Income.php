@@ -13,4 +13,8 @@ class Income extends Eloquent
     public function clients() {
         return $this->hasOne('App\Models\Client', '_id', 'client_id');
     }
+
+    public function mediums() {
+        return $this->hasOne('App\Models\Medium', '_id', 'medium');
+    }
 }

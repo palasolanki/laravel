@@ -23,7 +23,7 @@ class IncomeController extends Controller
         $to = ($request->daterange[1]) ? Carbon::parse($request->daterange[1]) : null;
 
         $selectedClient = $request->client;
-        $income = Income::with('clients')
+        $income = Income::with('clients', 'mediums')
                 ->when($from, function ($income) use ($from, $to) {
                     return $income->whereBetween('date', [$from, $to]);
                 })
@@ -37,7 +37,7 @@ class IncomeController extends Controller
                 return $income->date;
             })
             ->addColumn('mediumvalue', function ($income) {
-                return config('expense.medium')[$income->medium];
+                return optional($income->mediums)->medium;
             })
             ->addColumn('clientname', function ($income) {
                 return ($income->clients) ? $income->clients->name : $income->client_name;
@@ -111,10 +111,6 @@ class IncomeController extends Controller
     {
         $income->delete();
         return ['message' => 'Delete Success!'];
-    }
-
-    public function getIncomeMediumList() {
-        return ['medium' => config('expense.medium')];
     }
 
     public function monthlyIncomeChart(Request $request) {

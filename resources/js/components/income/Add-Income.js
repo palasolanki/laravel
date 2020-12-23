@@ -20,7 +20,7 @@ function AddIncome() {
     const [clients, setClients] = useState([]);
     const [tagOptions, setTagOptions] = useState([]);
     useEffect( () => {
-        api.get('/getIncomeMediumList')
+        api.get('/get-income-mediums')
         .then((res) => {
             setMediums(res.data.medium);
         })
@@ -39,10 +39,6 @@ function AddIncome() {
     }, [] );
     const [incomeData, setIncomeData] = useState([data]);
 
-    useEffect(() => {
-        console.log(incomeData.tags);
-    }, [incomeData.tags]);
-
     const createTagOptions = data => {
         const options = data.map(value => {
             return {
@@ -53,8 +49,8 @@ function AddIncome() {
         setTagOptions(options);
     }
 
-    const mediumList = mediums && Object.keys(mediums).map((key) => {
-        return <option value={key} key={key}>{mediums[key]}</option>
+    const mediumList = mediums && mediums.map((medium, key) => {
+        return <option value={medium._id} key={key}>{medium.medium}</option>
     })
     const clientList = clients && clients.map((client, key) => {
         return <option value={client._id} key={key}>{client.name}</option>

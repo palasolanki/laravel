@@ -56,8 +56,8 @@ function EditExpenses(props) {
             ['tagsArray']: (event) ? tmp : []
         })
     }
-    const mediumList = mediums && Object.keys(mediums).map((key) => {
-        return <option value={key} key={key}>{mediums[key]}</option>
+    const mediumList = mediums && mediums.map((medium, key) => {
+        return <option value={medium._id} key={key}>{medium.medium}</option>
     })
 
     const deleteExpenseFile = (expenseId,deleteFile) => {
