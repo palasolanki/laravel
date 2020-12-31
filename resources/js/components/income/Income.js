@@ -9,6 +9,7 @@ import {
     faPlus
 } from '@fortawesome/free-solid-svg-icons';
 import ConfirmationComponent from '../ConfirmationComponent';
+import Select from 'react-select';
 const $ = require('jquery')
 $.DataTable = require('datatables.net')
 
@@ -18,6 +19,8 @@ export default function Income() {
     const [dateRange, setDateRange] = useState([null, null]);
     const [clients, setClients] = useState([]);
     const [mediums, setMediums] = useState([]);
+    const [mediumsOptionForFilter, setMediumsOptionForFilter] = useState([]);
+    const [selectedMediums, setSelectedMediums] = useState(null);
     const [filterClient, setFilterClient] = useState('all');
     const [showEditModal, setEditShow] = useState(false);
     const [tagOptions, setTagOptions] = useState([]);
@@ -42,7 +45,7 @@ export default function Income() {
                 "url": `/api/getIncomeData`,
                 "dataType": 'json',
                 "type": 'post',
-                "data": {'daterange': dateRange, 'client': filterClient},
+                "data": {'daterange': dateRange, 'client': filterClient, 'mediums': selectedMediums},
                 "beforeSend": function (xhr) {
                     xhr.setRequestHeader('Authorization',
                         "Bearer " + localStorage.getItem('token'));
@@ -81,6 +84,7 @@ export default function Income() {
         api.get('/get-income-mediums')
         .then((res) => {
             setMediums(res.data.medium);
+            setMediumsOptionForFilter(createMediumOption(res.data.medium));
         })
         api.get('/get-income-tags').then((res) => {
             createTagOptions(res.data.tags);
@@ -148,8 +152,25 @@ export default function Income() {
             dataTable.destroy();
             initDatatables();
         }
-    }, [date, filterClient]);
+    }, [date, filterClient, selectedMediums]);
 
+    const createMediumOption = mediums => { 
+        return mediums.map((medium, key) => {
+            return {
+                value: medium._id,
+                label: medium.medium
+            }
+        });
+    }
+
+    const handleSelectChange = event => {
+        const tmp = event ? event.map(value => {
+            return value['value'];
+        }) : [];
+        setSelectedMediums(
+            (event) ? tmp : null
+        );
+    }
     return  (
                 <div className="bg-white p-3">
                     <div className="d-flex align-items-center pb-2">
@@ -169,6 +190,14 @@ export default function Income() {
                                     )
                                 }
                             </select>
+                        </div>
+                        <div className="col-md-2">
+                            <Select
+                                onChange={handleSelectChange}
+                                isMulti
+                                options={mediumsOptionForFilter}
+                                placeholder='Select Mediums'
+                            />
                         </div>
                         <Link to="incomes/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Income</Link>
                     </div>

@@ -25,12 +25,16 @@ class IncomeController extends Controller
         $to = ($request->daterange[1]) ? Carbon::parse($request->daterange[1]) : null;
 
         $selectedClient = $request->client;
+        $selectedMediums = $request->mediums;
         $income = Income::with('tags')
                 ->when($from, function ($income) use ($from, $to) {
                     return $income->whereBetween('date', [$from, $to]);
                 })
                 ->when($selectedClient != "all", function ($income) use ($selectedClient) {
                     return $income->where('client_id', $selectedClient);
+                })
+                ->when($selectedMediums, function ($income) use ($selectedMediums) {
+                    return $income->whereIn('medium.id', $selectedMediums);
                 });
 
         return (new MongodbDataTable($income))
