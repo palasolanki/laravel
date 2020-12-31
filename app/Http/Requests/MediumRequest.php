@@ -2,8 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Expense;
+use App\Income;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Medium;
+use Illuminate\Validation\ValidationException;
 class MediumRequest extends FormRequest
 {
     /**
@@ -33,6 +36,10 @@ class MediumRequest extends FormRequest
     {
         if ($id) {
             $medium = Medium::where('_id', $id)->first();
+            $oldMediumName = $medium->medium;
+            if ($medium->type != $this->type) {
+                throw ValidationException::withMessages(['type' => "Can't update type of existing medium."]);
+            }
         } else {
             $medium = new Medium;
         }
@@ -40,6 +47,11 @@ class MediumRequest extends FormRequest
         $medium->medium = $this->medium;
         $medium->type = $this->type;
         $medium->save();
+
+        if ($id && $oldMediumName != $medium->medium) {
+            $model = ['income' => new Income, 'expense' => new Expense ];
+            $model[$medium->type]::where('medium.id', $id)->update(['medium.medium' => $medium->medium]);
+        }
 
         return $medium;
     }

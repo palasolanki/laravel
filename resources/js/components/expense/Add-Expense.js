@@ -25,7 +25,7 @@ function AddExpense() {
             setMediums(res.data.medium);
         })
 
-        api.get('/getTagList')
+        api.get('/get-expense-tags')
         .then((res) => {
             createTagOptions(res.data.tags);
         })

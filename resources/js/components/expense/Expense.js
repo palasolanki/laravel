@@ -39,7 +39,7 @@ function Expense() {
                     setMediums(res.data.medium);
                 }
             }),
-            api.get('/getTagList').then((res) => {
+            api.get('/get-expense-tags').then((res) => {
                 createTagOptions(res.data.tags);
             })
         }

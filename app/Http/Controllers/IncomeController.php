@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IncomeRequest;
 use App\Income;
+use Pimlie\DataTables\MongodbDataTable;
+use App\Tag;
 use Symfony\Component\HttpFoundation\Request;
 use App\Traits\ChartData;
 use Carbon\Carbon;
@@ -23,25 +25,19 @@ class IncomeController extends Controller
         $to = ($request->daterange[1]) ? Carbon::parse($request->daterange[1]) : null;
 
         $selectedClient = $request->client;
-        $income = Income::with('clients', 'mediums')
+        $income = Income::with('tags')
                 ->when($from, function ($income) use ($from, $to) {
                     return $income->whereBetween('date', [$from, $to]);
                 })
                 ->when($selectedClient != "all", function ($income) use ($selectedClient) {
                     return $income->where('client_id', $selectedClient);
-                })
-                ->get();
+                });
 
-        return Datatables::of($income)
+        return (new MongodbDataTable($income))
             ->addColumn('selectedDateForEdit', function ($income) {
                 return $income->date;
             })
-            ->addColumn('mediumvalue', function ($income) {
-                return optional($income->mediums)->medium;
-            })
-            ->addColumn('clientname', function ($income) {
-                return ($income->clients) ? $income->clients->name : $income->client_name;
-            })->make(true);
+            ->make(true);
     }
 
     /**
@@ -116,5 +112,10 @@ class IncomeController extends Controller
     public function monthlyIncomeChart(Request $request) {
         $chartData = $this->getChartData($request->chart_range, 'income');
         return ['monthlyIncome' => $chartData[0], 'labels' => $chartData[1]];
+    }
+
+    public function getTagList() {
+        $tags = Tag::select('_id', 'tag')->where('type', 'income')->get();
+        return ['tags' => $tags];
     }
 }

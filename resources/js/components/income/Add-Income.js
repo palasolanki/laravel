@@ -32,7 +32,7 @@ function AddIncome() {
         })
             .catch((res) => {
         })
-        api.get('/getTagList')
+        api.get('/get-income-tags')
         .then((res) => {
             createTagOptions(res.data.tags);
         })
@@ -42,8 +42,8 @@ function AddIncome() {
     const createTagOptions = data => {
         const options = data.map(value => {
             return {
-                value:value,
-                label:value
+                value:value._id,
+                label:value.tag
             }
         });
         setTagOptions(options);
@@ -75,7 +75,7 @@ function AddIncome() {
     const handleSelectChange = key => event => {
         const rows = [...incomeData];
         const tmp = event ? event.map(value => {
-            return value['label'];
+            return value['value'];
         }) : [];
         rows[key] = {
             ...rows[key],

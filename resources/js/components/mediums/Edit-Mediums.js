@@ -48,7 +48,7 @@ function EditMediums(props) {
                             </div>
                             <div className="form-group">
                                 <label>Type:</label>
-                                <select className="form-control" id="type" name="type" onChange={handleInputChange} value={medium.type}>
+                                <select className="form-control" id="type" name="type" onChange={handleInputChange} value={medium.type} disabled>
                                     <option value="">Select Type</option>
                                     <option value="expense">Expense</option>
                                     <option value="income">Income</option>

@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Income;
+use App\Models\Client;
+use App\Models\Medium;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 
@@ -49,17 +51,25 @@ class IncomeRequest extends FormRequest
             if(!$income) {
                 $income = new Income;
             }
+            $client = Client::find($value['client_id']);
+            $medium = Medium::find($value['medium']);
             $income->date = Carbon::parse($value['date']);
-            $income->client_id = $value['client_id'];
+            $income->client = ['id' => $client->_id, 'name' => $client->name];
             $income->amount = $value['amount'];
-            $income->medium = $value['medium'];
-            if (array_key_exists('tagsArray', $value)) {
-                $income->tags = $value['tagsArray'];
-            }
+            $income->medium = ['id' => $medium->_id, 'medium' => $medium->medium];
             $income->notes = $value['notes'];
             $income->save();
+            $this->saveIncomeTags($income, $value);
             $income = null;
         }
         return true;
+    }
+
+    public function saveIncomeTags($income, $value) {
+        if (array_key_exists('tagsArray', $value)) {
+            $income->id 
+                ? $income->tags()->sync($value['tagsArray']) 
+                : $income->tags()->attach($value['tagsArray']);
+        }
     }
 }

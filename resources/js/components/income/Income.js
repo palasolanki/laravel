@@ -49,16 +49,15 @@ export default function Income() {
                 },
             },
             columns: [
-                { title: "Date", data: 'date' },
-                { title: "Client", data: 'clientname' },
+                { title: "Date", data: 'date', searchable: false },
+                { title: "Client", data: 'client.name' },
                 { title: "Amount", data: 'amount' },
-                { title: "Medium", data: 'mediumvalue', defaultContent: 'N/A' },
-                { title: "Tags", data: 'tags', defaultContent: 'N/A' },
-                { title: "Notes", data: 'notes', defaultContent: 'N/A'},
+                { title: "Medium", data: 'medium.medium', defaultContent: 'N/A' },
+                { title: "Tags", data: 'tags', defaultContent: 'N/A', orderable: false, searchable: false },
+                { title: "Notes", data: 'notes', defaultContent: 'N/A', orderable: false },
                 { title: "Action", data: 'null', defaultContent: 'N/A', orderable: false }
             ],
             rowCallback: function( row, data, index ) {
-                console.log(data);
                 let action = '<button data-index="' + index + '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' + data._id + '" class="btn btn-sm btn--cancel deletData" >Delete</button>'
                 $('td:eq(6)', row).html( action );
                 if (data.notes) {
@@ -66,7 +65,7 @@ export default function Income() {
                     $('td:eq(5)', row).html( notes );
                 }
                 if (data.tags && data.tags.length) {
-                    $('td:eq(4)', row).html( data.tags.toString() );
+                    $('td:eq(4)', row).html( data.tags.map(value => value.tag).toString() );
                 }
             }
         });
@@ -83,7 +82,7 @@ export default function Income() {
         .then((res) => {
             setMediums(res.data.medium);
         })
-        api.get('/getTagList').then((res) => {
+        api.get('/get-income-tags').then((res) => {
             createTagOptions(res.data.tags);
         })
     }, []);
@@ -91,8 +90,8 @@ export default function Income() {
     const createTagOptions = data => {
         const options = data.map(value => {
             return {
-                value: value,
-                label: value
+                value: value._id,
+                label: value.tag
             }
         });
         setTagOptions(options);

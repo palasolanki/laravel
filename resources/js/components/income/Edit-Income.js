@@ -13,8 +13,8 @@ function EditIncome(props) {
       const tmpTagsList = (data) => {
         const tmpTagOptions = (data && data.length > 0) ? data.map(value => {
             return {
-                value: value,
-                label: value
+                value: value._id,
+                label: value.tag
             }
         }) : [];
         return tmpTagOptions;
@@ -37,7 +37,7 @@ function EditIncome(props) {
     }
     const handleSelectChange = event => {
         const tmp = event ? event.map(value => {
-            return value['label'];
+            return value['value'];
         }) : [];
         setIncome({
             ...income,
