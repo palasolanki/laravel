@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Expense;
 use App\Http\Requests\MediumRequest;
+use App\Income;
 use App\Models\Medium;
 use Illuminate\Http\Request;
 
@@ -20,7 +22,10 @@ class MediumController extends Controller
 
     public function destroy($id)
     {
-        Medium::findOrFail($id)->delete();
+        $medium = Medium::findOrFail($id);
+        $model = ['income' => new Income, 'expense' => new Expense ];
+        $model[$medium->type]::where('medium.id', $medium->_id)->unset('medium');
+        $medium->delete();
         return response()->json(['message' => 'Medium Delete Success!']);
     }
 

@@ -50,7 +50,7 @@ export default function Income() {
             },
             columns: [
                 { title: "Date", data: 'date', searchable: false },
-                { title: "Client", data: 'client.name' },
+                { title: "Client", data: 'client.name', defaultContent: 'N/A' },
                 { title: "Amount", data: 'amount' },
                 { title: "Medium", data: 'medium.medium', defaultContent: 'N/A' },
                 { title: "Tags", data: 'tags', defaultContent: 'N/A', orderable: false, searchable: false },

@@ -42,6 +42,7 @@ class ClientController extends Controller
         if ($incomes->count() > 0) {
             $this->setClientIdNullForDeletedClient($incomes, $client->name);
         }
+        Income::where('client.id', $client->_id)->unset('client');
         $client->delete();
         return response()->json(['message' => 'Client deleted Successfully...']);
     }
