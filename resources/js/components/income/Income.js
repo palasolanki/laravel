@@ -60,7 +60,7 @@ export default function Income() {
             columns: [
                 { title: "Date", data: 'date', searchable: false },
                 { title: "Client", data: 'client.name', defaultContent: 'N/A' },
-                { title: "Amount", data: 'amount' },
+                { title: "Amount (INR)", data: 'amount' },
                 { title: "Medium", data: 'medium.medium', defaultContent: 'N/A' },
                 { title: "Tags", data: 'tags', defaultContent: 'N/A', orderable: false, searchable: false },
                 { title: "Notes", data: 'notes', defaultContent: 'N/A', orderable: false },
@@ -101,9 +101,14 @@ export default function Income() {
                     return intVal(a) + intVal(b);
                 }, 0 );
 
-                $( api.column( 2 ).footer() ).html(
-                    currentPageTotalAmount +' ('+ totalAmount +' total)'
-                );
+                var totalHtml = '<div>'+
+                                'This page: <span style="font-weight:bold;">&#8377;</span>'+currentPageTotalAmount+
+                            '</div>'+
+                            '<div>'+
+                                'All pages: <span style="font-weight:bold;">&#8377;</span>'+totalAmount+
+                            '</div>';
+
+                $( api.column( 2 ).footer() ).html(totalHtml);
             }
         });
         setDataTable(table);
