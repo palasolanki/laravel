@@ -26,6 +26,7 @@ class IncomeController extends Controller
 
         $selectedClient = $request->client;
         $selectedMediums = $request->mediums;
+        $selectedTags = $request->tags;
         $income = Income::with('tags')
                 ->when($from, function ($income) use ($from, $to) {
                     return $income->whereBetween('date', [$from, $to]);
@@ -35,6 +36,9 @@ class IncomeController extends Controller
                 })
                 ->when($selectedMediums, function ($income) use ($selectedMediums) {
                     return $income->whereIn('medium.id', $selectedMediums);
+                })
+                ->when($selectedTags, function ($income) use ($selectedTags) {
+                    return $income->whereIn('tag_ids', $selectedTags);
                 });
 
         return (new MongodbDataTable($income))

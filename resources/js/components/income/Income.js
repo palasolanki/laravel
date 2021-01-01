@@ -20,7 +20,8 @@ export default function Income() {
     const [clients, setClients] = useState([]);
     const [mediums, setMediums] = useState([]);
     const [mediumsOptionForFilter, setMediumsOptionForFilter] = useState([]);
-    const [selectedMediums, setSelectedMediums] = useState(null);
+    const [selectedMediumsForFilter, setSelectedMediumsForFilter] = useState(null);
+    const [selectedTagsForFilter, setSelectedTagsForFilter] = useState(null);
     const [filterClient, setFilterClient] = useState('all');
     const [showEditModal, setEditShow] = useState(false);
     const [tagOptions, setTagOptions] = useState([]);
@@ -45,7 +46,12 @@ export default function Income() {
                 "url": `/api/getIncomeData`,
                 "dataType": 'json',
                 "type": 'post',
-                "data": {'daterange': dateRange, 'client': filterClient, 'mediums': selectedMediums},
+                "data": {   
+                    'daterange': dateRange, 
+                    'client': filterClient, 
+                    'mediums': selectedMediumsForFilter, 
+                    'tags': selectedTagsForFilter
+                },
                 "beforeSend": function (xhr) {
                     xhr.setRequestHeader('Authorization',
                         "Bearer " + localStorage.getItem('token'));
@@ -70,6 +76,34 @@ export default function Income() {
                 if (data.tags && data.tags.length) {
                     $('td:eq(4)', row).html( data.tags.map(value => value.tag).toString() );
                 }
+            },
+            footerCallback: function ( row, data, start, end, display ) {
+                var api = this.api(), totalAmount, currentPageTotalAmount;
+
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+
+                totalAmount = api
+                    .column( 2 )
+                    .data()
+                    .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+                currentPageTotalAmount = api
+                    .column( 2, { page: 'current'} )
+                    .data()
+                    .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+                $( api.column( 2 ).footer() ).html(
+                    currentPageTotalAmount +' ('+ totalAmount +' total)'
+                );
             }
         });
         setDataTable(table);
@@ -152,7 +186,7 @@ export default function Income() {
             dataTable.destroy();
             initDatatables();
         }
-    }, [date, filterClient, selectedMediums]);
+    }, [date, filterClient, selectedMediumsForFilter, selectedTagsForFilter]);
 
     const createMediumOption = mediums => { 
         return mediums.map((medium, key) => {
@@ -163,13 +197,16 @@ export default function Income() {
         });
     }
 
-    const handleSelectChange = event => {
+    const handleSelectChange = selectFor => event => {
         const tmp = event ? event.map(value => {
             return value['value'];
         }) : [];
-        setSelectedMediums(
-            (event) ? tmp : null
-        );
+        const data = (event) ? tmp : null;
+        if (selectFor == 'mediums') {
+            setSelectedMediumsForFilter(data);
+        } else if (selectFor == 'tags') {
+            setSelectedTagsForFilter(data);
+        }
     }
     return  (
                 <div className="bg-white p-3">
@@ -193,16 +230,31 @@ export default function Income() {
                         </div>
                         <div className="col-md-2">
                             <Select
-                                onChange={handleSelectChange}
+                                onChange={handleSelectChange('mediums')}
                                 isMulti
                                 options={mediumsOptionForFilter}
                                 placeholder='Select Mediums'
                             />
                         </div>
+                        <div className="col-md-2">
+                            <Select
+                                onChange={handleSelectChange('tags')}
+                                isMulti
+                                options={tagOptions}
+                                placeholder='Select Tags'
+                            />
+                        </div>
                         <Link to="incomes/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Income</Link>
                     </div>
 
-                    <table id="datatable" className="display" width="100%"></table>
+                    <table id="datatable" className="display" width="100%">
+                    <tfoot>
+                        <tr>
+                            <th colSpan="2"></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                    </table>
 
                     {showEditModal && <EditIncomes
                                         handleCloseEdit={handleCloseEdit}
