@@ -6,10 +6,12 @@ import EditExpenses from "./Edit-Expense";
 import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-    faPlus
+    faPlus,
+    faFileExcel
 } from '@fortawesome/free-solid-svg-icons';
 import ConfirmationComponent from '../ConfirmationComponent';
 import Select from 'react-select';
+import fileSaver from 'file-saver';
 const $ = require('jquery')
 $.DataTable = require('datatables.net')
 
@@ -227,6 +229,20 @@ function Expense() {
         }
     }
 
+    const exportData = () => {
+        const exportDataFilters = {
+            'daterange': dateRange,
+            'mediums': selectedMediumsForFilter, 
+            'tags': selectedTagsForFilter,
+        };
+        api.post('/export/expense', exportDataFilters, {responseType: 'arraybuffer'}).then((response) => {
+            var blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            fileSaver.saveAs(blob, 'expense.xlsx');
+        }).catch(function () {
+            ToastsStore.error('Something went wrong!');
+        });
+    }
+
     return  (
                 <div className="bg-white p-3">
                     <div className="d-flex align-items-center pb-2">
@@ -252,6 +268,12 @@ function Expense() {
                                 options={options}
                                 placeholder='Select Tags'
                             />
+                        </div>
+                        <div className="col-md-2">
+                            <button
+                                onClick={exportData}
+                                className="btn btn--prime ml-auto"
+                            ><FontAwesomeIcon style={{fontSize: "24px"}} icon={faFileExcel} /></button>
                         </div>
                         <Link to="expenses/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Expense</Link>
                     </div>

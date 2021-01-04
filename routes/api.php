@@ -54,6 +54,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::delete('/mediums/{id}', 'MediumController@destroy');
     Route::get('/get-expense-mediums', 'MediumController@getExpenseMediumList');
     Route::get('/get-income-mediums', 'MediumController@getIncomeMediumList');
+    Route::post('/export/expense', 'ExpenseController@exportExpense');
 
     Route::post('/profile','ProfileController@update');
 

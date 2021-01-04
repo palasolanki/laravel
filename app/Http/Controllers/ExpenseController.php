@@ -12,6 +12,7 @@ use DB;
 use App\Traits\ChartData;
 use Carbon\Carbon;
 use Yajra\DataTables\DataTables;
+use App\Exports\ExpenseExport;
 
 class ExpenseController extends Controller
 {
@@ -111,5 +112,10 @@ class ExpenseController extends Controller
         $fileName = storage_path('uploads/expense/' . $expenseId . '/'. $deleteFile);
         File::delete($fileName);
         return ['message' => 'File Delete Success!'];
+    }
+
+    public function exportExpense(Request $request)
+    {
+        return (new ExpenseExport($request))->download('expense.xlsx');
     }
 }

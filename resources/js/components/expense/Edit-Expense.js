@@ -30,7 +30,6 @@ function EditExpenses(props) {
         amount: props.currentExpense.amount,
         medium: props.currentExpense.medium.id,
         tags: tmpTagsList(props.currentExpense.tags),
-        tagsArray: props.currentExpense.tags,
         file_attachments: selectedFile,
         notes: props.currentExpense.notes,
     }
