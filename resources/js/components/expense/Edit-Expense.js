@@ -17,8 +17,8 @@ function EditExpenses(props) {
     const tmpTagsList = (data) => {
         const tmpTagOptions = data.map(value => {
             return {
-                value: value,
-                label: value
+                value: value._id,
+                label: value.tag
             }
         });
         return tmpTagOptions;
@@ -28,7 +28,7 @@ function EditExpenses(props) {
         date: new Date(props.currentExpense.selectedDateForEdit),
         item: props.currentExpense.item,
         amount: props.currentExpense.amount,
-        medium: props.currentExpense.medium,
+        medium: props.currentExpense.medium.id,
         tags: tmpTagsList(props.currentExpense.tags),
         tagsArray: props.currentExpense.tags,
         file_attachments: selectedFile,
@@ -47,9 +47,9 @@ function EditExpenses(props) {
         setExpense({ ...expense, ['date']: event })
     }
     const handleSelectChange = event => {
-        const tmp = event.map(value => {
-            return value['label'];
-        })
+        const tmp = event ? event.map(value => {
+            return value['value'];
+        }) : [];
         setExpense({
             ...expense,
             ['tags']: (event) ? event : [],

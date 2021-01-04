@@ -33,8 +33,8 @@ function AddExpense() {
     const createTagOptions = data => {
         const tagOption = data.map(value => {
             return {
-                value:value,
-                label:value
+                value:value._id,
+                label:value.tag
             }
         });
         setOptions(tagOption);
@@ -67,9 +67,9 @@ function AddExpense() {
     }
     const handleSelectChange = key => event => {
         const rows = [...expenseData];
-        const tmp = event.map(value => {
-            return value['label'];
-        })
+        const tmp = event ? event.map(value => {
+            return value['value'];
+        }) : [];
         rows[key] = {
             ...rows[key],
             ['tags']: (event) ? event : [],
@@ -94,7 +94,13 @@ function AddExpense() {
                     const isoDate = new Date(expenseData[key][fieldName]).toISOString();
                     formData.append("data["+key+"]["+fieldName+"]", isoDate)
                 } else {
-                    formData.append("data["+key+"]["+fieldName+"]", expenseData[key][fieldName])
+                    if (fieldName == 'tagsArray') {
+                        expenseData[key][fieldName].map((value) => {
+                            formData.append("data["+key+"]["+fieldName+"][]", value)
+                        });
+                    } else {
+                        formData.append("data["+key+"]["+fieldName+"]", expenseData[key][fieldName])
+                    }
                 }
             })
         })

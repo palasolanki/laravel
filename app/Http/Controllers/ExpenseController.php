@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Expense;
 use Illuminate\Http\Request;
 use App\Http\Requests\ExpenseRequest;
+use Pimlie\DataTables\MongodbDataTable;
 use App\Tag;
 use File;
 use DB;
@@ -25,17 +26,24 @@ class ExpenseController extends Controller
         $from = ($request->daterange[0]) ? Carbon::parse($request->daterange[0]) : null;
         $to = ($request->daterange[1]) ? Carbon::parse($request->daterange[1]) : null;
 
-        $expense = Expense::with('mediums')->when($from, function ($expense) use ($from, $to) {
-            return $expense->whereBetween('date', [$from, $to]);
-        })->get();
+        $selectedMediums = $request->mediums;
+        $selectedTags = $request->tags;
+        $expense = Expense::with('tags')
+                ->when($from, function ($expense) use ($from, $to) {
+                    return $expense->whereBetween('date', [$from, $to]);
+                })
+                ->when($selectedMediums, function ($expense) use ($selectedMediums) {
+                    return $expense->whereIn('medium.id', $selectedMediums);
+                })
+                ->when($selectedTags, function ($expense) use ($selectedTags) {
+                    return $expense->whereIn('tag_ids', $selectedTags);
+                });
 
-        return Datatables::of($expense)
+        return (new MongodbDataTable($expense))
             ->addColumn('selectedDateForEdit', function ($expense) {
                 return $expense->date;
             })
-            ->addColumn('mediumvalue', function ($expense) {
-                return optional($expense->mediums)->medium;
-            })->make(true);
+            ->make(true);
     }
 
     /**
@@ -88,7 +96,7 @@ class ExpenseController extends Controller
     }
 
     public function getTagList() {
-        $tags = Tag::where('type', 'expense')->get()->pluck('tag');
+        $tags = Tag::where('type', 'expense')->get();
         return ['tags' => $tags];
     }
 

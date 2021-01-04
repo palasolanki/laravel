@@ -21,9 +21,9 @@ function EditIncome(props) {
     }
     const editData = {
         date: new Date(props.currentIncome.selectedDateForEdit),
-        client_id: props.currentIncome.client_id,
+        client_id: props.currentIncome.client.id,
         amount: props.currentIncome.amount,
-        medium: props.currentIncome.medium,
+        medium: props.currentIncome.medium.id,
         tags: tmpTagsList(props.currentIncome.tags),
         notes: props.currentIncome.notes,
     }

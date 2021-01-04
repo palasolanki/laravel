@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Expense;
 use File;
+use App\Models\Medium;
 use Illuminate\Support\Carbon;
 
 class ExpenseRequest extends FormRequest
@@ -49,15 +50,18 @@ class ExpenseRequest extends FormRequest
         foreach ($this->data as $value) {
             if(!$expense) {
                 $expense = new Expense;
+                $updateExpense = false;
+            } else {
+                $updateExpense = true;
             }
+            $medium = Medium::find($value['medium']);
             $expense->date = Carbon::parse($value['date']);
             $expense->item = $value['item'];
             $expense->amount = $value['amount'];
-            $expense->medium = $value['medium'];
-            $expense->tags = explode(',', $value['tagsArray']);
+            $expense->medium = ['id' => $medium->_id, 'medium' => $medium->medium];
             $expense->notes = $value['notes'];
             $expense->save();
-
+            $this->saveExpenseTags($expense, $value, $updateExpense);
             $this->addFileAttachment($value, $expense);
             $expense = null;
         }
@@ -87,6 +91,14 @@ class ExpenseRequest extends FormRequest
             
             $expense->file_attachments = $filesArray;
             $expense->save();
+        }
+    }
+
+    public function saveExpenseTags($expense, $value, $updateExpense) {
+        if (array_key_exists('tagsArray', $value)) {
+            $updateExpense 
+                ? $expense->tags()->sync($value['tagsArray']) 
+                : $expense->tags()->attach($value['tagsArray']);
         }
     }
 }

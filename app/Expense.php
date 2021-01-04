@@ -12,7 +12,8 @@ class Expense extends Eloquent
     ];
     const FILE_TYPE_INVOICE = 'invoice';
 
-    public function mediums() {
-        return $this->hasOne('App\Models\Medium', '_id', 'medium');
+    public function tags()
+    {
+        return $this->belongsToMany('App\Tag');
     }
 }
