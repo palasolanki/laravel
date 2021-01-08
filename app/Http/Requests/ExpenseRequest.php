@@ -50,9 +50,6 @@ class ExpenseRequest extends FormRequest
         foreach ($this->data as $value) {
             if(!$expense) {
                 $expense = new Expense;
-                $updateExpense = false;
-            } else {
-                $updateExpense = true;
             }
             $medium = Medium::find($value['medium']);
             $expense->date = Carbon::parse($value['date']);
@@ -61,7 +58,7 @@ class ExpenseRequest extends FormRequest
             $expense->medium = ['id' => $medium->_id, 'medium' => $medium->medium];
             $expense->notes = $value['notes'];
             $expense->save();
-            $this->saveExpenseTags($expense, $value, $updateExpense);
+            $this->saveExpenseTags($expense, $value);
             $this->addFileAttachment($value, $expense);
             $expense = null;
         }
@@ -94,11 +91,11 @@ class ExpenseRequest extends FormRequest
         }
     }
 
-    public function saveExpenseTags($expense, $value, $updateExpense) {
+    public function saveExpenseTags($expense, $value) {
         if (array_key_exists('tagsArray', $value)) {
-            $updateExpense 
-                ? $expense->tags()->sync($value['tagsArray']) 
-                : $expense->tags()->attach($value['tagsArray']);
+            $expense->wasRecentlyCreated 
+                ? $expense->tags()->attach($value['tagsArray']) 
+                : $expense->tags()->sync($value['tagsArray']);
         }
     }
 }

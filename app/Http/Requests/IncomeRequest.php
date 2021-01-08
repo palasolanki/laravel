@@ -50,9 +50,6 @@ class IncomeRequest extends FormRequest
         foreach ($this->data as $value) {
             if(!$income) {
                 $income = new Income;
-                $updateIncome = false;
-            } else {
-                $updateIncome = true;
             }
             $client = Client::find($value['client_id']);
             $medium = Medium::find($value['medium']);
@@ -62,17 +59,17 @@ class IncomeRequest extends FormRequest
             $income->medium = ['id' => $medium->_id, 'medium' => $medium->medium];
             $income->notes = $value['notes'];
             $income->save();
-            $this->saveIncomeTags($income, $value, $updateIncome);
+            $this->saveIncomeTags($income, $value);
             $income = null;
         }
         return true;
     }
 
-    public function saveIncomeTags($income, $value, $updateIncome) {
+    public function saveIncomeTags($income, $value) {
         if (array_key_exists('tagsArray', $value)) {
-            $updateIncome 
-                ? $income->tags()->sync($value['tagsArray']) 
-                : $income->tags()->attach($value['tagsArray']);
+            $income->wasRecentlyCreated 
+                ? $income->tags()->attach($value['tagsArray']) 
+                : $income->tags()->sync($value['tagsArray']);
         }
     }
 }
