@@ -11,4 +11,9 @@ class Expense extends Eloquent
         'date' => 'datetime:d-m-Y',
     ];
     const FILE_TYPE_INVOICE = 'invoice';
+
+    public function tags()
+    {
+        return $this->belongsToMany('App\Tag');
+    }
 }

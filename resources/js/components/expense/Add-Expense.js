@@ -20,12 +20,12 @@ function AddExpense() {
 
     const [mediums, setMediums] = useState([]);
     useEffect( () => {
-        api.get('/getExpenseMediumList')
+        api.get('/get-expense-mediums')
         .then((res) => {
             setMediums(res.data.medium);
         })
 
-        api.get('/getTagList')
+        api.get('/get-expense-tags')
         .then((res) => {
             createTagOptions(res.data.tags);
         })
@@ -33,16 +33,16 @@ function AddExpense() {
     const createTagOptions = data => {
         const tagOption = data.map(value => {
             return {
-                value:value,
-                label:value
+                value:value._id,
+                label:value.tag
             }
         });
         setOptions(tagOption);
     }
     const [expenseData, setExpenseData] = useState([data]);
 
-    const mediumList = mediums && Object.keys(mediums).map((key) => {
-        return <option value={key} key={key}>{mediums[key]}</option>
+    const mediumList = mediums && mediums.map((medium, key) => {
+        return <option value={medium._id} key={key}>{medium.medium}</option>
     })
     const handleInputChange = key => event => {
         const rows = [...expenseData];
@@ -67,9 +67,9 @@ function AddExpense() {
     }
     const handleSelectChange = key => event => {
         const rows = [...expenseData];
-        const tmp = event.map(value => {
-            return value['label'];
-        })
+        const tmp = event ? event.map(value => {
+            return value['value'];
+        }) : [];
         rows[key] = {
             ...rows[key],
             ['tags']: (event) ? event : [],
@@ -94,7 +94,13 @@ function AddExpense() {
                     const isoDate = new Date(expenseData[key][fieldName]).toISOString();
                     formData.append("data["+key+"]["+fieldName+"]", isoDate)
                 } else {
-                    formData.append("data["+key+"]["+fieldName+"]", expenseData[key][fieldName])
+                    if (fieldName == 'tagsArray') {
+                        expenseData[key][fieldName].map((value) => {
+                            formData.append("data["+key+"]["+fieldName+"][]", value)
+                        });
+                    } else {
+                        formData.append("data["+key+"]["+fieldName+"]", expenseData[key][fieldName])
+                    }
                 }
             })
         })

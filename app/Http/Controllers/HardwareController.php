@@ -86,6 +86,6 @@ class HardwareController extends Controller
         return ['message' => 'Delete Success!'];
     }
     public function getHardwareType() {
-        return ['type' => config('expense.hardware_type')];
+        return ['type' => config('expense_tracker.hardware_type')];
     }
 }

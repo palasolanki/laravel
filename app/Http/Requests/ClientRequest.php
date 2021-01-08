@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Income;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\Client;
 
@@ -36,8 +37,16 @@ class ClientRequest extends FormRequest
         if (!$id) {
             return Client::create($this->all());
         }
-        
-        return Client::where('_id', $id)
-            ->update($this->all());
+        $client = Client::find($id);
+        $oldClientName = $client->name;
+        $client->name = $this->name;
+        $client->company_name = $this->company_name;
+        $client->country_id = $this->country_id;
+        $client->save();
+
+        if ($oldClientName != $client->name) {
+            Income::where('client.id', $id)->update(['client.name' => $client->name]);
+        }
+        return $client;
     }
 }

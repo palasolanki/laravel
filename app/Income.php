@@ -10,7 +10,9 @@ class Income extends Eloquent
     protected $casts = [
         'date' => 'datetime:d-m-Y',
     ];
-    public function clients() {
-        return $this->hasOne('App\Models\Client', '_id', 'client_id');
+
+    public function tags()
+    {
+        return $this->belongsToMany('App\Tag');
     }
 }

@@ -17,8 +17,8 @@ function EditExpenses(props) {
     const tmpTagsList = (data) => {
         const tmpTagOptions = data.map(value => {
             return {
-                value: value,
-                label: value
+                value: value._id,
+                label: value.tag
             }
         });
         return tmpTagOptions;
@@ -28,9 +28,8 @@ function EditExpenses(props) {
         date: new Date(props.currentExpense.selectedDateForEdit),
         item: props.currentExpense.item,
         amount: props.currentExpense.amount,
-        medium: props.currentExpense.medium,
+        medium: props.currentExpense.medium.id,
         tags: tmpTagsList(props.currentExpense.tags),
-        tagsArray: props.currentExpense.tags,
         file_attachments: selectedFile,
         notes: props.currentExpense.notes,
     }
@@ -47,17 +46,17 @@ function EditExpenses(props) {
         setExpense({ ...expense, ['date']: event })
     }
     const handleSelectChange = event => {
-        const tmp = event.map(value => {
-            return value['label'];
-        })
+        const tmp = event ? event.map(value => {
+            return value['value'];
+        }) : [];
         setExpense({
             ...expense,
             ['tags']: (event) ? event : [],
             ['tagsArray']: (event) ? tmp : []
         })
     }
-    const mediumList = mediums && Object.keys(mediums).map((key) => {
-        return <option value={key} key={key}>{mediums[key]}</option>
+    const mediumList = mediums && mediums.map((medium, key) => {
+        return <option value={medium._id} key={key}>{medium.medium}</option>
     })
 
     const deleteExpenseFile = (expenseId,deleteFile) => {

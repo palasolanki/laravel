@@ -9,6 +9,7 @@ import {
     faPlus
 } from '@fortawesome/free-solid-svg-icons';
 import ConfirmationComponent from '../ConfirmationComponent';
+import Select from 'react-select';
 const $ = require('jquery')
 $.DataTable = require('datatables.net')
 
@@ -18,8 +19,12 @@ export default function Income() {
     const [dateRange, setDateRange] = useState([null, null]);
     const [clients, setClients] = useState([]);
     const [mediums, setMediums] = useState([]);
+    const [mediumsOptionForFilter, setMediumsOptionForFilter] = useState([]);
+    const [selectedMediumsForFilter, setSelectedMediumsForFilter] = useState(null);
+    const [selectedTagsForFilter, setSelectedTagsForFilter] = useState(null);
     const [filterClient, setFilterClient] = useState('all');
     const [showEditModal, setEditShow] = useState(false);
+    const [tagOptions, setTagOptions] = useState([]);
     const openShowEdit = () => setEditShow(true);
     const handleCloseEdit = () => setEditShow(false);
 
@@ -41,27 +46,69 @@ export default function Income() {
                 "url": `/api/getIncomeData`,
                 "dataType": 'json',
                 "type": 'post',
-                "data": {'daterange': dateRange, 'client': filterClient},
+                "data": {   
+                    'daterange': dateRange, 
+                    'client': filterClient, 
+                    'mediums': selectedMediumsForFilter, 
+                    'tags': selectedTagsForFilter
+                },
                 "beforeSend": function (xhr) {
                     xhr.setRequestHeader('Authorization',
                         "Bearer " + localStorage.getItem('token'));
                 },
             },
             columns: [
-                { title: "Date", data: 'date' },
-                { title: "Client", data: 'clientname' },
-                { title: "Amount", data: 'amount' },
-                { title: "Medium", data: 'mediumvalue' },
-                { title: "Notes", data: 'notes', defaultContent: 'N/A'},
+                { title: "Date", data: 'date', searchable: false },
+                { title: "Client", data: 'client.name', defaultContent: 'N/A' },
+                { title: "Amount (INR)", data: 'amount' },
+                { title: "Medium", data: 'medium.medium', defaultContent: 'N/A' },
+                { title: "Tags", data: 'tags', defaultContent: 'N/A', orderable: false, searchable: false },
+                { title: "Notes", data: 'notes', defaultContent: 'N/A', orderable: false },
                 { title: "Action", data: 'null', defaultContent: 'N/A', orderable: false }
             ],
             rowCallback: function( row, data, index ) {
                 let action = '<button data-index="' + index + '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' + data._id + '" class="btn btn-sm btn--cancel deletData" >Delete</button>'
-                $('td:eq(5)', row).html( action );
+                $('td:eq(6)', row).html( action );
                 if (data.notes) {
                     let notes = (data.notes.length > 20) ? data.notes.substring(0,20) + '...' : data.notes;
-                    $('td:eq(4)', row).html( notes );
+                    $('td:eq(5)', row).html( notes );
                 }
+                if (data.tags && data.tags.length) {
+                    $('td:eq(4)', row).html( data.tags.map(value => value.tag).toString() );
+                }
+            },
+            footerCallback: function ( row, data, start, end, display ) {
+                var api = this.api(), totalAmount, currentPageTotalAmount;
+
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '')*1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+
+                totalAmount = api
+                    .column( 2 )
+                    .data()
+                    .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+                currentPageTotalAmount = api
+                    .column( 2, { page: 'current'} )
+                    .data()
+                    .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+                var totalHtml = '<div>'+
+                                'This page: <span style="font-weight:bold;">&#8377;</span>'+currentPageTotalAmount+
+                            '</div>'+
+                            '<div>'+
+                                'All pages: <span style="font-weight:bold;">&#8377;</span>'+totalAmount+
+                            '</div>';
+
+                $( api.column( 2 ).footer() ).html(totalHtml);
             }
         });
         setDataTable(table);
@@ -73,11 +120,25 @@ export default function Income() {
         .then((res) => {
             setClients(res.data.clients);
         })
-        api.get('/getIncomeMediumList')
+        api.get('/get-income-mediums')
         .then((res) => {
             setMediums(res.data.medium);
+            setMediumsOptionForFilter(createMediumOption(res.data.medium));
+        })
+        api.get('/get-income-tags').then((res) => {
+            createTagOptions(res.data.tags);
         })
     }, []);
+
+    const createTagOptions = data => {
+        const options = data.map(value => {
+            return {
+                value: value._id,
+                label: value.tag
+            }
+        });
+        setTagOptions(options);
+    }
 
     useEffect(() => {
         if(dataTable) {
@@ -130,8 +191,28 @@ export default function Income() {
             dataTable.destroy();
             initDatatables();
         }
-    }, [date, filterClient]);
+    }, [date, filterClient, selectedMediumsForFilter, selectedTagsForFilter]);
 
+    const createMediumOption = mediums => { 
+        return mediums.map((medium, key) => {
+            return {
+                value: medium._id,
+                label: medium.medium
+            }
+        });
+    }
+
+    const handleSelectChange = selectFor => event => {
+        const tmp = event ? event.map(value => {
+            return value['value'];
+        }) : [];
+        const data = (event) ? tmp : null;
+        if (selectFor == 'mediums') {
+            setSelectedMediumsForFilter(data);
+        } else if (selectFor == 'tags') {
+            setSelectedTagsForFilter(data);
+        }
+    }
     return  (
                 <div className="bg-white p-3">
                     <div className="d-flex align-items-center pb-2">
@@ -152,16 +233,40 @@ export default function Income() {
                                 }
                             </select>
                         </div>
+                        <div className="col-md-2">
+                            <Select
+                                onChange={handleSelectChange('mediums')}
+                                isMulti
+                                options={mediumsOptionForFilter}
+                                placeholder='Select Mediums'
+                            />
+                        </div>
+                        <div className="col-md-2">
+                            <Select
+                                onChange={handleSelectChange('tags')}
+                                isMulti
+                                options={tagOptions}
+                                placeholder='Select Tags'
+                            />
+                        </div>
                         <Link to="incomes/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Income</Link>
                     </div>
 
-                    <table id="datatable" className="display" width="100%"></table>
+                    <table id="datatable" className="display" width="100%">
+                    <tfoot>
+                        <tr>
+                            <th colSpan="2"></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                    </table>
 
                     {showEditModal && <EditIncomes
                                         handleCloseEdit={handleCloseEdit}
                                         currentIncome={currentIncome}
                                         mediums={mediums}
                                         clients={clients}
+                                        tagOptions={tagOptions}
                                         updateIncome={updateIncome}
                                     />}
                     {showDeleteModal && <ConfirmationComponent

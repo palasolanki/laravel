@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Expense;
 use Illuminate\Http\Request;
 use App\Http\Requests\ExpenseRequest;
+use Pimlie\DataTables\MongodbDataTable;
 use App\Tag;
 use File;
 use DB;
 use App\Traits\ChartData;
 use Carbon\Carbon;
 use Yajra\DataTables\DataTables;
+use App\Exports\ExpenseExport;
 
 class ExpenseController extends Controller
 {
@@ -25,17 +27,24 @@ class ExpenseController extends Controller
         $from = ($request->daterange[0]) ? Carbon::parse($request->daterange[0]) : null;
         $to = ($request->daterange[1]) ? Carbon::parse($request->daterange[1]) : null;
 
-        $expense = Expense::when($from, function ($expense) use ($from, $to) {
-            return $expense->whereBetween('date', [$from, $to]);
-        })->get();
+        $selectedMediums = $request->mediums;
+        $selectedTags = $request->tags;
+        $expense = Expense::with('tags')
+                ->when($from, function ($expense) use ($from, $to) {
+                    return $expense->whereBetween('date', [$from, $to]);
+                })
+                ->when($selectedMediums, function ($expense) use ($selectedMediums) {
+                    return $expense->whereIn('medium.id', $selectedMediums);
+                })
+                ->when($selectedTags, function ($expense) use ($selectedTags) {
+                    return $expense->whereIn('tag_ids', $selectedTags);
+                });
 
-        return Datatables::of($expense)
+        return (new MongodbDataTable($expense))
             ->addColumn('selectedDateForEdit', function ($expense) {
                 return $expense->date;
             })
-            ->addColumn('mediumvalue', function ($expense) {
-                return config('expense.medium')[$expense->medium];
-            })->make(true);
+            ->make(true);
     }
 
     /**
@@ -87,11 +96,8 @@ class ExpenseController extends Controller
         return ['message' => 'Delete Success!'];
     }
 
-    public function getExpenseMediumList() {
-        return ['medium' => config('expense.medium')];
-    }
     public function getTagList() {
-        $tags = Tag::where('type', 'expense')->get()->pluck('tag');
+        $tags = Tag::where('type', 'expense')->get();
         return ['tags' => $tags];
     }
 
@@ -106,5 +112,10 @@ class ExpenseController extends Controller
         $fileName = storage_path('uploads/expense/' . $expenseId . '/'. $deleteFile);
         File::delete($fileName);
         return ['message' => 'File Delete Success!'];
+    }
+
+    public function exportExpense(Request $request)
+    {
+        return (new ExpenseExport($request))->download('expense.xlsx');
     }
 }

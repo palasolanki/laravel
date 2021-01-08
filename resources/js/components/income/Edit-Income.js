@@ -1,19 +1,30 @@
 import React, { Fragment, useState } from 'react'
 import DatePicker from "react-datepicker";
+import Select from 'react-select';
 
 function EditIncome(props) {
-    const {clients, mediums} = props;
+    const {clients, mediums, tagOptions} = props;
     const closeModalSpanStyle = {
         color: '#000',
         float: 'right',
         fontSize: '20px',
         cursor: 'pointer'
       };
+      const tmpTagsList = (data) => {
+        const tmpTagOptions = (data && data.length > 0) ? data.map(value => {
+            return {
+                value: value._id,
+                label: value.tag
+            }
+        }) : [];
+        return tmpTagOptions;
+    }
     const editData = {
         date: new Date(props.currentIncome.selectedDateForEdit),
-        client_id: props.currentIncome.client_id,
+        client_id: props.currentIncome.client.id,
         amount: props.currentIncome.amount,
-        medium: props.currentIncome.medium,
+        medium: props.currentIncome.medium.id,
+        tags: tmpTagsList(props.currentIncome.tags),
         notes: props.currentIncome.notes,
     }
     const [income, setIncome] = useState(editData)
@@ -24,8 +35,18 @@ function EditIncome(props) {
     const handleDateChange = event => {
         setIncome({ ...income, ['date']: event })
     }
-    const mediumList = mediums && Object.keys(mediums).map((key) => {
-        return <option value={key} key={key}>{mediums[key]}</option>
+    const handleSelectChange = event => {
+        const tmp = event ? event.map(value => {
+            return value['value'];
+        }) : [];
+        setIncome({
+            ...income,
+            ['tags']: (event) ? event : [],
+            ['tagsArray']: (event) ? tmp : []
+        })
+    }
+    const mediumList = mediums && mediums.map((medium, key) => {
+        return <option value={medium._id} key={key}>{medium.medium}</option>
     })
     return (
         <Fragment>
@@ -81,6 +102,14 @@ function EditIncome(props) {
                                         mediumList
                                     }
                                 </select>
+                            </div>
+                            <div className="form-group pt-1">
+                                <Select
+                                    value={income.tags}
+                                    onChange={handleSelectChange}
+                                    isMulti
+                                    options={tagOptions}
+                                />
                             </div>
                             <div className="form-group">
                                 <label>Notes:</label>

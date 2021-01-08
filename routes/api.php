@@ -37,9 +37,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('getIncomeData', 'IncomeController@index');
     Route::post('getExpenseData', 'ExpenseController@index');
     Route::resource('hardwares', 'HardwareController');
-    Route::get('/getTagList', 'ExpenseController@getTagList');
-    Route::get('/getExpenseMediumList', 'ExpenseController@getExpenseMediumList');
-    Route::get('/getIncomeMediumList', 'IncomeController@getIncomeMediumList');
+    Route::get('/get-expense-tags', 'ExpenseController@getTagList');
+    Route::get('/get-income-tags', 'IncomeController@getTagList');
     Route::post('/monthlyExpenseChart', 'ExpenseController@monthlyExpenseChart');
     Route::post('/monthlyIncomeChart', 'IncomeController@monthlyIncomeChart');
     Route::get('/getClients', 'ClientController@getClients');
@@ -49,6 +48,13 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/client/{client}', 'ClientController@show');
     Route::patch('/client/{client}', 'ClientController@update');
     Route::delete('/client/{client}', 'ClientController@destroy');
+    Route::get('/mediums', 'MediumController@index');
+    Route::post('/mediums', 'MediumController@store');
+    Route::patch('/mediums/{id}', 'MediumController@update');
+    Route::delete('/mediums/{id}', 'MediumController@destroy');
+    Route::get('/get-expense-mediums', 'MediumController@getExpenseMediumList');
+    Route::get('/get-income-mediums', 'MediumController@getIncomeMediumList');
+    Route::post('/export/expense', 'ExpenseController@exportExpense');
 
     Route::post('/profile','ProfileController@update');
 
