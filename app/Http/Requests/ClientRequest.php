@@ -38,13 +38,12 @@ class ClientRequest extends FormRequest
             return Client::create($this->all());
         }
         $client = Client::find($id);
-        $oldClientName = $client->name;
         $client->name = $this->name;
         $client->company_name = $this->company_name;
         $client->country_id = $this->country_id;
         $client->save();
 
-        if ($oldClientName != $client->name) {
+        if ($client->wasChanged('name')) {
             Income::where('client.id', $id)->update(['client.name' => $client->name]);
         }
         return $client;
