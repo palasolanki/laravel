@@ -36,7 +36,6 @@ class MediumRequest extends FormRequest
     {
         if ($id) {
             $medium = Medium::where('_id', $id)->first();
-            $oldMediumName = $medium->medium;
             if ($medium->type != $this->type) {
                 throw ValidationException::withMessages(['type' => "Can't update type of existing medium."]);
             }
@@ -48,7 +47,7 @@ class MediumRequest extends FormRequest
         $medium->type = $this->type;
         $medium->save();
 
-        if ($id && $oldMediumName != $medium->medium) {
+        if ($id && $medium->wasChanged('medium')) {
             $model = ['income' => new Income, 'expense' => new Expense ];
             $model[$medium->type]::where('medium.id', $id)->update(['medium.medium' => $medium->medium]);
         }

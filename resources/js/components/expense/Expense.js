@@ -1,6 +1,7 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
+import { intVal } from '../../helpers';
 import {ToastsStore} from 'react-toasts';
 import EditExpenses from "./Edit-Expense";
 import DateRangePicker from '@wojtekmaj/react-daterange-picker';
@@ -101,13 +102,6 @@ function Expense() {
             },
             footerCallback: function ( row, data, start, end, display ) {
                 var api = this.api(), totalAmount, currentPageTotalAmount;
-
-                var intVal = function ( i ) {
-                    return typeof i === 'string' ?
-                        i.replace(/[\$,]/g, '')*1 :
-                        typeof i === 'number' ?
-                            i : 0;
-                };
 
                 totalAmount = api
                     .column( 2 )
