@@ -126,53 +126,61 @@ function AddIncome() {
                 {
                     incomeData.map((incomeItem, key) =>
                         <div className="row mx-0 mb-2" key={key}>
-                            <div className="col-md-3 form-group px-0 pr-md-3">
-                                <DatePicker
-                                    className="form-control"
-                                    name="date"
-                                    selected={incomeItem.date}
-                                    onChange={handleInputChange(key)}
-                                    dateFormat="dd-MM-yyyy"
-                                />
-                            </div>
-                            <div className="col-md-3 form-group px-0 px-md-3">
-                                <select name="client_id" className="form-control" onChange={handleInputChange(key)} value={incomeItem.client_id}>
-                                    <option value="">Select Client</option>
-                                    {
-                                        clientList
-                                    }
-                                </select>
-                            </div>
-                            <div className="col-xl-2 col-md-3 form-group px-0 px-md-3">
-                                <input type="text" name="amount" placeholder="Enter Amount" onChange={handleInputChange(key)} value={incomeItem.amount} className="form-control"/>
-                            </div>
-                            <div className="col-xl-2 col-md-3 form-group px-0 px-md-3">
-                                <select name="medium" className="form-control" onChange={handleInputChange(key)} value={incomeItem.medium}>
-                                    <option value="">Select Medium</option>
-                                    {
-                                        mediumList
-                                    }
-                                </select>
-                            </div>
-                            <div className="col-md-3 col-xl-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
-                                <Select
-                                    value={incomeData.tags}
-                                    onChange={handleSelectChange(key)}
-                                    isMulti
-                                    options={tagOptions}
-                                    placeholder='Select Tags'
-                                />
-                            </div>
-                            <div className="col-xl-2 col-md-3 form-group px-0 px-md-3">
-                                <textarea className="w-100 form-control" rows="1" placeholder="Enter Notes" name="notes" onChange={handleInputChange(key)} value={incomeItem.notes} />
-                            </div>
-                            {
-                                (incomeData.length > 1 && key != 0) ?
-                                    <div className="col-md-2 form-group">
-                                        <button className="btn btn-danger" value={key} onClick={removeIncome}> Remove </button>
+                            <div className="col-xl-6 custom__col col-md-10 border p-xl-4 p-3 mb-3">
+                                <div className="row mx-0 mt-2 flex-column flex-md-row">
+                                    <div className="col form-group px-0 px-lg-3 px-md-2">
+                                        <DatePicker
+                                            className="form-control"
+                                            name="date"
+                                            selected={incomeItem.date}
+                                            onChange={handleInputChange(key)}
+                                            dateFormat="dd-MM-yyyy"
+                                        />
                                     </div>
-                                : ''
-                            }
+                                    <div className="col form-group px-0 px-lg-3 px-md-2">
+                                        <select name="client_id" className="form-control" onChange={handleInputChange(key)} value={incomeItem.client_id}>
+                                            <option value="">Select Client</option>
+                                            {
+                                                clientList
+                                            }
+                                        </select>
+                                    </div>
+                                    <div className="col form-group px-0 px-lg-3 px-md-2">
+                                        <input type="text" name="amount" placeholder="Enter Amount" onChange={handleInputChange(key)} value={incomeItem.amount} className="form-control"/>
+                                    </div>
+                                </div>
+                                <div className="row mx-0 align-items-center flex-column flex-md-row">
+                                    <div className="col form-group px-0 px-lg-3 px-md-2 mb-md-0">
+                                        <select name="medium" className="form-control" onChange={handleInputChange(key)} value={incomeItem.medium}>
+                                            <option value="">Select Medium</option>
+                                            {
+                                                mediumList
+                                            }
+                                        </select>
+                                    </div>
+                                    <div className="col form-group px-0 px-lg-3 px-md-2 mb-md-0">
+                                        <Select
+                                            value={incomeData.tags}
+                                            onChange={handleSelectChange(key)}
+                                            isMulti
+                                            options={tagOptions}
+                                            placeholder='Select Tags'
+                                        />
+                                    </div>
+                                    <div className="col form-group px-0 px-lg-3 px-md-2 mb-md-0">
+                                        <textarea className="w-100 form-control" rows="2" placeholder="Enter Notes" name="notes" onChange={handleInputChange(key)} value={incomeItem.notes} />
+                                    </div>
+                                </div>
+                            </div>
+                                {
+                                    (incomeData.length > 1 && key != 0) ?
+                                        <div className="col row mx-0 px-0">
+                                            <div className="col-md-3 px-0 px-md-3 form-group mb-md-0">
+                                                <button className="btn btn--cancel" value={key} onClick={removeIncome}> Remove </button>
+                                            </div>
+                                        </div>
+                                    : ''
+                                }
                         </div>
                   )
                 }
