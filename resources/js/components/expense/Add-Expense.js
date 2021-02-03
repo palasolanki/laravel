@@ -137,50 +137,58 @@ function AddExpense() {
                 }
                 {
                     expenseData.map((expenseItem, key) =>
-                        <div className="row mx-0 align-items-center mb-md-3" key={key}>
-                            <div className="row w-100 flex-nowrap mx-0 align-items-center">
-                                <div className="col-md-2 form-group mb-md-0 px-0 pl-md-0">
-                                    <DatePicker
-                                        className="form-control"
-                                        name="date"
-                                        selected={expenseItem.date}
-                                        onChange={handleInputChange(key)}
-                                        dateFormat="dd-MM-yyyy"
-                                    />
+                        <div className="row mx-0" key={key}>
+                            <div className="col-xl-6 custom__col col-md-10 border p-xl-4 p-3 mb-3">
+                                <div className="row mx-0 mt-2 flex-column flex-md-row">
+                                    <div className="col form-group px-0 px-lg-3 px-md-2">
+                                        <DatePicker
+                                            className="form-control"
+                                            name="date"
+                                            selected={expenseItem.date}
+                                            onChange={handleInputChange(key)}
+                                            dateFormat="dd-MM-yyyy"
+                                        />
+                                    </div>
+                                    <div className="col form-group px-0 px-lg-3 px-md-2">
+                                        <input type="text" name="item" placeholder="Enter Item" onChange={handleInputChange(key)} value={expenseItem.item} className="form-control"/>
+                                    </div>
+                                    <div className="col form-group px-0 px-lg-3 px-md-2">
+                                        <input type="text" name="amount" placeholder="Enter Amount" onChange={handleInputChange(key)} value={expenseItem.amount} className="form-control"/>
+                                    </div>
                                 </div>
-                                <div className="col-md-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
-                                    <input type="text" name="item" placeholder="Enter Item" onChange={handleInputChange(key)} value={expenseItem.item} className="form-control"/>
+
+                                <div className="row mx-0 flex-column flex-md-row">
+                                    <div className="col form-group px-0 px-lg-3 px-md-2 mb-md-0">
+                                        <select name="medium" className="form-control" onChange={handleInputChange(key)} value={expenseItem.medium}>
+                                            <option value="">Select Medium</option>
+                                        {
+                                            mediumList
+                                        }
+                                        </select>
+                                    </div>
+                                    <div className="form-group mb-md-0 col px-0 px-lg-3 px-md-2">
+                                        <Select
+                                            value={expenseItem.tags}
+                                            onChange={handleSelectChange(key)}
+                                            isMulti
+                                            options={options}
+                                            placeholder='Select Tags'
+                                        />
+                                    </div>
+                                    <div className="col form-group px-0 px-lg-3 px-md-2 mb-0">
+                                        <textarea className="w-100 form-control" placeholder="Enter Notes" name="notes" onChange={handleInputChange(key)} value={expenseItem.notes} />
+                                    </div>
                                 </div>
-                                <div className="col-md-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
-                                    <input type="text" name="amount" placeholder="Enter Amount" onChange={handleInputChange(key)} value={expenseItem.amount} className="form-control"/>
+
+                                <div className="col mt-3 mt-md-0 px-0 px-lg-3 px-md-2">
+                                    <input className="h-100" type="file" name="file" onChange={handleInputChange(key)}/>
                                 </div>
-                                <div className="col-md-3 col-xl-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
-                                    <select name="medium" className="form-control" onChange={handleInputChange(key)} value={expenseItem.medium}>
-                                        <option value="">Select Medium</option>
-                                    {
-                                        mediumList
-                                    }
-                                    </select>
-                                </div>
-                                <div className="col-md-3 col-xl-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
-                                    <Select
-                                        value={expenseItem.tags}
-                                        onChange={handleSelectChange(key)}
-                                        isMulti
-                                        options={options}
-                                        placeholder='Select Tags'
-                                    />
-                                </div>
-                                <div className="col-md-3 col-xl-2 form-group mb-md-0 px-0 px-md-2 px-lg-3">
-                                    <textarea className="w-100 form-control" placeholder="Enter Notes" name="notes" onChange={handleInputChange(key)} value={expenseItem.notes} />
-                                </div>
-                                <input className="h-100" type="file" name="file" onChange={handleInputChange(key)}/>
                             </div>
                             {
                                 (expenseData.length > 1 && key != 0) ?
-                                    <div className="col-12 px-0">
-                                        <div className="form-group mb-md-0 mt-3">
-                                            <button className="btn btn-danger" value={key} onClick={removeExpense}> Remove </button>
+                                    <div className="col row mx-0 px-0">
+                                        <div className="col-md-3 px-0 px-md-3 form-group mb-md-0">
+                                            <button className="btn btn--cancel" value={key} onClick={removeExpense}> Remove </button>
                                         </div>
                                     </div>
                                 : ''
@@ -189,7 +197,7 @@ function AddExpense() {
                   )
                 }
                 <div className="row mx-0">
-                    <div className="col-12 px-0">
+                    <div className="col-12 px-0 mt-2">
                         <button className="btn btn-success mr-2" onClick={addExpense}> Add New</button>
                     </div>
                     <div className="col-12 px-0 mt-4">
