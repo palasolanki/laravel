@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
 import { intVal } from '../../helpers';
+import { numberFormat } from "../../helpers";
 import { ToastsStore } from 'react-toasts';
 import EditIncomes from "./Edit-Income";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import {
+    faFilter,
     faPlus
 } from '@fortawesome/free-solid-svg-icons';
 import ConfirmationComponent from '../ConfirmationComponent';
@@ -40,67 +42,117 @@ export default function Income() {
         }
     }
     const initDatatables = () => {
-        var table = $('#datatable').DataTable({
+        var table = $("#datatable").DataTable({
             serverSide: true,
             processing: true,
+            oLanguage: {
+                sSearch: "",
+                sSearchPlaceholder: "Search"
+            },
             ajax: {
-                "url": `/api/getIncomeData`,
-                "dataType": 'json',
-                "type": 'post',
-                "data": {
-                    'daterange': dateRange,
-                    'client': filterClient,
-                    'mediums': selectedMediumsForFilter,
-                    'tags': selectedTagsForFilter
+                url: `/api/getIncomeData`,
+                dataType: "json",
+                type: "post",
+                data: {
+                    daterange: dateRange,
+                    client: filterClient,
+                    mediums: selectedMediumsForFilter,
+                    tags: selectedTagsForFilter
                 },
-                "beforeSend": function (xhr) {
-                    xhr.setRequestHeader('Authorization',
-                        "Bearer " + localStorage.getItem('token'));
-                },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(
+                        "Authorization",
+                        "Bearer " + localStorage.getItem("token")
+                    );
+                }
             },
             columns: [
-                { title: "Date", data: 'date', searchable: false },
-                { title: "Client", data: 'client.name', defaultContent: 'N/A' },
-                { title: "Amount (INR)", data: 'amount' },
-                { title: "Medium", data: 'medium.medium', defaultContent: 'N/A' },
-                { title: "Tags", data: 'tags', defaultContent: 'N/A', orderable: false, searchable: false },
-                { title: "Notes", data: 'notes', defaultContent: 'N/A', orderable: false },
-                { title: "Action", data: 'null', defaultContent: 'N/A', orderable: false }
+                { title: "Date", data: "date", searchable: false },
+                {
+                    title: "Client",
+                    data: "client.name",
+                    defaultContent: "N/A"
+                },
+                { title: "Amount (INR)", data: "amount" },
+                {
+                    title: "Medium",
+                    data: "medium.medium",
+                    defaultContent: "N/A"
+                },
+                {
+                    title: "Tags",
+                    data: "tags",
+                    defaultContent: "N/A",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    title: "Notes",
+                    data: "notes",
+                    defaultContent: "N/A",
+                    orderable: false
+                },
+                {
+                    title: "Action",
+                    data: "null",
+                    defaultContent: "N/A",
+                    orderable: false
+                }
             ],
-            rowCallback: function (row, data, index) {
-                let action = '<button data-index="' + index + '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' + data._id + '" class="btn btn-sm btn--cancel deletData" >Delete</button>'
-                $('td:eq(6)', row).html(action);
+            rowCallback: function(row, data, index) {
+                let action =
+                    '<button data-index="' +
+                    index +
+                    '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' +
+                    data._id +
+                    '" class="btn btn-sm btn--cancel deletData" >Delete</button>';
+                $("td:eq(6)", row).html(action);
                 if (data.notes) {
-                    let notes = (data.notes.length > 20) ? data.notes.substring(0, 20) + '...' : data.notes;
-                    $('td:eq(5)', row).html(notes);
+                    let notes =
+                        data.notes.length > 20
+                            ? data.notes.substring(0, 20) + "..."
+                            : data.notes;
+                    $("td:eq(5)", row).html(notes);
                 }
                 if (data.tags && data.tags.length) {
-                    $('td:eq(4)', row).html(data.tags.map(value => value.tag).toString());
+                    $("td:eq(4)", row).html(
+                        data.tags.map(value => value.tag).toString()
+                    );
+                }
+                if (data.amount && data.amount.length) {
+                    $("td:eq(2)", row).html(
+                        numberFormat(data.amount)
+                    );
                 }
             },
-            footerCallback: function (row, data, start, end, display) {
-                var api = this.api(), totalAmount, currentPageTotalAmount;
+            footerCallback: function(row, data, start, end, display) {
+                var api = this.api(),
+                    totalAmount,
+                    currentPageTotalAmount;
 
                 totalAmount = api
                     .column(2)
                     .data()
-                    .reduce(function (a, b) {
+                    .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
 
                 currentPageTotalAmount = api
-                    .column(2, { page: 'current' })
+                    .column(2, { page: "current" })
                     .data()
-                    .reduce(function (a, b) {
+                    .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
 
-                var totalHtml = '<div>' +
-                    'This page: <span style="font-weight:bold;">&#8377;</span>' + currentPageTotalAmount +
-                    '</div>' +
-                    '<div>' +
-                    'All pages: <span style="font-weight:bold;">&#8377;</span>' + totalAmount +
-                    '</div>';
+                var totalHtml =
+                    "<div>" +
+                    'This page: <span style="font-weight:bold;">&#8377;</span>' +
+                    numberFormat(currentPageTotalAmount) +
+                    "</div>" +
+                    "<div>" +
+                    'All pages: <span style="font-weight:bold;">&#8377;</span>' +
+                    numberFormat(totalAmount) +
+                    "</div>";
 
                 $(api.column(2).footer()).html(totalHtml);
             }
@@ -212,17 +264,29 @@ export default function Income() {
             <div className="row mx-0 align-items-center">
                 <h2 className="heading">Income</h2>
                 <div className="ml-auto">
-                    <Link to="incomes/add" className="btn btn--prime"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Income</Link>
+                    <Link to="incomes/add" className="btn btn--prime">
+                        <FontAwesomeIcon className="mr-2" icon={faPlus} />
+                        Add Income
+                    </Link>
                 </div>
             </div>
 
-            <div className="row mx-0 my-4">
+            <div className="row mx-0 my-4 advance-filter">
                 <h5 className="col-12 px-0 mb-3">
-                    <Link onClick={() => setAdvanceFilter(!advanceFilter)} to="incomes"><FontAwesomeIcon size="sm" className="mr-2" icon={faPlus} />Advanced Filters</Link>
+                    <Link
+                        onClick={() => setAdvanceFilter(!advanceFilter)}
+                        to="incomes"
+                    >
+                        <FontAwesomeIcon
+                            size="sm"
+                            className="mr-2"
+                            icon={faFilter}
+                        />
+                        Advanced Filters
+                    </Link>
                 </h5>
-                {
-                    advanceFilter &&
-                    <div className="col-xl-6 col-md-10 border p-xl-4 p-3 mb-3 advance-filter">
+                {advanceFilter && (
+                    <div className="col-xl-6 col-md-10 border p-xl-4 p-3 mb-3">
                         <div className="row mx-0 mt-2 flex-column flex-md-row">
                             <div className="col form-group px-0 px-lg-3 px-md-2">
                                 <DateRangePicker
@@ -231,62 +295,78 @@ export default function Income() {
                                 />
                             </div>
                             <div className="col form-group px-0 px-lg-3 px-md-2">
-                                <select className="form-control" onChange={handleClientFilterChange} value={filterClient}>
+                                <select
+                                    className="form-control"
+                                    onChange={handleClientFilterChange}
+                                    value={filterClient}
+                                >
                                     <option value="all">All Clients</option>
-                                    {
-                                        clients && clients.map((client) =>
-                                            <option value={client._id} key={client._id}>{client.name}</option>
-                                        )
-                                    }
+                                    {clients &&
+                                        clients.map(client => (
+                                            <option
+                                                value={client._id}
+                                                key={client._id}
+                                            >
+                                                {client.name}
+                                            </option>
+                                        ))}
                                 </select>
                             </div>
                         </div>
                         <div className="row mx-0 mt-md-2 flex-column flex-md-row">
                             <div className="col form-group px-0 px-lg-3 px-md-2">
                                 <Select
-                                    onChange={handleSelectChange('mediums')}
+                                    onChange={handleSelectChange("mediums")}
                                     isMulti
                                     options={mediumsOptionForFilter}
-                                    placeholder='Select Mediums'
+                                    placeholder="Select Mediums"
                                 />
                             </div>
                             <div className="col form-group px-0 px-lg-3 px-md-2">
                                 <Select
-                                    onChange={handleSelectChange('tags')}
+                                    onChange={handleSelectChange("tags")}
                                     isMulti
                                     options={tagOptions}
-                                    placeholder='Select Tags'
+                                    placeholder="Select Tags"
                                 />
                             </div>
                         </div>
                     </div>
-                }
+                )}
             </div>
 
             <div className="table-responsive-md table-income-expense">
-                <table id="datatable" className="display table" width="100%">
+                <table
+                    id="datatable"
+                    className="display table"
+                    width="100%"
+                >
                     <tfoot>
                         <tr>
-                            <th colSpan="2"></th>
-                            <th></th>
+                            <th colSpan="2" />
+                            <th />
                         </tr>
                     </tfoot>
                 </table>
             </div>
-            {showEditModal && <EditIncomes
-                handleCloseEdit={handleCloseEdit}
-                currentIncome={currentIncome}
-                mediums={mediums}
-                clients={clients}
-                tagOptions={tagOptions}
-                updateIncome={updateIncome}
-            />}
-            {showDeleteModal && <ConfirmationComponent
-                title="Are you sure to delete this Income?"
-                handleCloseDelete={handleCloseDelete}
-                btnName="Delete"
-                action={() => deleteIncome(deleteIncomeId)}
-            />}
+            {showEditModal && (
+                <EditIncomes
+                    handleCloseEdit={handleCloseEdit}
+                    currentIncome={currentIncome}
+                    mediums={mediums}
+                    clients={clients}
+                    tagOptions={tagOptions}
+                    updateIncome={updateIncome}
+                />
+            )}
+            {showDeleteModal && (
+                <ConfirmationComponent
+                    title="Are you sure to delete this Income?"
+                    handleCloseDelete={handleCloseDelete}
+                    btnName="Delete"
+                    action={() => deleteIncome(deleteIncomeId)}
+                />
+            )}
         </div>
-    )
+    );
 }

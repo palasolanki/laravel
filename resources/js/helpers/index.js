@@ -4,3 +4,7 @@ export function intVal( i ) {
         typeof i === 'number' ?
             i : 0;
 };
+
+export function numberFormat (data) {
+    return Intl.NumberFormat().format(data);
+}
