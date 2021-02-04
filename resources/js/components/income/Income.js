@@ -218,7 +218,7 @@ export default function Income() {
 
             <div className="row mx-0 my-4">
                 <h5 className="col-12 px-0 mb-3">
-                    <Link onClick={() => setAdvanceFilter(!advanceFilter)} to="incomes"><FontAwesomeIcon className="mr-2" icon={faPlus} />Advance Filter</Link>
+                    <Link onClick={() => setAdvanceFilter(!advanceFilter)} to="incomes"><FontAwesomeIcon size="sm" className="mr-2" icon={faPlus} />Advanced Filters</Link>
                 </h5>
                 {
                     advanceFilter &&
@@ -263,7 +263,7 @@ export default function Income() {
                 }
             </div>
 
-            <div className="table-responsive-md">
+            <div className="table-responsive-md table-income-expense">
                 <table id="datatable" className="display table" width="100%">
                     <tfoot>
                         <tr>

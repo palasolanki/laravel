@@ -244,15 +244,15 @@ function Expense() {
                 <div className="ml-auto d-flex align-items-center">
                     <button
                         onClick={exportData}
-                        className="btn btn--prime mr-sm-4 mr-3 d-flex align-items-center"
-                    ><FontAwesomeIcon className="mr-2" style={{ fontSize: "24px" }} icon={faFileExcel} /><span> Export</span></button>
+                        className="btn btn--prime mr-3 d-flex align-items-center"
+                    ><FontAwesomeIcon className="mr-2" style={{ fontSize: "20px" }} icon={faFileExcel} /><span> Export</span></button>
 
                     <Link to="expenses/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Expense</Link>
                 </div>
             </div>
             <div className="row mx-0 my-4">
                 <h5 className="col-12 px-0 mb-3">
-                    <Link onClick={() => setAdvanceFilter(!advanceFilter)} to="expenses"><FontAwesomeIcon className="mr-2" icon={faPlus} />Advance Filter</Link>
+                    <Link onClick={() => setAdvanceFilter(!advanceFilter)} to="expenses"><FontAwesomeIcon size="sm" className="mr-2" icon={faPlus} />Advanced Filters</Link>
                 </h5>
 
                 {
@@ -287,7 +287,7 @@ function Expense() {
                     </div>
                 }
             </div>
-            <div className="table-responsive-md">
+            <div className="table-responsive-md table-income-expense">
                 <table id="datatable" className="display table" width="100%">
                     <tfoot>
                         <tr>

@@ -720,8 +720,16 @@ input[name="change_password"] {
 }
 
 .expenses__heading {
-    @media (max-width: 368px) {
+    @media (max-width: 365px) {
         margin-right: 1rem;
         margin-bottom: 1rem !important;
+    }
+}
+
+.table-income-expense {
+    .dataTables_filter input {
+        border-top-style: solid;
+        border-color: #dee2e6;
+        border-left-style: solid;
     }
 }
