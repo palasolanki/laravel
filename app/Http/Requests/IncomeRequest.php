@@ -55,7 +55,7 @@ class IncomeRequest extends FormRequest
             $medium = Medium::find($value['medium']);
             $income->date = Carbon::parse($value['date']);
             $income->client = ['id' => $client->_id, 'name' => $client->name];
-            $income->amount = $value['amount'];
+            $income->amount = (float)$value['amount'];
             $income->medium = ['id' => $medium->_id, 'medium' => $medium->medium];
             $income->notes = $value['notes'];
             $income->save();

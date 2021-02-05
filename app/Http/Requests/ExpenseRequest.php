@@ -54,7 +54,7 @@ class ExpenseRequest extends FormRequest
             $medium = Medium::find($value['medium']);
             $expense->date = Carbon::parse($value['date']);
             $expense->item = $value['item'];
-            $expense->amount = $value['amount'];
+            $expense->amount = (float)$value['amount'];
             $expense->medium = ['id' => $medium->_id, 'medium' => $medium->medium];
             $expense->notes = $value['notes'];
             $expense->save();
