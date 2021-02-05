@@ -16,4 +16,9 @@ class Expense extends Eloquent
     {
         return $this->belongsToMany('App\Tag');
     }
+
+    public function setAmountAttribute($value) 
+    {
+        $this->attributes['amount'] = (float)$value;
+    }
 }
