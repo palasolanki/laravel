@@ -741,3 +741,13 @@ input[name="change_password"] {
         }
     }
 }
+
+.toast {
+    &-success {
+        background-color: #1c884b !important;
+    }
+    &-error,
+    &-success {
+        color: #fff !important;
+    }
+}

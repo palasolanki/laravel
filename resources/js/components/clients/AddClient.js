@@ -23,7 +23,10 @@ const AddClient = (props) => {
     const submitForm = event => {
         event.preventDefault()
 
-        if (!client.name || !client.company_name, !client.country_id) return
+        if (!client.name || !client.company_name, !client.country_id) {
+            ToastsStore.error("Clients Field is required");
+            return
+        }
         setSendRequest(true)
 
     }

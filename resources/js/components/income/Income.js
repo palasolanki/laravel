@@ -119,7 +119,7 @@ export default function Income() {
                         data.tags.map(value => value.tag).toString()
                     );
                 }
-                if (data.amount && data.amount.length) {
+                if (data.amount) {
                     $("td:eq(2)", row).html(
                         numberFormat(data.amount)
                     );

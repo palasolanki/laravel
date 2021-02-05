@@ -21,12 +21,15 @@ function EditIncome(props) {
     }
     const editData = {
         date: new Date(props.currentIncome.selectedDateForEdit),
-        client_id: props.currentIncome.client.id,
+        client_id:
+            "client" in props.currentIncome
+                ? props.currentIncome.client.id
+                : '',
         amount: props.currentIncome.amount,
-        medium: props.currentIncome.medium.id,
+        medium: ('medium' in props.currentIncome) ? props.currentIncome.medium.id : '',
         tags: tmpTagsList(props.currentIncome.tags),
-        notes: props.currentIncome.notes,
-    }
+        notes: props.currentIncome.notes
+    };
     const [income, setIncome] = useState(editData)
     const handleInputChange = event => {
         const { name, value } = event.target

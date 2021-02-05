@@ -87,6 +87,7 @@ function AddHardware() {
                     }
                 }
                 setErrorList(errors);
+                ToastsStore.error(error.response.data.message);
             });
     }
     return  (

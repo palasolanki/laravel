@@ -118,6 +118,7 @@ function AddExpense() {
                 }
             }
             setErrorList(errors);
+            ToastsStore.error(error.response.data.message);
         });
     }
     return  (
