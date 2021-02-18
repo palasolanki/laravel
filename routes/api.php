@@ -46,7 +46,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/clients', 'ClientController@index');
     Route::post('/addClient', 'ClientController@store');
     Route::get('/client/{client}', 'ClientController@show');
-    Route::patch('/client/{client}', 'ClientController@update');
+    Route::post('/client/{client}', 'ClientController@update');
     Route::delete('/client/{client}', 'ClientController@destroy');
     Route::get('/mediums', 'MediumController@index');
     Route::post('/mediums', 'MediumController@store');
