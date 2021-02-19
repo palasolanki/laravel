@@ -51,7 +51,7 @@ class ClientController extends Controller
 
     public function getClients()
     {
-        return ['clients' => Client::select('_id', 'name')->get()];
+        return ['clients' => Client::select('_id', 'name','address')->get()];
     }
 
     public function setClientIdNullForDeletedClient($incomes, $clientName)
