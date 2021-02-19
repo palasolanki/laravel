@@ -11,24 +11,48 @@ const Invoices = () => {
 
     const [tableData, setTableData] = useState([initialRow]);
     const [deatils, setDetails] = useState({
-        total: 40.00,
+        total: 0,
+        numaber:0,
+        date:'January 1, 2012',
+        due_date:'January 10, 2012'
     })
 
-    const keyUP = () => {
-        setAmount()
+    const handleChange = (index) => (e) => {
+        let newArr = [...tableData];
+        let name = e.target.getAttribute('name');
+        newArr[index] =  { ...newArr[index] ,[name]: e.target.innerText };
+        setTableData([...newArr]);
     }
+   
     useEffect(() => {
-        setAmount()
+        setTotalAmount()
     }, [])
 
-    const setAmount = () => {
+    // useEffect(() => {
+    //     setTotalAmount()
+    // }, [tableData]);
+
+    useEffect(() => {
+        let obj = { ...deatils };
+        obj.total = getTotalAmount()
+        setDetails(obj);
+    }, [tableData])
+
+    const getTotalAmount = () => {
+        return tableData.reduce(function (prev, cur) {
+            return prev + cur.amount;
+        }, 0);
+    }
+
+    const setTotalAmount = () => {
         if (tableData.length === 0) return;
-        const modifiedArr = tableData.map(item => {
+        let modifiedArr = tableData.map(item => {
             let modifiedItem = Object.assign({}, item);
             return { ...modifiedItem, amount: modifiedItem.hours * modifiedItem.rate };
         });
-        setTableData([...modifiedArr])
+        setTableData([...modifiedArr]);
     }
+
     const addRow = () => {
         setTableData([...tableData, initialRow]);
     }
@@ -65,15 +89,15 @@ const Invoices = () => {
                                     <tbody>
                                         <tr>
                                             <th><span contentEditable={true} suppressContentEditableWarning={true}>Invoice #</span></th>
-                                            <td><span contentEditable={true} suppressContentEditableWarning={true}>101138</span></td>
+                                            <td><span contentEditable={true} suppressContentEditableWarning={true}>{deatils.numaber}</span></td>
                                         </tr>
                                         <tr>
                                             <th><span contentEditable={true} suppressContentEditableWarning={true}>Date</span></th>
-                                            <td><span contentEditable={true} suppressContentEditableWarning={true}>January 1, 2012</span></td>
+                                            <td><span contentEditable={true} suppressContentEditableWarning={true}>{deatils.date}</span></td>
                                         </tr>
                                         <tr>
                                             <th><span contentEditable={true} suppressContentEditableWarning={true}>Due Date</span></th>
-                                            <td><span contentEditable={true} suppressContentEditableWarning={true}>January 10, 2012</span></td>
+                                            <td><span contentEditable={true} suppressContentEditableWarning={true}>{deatils.due_date}</span></td>
                                         </tr>
                                         <tr>
                                             <th><span contentEditable={true} suppressContentEditableWarning={true}>Amount Due</span></th>
@@ -95,15 +119,38 @@ const Invoices = () => {
 
                                     {tableData.map((row, index) =>
                                     (<tr key={index}>
-                                        <td><a className="cut" onClick={() => removeRow(index)}>-</a><span contentEditable={true} suppressContentEditableWarning={true}>{row.item}</span></td>
-                                        <td><span contentEditable={true} suppressContentEditableWarning={true}
-                                            onKeyUp={keyUP}
-                                        >{row.hours}</span></td>
-                                        <td><span data-prefix>$</span>
+                                        <td>
+                                            <a className="cut" onClick={() => removeRow(index)}>-</a>
+                                            <span contentEditable={true}
+                                                suppressContentEditableWarning={true}
+                                                name="item"
+                                                onKeyUp={handleChange(index)}>
+                                                {row.item}
+                                            </span>
+                                        </td>
+
+                                        <td>
                                             <span contentEditable={true} suppressContentEditableWarning={true}
-                                                onKeyUp={keyUP}
-                                            >{row.rate}</span></td>
-                                        <td><span data-prefix>$</span><span>{row.amount}</span></td>
+                                                // onKeyDown={keyDown}
+                                                name="hours"
+                                                onKeyUp={handleChange(index)}>
+                                                {row.hours}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span data-prefix>$</span>
+                                            <span contentEditable={true}
+                                                suppressContentEditableWarning={true}
+                                                // onKeyDown={keyDown}
+                                                name="rate"
+                                                onKeyUp={handleChange(index)}>
+                                                {row.rate}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span data-prefix>$</span>
+                                            <span>{row.amount}</span>
+                                        </td>
                                     </tr>)
                                     )}
                                 </tbody>
@@ -113,7 +160,7 @@ const Invoices = () => {
                                 <tbody>
                                     <tr>
                                         <th><span contentEditable={true} suppressContentEditableWarning={true}>Total</span></th>
-                                        <td><span data-prefix>$</span><span>40.00</span></td>
+                                        <td><span data-prefix>$</span><span>{deatils.total}</span></td>
                                     </tr>
                                     <tr>
                                         <th><span contentEditable={true} suppressContentEditableWarning={true}>Amount Paid</span></th>
