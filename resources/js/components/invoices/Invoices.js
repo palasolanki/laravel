@@ -16,21 +16,26 @@ const Invoices = () => {
         date:'January 1, 2012',
         due_date:'January 10, 2012'
     })
+    const [isCheckAmount,setCheckAmount] = useState(false);
 
     const handleChange = (index) => (e) => {
         let newArr = [...tableData];
         let name = e.target.getAttribute('name');
         newArr[index] =  { ...newArr[index] ,[name]: e.target.innerText };
         setTableData([...newArr]);
+
+        if(name=='hours' || name=="rate")
+        setCheckAmount(true);
     }
    
     useEffect(() => {
         setTotalAmount()
     }, [])
 
-    // useEffect(() => {
-    //     setTotalAmount()
-    // }, [tableData]);
+    useEffect(() => {
+        if(!isCheckAmount) return;
+        setTotalAmount()
+    }, [isCheckAmount]);
 
     useEffect(() => {
         let obj = { ...deatils };
@@ -51,6 +56,7 @@ const Invoices = () => {
             return { ...modifiedItem, amount: modifiedItem.hours * modifiedItem.rate };
         });
         setTableData([...modifiedArr]);
+        setCheckAmount(false);
     }
 
     const addRow = () => {
