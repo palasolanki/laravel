@@ -106,12 +106,13 @@ const Invoices = () => {
             return
         }
         let val = e.target.value;
-        if (e.target.name === "notes") {
-            setInvoice({ ...invoice, [e.target.name]: val });
+        if (e.target.name === "client_id") {
+            let bill_to = clients.find(client => client._id === val) || { name: '', address: '' };
+            setInvoice({ ...invoice, client_id: val, bill_to: bill_to })
             return
         }
-        let bill_to = clients.find(client => client._id === val);
-        setInvoice({ ...invoice, client_id: val, bill_to: bill_to })
+        setInvoice({ ...invoice, [e.target.name]: val });
+
     }
 
     const saveInvoice = () => {
@@ -175,7 +176,6 @@ const Invoices = () => {
                                                     onChange={(e) => onChange(e, "date")}
                                                     dateFormat="MMMM dd, yyyy"
                                                 />
-                                                {/* <span contentEditable={true} suppressContentEditableWarning={true}>{invoice.date}</span> */}
                                             </td>
                                         </tr>
                                         <tr>
@@ -188,7 +188,6 @@ const Invoices = () => {
                                                     onChange={(e) => onChange(e, "due_date")}
                                                     dateFormat="MMMM dd, yyyy"
                                                 />
-                                                {/* <span contentEditable={true} suppressContentEditableWarning={true}>{invoice.due_date}</span> */}
                                             </td>
                                         </tr>
                                         <tr>
@@ -209,7 +208,6 @@ const Invoices = () => {
                                 </table>
                             </div>
                             <table className="inventory">
-
                                 <tbody>
                                     <tr>
                                         <th>
