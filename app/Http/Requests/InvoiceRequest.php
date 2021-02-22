@@ -25,15 +25,16 @@ class InvoiceRequest extends FormRequest
     {
         return [
             'client_id'=> 'nullable',
-            'number'=>'required',
+            'number'=>'nullable',
             'lines'=>'required',
             'date'=> 'required',
             'due_date'=> 'required',
             'amount_due'=> 'required',
             'amount_paid'=> 'required',
-            'notes'=> 'required',
+            'notes'=> 'nullable',
             'bill_from'=> 'required',
             'bill_to'=> 'required',
         ];
     }
+
 }

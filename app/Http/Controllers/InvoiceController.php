@@ -12,7 +12,7 @@ class InvoiceController extends Controller
     public function store(InvoiceRequest $request): JsonResponse
     {
         $inputs = $request->validated();
-        $invoice =  Invoice::create($inputs);;
+        $invoice =  Invoice::create($inputs);
         return response()->json(['invoice' => $invoice, 'message' => 'Invoice Save Successfully...']);
     }
 

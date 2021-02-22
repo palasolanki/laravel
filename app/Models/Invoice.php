@@ -9,4 +9,13 @@ class Invoice extends Eloquent
     protected $collection = 'invoices';
     protected $guarded = [];
 
+    public function setNumberAttribute()
+    {
+            $prevNum = Invoice::select('number')->latest()->first();
+            if(!$prevNum){
+                $this->attributes['number'] = 1;
+                return;
+            }
+            $this->attributes['number'] = (int) $prevNum->number + 1;
+    }
 }

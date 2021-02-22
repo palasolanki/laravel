@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from 'react';
-import moment from 'moment';
 import api from '../../helpers/api';
 import DatePicker from "react-datepicker";
+import { ToastsStore } from 'react-toasts';
 
 const Invoices = () => {
 
@@ -12,18 +12,19 @@ const Invoices = () => {
         amount: 0
     }
 
-    const [invoice, setInvoice] = useState({
+    const data = {
         client_id: '',
         number: '',
         lines: [initialRow],
         date: new Date(),
-        due_date: new Date().setDate(new Date().getDate() + 10),
+        due_date: new Date(new Date().setDate(new Date().getDate() + 10)),
         amount_due: 0,
         amount_paid: 0,
         notes: '',
         bill_from: 'Radicalloop Technolabs LLP',
         bill_to: { name: '', address: '' },
-    })
+    }
+    const [invoice, setInvoice] = useState(data);
 
     const [currencySign, setCurrencySign] = useState('$');
     const [total, setTotal] = useState(0)
@@ -32,12 +33,11 @@ const Invoices = () => {
 
     const handleChange = (index) => (e) => {
         let name = e.target.getAttribute('name');
-        console.log(name)
         if (name == 'notes' || name == 'number') {
             setInvoice({ ...invoice, [name]: e.target.innerText });
             return
         }
-        
+
         let newArr = [...invoice.lines];
         newArr[index] = { ...newArr[index], [name]: e.target.innerText };
         setInvoice({ ...invoice, lines: [...newArr] });
@@ -102,19 +102,27 @@ const Invoices = () => {
 
     const onChange = (e, name) => {
         if (e instanceof Date) {
-            setInvoice({ ...invoice, [name]: e })
+            setInvoice({ ...invoice, [name]: e });
             return
         }
-        let id = e.target.value
-        let bill_to = clients.find(client => client._id === id);
-        delete bill_to._id;
-        setInvoice({ ...invoice, client_id: id, bill_to: bill_to })
+        let val = e.target.value;
+        if (e.target.name === "notes") {
+            setInvoice({ ...invoice, [e.target.name]: val });
+            return
+        }
+        let bill_to = clients.find(client => client._id === val);
+        setInvoice({ ...invoice, client_id: val, bill_to: bill_to })
     }
 
     const saveInvoice = () => {
-        api.post(`/invoice`, {...invoice,amount_due:total})
+        if (!invoice.lines.length || !total || !invoice.bill_from) {
+            ToastsStore.error("Invoice Field is required");
+            return
+        }
+        api.post(`/invoice`, { ...invoice, amount_due: total })
             .then(res => {
-                console.log(res)
+                setInvoice(data);
+                ToastsStore.success(res.data.message);
             })
             .catch(function (err) {
                 console.log(err)
@@ -281,8 +289,15 @@ const Invoices = () => {
                     <aside>
                         <h1><span>Notes</span></h1>
                         <div >
-                            <span contentEditable={true} suppressContentEditableWarning={true}
-                            name="notes" onKeyUp={handleChange(null)}>Enter note:{invoice.notes}</span>
+                            <textarea
+                                style={{ border: 'none', boxShadow: 'none' }}
+                                className="form-control"
+                                rows="6"
+                                placeholder="Enter Note"
+                                name="notes"
+                                onChange={onChange}
+                                value={invoice.notes}
+                            ></textarea>
                         </div>
                     </aside>
                     <div className="form-group text-right">
