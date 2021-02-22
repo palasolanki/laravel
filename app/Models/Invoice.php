@@ -18,4 +18,8 @@ class Invoice extends Eloquent
             }
             $this->attributes['number'] = (int) $prevNum->number + 1;
     }
+
+    public function client() {
+        return $this->hasOne('App\Models\Client', '_id','client_id');
+    }
 }

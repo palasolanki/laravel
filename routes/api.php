@@ -56,5 +56,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/get-income-mediums', 'MediumController@getIncomeMediumList');
     Route::post('/export/expense', 'ExpenseController@exportExpense');
     Route::post('/profile','ProfileController@update');
-    Route::post('/invoice', 'InvoiceController@store');
+    Route::post('/invoices', 'InvoiceController@index');
+    Route::post('/invoices/add', 'InvoiceController@store');
+    Route::delete('/invoices/{invoice}', 'InvoiceController@destroy');
 });
