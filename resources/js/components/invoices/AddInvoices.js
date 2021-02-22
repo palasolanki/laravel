@@ -35,15 +35,16 @@ const AddInvoices = (props) => {
         let name = e.target.getAttribute('name');
         if (name == 'notes' || name == 'number') {
             setInvoice({ ...invoice, [name]: e.target.innerText });
-            return
+            return;
         }
 
         let newArr = [...invoice.lines];
         newArr[index] = { ...newArr[index], [name]: e.target.innerText };
         setInvoice({ ...invoice, lines: [...newArr] });
 
-        if (name == 'quantity' || name == "rate")
+        if (name == 'quantity' || name == "rate") {
             setCheckAmount(true);
+        }
     }
 
     useEffect(() => {
@@ -164,7 +165,7 @@ const AddInvoices = (props) => {
                                                 <span contentEditable={true} suppressContentEditableWarning={true}>Invoice #</span>
                                             </th>
                                             <td>
-                                                <span contentEditable={true} name="number" suppressContentEditableWarning={true} onKeyUp={handleChange(null)}>{invoice.number}</span>
+                                                <span contentEditable={true} name="number" suppressContentEditableWarning={true} onBlur={handleChange(null)}>{invoice.number}</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -198,7 +199,7 @@ const AddInvoices = (props) => {
                                             <td>
                                                 <span contentEditable={true}
                                                     suppressContentEditableWarning={true}
-                                                    onKeyUp={(e) => setCurrencySign(e.target.innerText)}>
+                                                    onBlur={(e) => setCurrencySign(e.target.innerText)}>
                                                     {currencySign}
                                                 </span>
                                                 <span id="amount_due">{total}</span>
@@ -232,7 +233,7 @@ const AddInvoices = (props) => {
                                             <span contentEditable={true}
                                                 suppressContentEditableWarning={true}
                                                 name="item"
-                                                onKeyUp={handleChange(index)}>
+                                                onBlur={handleChange(index)}>
                                                 {row.item}
                                             </span>
                                         </td>
@@ -240,7 +241,7 @@ const AddInvoices = (props) => {
                                         <td>
                                             <span contentEditable={true} suppressContentEditableWarning={true}
                                                 name="quantity"
-                                                onKeyUp={handleChange(index)}>
+                                                onBlur={handleChange(index)}>
                                                 {row.quantity}
                                             </span>
                                         </td>
@@ -249,7 +250,7 @@ const AddInvoices = (props) => {
                                             <span contentEditable={true}
                                                 suppressContentEditableWarning={true}
                                                 name="rate"
-                                                onKeyUp={handleChange(index)}>
+                                                onBlur={handleChange(index)}>
                                                 {row.rate}
                                             </span>
                                         </td>
