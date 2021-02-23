@@ -11,32 +11,30 @@ const AddInvoices = props => {
         amount: 0
     };
 
-    const data = {
-        client_id: "",
-        number: "",
+    const [invoice, setInvoice] = useState({
+        client_id: '',
+        number: '',
         lines: [initialRow],
         date: new Date(),
         due_date: new Date(new Date().setDate(new Date().getDate() + 10)),
         amount_due: 0,
         amount_paid: 0,
-        notes: "",
-        bill_from: "Radicalloop Technolabs LLP",
-        bill_to: { name: "", address: "" }
-    };
-    const [invoice, setInvoice] = useState(data);
+        notes: '',
+        bill_from: 'Radicalloop Technolabs LLP',
+        bill_to: { name: '', address: '' },
+    });
 
     const [currencySign, setCurrencySign] = useState("$");
     const [total, setTotal] = useState(0);
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
 
-    const handleChange = index => e => {
-        let name = e.target.getAttribute("name");
-        if (name == "notes" || name == "number") {
+    const handleChange = (index) => (e) => {
+        let name = e.target.getAttribute('name');
+        if (typeof (index) !== "number") {
             setInvoice({ ...invoice, [name]: e.target.innerText });
             return;
         }
-
         let newArr = [...invoice.lines];
         newArr[index] = { ...newArr[index], [name]: e.target.innerText };
         setInvoice({ ...invoice, lines: [...newArr] });
@@ -52,7 +50,7 @@ const AddInvoices = props => {
             .then(res => {
                 setClients(res.data.clients);
             })
-            .catch(res => {});
+            .catch(res => { });
     }, []);
 
     const clientList =
@@ -75,7 +73,7 @@ const AddInvoices = props => {
     }, [invoice.lines]);
 
     const getTotalAmount = () => {
-        return invoice.lines.reduce(function(prev, cur) {
+        return invoice.lines.reduce(function (prev, cur) {
             return prev + cur.amount;
         }, 0);
     };
@@ -127,11 +125,11 @@ const AddInvoices = props => {
         }
         api.post(`/invoices/add`, { ...invoice, amount_due: total })
             .then(res => {
-                setInvoice(data);
-                props.history.push("/invoices");
-                ToastsStore.success(res.data.message);
+                window.open(res.data.link, '_blank');
+                props.history.push('/invoices');
+                ToastsStore.success('Invoice Save Successfully...');
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 console.log(err);
             });
     };
@@ -144,8 +142,10 @@ const AddInvoices = props => {
                         <address
                             contentEditable={true}
                             suppressContentEditableWarning={true}
+                            name="bill_from"
+                            onBlur={handleChange()}
                         >
-                            <p>{invoice.bill_from}</p>
+                            {invoice.bill_from}
                         </address>
                     </div>
                     <article>
@@ -450,10 +450,9 @@ const AddInvoices = props => {
                         <button
                             type="button"
                             onClick={saveInvoice}
-                            className="btn btn--prime mr-1"
-                        >
-                            Save
-                        </button>
+                            className="btn btn--prime mr-1">
+                            Save & Download
+                          </button>
                     </div>
                 </div>
             </div>

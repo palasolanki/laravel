@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Requests\InvoiceRequest;
 use App\Models\Invoice;
 use Pimlie\DataTables\MongodbDataTable;
+use PDF;
 
 class InvoiceController extends Controller
 {
@@ -17,14 +18,14 @@ class InvoiceController extends Controller
         }]);
 
         return (new MongodbDataTable($invoice))
-        ->make(true);
+            ->make(true);
     }
 
-    public function store(InvoiceRequest $request): JsonResponse
+    public function store(InvoiceRequest $request)
     {
         $inputs = $request->validated();
         $invoice =  Invoice::create($inputs);
-        return response()->json(['invoice' => $invoice, 'message' => 'Invoice Save Successfully...']);
+        return response()->json(['link' => route('invoice.download', $invoice->id)]);
     }
 
     public function destroy(Invoice $invoice)
@@ -33,4 +34,10 @@ class InvoiceController extends Controller
         return response()->json(['message' => 'Invoice Remove Successfully...']);
     }
 
+    public function generatePDF(Invoice $invoice)
+    {
+        $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
+        $fileName = $invoice->id . '.pdf';
+        return $pdf->stream($fileName);
+    }
 }
