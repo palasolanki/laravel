@@ -30,6 +30,7 @@ export default class Sidebar extends Component {
       { brandicon: faTags, title: 'Tags', url: '/tags' },
       { brandicon: faCreditCard, title: 'Mediums', url: '/mediums' },
       { brandicon: faGlobeAmericas, title: 'Country', url: '/country' },
+      { brandicon: faMicrochip, title: 'Invoices', url: '/invoices' },
     ];
 
     this.state = {

@@ -67,7 +67,7 @@ class IncomeController extends Controller
     public function store(IncomeRequest $request)
     {
         $request->save();
-        return ['message' => 'Add Success!'];
+        return ['message' => 'Income added successfully.'];
     }
 
     /**
@@ -102,7 +102,7 @@ class IncomeController extends Controller
     public function update(IncomeRequest $request, Income $income)
     {
         $request->save($income);
-        return ['updateIncome' => $income, 'message' => 'Update Success!'];
+        return ['updateIncome' => $income, 'message' => 'Income updated successfully.'];
     }
 
     /**
@@ -114,7 +114,7 @@ class IncomeController extends Controller
     public function destroy(Income $income)
     {
         $income->delete();
-        return ['message' => 'Delete Success!'];
+        return ['message' => 'Income deleted successfully.'];
     }
 
     public function monthlyIncomeChart(Request $request) {

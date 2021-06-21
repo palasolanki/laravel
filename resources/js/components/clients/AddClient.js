@@ -1,23 +1,27 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
-import {ToastsStore} from 'react-toasts';
+import { ToastsStore } from 'react-toasts';
 
 const AddClient = (props) => {
-    const initialFormState = { name: '', company_name: '', country_id: '' }
+    const initialFormState = { name: '', company_name: '', country_id: '', company_logo: '', address: '' }
 
     const [client, setClient] = useState(initialFormState)
     const [countries, setCountries] = useState([])
     const [sendRequest, setSendRequest] = useState(false)
-
-    useEffect( () => {
+    
+    useEffect(() => {
         api.get('/countries').then((res) => {
             setCountries(res.data.country);
         })
-    }, [] );
+    }, []);
 
     const handleInputChange = event => {
-        const { name, value } = event.target
+        const { name, value } = event.target;
+        if (name == 'company_logo') {
+            setClient({ ...client, [name]: event.target.files[0]});
+            return;
+        }
         setClient({ ...client, [name]: value })
     }
     const submitForm = event => {
@@ -32,7 +36,11 @@ const AddClient = (props) => {
     }
 
     const addClient = () => {
-        return api.post('/addClient', client)
+        const data = new FormData();
+        for (let [key, value] of Object.entries(client)) {
+            data.append(key, value || '');
+        }
+        return api.post('/addClient', data)
             .then((res) => {
                 props.history.push('/clients');
                 ToastsStore.success(res.data.message);
@@ -75,6 +83,26 @@ const AddClient = (props) => {
                                     })
                                 }
                             </select>
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label className="control-label col-auto px-0" htmlFor="company_logo">Company Logo:</label>
+                        <div className="col-sm-10 pl-0">
+                            <input type="file" accept="image/*" className="form-control" name="company_logo" onChange={handleInputChange} />
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label className="control-label col-auto px-0" htmlFor="address">Address:</label>
+                        <div className="col-sm-10 pl-0">
+                            <textarea
+                                className="form-control"
+                                rows="6"
+                                placeholder="Enter Address"
+                                name="address"
+                                onChange={handleInputChange}
+                                value={client.address}
+                            ></textarea>
+
                         </div>
                     </div>
                     <div className="form-group">
