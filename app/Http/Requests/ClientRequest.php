@@ -56,19 +56,17 @@ class ClientRequest extends FormRequest
     }
 
     public function addFileAttachment($uploadedFile, $client)
-    { 
-        if(!$uploadedFile) {
-            $client->company_logo = $uploadedFile;
-            $client->save();
+    {
+        if (!$uploadedFile) {
             return;
         }
+
         if (File::exists(storage_path('clients/company_logo/' . $client->_id))) {
             File::deleteDirectory(storage_path('clients/company_logo/' . $client->_id));
         }
         File::makeDirectory(storage_path('clients/company_logo/' . $client->_id), $mode = 0777, true, true);
-        $file = $uploadedFile->getClientOriginalName();
-        $originalFileName = pathinfo($file, PATHINFO_FILENAME);
-        $fileName = $originalFileName . '-' . time() . '.' . $uploadedFile->getClientOriginalExtension();
+
+        $fileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
         $uploadedFile->move(storage_path('clients/company_logo/' . $client->_id), $fileName);
 
         $client->company_logo = $fileName;

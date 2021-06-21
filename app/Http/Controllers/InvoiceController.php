@@ -10,7 +10,6 @@ use PDF;
 
 class InvoiceController extends Controller
 {
-
     public function index(): JsonResponse
     {
         $invoice = Invoice::with(['client' => function ($query) {
@@ -31,13 +30,13 @@ class InvoiceController extends Controller
     public function destroy(Invoice $invoice)
     {
         $invoice->delete();
-        return response()->json(['message' => 'Invoice Remove Successfully...']);
+        return response()->json(['message' => 'Invoice deleted successfully.']);
     }
 
     public function generatePDF(Invoice $invoice)
     {
         $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
-        $fileName = $invoice->id . '.pdf';
+        $fileName = 'invoice_' . $invoice->number . '.pdf';
         return $pdf->stream($fileName);
     }
 }

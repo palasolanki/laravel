@@ -23,7 +23,7 @@ class ClientController extends Controller
     public function store(ClientRequest $request): JsonResponse
     {
         $client = $request->save();
-        return response()->json(['client' => $client, 'message' => 'Client Added Successfully...']);
+        return response()->json(['client' => $client, 'message' => 'Client added successfully.']);
     }
 
     public function show(Client $client): JsonResponse
@@ -34,7 +34,7 @@ class ClientController extends Controller
     public function update(ClientRequest $request, $client): JsonResponse
     {
         $client = $request->save($client);
-        return response()->json(['client' => $client, 'message' => 'Client Updated Successfully...']);
+        return response()->json(['client' => $client, 'message' => 'Client updated successfully.']);
     }
 
     public function destroy(Client $client): JsonResponse
@@ -46,7 +46,7 @@ class ClientController extends Controller
         Income::where('client.id', $client->_id)->unset('client');
         File::deleteDirectory(storage_path('clients/company_logo/' . $client->_id));
         $client->delete();
-        return response()->json(['message' => 'Client deleted Successfully...']);
+        return response()->json(['message' => 'Client deleted successfully.']);
     }
 
     public function getClients()

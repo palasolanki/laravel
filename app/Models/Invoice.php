@@ -8,15 +8,15 @@ class Invoice extends Eloquent
 {
     protected $collection = 'invoices';
     protected $guarded = [];
+    public const START_INVOICE_NUMBER = 100;
 
     public function setNumberAttribute()
     {
-            $prevNum = Invoice::select('number')->latest()->first();
-            if(!$prevNum){
-                $this->attributes['number'] = 1;
-                return;
-            }
-            $this->attributes['number'] = (int) $prevNum->number + 1;
+        $prevNum = Invoice::select('number')->latest('number')->first();
+
+        $number = (!$prevNum) ? self::START_INVOICE_NUMBER : ((int) $prevNum->number + 1);
+
+        $this->attributes['number'] = str_pad($number, 4, "0", STR_PAD_LEFT);
     }
 
     public function client() {
