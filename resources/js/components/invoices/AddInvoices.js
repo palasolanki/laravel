@@ -20,7 +20,10 @@ const AddInvoices = props => {
         amount_due: 0,
         amount_paid: 0,
         notes: '',
-        bill_from: 'Radicalloop Technolabs LLP',
+        bill_from:
+        `Radicalloop Technolabs LLP,
+        India
+        GST No.: 24AAUFR2815E1Z6`,
         bill_to: { name: '', address: '' },
     });
 
@@ -120,33 +123,53 @@ const AddInvoices = props => {
 
     const saveInvoice = () => {
         if (!invoice.lines.length || !total || !invoice.bill_from) {
-            ToastsStore.error("Invoice Field is required");
+            ToastsStore.error("Required fields missing.");
             return;
         }
-        api.post(`/invoices/add`, { ...invoice, amount_due: total })
+        api.post(`/invoices/add`, { ...invoice, amount_due: total }, {responseType: 'blob'})
             .then(res => {
-                window.open(res.data.link, '_blank');
-                props.history.push('/invoices');
-                ToastsStore.success('Invoice Save Successfully...');
+                ToastsStore.success('Invoice saved successfully.');
+                downloadFile(res);
             })
             .catch(function (err) {
                 console.log(err);
             });
     };
+
+    const downloadFile = (res) => {
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        const contentDisposition = res.headers['content-disposition'];
+        let fileName = 'invoice.pdf';
+        if (contentDisposition) {
+            const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+            if (fileNameMatch.length === 2) {
+                fileName = fileNameMatch[1];
+            }
+        }
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+    }
+
     return (
         <Fragment>
             <div className="invoice-form">
                 <div className="invoice-body">
                     <div className="invoice-header">
                         <h1 className="invoice-h1">Invoice</h1>
-                        <address
+                        <div
+                            className="display-linebreak"
                             contentEditable={true}
                             suppressContentEditableWarning={true}
                             name="bill_from"
                             onBlur={handleChange()}
                         >
                             {invoice.bill_from}
-                        </address>
+                        </div>
                     </div>
                     <article>
                         <div style={{ float: "left", width: "20%" }}>
@@ -292,7 +315,7 @@ const AddInvoices = props => {
                                                     true
                                                 }
                                             >
-                                                Quantity / Hours
+                                                Qty / Hours
                                             </span>
                                         </th>
                                         <th>
@@ -321,7 +344,7 @@ const AddInvoices = props => {
                                         <tr key={index}>
                                             <td>
                                                 <a
-                                                    className="cut"
+                                                    className="cut-invoice-btn"
                                                     onClick={() =>
                                                         removeRow(index)
                                                     }
@@ -377,7 +400,7 @@ const AddInvoices = props => {
                                     ))}
                                 </tbody>
                             </table>
-                            <a className="add" onClick={addRow}>
+                            <a className="add-invoice-btn" onClick={addRow}>
                                 +
                             </a>
                             <table className="balance">
@@ -446,7 +469,7 @@ const AddInvoices = props => {
                             />
                         </div>
                     </aside>
-                    <div className="form-group text-right">
+                    <div className="form-group text-right invoice-save-btn">
                         <button
                             type="button"
                             onClick={saveInvoice}

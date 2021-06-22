@@ -78,5 +78,4 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/invoices', 'InvoiceController@index');
     Route::post('/invoices/add', 'InvoiceController@store');
     Route::delete('/invoices/{invoice}', 'InvoiceController@destroy');
-    Route::get('/invoice/{invoice}/download','InvoiceController@generatePDF')->name('invoice.download');
 });

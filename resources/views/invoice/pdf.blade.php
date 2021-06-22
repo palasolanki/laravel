@@ -15,35 +15,37 @@
 <body>
     <div class="container">
 
-        <h1>Invoice</h1>
+        <h1>Invoice #{{$invoice->number}}</h1>
         <div class="row">
             <div class="col-md-12">
+                <div style="white-space: pre-line; margin-bottom: 20px;">
+                    {{$invoice->bill_from}}
+                </div>
                 <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Number</th>
-                            <th>Client Name</th>
-                            <th>Date</th>
-                            <th>Due Date</th>
-                            <th>Amount Due</th>
-                            <th>Aamount_paid</th>
-                            <th>Bill From</th>
-                        </tr>
-                    </thead>
                     <tbody>
                         <tr>
-                            <td>{{$invoice->number}}</td>
+                            <td>Client Name</td>
                             <td>{{$invoice->bill_to["name"] ?? '-'}}</td>
+                        </tr>
+                        <tr>
+                            <td>Date</td>
                             <td>{{\Carbon\Carbon::parse($invoice->date)->format('F j, Y') }}</td>
+                        </tr>
+                        <tr>
+                            <td>Due Date</td>
                             <td>{{\Carbon\Carbon::parse($invoice->due_date)->format('F j, Y') }}</td>
+                        </tr>
+                        <tr>
+                            <td>Amount Due</td>
                             <td>{{$invoice->amount_due}}</td>
+                        </tr>
+                        <tr>
+                            <td>Amount Paid</td>
                             <td>{{$invoice->amount_paid}}</td>
-                            <td>{{$invoice->bill_from}}</td>
                         </tr>
                     </tbody>
                 </table>
                 <br />
-                <h1>Invoice Lines</h1>
                 <table class="table table-bordered mb-2">
                     <thead>
                         <tr>
@@ -65,7 +67,7 @@
                     </tbody>
                 </table>
 
-                <div>
+                <div style="margin-top:20px;">
                     <p><b>Notes:</b> {{$invoice->notes ?? '-'}}</p>
                 </div>
 
