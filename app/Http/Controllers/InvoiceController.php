@@ -24,19 +24,16 @@ class InvoiceController extends Controller
     {
         $inputs = $request->validated();
         $invoice =  Invoice::create($inputs);
-        return response()->json(['link' => route('invoice.download', $invoice->id)]);
+
+        $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
+        $fileName = 'invoice_' . $invoice->number . '.pdf';
+
+        return $pdf->stream($fileName);
     }
 
     public function destroy(Invoice $invoice)
     {
         $invoice->delete();
         return response()->json(['message' => 'Invoice deleted successfully.']);
-    }
-
-    public function generatePDF(Invoice $invoice)
-    {
-        $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
-        $fileName = 'invoice_' . $invoice->number . '.pdf';
-        return $pdf->stream($fileName);
     }
 }

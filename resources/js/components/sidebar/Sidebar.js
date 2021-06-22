@@ -15,7 +15,8 @@ import {
   faCoins,
   faMicrochip,
   faCreditCard,
-  faGlobeAmericas
+  faGlobeAmericas,
+  faFileInvoiceDollar
  } from '@fortawesome/free-solid-svg-icons';
 export default class Sidebar extends Component {
   constructor(props) {
@@ -30,7 +31,7 @@ export default class Sidebar extends Component {
       { brandicon: faTags, title: 'Tags', url: '/tags' },
       { brandicon: faCreditCard, title: 'Mediums', url: '/mediums' },
       { brandicon: faGlobeAmericas, title: 'Country', url: '/country' },
-      { brandicon: faMicrochip, title: 'Invoices', url: '/invoices' },
+      { brandicon: faFileInvoiceDollar, title: 'Invoices', url: '/invoices' },
     ];
 
     this.state = {
