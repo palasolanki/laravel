@@ -757,10 +757,6 @@ input[name="change_password"] {
     }
 }
 
-.display-linebreak {
-    white-space: pre-line;
-}
-
 /* invoice css */
 /* TO-DO: make it more scoped, like using a parent class.. avoid generalized classes */
 
@@ -775,7 +771,7 @@ span[contenteditable] { display: inline-block; }
 
 /* heading */
 
-.invoice-h1 { font: bold 100% sans-serif; letter-spacing: 0.5em; text-align: center; text-transform: uppercase; }
+.invoice-h1 { margin-bottom: 30px; font: bold 100% sans-serif; letter-spacing: 0.5em; text-align: center; text-transform: uppercase; }
 
 /* table */
 
@@ -791,20 +787,30 @@ span[contenteditable] { display: inline-block; }
 
 .invoice-form { overflow: auto; padding: 0.5in;  background: #999; cursor: default; }
 
-.invoice-body { box-sizing: border-box; height: 11in; margin: 0 auto; padding: 0.5in; width: 8.5in;  background: #FFF; border-radius: 1px; box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5); }
+.invoice-body {
+    box-sizing: border-box;
+    height: 11in;
+    margin: 0 auto;
+    padding: 0.5in;
+    width: 8.5in;
+    background: #FFF;
+    border-radius: 1px;
+    box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
+}
+
+.invoice-address {
+    white-space: pre-line;
+    float: left;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 1.25;
+    margin: 0 1em 1em 0;
+}
 
 /* header */
 
-.invoice-header { margin: 0 0 3em; }
+.invoice-header { margin: 0 0 2em; }
 .invoice-header:after { clear: both; content: ""; display: table; }
-
-.invoice-header h1 { background: #000; border-radius: 0.25em; color: #FFF; margin: 0 0 1em; padding: 0.5em 0; }
-.invoice-header div { float: left; font-size: 14px; font-style: normal; line-height: 1.25; margin: 0 1em 1em 0; }
-.invoice-header div p { margin: 0 0 0.25em; }
-.invoice-header span, .invoice-header img { display: block; float: right; }
-.invoice-header span { margin: 0 0 1em 1em; max-height: 25%; max-width: 60%; position: relative; }
-.invoice-header img { max-height: 100%; max-width: 100%; }
-.invoice-header input { cursor: pointer; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"; height: 100%; left: 0; opacity: 0; position: absolute; top: 0; width: 100%; }
 
 /* article */
 

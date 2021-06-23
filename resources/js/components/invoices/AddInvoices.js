@@ -162,7 +162,7 @@ const AddInvoices = props => {
                     <div className="invoice-header">
                         <h1 className="invoice-h1">Invoice</h1>
                         <div
-                            className="display-linebreak"
+                            className="invoice-address"
                             contentEditable={true}
                             suppressContentEditableWarning={true}
                             name="bill_from"
@@ -187,9 +187,9 @@ const AddInvoices = props => {
                                     <option value="">Select Client</option>
                                     {clientList}
                                 </select>
-                                <p className="mt-2">
+                                <div className="mt-2 invoice-address">
                                     {invoice.bill_to.address}
-                                </p>
+                                </div>
                             </div>
                         </div>
                         <div className="invoice-table">

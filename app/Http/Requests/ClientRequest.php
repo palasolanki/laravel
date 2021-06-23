@@ -61,13 +61,15 @@ class ClientRequest extends FormRequest
             return;
         }
 
-        if (File::exists(storage_path('clients/company_logo/' . $client->_id))) {
-            File::deleteDirectory(storage_path('clients/company_logo/' . $client->_id));
+        $logoDirPath = "app/clients/$client->_id/company_logo";
+
+        if (File::exists(storage_path($logoDirPath))) {
+            File::deleteDirectory(storage_path($logoDirPath));
         }
-        File::makeDirectory(storage_path('clients/company_logo/' . $client->_id), $mode = 0777, true, true);
+        File::makeDirectory(storage_path($logoDirPath), $mode = 0777, true, true);
 
         $fileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
-        $uploadedFile->move(storage_path('clients/company_logo/' . $client->_id), $fileName);
+        $uploadedFile->move(storage_path($logoDirPath), $fileName);
 
         $client->company_logo = $fileName;
         $client->save();

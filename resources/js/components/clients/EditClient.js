@@ -6,10 +6,10 @@ import { ToastsStore } from 'react-toasts';
 const EditClient = (props) => {
     const initialFormState = { name: '', company_name: '', country_id: '', company_logo: '', address: '' }
 
-    const [client, setClient] = useState(initialFormState)
-    const [countries, setCountries] = useState([])
-    const [sendRequest, setSendRequest] = useState(false)
-    const [logo, setLogo] = useState('');
+    const [client, setClient] = useState(initialFormState);
+    const [countries, setCountries] = useState([]);
+    const [sendRequest, setSendRequest] = useState(false);
+    const [logoUrl, setLogoUrl] = useState('');
     const url = window.location.pathname;
     const id = (url).substring(url.lastIndexOf('/') + 1);
 
@@ -34,9 +34,9 @@ const EditClient = (props) => {
                         company_name: data.company_name,
                         country_id: data.country_id,
                         address: data.address,
-                        company_logo: ''
+                        company_logo: data.company_logo
                     });
-                    setLogo(data.company_logo);
+                    setLogoUrl(data.company_logo_url);
                 }).catch((err) => {
                     console.log(err)
                 });
@@ -50,7 +50,7 @@ const EditClient = (props) => {
         for (let [key, value] of Object.entries(client)) {
             data.append(key, value || '');
         }
-        
+
         return api.post(`/client/${id}`, data)
             .then((res) => {
 
@@ -72,7 +72,7 @@ const EditClient = (props) => {
         const { name, value } = event.target
         if (name == 'company_logo') {
             let file = event.target.files[0];
-            setLogo(file ? file.name : value);
+            setLogoUrl(file ? file.name : value);
             setClient({ ...client, [name]: file });
             return;
         }
@@ -118,8 +118,8 @@ const EditClient = (props) => {
                     <div className="form-group">
                         <label className="control-label col-auto px-0" htmlFor="company_logo">Company Logo:</label>
                         <div className="col-sm-10 pl-0">
-                            {logo && <div style={logoDiv}>
-                                <span>{logo}</span>
+                            {logoUrl && <div style={logoDiv}>
+                                <img src={logoUrl} alt="logo" />
                             </div>}
                             <input type="file" accept="image/*" className="form-control" name="company_logo" onChange={handleInputChange} />
                         </div>
