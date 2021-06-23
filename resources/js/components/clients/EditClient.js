@@ -1,17 +1,25 @@
 import React, { useState, Fragment, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
-import {ToastsStore} from 'react-toasts';
+import { ToastsStore } from 'react-toasts';
 
 const EditClient = (props) => {
-    const initialFormState = { name: '', company_name: '', country_id: '' }
+    const initialFormState = { name: '', company_name: '', country_id: '', company_logo: '', address: '' }
 
-    const [client, setClient] = useState(initialFormState)
-    const [countries, setCountries] = useState([])
-    const [sendRequest, setSendRequest] = useState(false)
-
+    const [client, setClient] = useState(initialFormState);
+    const [countries, setCountries] = useState([]);
+    const [sendRequest, setSendRequest] = useState(false);
+    const [logoUrl, setLogoUrl] = useState('');
     const url = window.location.pathname;
     const id = (url).substring(url.lastIndexOf('/') + 1);
+
+    const logoDiv = {
+        width: '170px',
+        background: '#e8e8e8',
+        padding: '10px',
+        borderRadius: '5px',
+        margin: '5px 0px',
+    };
 
     useEffect(() => {
         api.get('/countries').then((res) => {
@@ -20,7 +28,15 @@ const EditClient = (props) => {
         const fetchData = async () => {
             await api.get(`/client/${id}`)
                 .then((res) => {
-                    setClient(res.data.client)
+                    let data = res.data.client;
+                    setClient({
+                        name: data.name,
+                        company_name: data.company_name,
+                        country_id: data.country_id,
+                        address: data.address,
+                        company_logo: data.company_logo
+                    });
+                    setLogoUrl(data.company_logo_url);
                 }).catch((err) => {
                     console.log(err)
                 });
@@ -30,7 +46,12 @@ const EditClient = (props) => {
 
     const editClient = () => {
         delete client._id;
-        return api.patch(`/client/${id}`, client)
+        const data = new FormData();
+        for (let [key, value] of Object.entries(client)) {
+            data.append(key, value || '');
+        }
+
+        return api.post(`/client/${id}`, data)
             .then((res) => {
 
                 setSendRequest(false)
@@ -49,6 +70,12 @@ const EditClient = (props) => {
 
     const handleInputChange = event => {
         const { name, value } = event.target
+        if (name == 'company_logo') {
+            let file = event.target.files[0];
+            setLogoUrl((window.URL ? URL : webkitURL).createObjectURL(file));
+            setClient({ ...client, [name]: file });
+            return;
+        }
         setClient({ ...client, [name]: value })
     }
     const submitForm = event => {
@@ -86,6 +113,29 @@ const EditClient = (props) => {
                                     })
                                 }
                             </select>
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label className="control-label col-auto px-0" htmlFor="company_logo">Company Logo:</label>
+                        <div className="col-sm-10 pl-0">
+                            {logoUrl && <div style={logoDiv}>
+                                <img className="company-logo-img" src={logoUrl} alt="logo" />
+                            </div>}
+                            <input type="file" accept="image/*" className="form-control" name="company_logo" onChange={handleInputChange} />
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label className="control-label col-auto px-0" htmlFor="address">Address:</label>
+                        <div className="col-sm-10 pl-0">
+                            <textarea
+                                className="form-control"
+                                rows="6"
+                                placeholder="Enter Address"
+                                name="address"
+                                onChange={handleInputChange}
+                                value={client.address || ''}
+                            ></textarea>
+
                         </div>
                     </div>
                     <div className="form-group">

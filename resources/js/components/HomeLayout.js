@@ -19,6 +19,8 @@ import Hardware from "./hardwares/Hardware";
 import AddHardware from "./hardwares/Add-Hardware";
 import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
 import Profile from "./profile/Profile";
+import Invoices from "./invoices/Invoices";
+import AddInvoices from "./invoices/AddInvoices";
 
 export default class Home extends Component {
   constructor(props) {
@@ -81,6 +83,8 @@ export default class Home extends Component {
             <Route exact path='/profile' component={Profile} />
             <Route exact path='/country'  component={Country} />
             <Route exact path='/mediums'  component={Mediums} />
+            <Route exact path='/invoices'  component={Invoices} />
+            <Route exact path='/invoices/add' component={AddInvoices} />
           </Switch>
         </div>
       </Fragment>

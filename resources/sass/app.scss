@@ -466,6 +466,11 @@ header>a {
     display: block !important;
 }
 
+.react-datepicker__input-container input {
+    border: none;
+    border-bottom: 1px solid #b3b3b3;
+}
+
 .react-datepicker-ignore-onclickoutside {
     width: 100%;
     border: none;
@@ -751,3 +756,146 @@ input[name="change_password"] {
         color: #fff !important;
     }
 }
+
+.company-logo-img {
+    width: 150px;
+}
+
+/* invoice css */
+/* TO-DO: make it more scoped, like using a parent class.. avoid generalized classes */
+
+/* content editable */
+
+*[contenteditable] { border-radius: 0.25em; min-width: 1em; outline: 0; cursor: pointer; }
+
+*[contenteditable]:hover, *[contenteditable]:focus, td:hover *[contenteditable], td:focus *[contenteditable],
+img.hover { background: #DEF; box-shadow: 0 0 1em 0.5em #DEF; }
+
+span[contenteditable] { display: inline-block; }
+
+/* heading */
+
+.invoice-h1 { margin-bottom: 30px; font: bold 100% sans-serif; letter-spacing: 0.5em; text-align: center; text-transform: uppercase; }
+
+/* table */
+
+.invoice-table { table-layout: fixed; width: 100%; border-collapse: separate; border-spacing: 2px; }
+.invoice-table th,  .invoice-table td { border-width: 1px; padding: 0.5em; position: relative; text-align: left; }
+.invoice-table th, .invoice-table td { border-radius: 0.25em; border-style: solid; }
+.invoice-table th { background: #EEE; border-color: #BBB; }
+.invoice-table td { border-color: #DDD; }
+.invoice-table .react-datepicker-popper[data-placement^="bottom"] { transform: translate3d(-76px, 41px, 0px) !important}
+.invoice-table .react-datepicker-popper[data-placement^="top"] { transform: translate3d(-75px, -230px, 0px) !important}
+.invoice-table .react-datepicker__triangle { left: 90px;}
+/* page */
+
+.invoice-form { overflow: auto; padding: 0.5in;  background: #999; cursor: default; }
+
+.invoice-body {
+    box-sizing: border-box;
+    height: 11in;
+    margin: 0 auto;
+    padding: 0.5in;
+    width: 8.5in;
+    background: #FFF;
+    border-radius: 1px;
+    box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
+}
+
+.invoice-address {
+    white-space: pre-line;
+    float: left;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 1.25;
+    margin: 0 1em 1em 0;
+}
+
+/* header */
+
+.invoice-header { margin: 0 0 2em; }
+.invoice-header:after { clear: both; content: ""; display: table; }
+
+/* article */
+
+article, table.meta, table.inventory { margin: 0 0 3em; }
+article:after { clear: both; content: ""; display: table; }
+article h1 { clip: rect(0 0 0 0); position: absolute; }
+
+/* table meta & balance */
+
+table.meta, table.balance { float: right; width: 45%; }
+table.meta:after, table.balance:after { clear: both; content: ""; display: table; }
+
+/* table meta */
+
+table.meta th { width: 40%; }
+table.meta td { width: 60%; }
+
+/* table items */
+
+table.inventory { clear: both; width: 100%; }
+table.inventory th { font-weight: bold; text-align: center; }
+table.inventory td:nth-child(1) { width: 62%; }
+table.inventory td:nth-child(2) { width: 14%; }
+table.inventory td:nth-child(3) { text-align: right; width: 12%; }
+table.inventory td:nth-child(4) { text-align: right; width: 12%; }
+
+/* table balance */
+
+table.balance th, table.balance td { width: 50%; }
+table.balance td { text-align: right; }
+
+/* aside */
+
+aside h1 { border: none; border-width: 0 0 1px; margin: 0 0 1em; }
+aside h1 { border-color: #999; border-bottom-style: solid; }
+
+/* javascript */
+
+.add-invoice-btn, .cut-invoice-btn
+{
+	border-width: 1px;
+	display: block;
+	font-size: .9rem;
+    padding: 0.075rem 0.75rem;
+	float: left;
+	text-align: center;
+	border-radius: 0.25em;
+	border-color: #0076A3;
+	color: #FFF !important;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.add-invoice-btn {
+    margin: -2.5em 0 0;
+    background-color: #32afbc;
+}
+
+.cut-invoice-btn {
+    background-color: #dc524b;
+    opacity: 0;
+    position: absolute;
+    top: 0.4em;
+    left: -2.5em;
+    -webkit-transition: opacity 100ms ease-in;
+}
+
+.invoice-save-btn {
+    margin-top: 20px;
+}
+
+tr:hover .cut-invoice-btn { opacity: 1; }
+
+@media print {
+	* { -webkit-print-color-adjust: exact; }
+	html { background: none; padding: 0; }
+	body { box-shadow: none; margin: 0; }
+	span:empty { display: none; }
+	.add-invoice-btn, .cut-invoice-btn { display: none; }
+}
+
+@page { margin: 0; }
+
+/* end invoice css */
