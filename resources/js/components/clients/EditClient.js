@@ -14,12 +14,12 @@ const EditClient = (props) => {
     const id = (url).substring(url.lastIndexOf('/') + 1);
 
     const logoDiv = {
-        width: '100%',
+        width: '170px',
         background: '#e8e8e8',
         padding: '10px',
         borderRadius: '5px',
         margin: '5px 0px',
-    }
+    };
 
     useEffect(() => {
         api.get('/countries').then((res) => {
@@ -72,7 +72,7 @@ const EditClient = (props) => {
         const { name, value } = event.target
         if (name == 'company_logo') {
             let file = event.target.files[0];
-            setLogoUrl(file ? file.name : value);
+            setLogoUrl((window.URL ? URL : webkitURL).createObjectURL(file));
             setClient({ ...client, [name]: file });
             return;
         }
@@ -119,7 +119,7 @@ const EditClient = (props) => {
                         <label className="control-label col-auto px-0" htmlFor="company_logo">Company Logo:</label>
                         <div className="col-sm-10 pl-0">
                             {logoUrl && <div style={logoDiv}>
-                                <img src={logoUrl} alt="logo" />
+                                <img className="company-logo-img" src={logoUrl} alt="logo" />
                             </div>}
                             <input type="file" accept="image/*" className="form-control" name="company_logo" onChange={handleInputChange} />
                         </div>

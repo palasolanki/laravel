@@ -15,6 +15,6 @@ class Client extends Eloquent
     }
 
     public function getCompanyLogoUrlAttribute() {
-        return url("storage/app/clients/$this->_id/company_logo/" . $this->company_logo);
+        return url("storage/clients/$this->_id/company_logo/" . $this->company_logo);
     }
 }

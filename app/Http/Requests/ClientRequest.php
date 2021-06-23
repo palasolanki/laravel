@@ -63,7 +63,7 @@ class ClientRequest extends FormRequest
             return;
         }
 
-        $logoDirPath = "app/clients/$client->_id/company_logo";
+        $logoDirPath = "app/public/clients/$client->_id/company_logo";
 
         if (File::exists(storage_path($logoDirPath))) {
             File::deleteDirectory(storage_path($logoDirPath));

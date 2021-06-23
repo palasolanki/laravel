@@ -44,7 +44,7 @@ class ClientController extends Controller
             $this->setClientIdNullForDeletedClient($incomes, $client->name);
         }
         Income::where('client.id', $client->_id)->unset('client');
-        File::deleteDirectory(storage_path("app/clients/$client->_id"));
+        File::deleteDirectory(storage_path("app/public/clients/$client->_id"));
         $client->delete();
         return response()->json(['message' => 'Client deleted successfully.']);
     }

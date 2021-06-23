@@ -4,12 +4,21 @@ import api from '../../helpers/api';
 import { ToastsStore } from 'react-toasts';
 
 const AddClient = (props) => {
-    const initialFormState = { name: '', company_name: '', country_id: '', company_logo: '', address: '' }
+    const initialFormState = { name: '', company_name: '', country_id: '', company_logo: '', address: '' };
 
-    const [client, setClient] = useState(initialFormState)
-    const [countries, setCountries] = useState([])
-    const [sendRequest, setSendRequest] = useState(false)
-    
+    const [client, setClient] = useState(initialFormState);
+    const [countries, setCountries] = useState([]);
+    const [sendRequest, setSendRequest] = useState(false);
+    const [logoUrl, setLogoUrl] = useState('');
+
+    const logoDiv = {
+        width: '170px',
+        background: '#e8e8e8',
+        padding: '10px',
+        borderRadius: '5px',
+        margin: '5px 0px',
+    };
+
     useEffect(() => {
         api.get('/countries').then((res) => {
             setCountries(res.data.country);
@@ -19,7 +28,9 @@ const AddClient = (props) => {
     const handleInputChange = event => {
         const { name, value } = event.target;
         if (name == 'company_logo') {
-            setClient({ ...client, [name]: event.target.files[0]});
+            let file = event.target.files[0];
+            setLogoUrl((window.URL ? URL : webkitURL).createObjectURL(file));
+            setClient({ ...client, [name]: file});
             return;
         }
         setClient({ ...client, [name]: value })
@@ -88,6 +99,9 @@ const AddClient = (props) => {
                     <div className="form-group">
                         <label className="control-label col-auto px-0" htmlFor="company_logo">Company Logo:</label>
                         <div className="col-sm-10 pl-0">
+                            {logoUrl && <div style={logoDiv}>
+                                <img className="company-logo-img" src={logoUrl} alt="logo" />
+                            </div>}
                             <input type="file" accept="image/*" className="form-control" name="company_logo" onChange={handleInputChange} />
                         </div>
                     </div>
