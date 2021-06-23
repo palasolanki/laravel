@@ -26,11 +26,13 @@ class ClientRequest extends FormRequest
      */
     public function rules()
     {
+        $stringOrFileRule = is_string($this->company_logo) ? 'string' : 'file';
+
         return [
             'name' => 'required',
             'company_name' => 'required',
             'country_id' => 'required',
-            'company_logo' => 'nullable',
+            'company_logo' => "sometimes|nullable|$stringOrFileRule",
             'address' => 'nullable',
         ];
     }
@@ -57,7 +59,7 @@ class ClientRequest extends FormRequest
 
     public function addFileAttachment($uploadedFile, $client)
     {
-        if (!$uploadedFile) {
+        if ( ! $this->hasFile('company_logo')) {
             return;
         }
 
