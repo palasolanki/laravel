@@ -29,7 +29,6 @@ class IncomeRequest extends FormRequest
     {
         return [
             'data.*.date' => 'required',
-            'data.*.client_id' => 'required',
             'data.*.amount' => 'required|integer',
             'data.*.medium' => 'required',
         ];
@@ -38,11 +37,10 @@ class IncomeRequest extends FormRequest
     public function messages()
     {
         return [
-            'data.*.date.required' => 'Date Field is required',
-            'data.*.client_id.required' => 'Client Field is required',
-            'data.*.amount.required' => 'Amount Field is required',
-            'data.*.amount.integer' => 'Amount Field is Must Number',
-            'data.*.medium.required' => 'Medium Field is required',
+            'data.*.date.required' => 'Date is required',
+            'data.*.amount.required' => 'Amount is required',
+            'data.*.amount.integer' => 'Amount must be a number',
+            'data.*.medium.required' => 'Medium is required',
         ];
     }
 
@@ -51,10 +49,12 @@ class IncomeRequest extends FormRequest
             if(!$income) {
                 $income = new Income;
             }
-            $client = Client::find($value['client_id']);
+            if ($value['client_id']) {
+                $client = Client::find($value['client_id']);
+                $income->client = ['id' => $client->_id, 'name' => $client->name];
+            }
             $medium = Medium::find($value['medium']);
             $income->date = Carbon::parse($value['date']);
-            $income->client = ['id' => $client->_id, 'name' => $client->name];
             $income->amount = $value['amount'];
             $income->medium = ['id' => $medium->_id, 'medium' => $medium->medium];
             $income->notes = $value['notes'];
@@ -67,8 +67,8 @@ class IncomeRequest extends FormRequest
 
     public function saveIncomeTags($income, $value) {
         if (array_key_exists('tagsArray', $value)) {
-            $income->wasRecentlyCreated 
-                ? $income->tags()->attach($value['tagsArray']) 
+            $income->wasRecentlyCreated
+                ? $income->tags()->attach($value['tagsArray'])
                 : $income->tags()->sync($value['tagsArray']);
         }
     }
