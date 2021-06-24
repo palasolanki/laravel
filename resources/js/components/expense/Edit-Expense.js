@@ -117,7 +117,7 @@ function EditExpenses(props) {
                             </div>
                             <div className="form-group">
                                 <label>Amount:</label>
-                                <input type="text" className="form-control" placeholder="Enter Amount" name="amount" value={expense.amount} onChange={handleInputChange} />
+                                <input type="number" className="form-control" placeholder="Enter Amount" name="amount" value={expense.amount} onChange={handleInputChange} />
                             </div>
                             <div className="form-group">
                                 <label>Medium:</label>

@@ -154,7 +154,7 @@ function AddExpense() {
                                         <input type="text" name="item" placeholder="Enter Item" onChange={handleInputChange(key)} value={expenseItem.item} className="form-control"/>
                                     </div>
                                     <div className="col form-group px-0 px-lg-3 px-md-2">
-                                        <input type="text" name="amount" placeholder="Enter Amount" onChange={handleInputChange(key)} value={expenseItem.amount} className="form-control"/>
+                                        <input type="number" name="amount" placeholder="Enter Amount" onChange={handleInputChange(key)} value={expenseItem.amount} className="form-control"/>
                                     </div>
                                 </div>
 

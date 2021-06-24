@@ -88,14 +88,14 @@ function EditIncome(props) {
                                     <option value="">Select Type</option>
                                     {
                                         clients && clients.map((client, index) =>
-                                            <option value={client._id} key={index}>{client.name}</option>
+                                            <option value={client._id} key={index}>{client.name + ` (` + client.company_name + `)`}</option>
                                         )
                                     }
                                 </select>
                             </div>
                             <div className="form-group">
                                 <label>Amount:</label>
-                                <input type="text" className="form-control" placeholder="Enter Amount" name="amount" value={income.amount} onChange={handleInputChange} />
+                                <input type="number" className="form-control" placeholder="Enter Amount" name="amount" value={income.amount} onChange={handleInputChange} />
                             </div>
                             <div className="form-group">
                                 <label>Medium:</label>

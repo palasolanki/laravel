@@ -60,7 +60,7 @@ function AddIncome() {
         clients.map((client, key) => {
             return (
                 <option value={client._id} key={key}>
-                    {client.name}
+                    {client.name + ` (` + client.company_name + `)`}
                 </option>
             );
         });
@@ -161,7 +161,7 @@ function AddIncome() {
                                 </div>
                                 <div className="col form-group px-0 px-lg-3 px-md-2">
                                     <input
-                                        type="text"
+                                        type="number"
                                         name="amount"
                                         placeholder="Enter Amount"
                                         onChange={handleInputChange(key)}
