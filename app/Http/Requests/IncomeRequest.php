@@ -46,7 +46,7 @@ class IncomeRequest extends FormRequest
 
     public function save($income = null) {
         foreach ($this->data as $value) {
-            if(!$income) {
+            if (!$income) {
                 $income = new Income;
             }
             if ($value['client_id']) {
