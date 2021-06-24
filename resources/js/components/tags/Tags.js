@@ -62,7 +62,7 @@ function Tags() {
       .then((res) => {
         console.log(res.data);
         setTags(tags.filter(tag => tag._id !== tagId))
-        ToastsStore.error(res.data.message);
+        ToastsStore.success(res.data.message);
         handleCloseDelete();
       })
   }

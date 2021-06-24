@@ -1,56 +1,85 @@
-import React, { Component, Fragment, useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import DatePicker from "react-datepicker";
+import api from '../../helpers/api';
 import Select from 'react-select';
+import {ToastsStore} from 'react-toasts';
 
 function EditExpenses(props) {
-
+    const selectedFile = (props.currentExpense.file_attachments) ? props.currentExpense.file_attachments : [];
+    const [fileAttachments, setFileAttachments] = useState(selectedFile);
+    const {mediums, options} = props;
     const closeModalSpanStyle = {
         color: '#000',
         float: 'right',
         fontSize: '20px',
         cursor: 'pointer'
-      };
-    //   const modalHeader = {
-    //     textAlign: 'center',
-    //   };
+    };
     const tmpTagsList = (data) => {
         const tmpTagOptions = data.map(value => {
             return {
-                value: value,
-                label: value
+                value: value._id,
+                label: value.tag
             }
         });
         return tmpTagOptions;
     }
     const editData = {
-        date: new Date(props.currentExpense.date),
+        id: props.currentExpense._id,
+        date: new Date(props.currentExpense.selectedDateForEdit),
         item: props.currentExpense.item,
         amount: props.currentExpense.amount,
-        medium: props.currentExpense.medium,
+        medium: props.currentExpense.medium.id,
         tags: tmpTagsList(props.currentExpense.tags),
-        tagsArray: props.currentExpense.tags
+        file_attachments: selectedFile,
+        notes: props.currentExpense.notes,
     }
+
     const [expense, setExpense] = useState(editData)
     const handleInputChange = event => {
         const { name, value } = event.target
         setExpense({ ...expense, [name]: value })
     }
+    const handleFileChange = event => {
+        setExpense({ ...expense, [event.target.name]:event.target.files[0] })
+    }
     const handleDateChange = event => {
         setExpense({ ...expense, ['date']: event })
     }
     const handleSelectChange = event => {
-        const tmp = event.map(value => {
-            return value['label'];
-        })
+        const tmp = event ? event.map(value => {
+            return value['value'];
+        }) : [];
         setExpense({
             ...expense,
             ['tags']: (event) ? event : [],
             ['tagsArray']: (event) ? tmp : []
         })
     }
-    const mediumList = Object.keys(props.mediums).map((key) => {
-        return <option value={key} key={key}>{props.mediums[key]}</option>
+    const mediumList = mediums && mediums.map((medium, key) => {
+        return <option value={medium._id} key={key}>{medium.medium}</option>
     })
+
+    const deleteExpenseFile = (expenseId,deleteFile) => {
+        api.delete(`/expenses/file_attachment/${deleteFile}/${expenseId}`)
+        .then((res) => {
+            setFileAttachments(fileAttachments.filter(expenseFile => expenseFile.filename !== deleteFile));
+            ToastsStore.error(res.data.message);
+        })
+    }
+    const deleteFileDiv = {
+        width: '100%',
+        background: '#e8e8e8',
+        padding: '10px',
+        borderRadius: '5px',
+        margin: '5px 0px',
+    }
+    const deleteFileCross = {
+        paddingLeft: '10px',
+        cursor: 'pointer',
+        float: 'right',
+        borderLeft: '1px solid #000',
+        color: '#000',
+    }
     return (
         <Fragment>
         <div
@@ -79,6 +108,7 @@ function EditExpenses(props) {
                                     className="form-control"
                                     selected={expense.date}
                                     onChange={handleDateChange}
+                                    dateFormat="dd-MM-yyyy"
                                 />
                             </div>
                             <div className="form-group">
@@ -103,9 +133,25 @@ function EditExpenses(props) {
                                     value={expense.tags}
                                     onChange={handleSelectChange}
                                     isMulti
-                                    options={props.options}
+                                    options={options}
                                 />
                             </div>
+                            <div className="form-group">
+                                <label>Notes:</label>
+                                <textarea className="form-control" placeholder="Enter Notes" name="notes" onChange={handleInputChange} value={expense.notes || ''} />
+                            </div>
+                                <div className="form-group">
+                                <label>File:</label>
+                                    <br></br>
+                                    { fileAttachments.map((expenseFiles, key) =>
+                                        <div style={deleteFileDiv} key={key}>
+                                            <span>{expenseFiles.filename}</span><span style={deleteFileCross}
+                                            onClick={() => deleteExpenseFile(editData.id, expenseFiles.filename)}>X</span>
+                                        </div>
+                                    )}
+                                    <input style={{paddingTop: "8px"}} type="file" name="file" onChange={handleFileChange}/>
+                                </div>
+
                             <div className="form-group text-right">
                                 <button type="submit" className="btn btn--prime mr-1">Submit</button>
                                 <button onClick={props.handleCloseEdit} className="btn btn--cancel ml-1">Cancel</button>

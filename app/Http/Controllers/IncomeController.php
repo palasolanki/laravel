@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IncomeRequest;
 use App\Income;
+use Pimlie\DataTables\MongodbDataTable;
+use App\Tag;
 use Symfony\Component\HttpFoundation\Request;
 use App\Traits\ChartData;
+use Carbon\Carbon;
+use Yajra\DataTables\DataTables;
 
 class IncomeController extends Controller
 {
@@ -15,9 +19,33 @@ class IncomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Income::all();
+        $from = ($request->daterange[0]) ? Carbon::parse($request->daterange[0]) : null;
+        $to = ($request->daterange[1]) ? Carbon::parse($request->daterange[1]) : null;
+
+        $selectedClient = $request->client;
+        $selectedMediums = $request->mediums;
+        $selectedTags = $request->tags;
+        $income = Income::with('tags')
+                ->when($from, function ($income) use ($from, $to) {
+                    return $income->whereBetween('date', [$from, $to]);
+                })
+                ->when($selectedClient != "all", function ($income) use ($selectedClient) {
+                    return $income->where('client_id', $selectedClient);
+                })
+                ->when($selectedMediums, function ($income) use ($selectedMediums) {
+                    return $income->whereIn('medium.id', $selectedMediums);
+                })
+                ->when($selectedTags, function ($income) use ($selectedTags) {
+                    return $income->whereIn('tag_ids', $selectedTags);
+                });
+
+        return (new MongodbDataTable($income))
+            ->addColumn('selectedDateForEdit', function ($income) {
+                return $income->date;
+            })
+            ->make(true);
     }
 
     /**
@@ -39,7 +67,7 @@ class IncomeController extends Controller
     public function store(IncomeRequest $request)
     {
         $request->save();
-        return ['message' => 'Add Success!'];
+        return ['message' => 'Income added successfully.'];
     }
 
     /**
@@ -74,7 +102,7 @@ class IncomeController extends Controller
     public function update(IncomeRequest $request, Income $income)
     {
         $request->save($income);
-        return ['updateIncome' => $income, 'message' => 'Update Success!'];
+        return ['updateIncome' => $income, 'message' => 'Income updated successfully.'];
     }
 
     /**
@@ -86,15 +114,16 @@ class IncomeController extends Controller
     public function destroy(Income $income)
     {
         $income->delete();
-        return ['message' => 'Delete Success!'];
-    }
-
-    public function getIncomeMediumList() {
-        return ['medium' => config('expense.medium')];
+        return ['message' => 'Income deleted successfully.'];
     }
 
     public function monthlyIncomeChart(Request $request) {
         $chartData = $this->getChartData($request->chart_range, 'income');
         return ['monthlyIncome' => $chartData[0], 'labels' => $chartData[1]];
+    }
+
+    public function getTagList() {
+        $tags = Tag::select('_id', 'tag')->where('type', 'income')->get();
+        return ['tags' => $tags];
     }
 }

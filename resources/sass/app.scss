@@ -1,12 +1,10 @@
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Nunito');
-
+@import '../../node_modules/datatables.net-dt/css/jquery.dataTables.min.css';
 // Variables
 @import 'variables';
-
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
-
 .body {
     background-color: #f9f9f9;
 }
@@ -120,7 +118,6 @@ header input {
 }
 
 // Sidebar
-
 .sidebar {
     position: absolute;
     width: 250px;
@@ -138,11 +135,13 @@ header input {
     left: 0;
     transform: translate3d(0, 0, 0);
 }
+
 .sidebar .nav-link.active svg,
 .sidebar .nav-link:hover svg {
     color: #3cafbb;
     transition: 0.5s;
 }
+
 .sidebar .nav-link.active,
 .sidebar .nav-link:hover {
     background-color: #ececec; // #3acbda;
@@ -353,7 +352,6 @@ header>a {
 
 .side--left {
     background: rgba(123, 123, 123, 0.34);
-
 }
 
 .side--right {
@@ -468,6 +466,11 @@ header>a {
     display: block !important;
 }
 
+.react-datepicker__input-container input {
+    border: none;
+    border-bottom: 1px solid #b3b3b3;
+}
+
 .react-datepicker-ignore-onclickoutside {
     width: 100%;
     border: none;
@@ -494,26 +497,21 @@ header>a {
     .side--left {
         width: 400px;
     }
-
     .side--right {
         width: 300px;
     }
-
     .block__login {
         max-width: 700px;
     }
-
     .login-logo {
         width: 100px;
     }
-
     .name {
         font-size: 20px;
     }
 }
 
 @media (max-width: 767px) {
-
     // .hamburger {
     //   position: absolute;
     //   right: 15px;
@@ -521,23 +519,18 @@ header>a {
     .section h3 {
         font-size: 20px;
     }
-
     .dashboard .list .list-inline-item:not(:last-child) {
         font-size: 16px;
         margin-right: 0px;
         width: 240px;
     }
-
     .dashboard .list .list-inline {
         margin: auto;
         margin-top: 1rem;
     }
-
     .dashboard .list {
         text-align: center;
-
     }
-
     .btn-prime {
         background-color: #32afbc;
         font-size: 30px;
@@ -549,7 +542,6 @@ header>a {
         display: flex;
         justify-content: center;
     }
-
     .btn__add-project {
         height: 40px;
         align-items: center;
@@ -558,7 +550,6 @@ header>a {
         top: 15px;
         right: 3px;
     }
-
     .form__project {
         position: absolute;
         top: 50%;
@@ -566,11 +557,9 @@ header>a {
         z-index: 9;
         transform: translate(-50%, -50%);
     }
-
     .overlay {
         position: relative;
     }
-
     .overlay:after {
         content: "";
         position: absolute;
@@ -581,45 +570,36 @@ header>a {
         background-color: #00000085;
         z-index: 0;
     }
-
     .block__login {
         width: 90%;
         max-width: 400px;
     }
-
     .login-logo {
         width: 70px;
     }
-
     .side--left {
         padding-top: 15px;
         padding-bottom: 15px;
     }
-
     .name {
         font-size: 18px;
     }
-
     .side--right {
         padding-top: 30px;
     }
-
     .logo {
         width: 40px;
         margin-left: 15px;
     }
-
     .project-header input,
     .project-header h3 {
         max-width: 150px;
     }
-
     .project-header h3 {
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
     }
-
     .main:not(.full) .btn__add-project {
         display: none !important;
     }
@@ -652,22 +632,31 @@ input {
     height: 35px;
 }
 
+input[name="change_password"] {
+    width: initial;
+    height: initial;
+    margin-left: 10px;
+}
 
 
 /* custum css*/
+
 .heading {
     font-size: 22px;
     @extend .mb-0;
 }
-@media(max-width: 767px){
+
+@media(max-width: 767px) {
     .heading {
         font-size: 18px;
     }
 }
+
 .table th,
 .table td {
     white-space: nowrap;
 }
+
 .logout {
     &__dropdown {
         display: none;
@@ -693,7 +682,7 @@ input {
         @extend .align-items-center;
         @extend .text-decoration-none;
         &:hover .logout__dropdown {
-            display : block !important;
+            display: block !important;
             position: absolute;
             right: 0;
             top: 50px;
@@ -702,5 +691,211 @@ input {
             box-shadow: 5px 5px 6px 0px rgba(82, 63, 105, 0.15);
         }
     }
-
 }
+
+.custom__col {
+    @media (min-width: 1200px) and (max-width: 1524px) {
+        flex-basis: 70%;
+        max-width: 70%;
+    }
+}
+
+.display {
+    &.dataTable tfoot th:first-child {
+        border-top: transparent;
+    }
+}
+
+.advance-filter {
+    h5 {
+        font-size: 1rem;
+    }
+    .col-xl-6 {
+        @media (min-width: 1200px) and (max-width: 1470px) {
+            flex-basis: 60%;
+            max-width: 60%;
+        }
+        .react-daterange-picker {
+            width: 100%;
+            height: 100%;
+            &__inputGroup {
+                min-width: auto;
+            }
+            &__wrapper {
+                width: 100%;
+                align-items: center;
+            }
+        }
+    }
+}
+
+.expenses__heading {
+    @media (max-width: 365px) {
+        margin-right: 1rem;
+        margin-bottom: 1rem !important;
+    }
+}
+
+.table-income-expense {
+    .dataTables_filter {
+        input {
+            padding-left: 5px;
+            border-top-style: solid;
+            border-color: #dee2e6;
+            border-left-style: solid;
+        }
+    }
+}
+
+.toast {
+    &-success {
+        background-color: #1c884b !important;
+    }
+    &-error,
+    &-success {
+        color: #fff !important;
+    }
+}
+
+.company-logo-img {
+    width: 150px;
+}
+
+/* invoice css */
+/* TO-DO: make it more scoped, like using a parent class.. avoid generalized classes */
+
+/* content editable */
+
+*[contenteditable] { border-radius: 0.25em; min-width: 1em; outline: 0; cursor: pointer; }
+
+*[contenteditable]:hover, *[contenteditable]:focus, td:hover *[contenteditable], td:focus *[contenteditable],
+img.hover { background: #DEF; box-shadow: 0 0 1em 0.5em #DEF; }
+
+span[contenteditable] { display: inline-block; }
+
+/* heading */
+
+.invoice-h1 { margin-bottom: 30px; font: bold 100% sans-serif; letter-spacing: 0.5em; text-align: center; text-transform: uppercase; }
+
+/* table */
+
+.invoice-table { table-layout: fixed; width: 100%; border-collapse: separate; border-spacing: 2px; }
+.invoice-table th,  .invoice-table td { border-width: 1px; padding: 0.5em; position: relative; text-align: left; }
+.invoice-table th, .invoice-table td { border-radius: 0.25em; border-style: solid; }
+.invoice-table th { background: #EEE; border-color: #BBB; }
+.invoice-table td { border-color: #DDD; }
+.invoice-table .react-datepicker-popper[data-placement^="bottom"] { transform: translate3d(-76px, 41px, 0px) !important}
+.invoice-table .react-datepicker-popper[data-placement^="top"] { transform: translate3d(-75px, -230px, 0px) !important}
+.invoice-table .react-datepicker__triangle { left: 90px;}
+/* page */
+
+.invoice-form { overflow: auto; padding: 0.5in;  background: #999; cursor: default; }
+
+.invoice-body {
+    box-sizing: border-box;
+    height: 11in;
+    margin: 0 auto;
+    padding: 0.5in;
+    width: 8.5in;
+    background: #FFF;
+    border-radius: 1px;
+    box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
+}
+
+.invoice-address {
+    white-space: pre-line;
+    float: left;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 1.25;
+    margin: 0 1em 1em 0;
+}
+
+/* header */
+
+.invoice-header { margin: 0 0 2em; }
+.invoice-header:after { clear: both; content: ""; display: table; }
+
+/* article */
+
+article, table.meta, table.inventory { margin: 0 0 3em; }
+article:after { clear: both; content: ""; display: table; }
+article h1 { clip: rect(0 0 0 0); position: absolute; }
+
+/* table meta & balance */
+
+table.meta, table.balance { float: right; width: 45%; }
+table.meta:after, table.balance:after { clear: both; content: ""; display: table; }
+
+/* table meta */
+
+table.meta th { width: 40%; }
+table.meta td { width: 60%; }
+
+/* table items */
+
+table.inventory { clear: both; width: 100%; }
+table.inventory th { font-weight: bold; text-align: center; }
+table.inventory td:nth-child(1) { width: 62%; }
+table.inventory td:nth-child(2) { width: 14%; }
+table.inventory td:nth-child(3) { text-align: right; width: 12%; }
+table.inventory td:nth-child(4) { text-align: right; width: 12%; }
+
+/* table balance */
+
+table.balance th, table.balance td { width: 50%; }
+table.balance td { text-align: right; }
+
+/* aside */
+
+aside h1 { border: none; border-width: 0 0 1px; margin: 0 0 1em; }
+aside h1 { border-color: #999; border-bottom-style: solid; }
+
+/* javascript */
+
+.add-invoice-btn, .cut-invoice-btn
+{
+	border-width: 1px;
+	display: block;
+	font-size: .9rem;
+    padding: 0.075rem 0.75rem;
+	float: left;
+	text-align: center;
+	border-radius: 0.25em;
+	border-color: #0076A3;
+	color: #FFF !important;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.add-invoice-btn {
+    margin: -2.5em 0 0;
+    background-color: #32afbc;
+}
+
+.cut-invoice-btn {
+    background-color: #dc524b;
+    opacity: 0;
+    position: absolute;
+    top: 0.4em;
+    left: -2.5em;
+    -webkit-transition: opacity 100ms ease-in;
+}
+
+.invoice-save-btn {
+    margin-top: 20px;
+}
+
+tr:hover .cut-invoice-btn { opacity: 1; }
+
+@media print {
+	* { -webkit-print-color-adjust: exact; }
+	html { background: none; padding: 0; }
+	body { box-shadow: none; margin: 0; }
+	span:empty { display: none; }
+	.add-invoice-btn, .cut-invoice-btn { display: none; }
+}
+
+@page { margin: 0; }
+
+/* end invoice css */

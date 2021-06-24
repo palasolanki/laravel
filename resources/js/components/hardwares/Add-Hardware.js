@@ -26,7 +26,7 @@ function AddHardware() {
 
     const [hardwareData, setHardwareData] = useState([data]);
 
-    const typeList = Object.keys(types).map((key) => {
+    const typeList = types && Object.keys(types).map((key) => {
         return <option value={key} key={key}>{types[key]}</option>
     })
     const handleInputChange = key => event => {
@@ -87,6 +87,7 @@ function AddHardware() {
                     }
                 }
                 setErrorList(errors);
+                ToastsStore.error(error.response.data.message);
             });
     }
     return  (

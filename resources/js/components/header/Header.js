@@ -16,7 +16,8 @@ export class Header extends Component {
     this.logout = this.logout.bind(this);
   }
 
-  logout() {
+  logout(e) {
+    e.preventDefault();
     this.props.logout();
   }
 
@@ -34,16 +35,16 @@ export class Header extends Component {
         </div>
         <div className="mr-3 h-100 logout">
           <div className="logout__link h-100">
-            <Link to={'/'} className="text-white"><FontAwesomeIcon size="2x" icon={faUserCircle} /><span className="ml-2">John</span></Link>
+            <Link to={'/'} className="text-white"><FontAwesomeIcon size="2x" icon={faUserCircle} /><span className="ml-2">{this.props.name}</span></Link>
             <ul className="logout__dropdown pl-0 list-unstyled px-3 mb-0">
               <li>
-                <Link to={'/'}><FontAwesomeIcon size="1x" icon={faUser} /><span className="ml-2">Account</span></Link>
+                <Link to={'/profile'}><FontAwesomeIcon size="1x" icon={faUser} /><span className="ml-2">Account</span></Link>
               </li>
               <li>
-                <Link to={'/'} className="logout" onClick={this.logout}>
-                <FontAwesomeIcon size="1x" icon={faSignOutAlt} />
+                <a href="/" className="logout" onClick={this.logout}>
+                  <FontAwesomeIcon size="1x" icon={faSignOutAlt} />
                   <span className="ml-2">Logout</span>
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -53,10 +54,16 @@ export class Header extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    name: state.auth.user.name,
+  }
+}
+
 const mapDispatchToProps = (dispatch) => {
   return {
     logout: () => dispatch(logout())
   }
 }
 
-export default connect(null, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

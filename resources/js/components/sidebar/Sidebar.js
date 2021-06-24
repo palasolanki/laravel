@@ -13,7 +13,10 @@ import {
   faTags,
   faDollarSign,
   faCoins,
-  faMicrochip
+  faMicrochip,
+  faCreditCard,
+  faGlobeAmericas,
+  faFileInvoiceDollar
  } from '@fortawesome/free-solid-svg-icons';
 export default class Sidebar extends Component {
   constructor(props) {
@@ -21,11 +24,14 @@ export default class Sidebar extends Component {
     this.navTitles = [
       { brandicon: faHome, title: 'Dashboard', url: '/' },
       // { title: 'Projects', url: '/project' },
-      { brandicon: faUsers, title: 'Clients', url: '/clients' },
-      { brandicon: faTags, title: 'Tags', url: '/tags' },
       { brandicon: faDollarSign, title: 'Income', url: '/incomes' },
       { brandicon: faCoins, title: 'Expense', url: '/expenses' },
+      { brandicon: faUsers, title: 'Clients', url: '/clients' },
       { brandicon: faMicrochip, title: 'Hardware', url: '/hardwares' },
+      { brandicon: faTags, title: 'Tags', url: '/tags' },
+      { brandicon: faCreditCard, title: 'Mediums', url: '/mediums' },
+      { brandicon: faGlobeAmericas, title: 'Country', url: '/country' },
+      { brandicon: faFileInvoiceDollar, title: 'Invoices', url: '/invoices' },
     ];
 
     this.state = {

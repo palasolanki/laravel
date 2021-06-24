@@ -36,7 +36,7 @@ const ClientList = () => {
             .then((res) => {
                 setDeleteRequest(false)
                 setMount(true)
-                ToastsStore.error(res.data.message);
+                ToastsStore.success(res.data.message);
             })
             .catch((err) => {
                 console.log(err)
@@ -86,12 +86,12 @@ const ClientList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {clients.length > 0 ? (clients.map((client, id) => (
+                            {clients.length > 0 ? (clients.map((client, index) => (
                                 <tr key={client._id}>
-                                    <td>{id + 1}</td>
+                                    <td>{index + 1}</td>
                                     <td>{client.name}</td>
                                     <td>{client.company_name}</td>
-                                    <td>{client.country}</td>
+                                    <td>{(client.country) ? client.country.name : '-'}</td>
                                     <td>
                                         <Link to={`editClient/${client._id}`} className="btn btn-sm btn--prime">Edit</Link>&nbsp;
                                         <button className="btn btn-sm btn--cancel ml-1" onClick={() => deleteClient(client._id)}>Delete</button>

@@ -25,18 +25,8 @@ export default class App extends Component {
                         path="/project"
                         component={requireAuth(ProjectLayout)}
                     />
-                    <Route exact path="/" component={requireAuth(HomeLayout)} />
-                    <Route path="/login" component={Login} />
-                    <Route exact path="/clients" component={requireAuth(HomeLayout)} />
-                    <Route  path="/addClient" component={requireAuth(HomeLayout)} />
-                    <Route  path="/editClient/:id" component={requireAuth(HomeLayout)} />
-                    <Route exact path="/tags" component={requireAuth(HomeLayout)} />
-                    <Route exact path="/expenses" component={requireAuth(HomeLayout)} />
-                    <Route exact path="/incomes" component={requireAuth(HomeLayout)} />
-                    <Route exact path="/expenses/add" component={requireAuth(HomeLayout)} />
-                    <Route exact path="/incomes/add" component={requireAuth(HomeLayout)} />
-                    <Route exact path="/hardwares" component={requireAuth(HomeLayout)} />
-                    <Route exact path="/hardwares/add" component={requireAuth(HomeLayout)} />
+                    <Route exact path="/login" component={Login} />
+                    <Route path="/" component={requireAuth(HomeLayout)} />
                 </Switch>
             </div>
         );

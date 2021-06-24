@@ -1,149 +1,403 @@
-import React, { Component, Fragment, useState, useEffect } from 'react'
+import React, { Component, Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import api from '../../helpers/api';
-import {ToastsStore} from 'react-toasts';
+import api from "../../helpers/api";
+import { numberFormat } from "../../helpers";
+import { intVal } from "../../helpers";
+import { ToastsStore } from "react-toasts";
 import EditExpenses from "./Edit-Expense";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import DateRangePicker from "@wojtekmaj/react-daterange-picker";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faPlus
-} from '@fortawesome/free-solid-svg-icons';
+    faPlus,
+    faFileExcel,
+    faFilter
+} from "@fortawesome/free-solid-svg-icons";
+import ConfirmationComponent from "../ConfirmationComponent";
+import Select from "react-select";
+import fileSaver from "file-saver";
+const $ = require("jquery");
+$.DataTable = require("datatables.net");
 
 function Expense() {
+    const [dataTable, setDataTable] = useState(null);
     const [showEditModal, setEditShow] = useState(false);
+    const [showDeleteModal, setDeleteShow] = useState(false);
+    const [date, setDate] = useState([null, null]);
+    const [dateRange, setDateRange] = useState([null, null]);
+    const [mediums, setMediums] = useState([]);
+    const [mediumsOptionForFilter, setMediumsOptionForFilter] = useState([]);
+    const [selectedMediumsForFilter, setSelectedMediumsForFilter] = useState(
+        null
+    );
+    const [selectedTagsForFilter, setSelectedTagsForFilter] = useState(null);
+    const [options, setOptions] = useState([]);
+    const [advanceFilter, setAdvanceFilter] = useState(false);
     const openShowEdit = () => setEditShow(true);
     const handleCloseEdit = () => setEditShow(false);
 
-    const [showDeleteModal, setDeleteShow] = useState(false);
     const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
 
-    const expenseData = [];
-    const [mediums, setMediums] = useState([]);
-    const [expenses, setExpenses] = useState(expenseData);
-    useEffect( () => {
-      api.get('/expenses')
-          .then((res) => {
-            setExpenses(res.data);
-          })
-          .catch((res) => {
-        }),
-        api.get('/getExpenseMediumList')
-        .then((res) => {
-            setMediums(res.data.medium);
-        })
+    useEffect(() => {
+        initDatatables();
+    }, []);
 
-        api.get('/getTagList')
-        .then((res) => {
-            createTagOptions(res.data.tags);
-        })
-    }, [] );
+    useEffect(() => {
+        if (dataTable) {
+            registerEvent();
+            api.get("/get-expense-mediums").then(res => {
+                if (res.data.medium) {
+                    setMediums(res.data.medium);
+                    setMediumsOptionForFilter(
+                        createMediumOption(res.data.medium)
+                    );
+                }
+            }),
+                api.get("/get-expense-tags").then(res => {
+                    createTagOptions(res.data.tags);
+                });
+        }
+    }, [dataTable]);
 
-    const [options, setOptions] = useState([]);
+    const createMediumOption = mediums => {
+        return mediums.map((medium, key) => {
+            return {
+                value: medium._id,
+                label: medium.medium
+            };
+        });
+    };
+
+    const initDatatables = () => {
+        var table = $("#datatable").DataTable({
+            serverSide: true,
+            processing: true,
+            oLanguage: {
+                sSearch: "",
+                sSearchPlaceholder: "Search"
+            },
+            ajax: {
+                url: `/api/getExpenseData`,
+                dataType: "json",
+                type: "post",
+                data: {
+                    daterange: dateRange,
+                    mediums: selectedMediumsForFilter,
+                    tags: selectedTagsForFilter
+                },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(
+                        "Authorization",
+                        "Bearer " + localStorage.getItem("token")
+                    );
+                }
+            },
+            columns: [
+                { title: "Date", data: "date" },
+                { title: "Item", data: "item" },
+                { title: "Amount (INR)", data: "amount" },
+                {
+                    title: "Medium",
+                    data: "medium.medium",
+                    defaultContent: "N/A"
+                },
+                { title: "Tags", data: "tags", orderable: false },
+                {
+                    title: "Notes",
+                    data: "notes",
+                    orderable: false,
+                    defaultContent: "N/A"
+                },
+                {
+                    title: "Action",
+                    data: "null",
+                    orderable: false,
+                    defaultContent: "N/A"
+                }
+            ],
+            rowCallback: function(row, data, index) {
+                let action =
+                    '<button data-index="' +
+                    index +
+                    '" class="btn btn-sm btn--prime editData">Edit</button> <button id="' +
+                    data._id +
+                    '" class="btn btn-sm btn--cancel deletData" >Delete</button>';
+                $("td:eq(6)", row).html(action);
+                if (data.notes) {
+                    let notes =
+                        data.notes.length > 20
+                            ? data.notes.substring(0, 20) + "..."
+                            : data.notes;
+                    $("td:eq(5)", row).html(notes);
+                }
+                if (data.tags && data.tags.length) {
+                    $("td:eq(4)", row).html(
+                        data.tags.map(value => value.tag).toString()
+                    );
+                }
+                if (data.amount) {
+                    $("td:eq(2)", row).html(
+                        numberFormat(data.amount)
+                    );
+                }
+            },
+            footerCallback: function(row, data, start, end, display) {
+                var api = this.api(),
+                totalAmount,
+                currentPageTotalAmount;
+
+                totalAmount = api
+                .column(2)
+                .data()
+                .reduce(function(a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+                currentPageTotalAmount = api
+                .column(2, { page: "current" })
+                .data()
+                .reduce(function(a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0);
+
+
+                var totalHtml =
+                    "<div>" +
+                    'This page: <span style="font-weight:bold;">&#8377;</span>' +
+                    numberFormat(currentPageTotalAmount) +
+                    "</div>" +
+                    "<div>" +
+                    'All pages: <span style="font-weight:bold;">&#8377;</span>' +
+                    numberFormat(totalAmount) +
+                    "</div>";
+
+                $(api.column(2).footer()).html(totalHtml);
+            }
+        });
+        setDataTable(table);
+    };
+
+    const registerEvent = () => {
+        $("#datatable").on("click", "tbody .editData", function(e) {
+            var expense = dataTable.row($(e.target).parents("tr")).data();
+            editRow(expense);
+        });
+        $("#datatable").on("click", "tbody .deletData", function(e) {
+            setDeleteExpenseIdFunction($(e.target).attr("id"));
+            setDeleteShow(true);
+        });
+    };
     const createTagOptions = data => {
         const tagOptions = data.map(value => {
             return {
-                value: value,
-                label: value
-            }
+                value: value._id,
+                label: value.tag
+            };
         });
         setOptions(tagOptions);
-    }
-    const [currentExpense, setCurrentExpense] = useState()
+    };
+
+    const [currentExpense, setCurrentExpense] = useState();
     const editRow = expense => {
-        setCurrentExpense(expense)
-        openShowEdit();
-    }
+        if (expense) {
+            setCurrentExpense(expense);
+            openShowEdit();
+        }
+    };
 
     const updateExpense = (expenseId, updatedExpense) => {
-        api.patch(`/expenses/${expenseId}`, {data:updatedExpense})
-        .then((res) => {
-            setExpenses(expenses.map(expense => (expense._id === expenseId ? res.data.updateExpense : expense)))
+        var formData = new FormData();
+        Object.keys(updatedExpense[0]).map(key => {
+            if (key == "date") {
+                const isoDate = new Date(updatedExpense[0][key]).toISOString();
+                formData.append("data[" + 0 + "][" + key + "]", isoDate);
+            } else {
+                if (key == "tagsArray") {
+                    updatedExpense[0][key].map(value => {
+                        formData.append(
+                            "data[" + 0 + "][" + key + "][]",
+                            value
+                        );
+                    });
+                } else {
+                    formData.append(
+                        "data[" + 0 + "][" + key + "]",
+                        updatedExpense[0][key]
+                    );
+                }
+            }
+        });
+        formData.append("_method", "put");
+        api.post(`/expenses/${expenseId}`, formData).then(res => {
             handleCloseEdit();
             ToastsStore.success(res.data.message);
-        })
-    }
+            dataTable.ajax.reload();
+        });
+    };
 
     const [deleteExpenseId, setDeleteExpenseId] = useState();
-    const setDeleteExpenseIdFunction = currentDeleteExpenseId =>{
+    const setDeleteExpenseIdFunction = currentDeleteExpenseId => {
         setDeleteExpenseId(currentDeleteExpenseId);
         openShowDelete();
-    }
+    };
 
     const deleteExpense = expenseId => {
-        api.delete(`/expenses/${expenseId}`)
-        .then((res) => {
-            setExpenses(expenses.filter(expense => expense._id !== expenseId))
+        api.delete(`/expenses/${expenseId}`).then(res => {
             handleCloseDelete();
-            ToastsStore.error(res.data.message);
+            ToastsStore.success(res.data.message);
+            dataTable.ajax.reload();
+        });
+    };
+
+    const onDateChange = datevalue => {
+        const dateForDateRangePicker = datevalue ? datevalue : [null, null];
+        const data = datevalue
+            ? [datevalue[0].toISOString(), datevalue[1].toISOString()]
+            : [null, null];
+        setDate(dateForDateRangePicker);
+        setDateRange(data);
+    };
+
+    useEffect(() => {
+        if (dataTable && date) {
+            dataTable.destroy();
+            initDatatables();
+        }
+    }, [date, selectedMediumsForFilter, selectedTagsForFilter]);
+
+    const handleSelectChange = selectFor => event => {
+        const tmp = event
+            ? event.map(value => {
+                  return value["value"];
+              })
+            : [];
+        const data = event ? tmp : null;
+        if (selectFor == "mediums") {
+            setSelectedMediumsForFilter(data);
+        } else if (selectFor == "tags") {
+            setSelectedTagsForFilter(data);
+        }
+    };
+
+    const exportData = () => {
+        const exportDataFilters = {
+            daterange: dateRange,
+            mediums: selectedMediumsForFilter,
+            tags: selectedTagsForFilter
+        };
+        api.post("/export/expense", exportDataFilters, {
+            responseType: "arraybuffer"
         })
-    }
+            .then(response => {
+                var blob = new Blob([response.data], {
+                    type:
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                });
+                fileSaver.saveAs(blob, "expense.xlsx");
+            })
+            .catch(function() {
+                ToastsStore.error("Something went wrong!");
+            });
+    };
 
-    return  (
-                <div className="bg-white p-3">
-                    <div className="d-flex align-items-center pb-2">
-                        <h2 className="heading">Expenses</h2>
-                        <Link to="expenses/add" className="btn btn--prime ml-auto"><FontAwesomeIcon className="mr-2" icon={faPlus} />Add Expense</Link>
-                    </div>
-                    <div className="table-responsive">
-                        <table className="table">
-                            <thead className="thead-light">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Item</th>
-                                    <th>Amount</th>
-                                    <th>Medium</th>
-                                    <th>Tags</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {expenses.length > 0 ? (
-                            expenses.map(expense => (
-                                    <tr key={expense._id}>
-                                        <td>{expense.date}</td>
-                                        <td>{expense.item}</td>
-                                        <td>{expense.amount}</td>
-                                        <td>{mediums[expense.medium]}</td>
-                                        <td>
-                                            { (expense.tags.length > 0) ? expense.tags.toString() : '-' }
-                                        </td>
-                                        <td>
-                                            <button className="btn btn-sm btn--prime" onClick={() => editRow(expense)}>Edit</button>&nbsp;
-                                            <button className="btn btn-sm btn--cancel ml-1" onClick={() => setDeleteExpenseIdFunction(expense._id)}>Delete</button>
-                                        </td>
-                                    </tr>
-                            ))
-                            ) : (
-                                    <tr>
-                                    <td colSpan={3}>No Expenses</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+    return (
+        <div className="bg-white p-3">
+            <div className="row mx-0 align-items-center">
+                <h2 className="heading expenses__heading">Expenses</h2>
+                <div className="ml-auto d-flex align-items-center">
+                    <button
+                        onClick={exportData}
+                        className="btn btn--prime mr-3 d-flex align-items-center"
+                    >
+                        <FontAwesomeIcon
+                            className="mr-2"
+                            style={{ fontSize: "20px" }}
+                            icon={faFileExcel}
+                        />
+                        <span> Export</span>
+                    </button>
 
-                     {showEditModal && <EditExpenses handleCloseEdit={handleCloseEdit} currentExpense={currentExpense} mediums={mediums} options={options} updateExpense={updateExpense} />}
-                     {showDeleteModal &&
-                         <div>
-                           <div style={{ display: 'block' }} className="modal">
-                             <div className="modal-dialog modal-dialog-centered register-modal-dialog">
-                               <div style={{padding:'25px',}} className="modal-content gradient_border modal-background">
-                                   <div style={{textAlign: 'center',}}>
-                                       <h3 className="heading">Are you sure to delete this expense?</h3>
-                                   </div>
-                                   <div style={{textAlign: 'center',}} className="modal-body">
-                                         <button style={{color: '#fff',}} className="btn btn--prime mr-1" onClick={handleCloseDelete}>Cancel</button>&nbsp;
-                                         <button className="btn btn--cancel ml-1" onClick={() => deleteExpense(deleteExpenseId)}>Delete</button>
-                                   </div>
-                               </div>
-                             </div>
-                           </div>
-                           <div className="modal-backdrop show" />
-                         </div>
-                     }
-
+                    <Link to="expenses/add" className="btn btn--prime ml-auto">
+                        <FontAwesomeIcon className="mr-2" icon={faPlus} />
+                        Add Expense
+                    </Link>
                 </div>
-            )
+            </div>
+            <div className="row mx-0 my-4 advance-filter">
+                <h5 className="col-12 px-0 mb-3">
+                    <Link
+                        onClick={() => setAdvanceFilter(!advanceFilter)}
+                        to="expenses"
+                    >
+                        <FontAwesomeIcon
+                            size="sm"
+                            className="mr-2"
+                            icon={faFilter}
+                        />
+                        Advanced Filters
+                    </Link>
+                </h5>
+
+                {advanceFilter && (
+                    <div className="col-xl-6 col-md-10 border p-xl-4 p-3 mb-3">
+                        <div className="row mx-0 mt-2 flex-column flex-md-row">
+                            <div className="col form-group px-0 px-lg-3 px-md-2">
+                                <DateRangePicker
+                                    onChange={onDateChange}
+                                    value={date}
+                                />
+                            </div>
+                            <div className="col form-group px-0 px-lg-3 px-md-2">
+                                <Select
+                                    onChange={handleSelectChange("mediums")}
+                                    isMulti
+                                    options={mediumsOptionForFilter}
+                                    placeholder="Select Mediums"
+                                />
+                            </div>
+                        </div>
+                        <div className="row mx-0 mt-md-2 flex-column flex-md-row">
+                            <div className="col-md-6 form-group px-0 px-lg-3 px-md-2">
+                                <Select
+                                    onChange={handleSelectChange("tags")}
+                                    isMulti
+                                    options={options}
+                                    placeholder="Select Tags"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+            <div className="table-responsive-md table-income-expense">
+                <table id="datatable" className="display table" width="100%">
+                    <tfoot>
+                        <tr>
+                            <th colSpan="2" />
+                            <th />
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            {showEditModal && (
+                <EditExpenses
+                    handleCloseEdit={handleCloseEdit}
+                    currentExpense={currentExpense}
+                    mediums={mediums}
+                    options={options}
+                    updateExpense={updateExpense}
+                />
+            )}
+            {showDeleteModal && (
+                <ConfirmationComponent
+                    title="Are you sure to delete this Expense?"
+                    handleCloseDelete={handleCloseDelete}
+                    btnName="Delete"
+                    action={() => deleteExpense(deleteExpenseId)}
+                />
+            )}
+        </div>
+    );
 }
 
 export default Expense;
