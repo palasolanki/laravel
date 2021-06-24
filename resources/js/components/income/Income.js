@@ -307,7 +307,7 @@ export default function Income() {
                                                 value={client._id}
                                                 key={client._id}
                                             >
-                                                {client.name}
+                                                {client.name + ` (` + client.company_name + `)`}
                                             </option>
                                         ))}
                                 </select>
