@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import api from '../../helpers/api';
 import Select from 'react-select';
 import {ToastsStore} from 'react-toasts';
+import { formatDate } from '../../helpers';
 
 function AddExpense() {
     let errors = [];
@@ -91,15 +92,14 @@ function AddExpense() {
         Object.keys(expenseData).map((key) => {
             Object.keys(expenseData[key]).map((fieldName) => {
                 if(fieldName == 'date') {
-                    const isoDate = new Date(expenseData[key][fieldName]).toISOString();
-                    formData.append("data["+key+"]["+fieldName+"]", isoDate)
+                    formData.append("data["+key+"]["+fieldName+"]", formatDate(expenseData[key][fieldName]));
                 } else {
                     if (fieldName == 'tagsArray') {
                         expenseData[key][fieldName].map((value) => {
-                            formData.append("data["+key+"]["+fieldName+"][]", value)
+                            formData.append("data["+key+"]["+fieldName+"][]", value);
                         });
                     } else {
-                        formData.append("data["+key+"]["+fieldName+"]", expenseData[key][fieldName])
+                        formData.append("data["+key+"]["+fieldName+"]", expenseData[key][fieldName]);
                     }
                 }
             })

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
-import { intVal } from '../../helpers';
+import { formatDate, intVal } from '../../helpers';
 import { numberFormat } from "../../helpers";
 import { ToastsStore } from 'react-toasts';
 import EditIncomes from "./Edit-Income";
@@ -193,6 +193,7 @@ export default function Income() {
     }, [dataTable]);
 
     const updateIncome = (incomeId, updatedIncome) => {
+        updatedIncome.date = formatDate(updatedIncome.date);
         api.patch(`/incomes/${incomeId}`, { data: updatedIncome })
             .then((res) => {
                 handleCloseEdit();

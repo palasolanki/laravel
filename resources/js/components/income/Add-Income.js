@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import api from "../../helpers/api";
 import { ToastsStore } from "react-toasts";
 import Select from "react-select";
+import { formatDate } from "../../helpers";
 
 function AddIncome() {
     let errors = [];
@@ -105,6 +106,9 @@ function AddIncome() {
         setIncomeData([...array]);
     };
     const saveIncomes = () => {
+        incomeData.map((incomeItem, key) => {
+            incomeItem.date = formatDate(incomeItem.date);
+        });
         api.post(`/incomes`, { data: incomeData })
             .then(res => {
                 setIncomeData([data]);
