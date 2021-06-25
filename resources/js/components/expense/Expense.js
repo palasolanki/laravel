@@ -1,7 +1,7 @@
 import React, { Component, Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../helpers/api";
-import { numberFormat } from "../../helpers";
+import { formatDate, numberFormat } from "../../helpers";
 import { intVal } from "../../helpers";
 import { ToastsStore } from "react-toasts";
 import EditExpenses from "./Edit-Expense";
@@ -208,8 +208,7 @@ function Expense() {
         var formData = new FormData();
         Object.keys(updatedExpense[0]).map(key => {
             if (key == "date") {
-                const isoDate = new Date(updatedExpense[0][key]).toISOString();
-                formData.append("data[" + 0 + "][" + key + "]", isoDate);
+                formData.append("data[" + 0 + "][" + key + "]", formatDate(updatedExpense[0][key]));
             } else {
                 if (key == "tagsArray") {
                     updatedExpense[0][key].map(value => {
