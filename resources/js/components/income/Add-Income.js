@@ -107,7 +107,9 @@ function AddIncome() {
     };
     const saveIncomes = () => {
         incomeData.map((incomeItem, key) => {
-            incomeItem.date = formatDate(incomeItem.date);
+            if (key == 'date') {
+                incomeItem.date = formatDate(incomeItem.date);
+            }
         });
         api.post(`/incomes`, { data: incomeData })
             .then(res => {

@@ -193,7 +193,11 @@ export default function Income() {
     }, [dataTable]);
 
     const updateIncome = (incomeId, updatedIncome) => {
-        updatedIncome.date = formatDate(updatedIncome.date);
+        updatedIncome.map((incomeItem, key) => {
+            if (key == 'date') {
+                incomeItem.date = formatDate(incomeItem.date);
+            }
+        });
         api.patch(`/incomes/${incomeId}`, { data: updatedIncome })
             .then((res) => {
                 handleCloseEdit();
