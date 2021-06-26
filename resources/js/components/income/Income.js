@@ -194,9 +194,7 @@ export default function Income() {
 
     const updateIncome = (incomeId, updatedIncome) => {
         updatedIncome.map((incomeItem, key) => {
-            if (key == 'date') {
-                incomeItem.date = formatDate(incomeItem.date);
-            }
+            incomeItem.date = formatDate(incomeItem.date);
         });
         api.patch(`/incomes/${incomeId}`, { data: updatedIncome })
             .then((res) => {
