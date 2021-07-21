@@ -22,8 +22,10 @@ class InvoiceController extends Controller
 
     public function store(InvoiceRequest $request)
     {
+
         $inputs = $request->validated();
         $invoice =  Invoice::create($inputs);
+
 
         $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
         $fileName = 'invoice_' . $invoice->number . '.pdf';
@@ -35,5 +37,12 @@ class InvoiceController extends Controller
     {
         $invoice->delete();
         return response()->json(['message' => 'Invoice deleted successfully.']);
+    }
+    public function getNextInvoiceNumber()
+    {
+
+        $invoice = new Invoice;
+        $nextInvoiceNumber = $invoice->setNumberAttribute();
+        return response()->json(['nextInvoiceNumber' => $nextInvoiceNumber]);
     }
 }

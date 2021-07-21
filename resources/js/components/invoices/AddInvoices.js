@@ -31,6 +31,7 @@ const AddInvoices = props => {
     const [total, setTotal] = useState(0);
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
+    
 
     const handleChange = (index) => (e) => {
         let name = e.target.getAttribute('name');
@@ -54,6 +55,11 @@ const AddInvoices = props => {
                 setClients(res.data.clients);
             })
             .catch(res => { });
+        api.get("/invoices/get-next-invoice-number")
+        .then(res=>{
+            setInvoice({ ...invoice, number:res.data.nextInvoiceNumber });
+           
+        });
     }, []);
 
     const clientList =
@@ -126,14 +132,14 @@ const AddInvoices = props => {
             ToastsStore.error("Required fields missing.");
             return;
         }
-        api.post(`/invoices/add`, { ...invoice, amount_due: total }, {responseType: 'blob'})
-            .then(res => {
-                ToastsStore.success('Invoice saved successfully.');
-                downloadFile(res);
-            })
-            .catch(function (err) {
-                console.log(err);
-            });
+        api.post(`/invoices/add`, { ...invoice, amount_due: total}, {responseType: 'blob'})
+        .then(res => {
+            ToastsStore.success('Invoice saved successfully.');
+            downloadFile(res);
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
     };
 
     const downloadFile = (res) => {
@@ -209,12 +215,8 @@ const AddInvoices = props => {
                                             </th>
                                             <td>
                                                 <span
-                                                    contentEditable={true}
                                                     name="number"
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                    onBlur={handleChange(null)}
+                                                    
                                                 >
                                                     {invoice.number}
                                                 </span>
@@ -385,7 +387,7 @@ const AddInvoices = props => {
                                                         true
                                                     }
                                                     name="rate"
-                                                    onBlur={handleChange(index)}
+                                                onBlur={handleChange(index)}
                                                 >
                                                     {row.rate}
                                                 </span>

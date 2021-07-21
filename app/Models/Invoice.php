@@ -17,9 +17,12 @@ class Invoice extends Eloquent
         $number = (!$prevNum) ? self::START_INVOICE_NUMBER : ((int) $prevNum->number + 1);
 
         $this->attributes['number'] = str_pad($number, 4, "0", STR_PAD_LEFT);
+
+        return $this->attributes['number'];
     }
 
-    public function client() {
-        return $this->hasOne('App\Models\Client', '_id','client_id');
+    public function client()
+    {
+        return $this->hasOne('App\Models\Client', '_id', 'client_id');
     }
 }
