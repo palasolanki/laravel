@@ -32,6 +32,7 @@ class ClientRequest extends FormRequest
             'name' => 'required',
             'company_name' => 'required',
             'country_id' => 'required',
+            'payment_medium_id' => 'required',
             'company_logo' => "sometimes|nullable|$stringOrFileRule",
             'address' => 'nullable',
         ];
@@ -48,6 +49,7 @@ class ClientRequest extends FormRequest
         $client->name = $this->name;
         $client->company_name = $this->company_name;
         $client->country_id = $this->country_id;
+        $client->payment_medium_id = $this->payment_medium_id;
         $client->address = $this->address;
         $client->save();
         $this->addFileAttachment($this->company_logo, $client);
@@ -59,7 +61,7 @@ class ClientRequest extends FormRequest
 
     public function addFileAttachment($uploadedFile, $client)
     {
-        if ( ! $this->hasFile('company_logo')) {
+        if (!$this->hasFile('company_logo')) {
             return;
         }
 

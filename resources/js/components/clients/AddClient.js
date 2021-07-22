@@ -2,12 +2,14 @@ import React, { useState, Fragment, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import api from '../../helpers/api';
 import { ToastsStore } from 'react-toasts';
+import { extendWith } from 'lodash';
 
 const AddClient = (props) => {
-    const initialFormState = { name: '', company_name: '', country_id: '', company_logo: '', address: '' };
+    const initialFormState = { name: '', company_name: '', country_id: '', payment_medium_id: '', company_logo: '', address: '' };
 
     const [client, setClient] = useState(initialFormState);
     const [countries, setCountries] = useState([]);
+    const [mediums, setMediums] = useState([]);
     const [sendRequest, setSendRequest] = useState(false);
     const [logoUrl, setLogoUrl] = useState('');
 
@@ -20,10 +22,25 @@ const AddClient = (props) => {
     };
 
     useEffect(() => {
+        api.get("/get-income-mediums")
+            .then(res => {
+                setMediums(res.data.medium);
+            })
+            .catch(res => {});
         api.get('/countries').then((res) => {
             setCountries(res.data.country);
         })
     }, []);
+
+    const mediumList =
+        mediums &&
+        mediums.map((medium, key) => {
+            return (
+                <option value={medium._id} key={key}>
+                    {medium.medium}
+                </option>
+            );
+        });
 
     const handleInputChange = event => {
         const { name, value } = event.target;
@@ -32,8 +49,8 @@ const AddClient = (props) => {
             setLogoUrl((window.URL ? URL : webkitURL).createObjectURL(file));
             setClient({ ...client, [name]: file});
             return;
-        }
-        setClient({ ...client, [name]: value })
+        }        
+        setClient({ ...client, [name]: value });
     }
     const submitForm = event => {
         event.preventDefault()
@@ -84,7 +101,7 @@ const AddClient = (props) => {
                         </div>
                     </div>
                     <div className="form-group">
-                        <label className="control-label col-auto px-0" htmlFor="countryid">Country:</label>
+                        <label className="control-label col-auto px-0" htmlFor="country_id">Country:</label>
                         <div className="col-sm-10 pl-0">
                             <select className="form-control" name="country_id" value={client.country_id} onChange={handleInputChange}>
                                 <option value="" disabled>Country</option>
@@ -96,6 +113,16 @@ const AddClient = (props) => {
                             </select>
                         </div>
                     </div>
+                    <div className="form-group">
+                        <label className="control-label col-auto px-0" htmlFor="payment_medium">Preferred payment Medium:</label>
+                        <div className="col-sm-10 pl-0">
+                            <select className="form-control" name="payment_medium_id" value={client.payment_medium_id} onChange={handleInputChange}>
+                                <option value="" disabled>Select Medium</option>
+                                {mediumList}
+                            </select>
+                        </div>
+                    </div>
+                    
                     <div className="form-group">
                         <label className="control-label col-auto px-0" htmlFor="company_logo">Company Logo:</label>
                         <div className="col-sm-10 pl-0">
@@ -116,7 +143,6 @@ const AddClient = (props) => {
                                 onChange={handleInputChange}
                                 value={client.address}
                             ></textarea>
-
                         </div>
                     </div>
                     <div className="form-group">

@@ -4,9 +4,10 @@ import api from '../../helpers/api';
 import { ToastsStore } from 'react-toasts';
 
 const EditClient = (props) => {
-    const initialFormState = { name: '', company_name: '', country_id: '', company_logo: '', address: '' }
+    const initialFormState = { name: '', company_name: '', country_id: '', payment_medium_id: '', company_logo: '', address: '' }
 
     const [client, setClient] = useState(initialFormState);
+    const [mediums, setMediums] = useState([]);
     const [countries, setCountries] = useState([]);
     const [sendRequest, setSendRequest] = useState(false);
     const [logoUrl, setLogoUrl] = useState('');
@@ -22,6 +23,12 @@ const EditClient = (props) => {
     };
 
     useEffect(() => {
+        api.get("/get-income-mediums")
+            .then(res => {
+                setMediums(res.data.medium);
+            })
+            .catch(res => {});
+
         api.get('/countries').then((res) => {
             setCountries(res.data.country);
         })
@@ -33,6 +40,7 @@ const EditClient = (props) => {
                         name: data.name,
                         company_name: data.company_name,
                         country_id: data.country_id,
+                        payment_medium_id:data.payment_medium_id,
                         address: data.address,
                         company_logo: data.company_logo
                     });
@@ -43,6 +51,17 @@ const EditClient = (props) => {
         };
         fetchData();
     }, []);
+
+    const mediumList =
+            mediums &&
+            mediums.map((medium, key) => {
+                return (
+                    <option value={medium._id} key={key}>
+                        {medium.medium}
+                    </option>
+                );
+            });
+
 
     const editClient = () => {
         delete client._id;
@@ -112,6 +131,15 @@ const EditClient = (props) => {
                                         return <option value={value._id} key={value._id}>{value.name}</option>
                                     })
                                 }
+                            </select>
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label className="control-label col-auto px-0" htmlFor="payment_medium">Preferred payment Medium:</label>
+                        <div className="col-sm-10 pl-0">
+                            <select className="form-control" name="payment_medium_id" value={client.payment_medium_id} onChange={handleInputChange}>
+                                <option value="" disabled>Select Medium</option>
+                                {mediumList}
                             </select>
                         </div>
                     </div>
