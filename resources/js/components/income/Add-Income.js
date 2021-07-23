@@ -66,18 +66,25 @@ function AddIncome() {
             );
         });
     const handleInputChange = key => event => {
+        
         const rows = [...incomeData];
+        const { name, value } = event.target;        
         if (event instanceof Date) {
             rows[key] = {
                 ...rows[key],
                 ["date"]: event
-            };
-        } else {
-            const { name, value } = event.target;
+            }; 
+        }
+        else{
             rows[key] = {
                 ...rows[key],
                 [name]: value
             };
+        }
+
+        if(name==='client_id')
+        {
+            rows[key].medium= clients.find((client) => client._id === value).payment_medium_id;
         }
         setIncomeData(rows);
     };
@@ -140,7 +147,8 @@ function AddIncome() {
                     ""
                 )}
                 {incomeData.map((incomeItem, key) => (
-                    <div className="row mx-0 mb-2" key={key}>
+                    
+                    <div className="row mx-0 mb-2" key={key}>     
                         <div className="col-xl-6 custom__col col-md-10 border p-xl-4 p-3 mb-3">
                             <div className="row mx-0 mt-2 flex-column flex-md-row">
                                 <div className="col form-group px-0 px-lg-3 px-md-2">

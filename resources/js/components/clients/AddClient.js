@@ -114,7 +114,7 @@ const AddClient = (props) => {
                         </div>
                     </div>
                     <div className="form-group">
-                        <label className="control-label col-auto px-0" htmlFor="payment_medium">Preferred payment Medium:</label>
+                        <label className="control-label col-auto px-0" htmlFor="payment_medium">Preferred Payment Medium:</label>
                         <div className="col-sm-10 pl-0">
                             <select className="form-control" name="payment_medium_id" value={client.payment_medium_id} onChange={handleInputChange}>
                                 <option value="" disabled>Select Medium</option>
