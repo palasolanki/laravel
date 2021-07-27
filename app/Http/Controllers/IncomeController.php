@@ -21,6 +21,7 @@ class IncomeController extends Controller
      */
     public function index(Request $request)
     {
+
         $from = ($request->daterange[0]) ? Carbon::parse($request->daterange[0]) : null;
         $to = ($request->daterange[1]) ? Carbon::parse($request->daterange[1]) : null;
 
@@ -32,7 +33,7 @@ class IncomeController extends Controller
                 return $income->whereBetween('date', [$from, $to]);
             })
             ->when($selectedClient != "all", function ($income) use ($selectedClient) {
-                return $income->where('client_id', $selectedClient);
+                return $income->where('client.id', $selectedClient);
             })
             ->when($selectedMediums, function ($income) use ($selectedMediums) {
                 return $income->whereIn('medium.id', $selectedMediums);
