@@ -28,23 +28,26 @@ class IncomeController extends Controller
         $selectedMediums = $request->mediums;
         $selectedTags = $request->tags;
         $income = Income::with('tags')
-                ->when($from, function ($income) use ($from, $to) {
-                    return $income->whereBetween('date', [$from, $to]);
-                })
-                ->when($selectedClient != "all", function ($income) use ($selectedClient) {
-                    return $income->where('client_id', $selectedClient);
-                })
-                ->when($selectedMediums, function ($income) use ($selectedMediums) {
-                    return $income->whereIn('medium.id', $selectedMediums);
-                })
-                ->when($selectedTags, function ($income) use ($selectedTags) {
-                    return $income->whereIn('tag_ids', $selectedTags);
-                });
+            ->when($from, function ($income) use ($from, $to) {
+                return $income->whereBetween('date', [$from, $to]);
+            })
+            ->when($selectedClient != "all", function ($income) use ($selectedClient) {
+                return $income->where('client_id', $selectedClient);
+            })
+            ->when($selectedMediums, function ($income) use ($selectedMediums) {
+                return $income->whereIn('medium.id', $selectedMediums);
+            })
+            ->when($selectedTags, function ($income) use ($selectedTags) {
+                return $income->whereIn('tag_ids', $selectedTags);
+            });
+
+        $totalAmount = $income->sum("amount");
 
         return (new MongodbDataTable($income))
             ->addColumn('selectedDateForEdit', function ($income) {
                 return $income->date;
             })
+            ->with('totalAmount', $totalAmount)
             ->make(true);
     }
 
@@ -117,12 +120,14 @@ class IncomeController extends Controller
         return ['message' => 'Income deleted successfully.'];
     }
 
-    public function monthlyIncomeChart(Request $request) {
+    public function monthlyIncomeChart(Request $request)
+    {
         $chartData = $this->getChartData($request->chart_range, 'income');
         return ['monthlyIncome' => $chartData[0], 'labels' => $chartData[1]];
     }
 
-    public function getTagList() {
+    public function getTagList()
+    {
         $tags = Tag::select('_id', 'tag')->where('type', 'income')->get();
         return ['tags' => $tags];
     }
