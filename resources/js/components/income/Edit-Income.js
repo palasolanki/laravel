@@ -113,6 +113,7 @@ function EditIncome(props) {
                                 </select>
                             </div>
                             <div className="form-group pt-1">
+                            <label>Tag:</label>
                                 <Select
                                     value={income.tags}
                                     onChange={handleSelectChange}

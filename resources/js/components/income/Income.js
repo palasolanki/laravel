@@ -34,6 +34,8 @@ export default function Income() {
     const [showDeleteModal, setDeleteShow] = useState(false);
     const handleCloseDelete = () => setDeleteShow(false);
 
+    const [currentIncome, setCurrentIncome] = useState();
+    
     var totalAmount = 0;
 
     const editRow = income => {
