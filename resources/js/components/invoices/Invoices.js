@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import api from "../../helpers/api";
 import { ToastsStore } from "react-toasts";
@@ -9,7 +9,8 @@ import moment from "moment";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
-function Invoices() {
+function Invoices(props) {
+    const history = props.history;
     const [dataTable, setDataTable] = useState(null);
     const [showDeleteModal, setDeleteShow] = useState(false);
     const openShowDelete = () => setDeleteShow(true);
@@ -73,11 +74,23 @@ function Invoices() {
                     );
                 }
 
-                let action =
-                    '<button id="' +
-                    data._id +
-                    '" class="btn btn-sm btn--cancel deletData" >Delete</button>';
-                $("td:eq(4)", row).html(action);
+                // let action =`<button to=${data._id} class="btn btn-sm btn--prime mr-2 deletData">Edit</button>
+                // <button id=${data._id} class="btn btn-sm btn--cancel deletData" >Delete</button>`;
+                let aTag = document.createElement('button');
+                aTag.textContent='Edit';
+                // aTag.html('Edit');
+                aTag.addEventListener('click', function () {
+                    history.push(`invoices/edit/${data._id}`);
+                });
+
+                // const editAction = `
+                //     <a onClick="">
+                //         Edit
+                //     </a>`;
+
+                // let action =`<button id=${data._id} class="btn btn-sm btn--cancel deletData" >Delete</button>`;
+
+                $("td:eq(4)", row).html(aTag);
             },
         });
         setDataTable(table);

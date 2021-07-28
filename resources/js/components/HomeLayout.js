@@ -85,6 +85,7 @@ export default class Home extends Component {
             <Route exact path='/mediums'  component={Mediums} />
             <Route exact path='/invoices'  component={Invoices} />
             <Route exact path='/invoices/add' component={AddInvoices} />
+            <Route exact path='/invoices/edit/:id' component={AddInvoices}/>
           </Switch>
         </div>
       </Fragment>

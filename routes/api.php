@@ -80,4 +80,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::delete('/invoices/{invoice}', 'InvoiceController@destroy');
 
     Route::get('/invoices/get-next-invoice-number', 'InvoiceController@getNextInvoiceNumber');
+
+    Route::get('/getInvoices/{invoiceId}', 'InvoiceController@edit');
+    Route::post('/invoices/edit', 'InvoiceController@update');
 });

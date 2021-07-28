@@ -3,7 +3,11 @@ import api from "../../helpers/api";
 import DatePicker from "react-datepicker";
 import { ToastsStore } from "react-toasts";
 
-const AddInvoices = props => {
+const AddInvoices = (props) => {
+
+    const invoiceId = props.match.params.id || null;
+
+
     const initialRow = {
         item: "",
         quantity: 0,
@@ -31,7 +35,7 @@ const AddInvoices = props => {
     const [total, setTotal] = useState(0);
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
-    
+
 
     const handleChange = (index) => (e) => {
         let name = e.target.getAttribute('name');
@@ -58,9 +62,35 @@ const AddInvoices = props => {
         api.get("/invoices/get-next-invoice-number")
         .then(res=>{
             setInvoice({ ...invoice, number:res.data.nextInvoiceNumber });
-           
+
         });
-    }, []);
+
+        if (!invoiceId) return;
+        api.get("/getInvoices/" + invoiceId)
+            .then((res) => {
+                let date= new Date(res.data.editInvoice[0].date) ;
+                let dueDate=new Date(res.data.editInvoice[0].due_date);
+                const respEditInvoice = {...res.data.editInvoice[0], date, due_date:dueDate};
+                setInvoice(respEditInvoice);
+            })
+            .catch((err) => {
+
+            });
+    },[invoiceId]);
+
+    // useEffect(() => {
+    //     setTotalAmount();
+    //     api.get("/getClients")
+    //         .then(res => {
+    //             setClients(res.data.clients);
+    //         })
+    //         .catch(res => { });
+    //     api.get("/invoices/get-next-invoice-number")
+    //     .then(res=>{
+    //         setInvoice({ ...invoice, number:res.data.nextInvoiceNumber });
+
+    //     });
+    // }, []);
 
     const clientList =
         clients &&
@@ -101,6 +131,7 @@ const AddInvoices = props => {
     };
 
     const addRow = () => {
+        console.log(invoice);
         setInvoice({ ...invoice, lines: [...invoice.lines, initialRow] });
     };
 
@@ -135,6 +166,21 @@ const AddInvoices = props => {
         api.post(`/invoices/add`, { ...invoice, amount_due: total}, {responseType: 'blob'})
         .then(res => {
             ToastsStore.success('Invoice saved successfully.');
+            downloadFile(res);
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+    };
+
+    const editInvoice = () => {
+        if (!invoice.lines.length || !total || !invoice.bill_from) {
+            ToastsStore.error("Required fields missing.");
+            return;
+        }
+        api.post(`/invoices/edit`, { ...invoice}, {responseType: 'blob'})
+        .then(res => {
+            ToastsStore.success('Invoice Edited successfully.');
             downloadFile(res);
         })
         .catch(function (err) {
@@ -216,7 +262,7 @@ const AddInvoices = props => {
                                             <td>
                                                 <span
                                                     name="number"
-                                                    
+
                                                 >
                                                     {invoice.number}
                                                 </span>
@@ -415,7 +461,7 @@ const AddInvoices = props => {
                                                     true
                                                 }
                                             >
-                                                Total
+                                                Totalsdfdsfdsf
                                             </span>
                                         </th>
                                         <td>
@@ -467,16 +513,16 @@ const AddInvoices = props => {
                                 placeholder="Enter Note"
                                 name="notes"
                                 onChange={onChange}
-                                value={invoice.notes}
+                                value={invoice.notes  || ''}
                             />
                         </div>
                     </aside>
                     <div className="form-group text-right invoice-save-btn">
                         <button
                             type="button"
-                            onClick={saveInvoice}
+                            onClick={(invoiceId) ? editInvoice : saveInvoice}
                             className="btn btn--prime mr-1">
-                            Save & Download
+                                {(invoiceId) ? 'Update & Download' : 'Save & Download'}
                           </button>
                     </div>
                 </div>
