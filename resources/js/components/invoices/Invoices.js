@@ -74,23 +74,10 @@ function Invoices(props) {
                     );
                 }
 
-                // let action =`<button to=${data._id} class="btn btn-sm btn--prime mr-2 deletData">Edit</button>
-                // <button id=${data._id} class="btn btn-sm btn--cancel deletData" >Delete</button>`;
-                let aTag = document.createElement('button');
-                aTag.textContent='Edit';
-                // aTag.html('Edit');
-                aTag.addEventListener('click', function () {
-                    history.push(`invoices/edit/${data._id}`);
-                });
+                let action =`<button id=${data._id} class="btn btn-sm btn--prime mr-2 editData">Edit</button>
+                <button id=${data._id} class="btn btn-sm btn--cancel deletData" >Delete</button>`;
 
-                // const editAction = `
-                //     <a onClick="">
-                //         Edit
-                //     </a>`;
-
-                // let action =`<button id=${data._id} class="btn btn-sm btn--cancel deletData" >Delete</button>`;
-
-                $("td:eq(4)", row).html(aTag);
+                $("td:eq(4)", row).html(action);
             },
         });
         setDataTable(table);
@@ -100,7 +87,10 @@ function Invoices(props) {
     const registerEvent = () => {
         $("#datatable").on("click", "tbody .deletData", function (e) {
             setDeleteInvoiceIdFunction($(e.target).attr("id"));
-            setDeleteShow(true);
+            // setDeleteShow(true);
+        });
+        $("#datatable").on("click", "tbody .editData", function (e) {
+            history.push(`invoices/edit/${$(e.target).attr("id")}`);
         });
     };
     const setDeleteInvoiceIdFunction = currentDeleteInvoiceId => {
