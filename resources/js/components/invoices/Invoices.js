@@ -50,6 +50,8 @@ function Invoices(props) {
                 { title: "Number", data: "number" },
                 { title: "Client Name", data: "client.name", defaultContent: "N/A" },
                 { title: "Date", data: "date" },
+                { title: "Status", data: "status", defaultContent: "open" },
+                { title: "Last Send Invoice", data: 'last_sent_at', defaultContent: "N/A" },
                 { title: "Amount Due", data: "amount_due" },
                 {
                     title: "Action",
@@ -75,9 +77,10 @@ function Invoices(props) {
                 }
 
                 let action =`<button id=${data._id} class="btn btn-sm btn--prime mr-2 editData">Edit</button>
-                <button id=${data._id} class="btn btn-sm btn--cancel deletData" >Delete</button>`;
+                <button id=${data._id} class="btn btn-sm btn--cancel deleteData" >Delete</button>
+                <button id=${data._id} class="btn btn-sm ml-2 btn-dark sendData" >Send Invoice</button>`;
 
-                $("td:eq(4)", row).html(action);
+                $("td:eq(6)", row).html(action);
             },
         });
         setDataTable(table);
@@ -85,12 +88,26 @@ function Invoices(props) {
 
     const [deleteInvoiceId, setDeleteInvoiceId] = useState();
     const registerEvent = () => {
-        $("#datatable").on("click", "tbody .deletData", function (e) {
+        $("#datatable").on("click", "tbody .deleteData", function (e) {
             setDeleteInvoiceIdFunction($(e.target).attr("id"));
             // setDeleteShow(true);
         });
+
         $("#datatable").on("click", "tbody .editData", function (e) {
             history.push(`invoices/edit/${$(e.target).attr("id")}`);
+        });
+
+        $('#datatable').on('click','tbody .sendData',function (e) {
+            let invoice = $(e.target).attr('id');
+            api.get(`/invoices/send/${invoice}`)
+            .then(res => {
+                dataTable.ajax.reload();
+                ToastsStore.success('Invoice Mailed successfully.');
+
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
         });
     };
     const setDeleteInvoiceIdFunction = currentDeleteInvoiceId => {

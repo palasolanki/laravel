@@ -24,6 +24,7 @@ const AddInvoices = (props) => {
         amount_due: 0,
         amount_paid: 0,
         notes: '',
+        status: '',
         bill_from:
         `Radicalloop Technolabs LLP,
         India
@@ -225,24 +226,38 @@ const AddInvoices = (props) => {
                     </div>
                     <article>
                         <div style={{ float: "left", width: "20%" }}>
-                            <p>Bill To:</p>
-                            <div
-                                contentEditable={true}
-                                suppressContentEditableWarning={true}
-                            >
-                                <select
-                                    name="client_id"
-                                    onChange={onChange}
-                                    value={invoice.client_id}
-                                    className="form-control"
-                                >
-                                    <option value="">Select Client</option>
-                                    {clientList}
-                                </select>
-                                <div className="mt-2 invoice-address">
-                                    {invoice.bill_to.address}
+                            <div>
+                                <span>Bill To:</span>
+                                <div contentEditable={true} suppressContentEditableWarning={true} >
+                                    <select
+                                        name="client_id"
+                                        onChange={onChange}
+                                        value={invoice.client_id}
+                                        className="form-control"
+                                    >
+                                        <option value="">Select Client</option>
+                                        {clientList}
+                                    </select>
+                                    <div className="mt-2 invoice-address">
+                                        {invoice.bill_to.address}
+                                    </div>
                                 </div>
                             </div>
+                            <div className="mt-5">
+                                <span>Status:</span>
+                                <div contentEditable={true} suppressContentEditableWarning={true} >
+                                    <select
+                                        name="status"
+                                        onChange={onChange}
+                                        value={invoice.status}
+                                        className="form-control"
+                                    >
+                                        <option value="open">Open</option>
+                                        <option value="paid">Paid</option>
+                                    </select>
+                                </div>
+                            </div>
+
                         </div>
                         <div className="invoice-table">
                             <div style={{ float: "right", width: "80%" }}>
@@ -461,7 +476,7 @@ const AddInvoices = (props) => {
                                                     true
                                                 }
                                             >
-                                                Totalsdfdsfdsf
+                                                Total
                                             </span>
                                         </th>
                                         <td>

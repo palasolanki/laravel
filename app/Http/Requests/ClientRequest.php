@@ -30,6 +30,7 @@ class ClientRequest extends FormRequest
 
         return [
             'name' => 'required',
+            'email' => 'required|email',
             'company_name' => 'required',
             'country_id' => 'required',
             'payment_medium_id' => 'required',
@@ -47,6 +48,7 @@ class ClientRequest extends FormRequest
         }
         $client = Client::find($id);
         $client->name = $this->name;
+        $client->email = $this->email;
         $client->company_name = $this->company_name;
         $client->country_id = $this->country_id;
         $client->payment_medium_id = $this->payment_medium_id;

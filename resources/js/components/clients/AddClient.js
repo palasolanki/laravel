@@ -5,7 +5,7 @@ import { ToastsStore } from 'react-toasts';
 import { extendWith } from 'lodash';
 
 const AddClient = (props) => {
-    const initialFormState = { name: '', company_name: '', country_id: '', payment_medium_id: '', company_logo: '', address: '' };
+    const initialFormState = { name: '', email:'', company_name: '', country_id: '', payment_medium_id: '', company_logo: '', address: '' };
 
     const [client, setClient] = useState(initialFormState);
     const [countries, setCountries] = useState([]);
@@ -49,7 +49,7 @@ const AddClient = (props) => {
             setLogoUrl((window.URL ? URL : webkitURL).createObjectURL(file));
             setClient({ ...client, [name]: file});
             return;
-        }        
+        }
         setClient({ ...client, [name]: value });
     }
     const submitForm = event => {
@@ -95,6 +95,13 @@ const AddClient = (props) => {
                         </div>
                     </div>
                     <div className="form-group">
+                        <label className="control-label col-auto px-0" htmlFor="name">Email:</label>
+                        <div className="col-sm-10 pl-0">
+                            <input type="email" className="form-control" placeholder="Enter Email" name="email" value={client.email} onChange={handleInputChange} />
+                        </div>
+                    </div>
+
+                    <div className="form-group">
                         <label className="control-label col-auto px-0" htmlFor="company_name">Company Name:</label>
                         <div className="col-sm-10 pl-0">
                             <input type="text" className="form-control" placeholder="Enter Company Name" name="company_name" value={client.company_name} onChange={handleInputChange} />
@@ -122,7 +129,7 @@ const AddClient = (props) => {
                             </select>
                         </div>
                     </div>
-                    
+
                     <div className="form-group">
                         <label className="control-label col-auto px-0" htmlFor="company_logo">Company Logo:</label>
                         <div className="col-sm-10 pl-0">

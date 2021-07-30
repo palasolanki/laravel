@@ -4,8 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\InvoiceRequest;
+use App\Mail\SendInvoice;
 use App\Models\Invoice;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon as SupportCarbon;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Pimlie\DataTables\MongodbDataTable;
 use PDF;
 
@@ -24,6 +29,7 @@ class InvoiceController extends Controller
     public function store(InvoiceRequest $request)
     {
         $inputs = $request->validated();
+
         $invoice =  Invoice::create($inputs);
 
 
@@ -59,6 +65,7 @@ class InvoiceController extends Controller
                 'lines' => $request->lines,
                 'date' => $request->date,
                 'due_date' => $request->due_date,
+                'status' => $request->status,
                 'amount_due' => $request->amount_due,
                 'amount_paid' => $request->amount_paid,
                 'notes' => $request->notes,
@@ -66,5 +73,23 @@ class InvoiceController extends Controller
                 'bill_to' => $request->bill_to,
             ]);
         return response()->json(['Data' => $invoice]);
+    }
+    public function send(Invoice $invoice)
+    {
+        $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
+        $fileName = 'public/invoice/invoice_' . $invoice->number . '.pdf';
+        Storage::put($fileName, $pdf->output());
+
+        Mail::to($invoice->client->email)->send(new SendInvoice($invoice, $fileName));
+
+        $invoice = Invoice::where('_id', $invoice->_id)
+            ->update([
+                'last_sent_at' => Carbon::now()->toDateTimeString()
+            ]);
+        // $invoice = Invoice::updateOrInsert(
+        //     ['_id' => $invoice->_id],
+        //     ['last_sent_at' => now()]
+        // );
+        exit;
     }
 }

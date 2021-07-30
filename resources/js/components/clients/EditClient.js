@@ -4,7 +4,7 @@ import api from '../../helpers/api';
 import { ToastsStore } from 'react-toasts';
 
 const EditClient = (props) => {
-    const initialFormState = { name: '', company_name: '', country_id: '', payment_medium_id: '', company_logo: '', address: '' }
+    const initialFormState = { name: '', email:'', company_name: '', country_id: '', payment_medium_id: '', company_logo: '', address: '' }
 
     const [client, setClient] = useState(initialFormState);
     const [mediums, setMediums] = useState([]);
@@ -38,6 +38,7 @@ const EditClient = (props) => {
                     let data = res.data.client;
                     setClient({
                         name: data.name,
+                        email: data.email,
                         company_name: data.company_name,
                         country_id: data.country_id,
                         payment_medium_id:data.payment_medium_id,
@@ -113,6 +114,12 @@ const EditClient = (props) => {
                         <label className="control-label" htmlFor="name">Name:</label>
                         <div className="col-sm-10 pl-0">
                             <input type="text" className="form-control" placeholder="Enter Name" name="name" value={client.name} onChange={handleInputChange} />
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label className="control-label col-auto px-0" htmlFor="name">Email:</label>
+                        <div className="col-sm-10 pl-0">
+                            <input type="email" className="form-control" placeholder="Enter Email" name="email" value={client.email} onChange={handleInputChange} />
                         </div>
                     </div>
                     <div className="form-group">
