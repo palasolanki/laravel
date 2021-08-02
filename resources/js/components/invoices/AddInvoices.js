@@ -66,6 +66,10 @@ const AddInvoices = (props) => {
 
         });
 
+
+    },[]);
+
+    useEffect(() => {
         if (!invoiceId) return;
         api.get("/getInvoices/" + invoiceId)
             .then((res) => {
@@ -78,20 +82,6 @@ const AddInvoices = (props) => {
 
             });
     },[invoiceId]);
-
-    // useEffect(() => {
-    //     setTotalAmount();
-    //     api.get("/getClients")
-    //         .then(res => {
-    //             setClients(res.data.clients);
-    //         })
-    //         .catch(res => { });
-    //     api.get("/invoices/get-next-invoice-number")
-    //     .then(res=>{
-    //         setInvoice({ ...invoice, number:res.data.nextInvoiceNumber });
-
-    //     });
-    // }, []);
 
     const clientList =
         clients &&

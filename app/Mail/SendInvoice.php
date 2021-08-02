@@ -20,12 +20,14 @@ class SendInvoice extends Mailable
      */
     public $invoice;
     public $fileName;
+    public $msg;
 
-
-    public function __construct(Invoice $invoice, $fileName)
+    public function __construct(Invoice $invoice, $fileName, $msg)
     {
+
         $this->invoice = $invoice;
         $this->fileName = $fileName;
+        $this->msg = $msg;
     }
 
     /**

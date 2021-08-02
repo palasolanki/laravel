@@ -74,22 +74,19 @@ class InvoiceController extends Controller
             ]);
         return response()->json(['Data' => $invoice]);
     }
-    public function send(Invoice $invoice)
+    public function sendInvoice(Invoice $invoice, Request $request)
     {
+        // dd($invoice);
         $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
         $fileName = 'public/invoice/invoice_' . $invoice->number . '.pdf';
         Storage::put($fileName, $pdf->output());
 
-        Mail::to($invoice->client->email)->send(new SendInvoice($invoice, $fileName));
-
+        Mail::to($invoice->client->email)->send(new SendInvoice($invoice, $fileName, $request->message));
         $invoice = Invoice::where('_id', $invoice->_id)
             ->update([
                 'last_sent_at' => Carbon::now()->toDateTimeString()
             ]);
-        // $invoice = Invoice::updateOrInsert(
-        //     ['_id' => $invoice->_id],
-        //     ['last_sent_at' => now()]
-        // );
-        exit;
+
+        return;
     }
 }
