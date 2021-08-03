@@ -256,6 +256,11 @@ class Dashboard extends Component {
       const project = list[list.length - 1];
       return <Redirect to={`project/${project.first_tab._id}`} />
     }
+    let incomeCnt=0;
+    let incomeTotal=0;
+    let expenseCnt=0;
+    let expenseTotal=0;
+
     return (
       <Fragment>
         <div className="form-group d-flex align-items-center pl-4 mt-3">
@@ -266,68 +271,36 @@ class Dashboard extends Component {
               <option value="last_12_month">Last-12 Month</option>
           </select>
         </div>
-        <div className="col-xl-6">
-          { this.state.expenseChartData.length > 0 && this.state.expenseLabels.length > 0 &&
-              <ChartExpense expesedata={this.state.expenseChartData} labels={this.state.expenseLabels}/>
-          }
+        <div className="d-flex">
+          <div className="col-xl-6">
+            { this.state.expenseChartData.length > 0 && this.state.expenseLabels.length > 0 &&
+                <ChartExpense expesedata={this.state.expenseChartData} labels={this.state.expenseLabels}/>
+            }
+          </div>
+          <div className="text-bolder mt-3 ml-5">
+            {this.state.expenseChartData.map((v,k) => {
+              expenseCnt = expenseCnt + 1;
+              expenseTotal = expenseTotal + v;
+            })}
+            Average: {new Intl.NumberFormat('en',{style:'currency', currency:'INR'}).format(expenseTotal/expenseCnt)}
+          </div>
         </div>
-        <div className="col-xl-6 mt-md-5 mt-4">
-          { this.state.incomeChartData.length > 0 && this.state.incomeLabels.length > 0 &&
-            <ChartIncome incomedata={this.state.incomeChartData} labels={this.state.incomeLabels}/>
-          }
+        <div className="d-flex">
+          <div className="col-xl-6 mt-md-5 mt-3">
+            { this.state.incomeChartData.length > 0 && this.state.incomeLabels.length > 0 &&
+              <ChartIncome incomedata={this.state.incomeChartData} labels={this.state.incomeLabels}/>
+            }
+          </div>
+          <div className="text-bolder mt-md-5 mt-5 ml-5">
+            {this.state.incomeChartData.map((v,k) => {
+              incomeCnt = incomeCnt + 1;
+              incomeTotal=incomeTotal+v;
+            })}
+            Average: {new Intl.NumberFormat('en',{style:'currency', currency:'INR'}).format(incomeTotal/incomeCnt)}
+          </div>
         </div>
-        {/* <div className={classnames({ "overlay": isAddProject !== null }, "dashboard p-3")} >
-          {
-            this.types.map((type, i) => {
-              return <div className={classnames({ "position-relative": isAddProject !== i }, "section")} key={i}>
-                <h3 className="mb-4">{type.title}</h3>
-                <div className="list">
-                  <ul className="ml-md-3 list-inline unstyled">
-                    {list.map((list, i) => (
-                      list.type === type.type) && <ProjectCard
-                        showDropdown={() => this.showDropdown(i)}
-                        index={i}
-                        activeId={activeId}
-                        visibleDropdown={visibleDropdown}
-                        project={list}
-                        key={list._id}
-                        deleteProject={() => this.deleteProject(i)}
-                        confirmDeleteTab={this.confirmDeleteTab}
-                        showConfirmationPopup={showConfirmationPopup}
-                        backToDropdown={this.backToDropdown}
-                        dropdownRef={dropdownRef => (this.dropdownRef = dropdownRef)}
-                        onClickEditBtn={() => this.onClickEditBtn(i)}
-                        editTitle={(e) => this.editTitle(i, e)}
-                        isTitleEditable={isTitleEditable}
-                        saveEditedData={(e) => this.saveEditedData(i, e)}
-                        changeTitleValue={(e) => this.changeTitleValue(i, e)}
-                        changeFinancialYear={(e) => this.changeFinancialYear(i, e)}
-                        editedFinancialYear={editedFinancialYear}
-                        cancelEdit={this.cancelEdit}
-                      />
-                    )}
-                    <li className="list-inline-item">
-                      {
-                        (isAddProject === i && !isTitleEditable) ?
-                          <ProjectForm
-                            projectTitle={projectTitle}
-                            financialYear={financialYear}
-                            getFinancialYear={this.getFinancialYear}
-                            editProjectTitle={this.editProjectTitle}
-                            saveProject={this.saveProject.bind(this, type.type)}
-                            closeProjectForm={this.closeProjectForm}
-                            onPressKey={(e) => this.onPressKey(type.type, e)}
-                          />
-                          :
-                          <AddButton addProject={this.addProject.bind(this, i)} />
-                      }
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            })
-          }
-        </div> */}
+
+
       </Fragment>
     );
   }
