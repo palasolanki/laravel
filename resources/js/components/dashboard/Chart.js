@@ -2,6 +2,7 @@ import React from 'react';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 
 export default function Chart(props) {
+  // console.log(props);
     const data = {
         labels:props.labels,
         datasets:[
@@ -26,6 +27,15 @@ export default function Chart(props) {
                   display:true,
                   position:"bottom"
                 },
+                tooltips: {
+                  callbacks: {
+                    label: (tooltipItem, data) => {
+                      let dataset = data.datasets[tooltipItem.datasetIndex];
+                      let currentValue = new Intl.NumberFormat('en',{style:'currency', currency:'INR'}).format(dataset.data[tooltipItem.index]);
+                      return currentValue;
+                    }
+                  }
+                }
               }}/>
             }
         </div>
