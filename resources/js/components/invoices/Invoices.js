@@ -169,7 +169,7 @@ function Invoices(props) {
                     </tfoot>
                 </table>
             </div>
-            {OpenMsgModal && <InvoiceMsgModal handleCloseEdit={closeMsgModal} sendInvoice={sendInvoice} isLoading={isLoading} />}
+            {OpenMsgModal && <InvoiceMsgModal handleCloseMsgModal={closeMsgModal} sendInvoice={sendInvoice} isLoading={isLoading} />}
             {showDeleteModal && (
                 <ConfirmationComponent
                     title="Are you sure to delete this Invoice?"
