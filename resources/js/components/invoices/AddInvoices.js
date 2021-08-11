@@ -4,9 +4,7 @@ import DatePicker from "react-datepicker";
 import { ToastsStore } from "react-toasts";
 
 const AddInvoices = (props) => {
-
     const invoiceId = props.match.params.id || null;
-
 
     const initialRow = {
         item: "",
@@ -156,9 +154,9 @@ const AddInvoices = (props) => {
         }
         api.post(`/invoices/add`, { ...invoice, amount_due: total}, {responseType: 'blob'})
         .then(res => {
-            window.location('/invoices');
             ToastsStore.success('Invoice saved successfully.');
             downloadFile(res);
+            props.history.push('/invoices');
         })
         .catch(function (err) {
             console.log(err);
@@ -243,7 +241,7 @@ const AddInvoices = (props) => {
                                         value={invoice.status}
                                         className="form-control"
                                     >
-                                        <option value="open" selected>Open</option>
+                                        <option value="open">Open</option>
                                         <option value="paid">Paid</option>
                                     </select>
                                 </div>
