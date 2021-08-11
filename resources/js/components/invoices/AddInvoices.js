@@ -24,7 +24,7 @@ const AddInvoices = (props) => {
         amount_due: 0,
         amount_paid: 0,
         notes: '',
-        status: '',
+        status: 'open',
         bill_from:
         `Radicalloop Technolabs LLP,
         India
@@ -156,6 +156,7 @@ const AddInvoices = (props) => {
         }
         api.post(`/invoices/add`, { ...invoice, amount_due: total}, {responseType: 'blob'})
         .then(res => {
+            window.location('/invoices');
             ToastsStore.success('Invoice saved successfully.');
             downloadFile(res);
         })
@@ -242,7 +243,7 @@ const AddInvoices = (props) => {
                                         value={invoice.status}
                                         className="form-control"
                                     >
-                                        <option value="open">Open</option>
+                                        <option value="open" selected>Open</option>
                                         <option value="paid">Paid</option>
                                     </select>
                                 </div>
