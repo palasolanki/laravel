@@ -78,12 +78,11 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/invoices', 'InvoiceController@index');
     Route::post('/invoices/add', 'InvoiceController@store');
     Route::delete('/invoices/{invoice}', 'InvoiceController@destroy');
-
-    Route::get('/invoices/get-next-invoice-number', 'InvoiceController@getNextInvoiceNumber');
-
-    Route::get('/getInvoices/{invoiceId}', 'InvoiceController@edit');
+    Route::get('/invoices/next-invoice-number', 'InvoiceController@getNextInvoiceNumber');
     Route::post('/invoices/edit', 'InvoiceController@update');
     Route::post('/invoices/send/{invoice}', 'InvoiceController@sendInvoice');
+
+    Route::get('/invoice/{invoiceId}', 'InvoiceController@edit');
 
     Route::post('/importExpense', 'ExpenseController@importExpense');
 });

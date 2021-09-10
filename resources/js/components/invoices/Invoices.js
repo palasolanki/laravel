@@ -4,7 +4,7 @@ import api from "../../helpers/api";
 import { ToastsStore } from "react-toasts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import InvoiceMsgModal from "./Invoice-Msg";
+import InvoiceMessageModal from "./InvoiceMessageModal";
 import ConfirmationComponent from "../ConfirmationComponent";
 import moment from "moment";
 const $ = require("jquery");
@@ -13,16 +13,15 @@ $.DataTable = require("datatables.net");
 function Invoices(props) {
     const history = props.history;
     const [dataTable, setDataTable] = useState(null);
-    const [OpenMsgModal, setOpenMsgModal] = useState(false);
+    const [openMsgModal, setOpenMsgModal] = useState(false);
     const [showDeleteModal, setDeleteShow] = useState(false);
     const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
 
-    const openMsgModal = () => setOpenMsgModal(true);
     const closeMsgModal = () => {
-        setOpenMsgModal(false)
-
+        setOpenMsgModal(false);
     };
+
     const [invoiceId, setInvoiceDataId] = useState();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -38,7 +37,7 @@ function Invoices(props) {
 
     const setSendInvoiceId = (invoiceId) => {
         setInvoiceDataId(invoiceId);
-        openMsgModal();
+        setOpenMsgModal(true);
     }
 
     const initDatatables = () => {
@@ -66,7 +65,7 @@ function Invoices(props) {
                 { title: "Client Name", data: "client.name", defaultContent: "N/A" },
                 { title: "Date", data: "date" },
                 { title: "Status", data: "status", defaultContent: "open" },
-                { title: "Last Send Invoice", data: 'last_sent_at', defaultContent: "N/A" },
+                { title: "Last Sent At", data: 'last_sent_at', defaultContent: "N/A" },
                 { title: "Amount Due", data: "amount_due" },
                 {
                     title: "Action",
@@ -126,7 +125,7 @@ function Invoices(props) {
         .then(res => {
             dataTable.ajax.reload();
             setIsLoading(false);
-            ToastsStore.success('Invoice Mailed successfully.');
+            ToastsStore.success('Invoice emailed successfully.');
             closeMsgModal();
 
         })
@@ -169,7 +168,7 @@ function Invoices(props) {
                     </tfoot>
                 </table>
             </div>
-            {OpenMsgModal && <InvoiceMsgModal handleCloseMsgModal={closeMsgModal} sendInvoice={sendInvoice} isLoading={isLoading} />}
+            {openMsgModal && <InvoiceMessageModal handleCloseMsgModal={closeMsgModal} sendInvoice={sendInvoice} isLoading={isLoading} />}
             {showDeleteModal && (
                 <ConfirmationComponent
                     title="Are you sure to delete this Invoice?"

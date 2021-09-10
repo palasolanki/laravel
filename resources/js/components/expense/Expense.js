@@ -40,10 +40,9 @@ function Expense() {
     const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
 
-    const [showImportModal, setImportShow]=useState(false)
+    const [showImportModal, setImportShow] = useState(false);
     const closeImportModal = () => {
-        setImportShow(false)
-
+        setImportShow(false);
     };
 
     useEffect(() => {
@@ -234,7 +233,6 @@ function Expense() {
             }
         });
         formData.append("_method", "put");
-        console.log(formData);
         api.post(`/expenses/${expenseId}`, formData).then(res => {
             handleCloseEdit();
             ToastsStore.success(res.data.message);
@@ -308,7 +306,7 @@ function Expense() {
     };
 
     const importShow = () => {
-        setImportShow(true)
+        setImportShow(true);
     }
 
     const importData = (fileState) => {
@@ -321,7 +319,7 @@ function Expense() {
         api.post("/importExpense", formData)
         .then(res => {
             closeImportModal();
-            ToastsStore.success("Data Import Successfully!");
+            ToastsStore.success("Data imported successfully.");
             dataTable.ajax.reload();
         })
         .catch( () => {

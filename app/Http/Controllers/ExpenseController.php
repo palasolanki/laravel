@@ -122,18 +122,11 @@ class ExpenseController extends Controller
     {
         return (new ExpenseExport($request))->download('expense.xlsx');
     }
+
     public function importExpense(Request $request)
     {
-        // dd($request->file('expenseFile'));
-
         $file = $request->file('expenseFile')->store('import');
-
-        // $destinationPath = 'uploads';
-        // $file->move($destinationPath, $file->getClientOriginalName());
-
         Excel::import(new ExpenseImport, $file);
-        // (new ExpenseImport)->import($file);
-
         return;
     }
 }

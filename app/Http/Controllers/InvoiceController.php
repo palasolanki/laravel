@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\InvoiceRequest;
 use App\Mail\SendInvoice;
-use App\Models\Invoice;
+use App\Invoice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Pimlie\DataTables\MongodbDataTable;
@@ -32,7 +31,6 @@ class InvoiceController extends Controller
 
         $invoice =  Invoice::create($inputs);
 
-
         $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
         $fileName = 'invoice_' . $invoice->number . '.pdf';
 
@@ -44,20 +42,21 @@ class InvoiceController extends Controller
         $invoice->delete();
         return response()->json(['message' => 'Invoice deleted successfully.']);
     }
+
     public function getNextInvoiceNumber()
     {
-        $invoice = new Invoice;
-        $nextInvoiceNumber = $invoice->setNumberAttribute();
+        $nextInvoiceNumber = Invoice::getNextInvoiceNumber();
         return response()->json(['nextInvoiceNumber' => $nextInvoiceNumber]);
     }
+
     public function edit($invoiceId)
     {
         $invoice = Invoice::where('_id', $invoiceId)->get();
         return response()->json(['editInvoice' => $invoice]);
     }
+
     public function update(Request $request)
     {
-        logger($request->all());
         $invoice = Invoice::where('_id', $request->_id)
             ->update([
                 'client_id' => $request->client_id,
@@ -74,9 +73,9 @@ class InvoiceController extends Controller
             ]);
         return response()->json(['Data' => $invoice]);
     }
+
     public function sendInvoice(Invoice $invoice, Request $request)
     {
-        // dd($invoice);
         $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
         $fileName = 'public/invoice/invoice_' . $invoice->number . '.pdf';
         Storage::put($fileName, $pdf->output());

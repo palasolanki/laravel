@@ -7,7 +7,7 @@ export default function ImportExpense(props) {
         fontSize: '20px',
         cursor: 'pointer'
     };
-    const [fileState ,setFileState]=useState("");
+    const [fileState ,setFileState] = useState();
 
     const onFileChange = (event) =>{
         setFileState({selectedFile:event.target.files[0]});
