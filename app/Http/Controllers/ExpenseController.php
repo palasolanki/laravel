@@ -13,6 +13,8 @@ use App\Traits\ChartData;
 use Carbon\Carbon;
 use Yajra\DataTables\DataTables;
 use App\Exports\ExpenseExport;
+use App\Imports\ExpenseImport;
+use Maatwebsite\Excel\Facades\Excel as Excel;
 
 class ExpenseController extends Controller
 {
@@ -30,15 +32,15 @@ class ExpenseController extends Controller
         $selectedMediums = $request->mediums;
         $selectedTags = $request->tags;
         $expense = Expense::with('tags')
-                ->when($from, function ($expense) use ($from, $to) {
-                    return $expense->whereBetween('date', [$from, $to]);
-                })
-                ->when($selectedMediums, function ($expense) use ($selectedMediums) {
-                    return $expense->whereIn('medium.id', $selectedMediums);
-                })
-                ->when($selectedTags, function ($expense) use ($selectedTags) {
-                    return $expense->whereIn('tag_ids', $selectedTags);
-                });
+            ->when($from, function ($expense) use ($from, $to) {
+                return $expense->whereBetween('date', [$from, $to]);
+            })
+            ->when($selectedMediums, function ($expense) use ($selectedMediums) {
+                return $expense->whereIn('medium.id', $selectedMediums);
+            })
+            ->when($selectedTags, function ($expense) use ($selectedTags) {
+                return $expense->whereIn('tag_ids', $selectedTags);
+            });
 
         return (new MongodbDataTable($expense))
             ->addColumn('selectedDateForEdit', function ($expense) {
@@ -96,12 +98,14 @@ class ExpenseController extends Controller
         return ['message' => 'Delete Success!'];
     }
 
-    public function getTagList() {
+    public function getTagList()
+    {
         $tags = Tag::where('type', 'expense')->get();
         return ['tags' => $tags];
     }
 
-    public function monthlyExpenseChart(Request $request) {
+    public function monthlyExpenseChart(Request $request)
+    {
         $chartData = $this->getChartData($request->chart_range, 'expense');
         return ['monthlyExpense' => $chartData[0], 'labels' => $chartData[1]];
     }
@@ -109,7 +113,7 @@ class ExpenseController extends Controller
     public function deleteFileAttachment($deleteFile, $expenseId)
     {
         DB::collection('expenses')->where('_id', $expenseId)->pull('file_attachments', ['type' => Expense::FILE_TYPE_INVOICE, 'filename' => $deleteFile]);
-        $fileName = storage_path('uploads/expense/' . $expenseId . '/'. $deleteFile);
+        $fileName = storage_path('uploads/expense/' . $expenseId . '/' . $deleteFile);
         File::delete($fileName);
         return ['message' => 'File Delete Success!'];
     }
@@ -117,5 +121,12 @@ class ExpenseController extends Controller
     public function exportExpense(Request $request)
     {
         return (new ExpenseExport($request))->download('expense.xlsx');
+    }
+
+    public function importExpense(Request $request)
+    {
+        $file = $request->file('expenseFile')->store('import');
+        Excel::import(new ExpenseImport, $file);
+        return;
     }
 }

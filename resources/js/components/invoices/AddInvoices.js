@@ -3,7 +3,9 @@ import api from "../../helpers/api";
 import DatePicker from "react-datepicker";
 import { ToastsStore } from "react-toasts";
 
-const AddInvoices = props => {
+const AddInvoices = (props) => {
+    const invoiceId = props.match.params.id || null;
+
     const initialRow = {
         item: "",
         quantity: 0,
@@ -20,6 +22,7 @@ const AddInvoices = props => {
         amount_due: 0,
         amount_paid: 0,
         notes: '',
+        status: 'open',
         bill_from:
         `Radicalloop Technolabs LLP,
         India
@@ -31,6 +34,7 @@ const AddInvoices = props => {
     const [total, setTotal] = useState(0);
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
+
 
     const handleChange = (index) => (e) => {
         let name = e.target.getAttribute('name');
@@ -54,7 +58,25 @@ const AddInvoices = props => {
                 setClients(res.data.clients);
             })
             .catch(res => { });
-    }, []);
+        api.get("/invoices/next-invoice-number")
+        .then(res=>{
+            setInvoice({ ...invoice, number : res.data.nextInvoiceNumber });
+        });
+    },[]);
+
+    useEffect(() => {
+        if (!invoiceId) return;
+        api.get("/invoice/" + invoiceId)
+            .then((res) => {
+                let date = new Date(res.data.editInvoice[0].date) ;
+                let dueDate = new Date(res.data.editInvoice[0].due_date);
+                const respEditInvoice = {...res.data.editInvoice[0], date, due_date:dueDate};
+                setInvoice(respEditInvoice);
+            })
+            .catch((err) => {
+
+            });
+    },[invoiceId]);
 
     const clientList =
         clients &&
@@ -126,14 +148,30 @@ const AddInvoices = props => {
             ToastsStore.error("Required fields missing.");
             return;
         }
-        api.post(`/invoices/add`, { ...invoice, amount_due: total }, {responseType: 'blob'})
-            .then(res => {
-                ToastsStore.success('Invoice saved successfully.');
-                downloadFile(res);
-            })
-            .catch(function (err) {
-                console.log(err);
-            });
+        api.post(`/invoices/add`, { ...invoice, amount_due: total}, {responseType: 'blob'})
+        .then(res => {
+            ToastsStore.success('Invoice saved successfully.');
+            downloadFile(res);
+            props.history.push('/invoices');
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+    };
+
+    const editInvoice = () => {
+        if (!invoice.lines.length || !total || !invoice.bill_from) {
+            ToastsStore.error("Required fields missing.");
+            return;
+        }
+        api.post(`/invoices/edit`, { ...invoice}, {responseType: 'blob'})
+        .then(res => {
+            ToastsStore.success('Invoice updated successfully.');
+            downloadFile(res);
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
     };
 
     const downloadFile = (res) => {
@@ -173,24 +211,38 @@ const AddInvoices = props => {
                     </div>
                     <article>
                         <div style={{ float: "left", width: "20%" }}>
-                            <p>Bill To:</p>
-                            <div
-                                contentEditable={true}
-                                suppressContentEditableWarning={true}
-                            >
-                                <select
-                                    name="client_id"
-                                    onChange={onChange}
-                                    value={invoice.client_id}
-                                    className="form-control"
-                                >
-                                    <option value="">Select Client</option>
-                                    {clientList}
-                                </select>
-                                <div className="mt-2 invoice-address">
-                                    {invoice.bill_to.address}
+                            <div>
+                                <span>Bill To:</span>
+                                <div contentEditable={true} suppressContentEditableWarning={true} >
+                                    <select
+                                        name="client_id"
+                                        onChange={onChange}
+                                        value={invoice.client_id}
+                                        className="form-control"
+                                    >
+                                        <option value="">Select Client</option>
+                                        {clientList}
+                                    </select>
+                                    <div className="mt-2 invoice-address">
+                                        {invoice.bill_to.address}
+                                    </div>
                                 </div>
                             </div>
+                            <div className="mt-5">
+                                <span>Status:</span>
+                                <div contentEditable={true} suppressContentEditableWarning={true} >
+                                    <select
+                                        name="status"
+                                        onChange={onChange}
+                                        value={invoice.status}
+                                        className="form-control"
+                                    >
+                                        <option value="open">Open</option>
+                                        <option value="paid">Paid</option>
+                                    </select>
+                                </div>
+                            </div>
+
                         </div>
                         <div className="invoice-table">
                             <div style={{ float: "right", width: "80%" }}>
@@ -209,12 +261,8 @@ const AddInvoices = props => {
                                             </th>
                                             <td>
                                                 <span
-                                                    contentEditable={true}
                                                     name="number"
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                    onBlur={handleChange(null)}
+
                                                 >
                                                     {invoice.number}
                                                 </span>
@@ -385,7 +433,7 @@ const AddInvoices = props => {
                                                         true
                                                     }
                                                     name="rate"
-                                                    onBlur={handleChange(index)}
+                                                onBlur={handleChange(index)}
                                                 >
                                                     {row.rate}
                                                 </span>
@@ -465,16 +513,16 @@ const AddInvoices = props => {
                                 placeholder="Enter Note"
                                 name="notes"
                                 onChange={onChange}
-                                value={invoice.notes}
+                                value={invoice.notes  || ''}
                             />
                         </div>
                     </aside>
                     <div className="form-group text-right invoice-save-btn">
                         <button
                             type="button"
-                            onClick={saveInvoice}
+                            onClick={(invoiceId) ? editInvoice : saveInvoice}
                             className="btn btn--prime mr-1">
-                            Save & Download
+                                {(invoiceId) ? 'Update & Download' : 'Save & Download'}
                           </button>
                     </div>
                 </div>
