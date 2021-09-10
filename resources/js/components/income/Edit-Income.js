@@ -3,7 +3,9 @@ import DatePicker from "react-datepicker";
 import Select from 'react-select';
 
 function EditIncome(props) {
+
     const {clients, mediums, tagOptions} = props;
+
     const closeModalSpanStyle = {
         color: '#000',
         float: 'right',
@@ -32,7 +34,10 @@ function EditIncome(props) {
     };
     const [income, setIncome] = useState(editData)
     const handleInputChange = event => {
-        const { name, value } = event.target
+        const { name, value } = event.target;
+        if (name === 'client_id') {
+            income.medium = clients.find((client) => client._id === value).payment_medium_id;
+        }
         setIncome({ ...income, [name]: value })
     }
     const handleDateChange = event => {
@@ -107,6 +112,7 @@ function EditIncome(props) {
                                 </select>
                             </div>
                             <div className="form-group pt-1">
+                            <label>Tag:</label>
                                 <Select
                                     value={income.tags}
                                     onChange={handleSelectChange}

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use App\Models\Client;
+use App\Client;
 use App\Http\Requests\ClientRequest;
 use App\Income;
 use Auth;
@@ -14,8 +14,11 @@ class ClientController extends Controller
 {
     public function index(): JsonResponse
     {
+
         $clients = Client::with(['country' => function ($query) {
             $query->select('name');
+        }, 'medium' => function ($query) {
+            $query->select('medium');
         }])->get();
         return response()->json(['data' => $clients]);
     }

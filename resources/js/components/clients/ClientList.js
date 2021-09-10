@@ -82,16 +82,23 @@ const ClientList = () => {
                                 <th>Name</th>
                                 <th>Company</th>
                                 <th>Country</th>
+                                <th>Payment Medium</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
+                            
+                            
+                        
                             {clients.length > 0 ? (clients.map((client, index) => (
+                                
                                 <tr key={client._id}>
                                     <td>{index + 1}</td>
                                     <td>{client.name}</td>
                                     <td>{client.company_name}</td>
                                     <td>{(client.country) ? client.country.name : '-'}</td>
+                                    <td>{(client.medium) ? client.medium.medium : ''}</td>
+
                                     <td>
                                         <Link to={`editClient/${client._id}`} className="btn btn-sm btn--prime">Edit</Link>&nbsp;
                                         <button className="btn btn-sm btn--cancel ml-1" onClick={() => deleteClient(client._id)}>Delete</button>

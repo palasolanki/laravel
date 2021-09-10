@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Expense;
 use File;
-use App\Models\Medium;
+use App\Medium;
 use Illuminate\Support\Carbon;
 
 class ExpenseRequest extends FormRequest
@@ -69,7 +69,7 @@ class ExpenseRequest extends FormRequest
     {
         if ( key_exists('file', $value)) {
             $uploadedFile = $value['file'];
-            
+
             if(!File::exists(storage_path('uploads/expense/' . $expense->_id))){
                 File::makeDirectory(storage_path('uploads/expense/' . $expense->_id), $mode = 0777, true, true);
             }
@@ -85,7 +85,7 @@ class ExpenseRequest extends FormRequest
             } else{
                 $filesArray = [['type' => Expense::FILE_TYPE_INVOICE, 'filename' => $fileName]];
             }
-            
+
             $expense->file_attachments = $filesArray;
             $expense->save();
         }
@@ -93,8 +93,8 @@ class ExpenseRequest extends FormRequest
 
     public function saveExpenseTags($expense, $value) {
         if (array_key_exists('tagsArray', $value)) {
-            $expense->wasRecentlyCreated 
-                ? $expense->tags()->attach($value['tagsArray']) 
+            $expense->wasRecentlyCreated
+                ? $expense->tags()->attach($value['tagsArray'])
                 : $expense->tags()->sync($value['tagsArray']);
         }
     }
