@@ -3,8 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Income;
-use App\Models\Client;
-use App\Models\Medium;
+use App\Client;
+use App\Medium;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 

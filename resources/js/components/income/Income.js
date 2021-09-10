@@ -34,7 +34,10 @@ export default function Income() {
     const [showDeleteModal, setDeleteShow] = useState(false);
     const handleCloseDelete = () => setDeleteShow(false);
 
-    const [currentIncome, setCurrentIncome] = useState()
+    const [currentIncome, setCurrentIncome] = useState();
+    
+    var totalAmount = 0;
+
     const editRow = income => {
         if (income) {
             setCurrentIncome(income)
@@ -64,7 +67,11 @@ export default function Income() {
                         "Authorization",
                         "Bearer " + localStorage.getItem("token")
                     );
-                }
+                },
+                dataSrc: function ( json ) {
+                    totalAmount = json.totalAmount;
+                    return json.data;
+                },
             },
             columns: [
                 { title: "Date", data: "date", searchable: false },
@@ -127,21 +134,14 @@ export default function Income() {
             },
             footerCallback: function(row, data, start, end, display) {
                 var api = this.api(),
-                    totalAmount,
                     currentPageTotalAmount;
-
-                totalAmount = api
-                    .column(2)
-                    .data()
-                    .reduce(function(a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0);
-
+                
                 currentPageTotalAmount = api
                     .column(2, { page: "current" })
                     .data()
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
+                    
                     }, 0);
 
                 var totalHtml =
@@ -231,7 +231,7 @@ export default function Income() {
         setDate(dateForDateRangePicker);
         setDateRange(data);
     }
-    const handleClientFilterChange = () => {
+    const handleClientFilterChange = (event) => {
         setFilterClient(event.target.value)
     }
 

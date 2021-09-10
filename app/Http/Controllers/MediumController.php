@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 use App\Expense;
 use App\Http\Requests\MediumRequest;
 use App\Income;
-use App\Models\Medium;
-use Illuminate\Http\Request;
+use App\Medium;
 
 class MediumController extends Controller
 {

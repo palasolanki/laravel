@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Expense;
 use App\Income;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\Medium;
+use App\Medium;
 use Illuminate\Validation\ValidationException;
 class MediumRequest extends FormRequest
 {
@@ -42,7 +42,7 @@ class MediumRequest extends FormRequest
         } else {
             $medium = new Medium;
         }
-        
+
         $medium->medium = $this->medium;
         $medium->type = $this->type;
         $medium->save();

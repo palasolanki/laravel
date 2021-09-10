@@ -15,6 +15,8 @@ import {
 import ConfirmationComponent from "../ConfirmationComponent";
 import Select from "react-select";
 import fileSaver from "file-saver";
+import ImportExpense from "./ImportExpense";
+
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
@@ -37,6 +39,11 @@ function Expense() {
 
     const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
+
+    const [showImportModal, setImportShow] = useState(false);
+    const closeImportModal = () => {
+        setImportShow(false);
+    };
 
     useEffect(() => {
         initDatatables();
@@ -286,23 +293,56 @@ function Expense() {
         api.post("/export/expense", exportDataFilters, {
             responseType: "arraybuffer"
         })
-            .then(response => {
-                var blob = new Blob([response.data], {
-                    type:
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                });
-                fileSaver.saveAs(blob, "expense.xlsx");
-            })
-            .catch(function() {
-                ToastsStore.error("Something went wrong!");
+        .then(response => {
+            var blob = new Blob([response.data], {
+                type:
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             });
+            fileSaver.saveAs(blob, "expense.xlsx");
+        })
+        .catch(function() {
+            ToastsStore.error("Something went wrong!");
+        });
     };
+
+    const importShow = () => {
+        setImportShow(true);
+    }
+
+    const importData = (fileState) => {
+
+        const formData = new FormData();
+        formData.append(
+            "expenseFile",
+            fileState.selectedFile
+        )
+        api.post("/importExpense", formData)
+        .then(res => {
+            closeImportModal();
+            ToastsStore.success("Data imported successfully.");
+            dataTable.ajax.reload();
+        })
+        .catch( () => {
+            ToastsStore.error("Something went wrong!");
+        });
+    }
 
     return (
         <div className="bg-white p-3">
             <div className="row mx-0 align-items-center">
                 <h2 className="heading expenses__heading">Expenses</h2>
                 <div className="ml-auto d-flex align-items-center">
+                    <button
+                        onClick={importShow}
+                        className="btn btn--prime mr-3 d-flex align-items-center"
+                    >
+                        <FontAwesomeIcon
+                            className="mr-2"
+                            style={{ fontSize: "20px" }}
+                            icon={faFileExcel}
+                        />
+                        <span>Import</span>
+                    </button>
                     <button
                         onClick={exportData}
                         className="btn btn--prime mr-3 d-flex align-items-center"
@@ -312,7 +352,7 @@ function Expense() {
                             style={{ fontSize: "20px" }}
                             icon={faFileExcel}
                         />
-                        <span> Export</span>
+                        <span>Export</span>
                     </button>
 
                     <Link to="expenses/add" className="btn btn--prime ml-auto">
@@ -394,6 +434,9 @@ function Expense() {
                     btnName="Delete"
                     action={() => deleteExpense(deleteExpenseId)}
                 />
+            )}
+            {showImportModal && (
+                <ImportExpense handleCloseImportModal={closeImportModal} importData={importData}/>
             )}
         </div>
     );

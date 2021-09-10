@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Income;
 use File;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\Client;
+use App\Client;
 
 class ClientRequest extends FormRequest
 {
@@ -30,8 +30,10 @@ class ClientRequest extends FormRequest
 
         return [
             'name' => 'required',
+            'email' => 'required|email',
             'company_name' => 'required',
             'country_id' => 'required',
+            'payment_medium_id' => 'required',
             'company_logo' => "sometimes|nullable|$stringOrFileRule",
             'address' => 'nullable',
         ];
@@ -46,8 +48,10 @@ class ClientRequest extends FormRequest
         }
         $client = Client::find($id);
         $client->name = $this->name;
+        $client->email = $this->email;
         $client->company_name = $this->company_name;
         $client->country_id = $this->country_id;
+        $client->payment_medium_id = $this->payment_medium_id;
         $client->address = $this->address;
         $client->save();
         $this->addFileAttachment($this->company_logo, $client);
@@ -59,7 +63,7 @@ class ClientRequest extends FormRequest
 
     public function addFileAttachment($uploadedFile, $client)
     {
-        if ( ! $this->hasFile('company_logo')) {
+        if (!$this->hasFile('company_logo')) {
             return;
         }
 
