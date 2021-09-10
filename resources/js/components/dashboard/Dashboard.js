@@ -25,15 +25,6 @@ class Dashboard extends Component {
     this.setMonthlyExpenseChart = this.setMonthlyExpenseChart.bind(this);
   }
 
-  componentDidMount() {
-
-    if (this.props.tabId !== null) {
-      this.props.resetProject(this.props.project);
-    }
-    this.props.getProjects();
-    document.addEventListener('mousedown', this.onClickOutside);
-  }
-
   getFinancialYear(e) {
     this.setState({
       financialYear: e.target.value
@@ -45,11 +36,6 @@ class Dashboard extends Component {
     this.setState({
       editedFinancialYear: e.target.value
     })
-  }
-
-  componentWillUnmount() {
-    this.props.setRedirect(false);
-    document.removeEventListener('mousedown', this.onClickOutside, true);
   }
 
   setMonthlyIncomeChart(url) {
