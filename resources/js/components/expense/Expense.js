@@ -40,10 +40,9 @@ function Expense() {
     const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
 
-    const [showImportModal, setImportShow]=useState(false)
+    const [showImportModal, setImportShow] = useState(false);
     const closeImportModal = () => {
-        setImportShow(false)
-
+        setImportShow(false);
     };
 
     useEffect(() => {
@@ -144,29 +143,26 @@ function Expense() {
                     );
                 }
                 if (data.amount) {
-                    $("td:eq(2)", row).html(
-                        numberFormat(data.amount)
-                    );
+                    $("td:eq(2)", row).html(numberFormat(data.amount));
                 }
             },
             footerCallback: function(row, data, start, end, display) {
                 var api = this.api(),
-                totalAmount,
-                currentPageTotalAmount;
+                    totalAmount,
+                    currentPageTotalAmount;
 
                 totalAmount = api
-                .column(2)
-                .data()
-                .reduce(function(a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
+                    .column(2)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
                 currentPageTotalAmount = api
-                .column(2, { page: "current" })
-                .data()
-                .reduce(function(a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
+                    .column(2, { page: "current" })
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
 
                 var totalHtml =
                     "<div>" +
@@ -216,7 +212,10 @@ function Expense() {
         var formData = new FormData();
         Object.keys(updatedExpense[0]).map(key => {
             if (key == "date") {
-                formData.append("data[" + 0 + "][" + key + "]", formatDate(updatedExpense[0][key]));
+                formData.append(
+                    "data[" + 0 + "][" + key + "]",
+                    formatDate(updatedExpense[0][key])
+                );
             } else {
                 if (key == "tagsArray") {
                     updatedExpense[0][key].map(value => {
@@ -295,39 +294,57 @@ function Expense() {
         api.post("/export/expense", exportDataFilters, {
             responseType: "arraybuffer"
         })
-        .then(response => {
-            var blob = new Blob([response.data], {
-                type:
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            .then(response => {
+                var blob = new Blob([response.data], {
+                    type:
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                });
+                fileSaver.saveAs(blob, "expense.xlsx");
+            })
+            .catch(function() {
+                ToastsStore.error("Something went wrong!");
             });
-            fileSaver.saveAs(blob, "expense.xlsx");
-        })
-        .catch(function() {
-            ToastsStore.error("Something went wrong!");
-        });
     };
 
     const importShow = () => {
-        setImportShow(true)
-    }
+        setImportShow(true);
+    };
 
-    const importData = (fileState) => {
-
+    const importData = fileState => {
         const formData = new FormData();
-        formData.append(
-            "expenseFile",
-            fileState.selectedFile
-        )
+        formData.append("expenseFile", fileState.selectedFile);
         api.post("/importExpense", formData)
-        .then(res => {
-            closeImportModal();
-            ToastsStore.success("Data Import Successfully!");
-            dataTable.ajax.reload();
-        })
-        .catch( () => {
-            ToastsStore.error("Something went wrong!");
-        });
-    }
+            .then(res => {
+                closeImportModal();
+                ToastsStore.success("Data Import Successfully!");
+                dataTable.ajax.reload();
+            })
+            .catch(() => {
+                ToastsStore.error("Something went wrong!");
+            });
+    };
+
+    const downloadSample = () => {
+        api.get("/downloadSample", { responseType: "blob" })
+            .then(res => {
+                downloadFile(res);
+            })
+            .catch(res => {
+                ToastsStore.error("Something went wrong!");
+            });
+    };
+
+    const downloadFile = res => {
+        const url = URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        let fileName = "expense.ods";
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+    };
 
     return (
         <div className="bg-white p-3">
@@ -438,7 +455,11 @@ function Expense() {
                 />
             )}
             {showImportModal && (
-                <ImportExpense handleCloseImportModal={closeImportModal} importData={importData}/>
+                <ImportExpense
+                    handleCloseImportModal={closeImportModal}
+                    importData={importData}
+                    downloadSample={downloadSample}
+                />
             )}
         </div>
     );

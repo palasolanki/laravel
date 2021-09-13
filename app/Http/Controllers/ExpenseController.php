@@ -14,7 +14,9 @@ use Carbon\Carbon;
 use Yajra\DataTables\DataTables;
 use App\Exports\ExpenseExport;
 use App\Imports\ExpenseImport;
+use Illuminate\Support\Facades\File as FacadesFile;
 use Maatwebsite\Excel\Facades\Excel as Excel;
+use Illuminate\Support\Facades\Storage;
 
 class ExpenseController extends Controller
 {
@@ -122,18 +124,17 @@ class ExpenseController extends Controller
     {
         return (new ExpenseExport($request))->download('expense.xlsx');
     }
+
     public function importExpense(Request $request)
     {
-        // dd($request->file('expenseFile'));
-
         $file = $request->file('expenseFile')->store('import');
-
-        // $destinationPath = 'uploads';
-        // $file->move($destinationPath, $file->getClientOriginalName());
-
         Excel::import(new ExpenseImport, $file);
-        // (new ExpenseImport)->import($file);
-
         return;
+    }
+
+    public function downloadSample()
+    {
+        $file = FacadesFile::get(storage_path('sample/expense.ods'));
+        return $file;
     }
 }
