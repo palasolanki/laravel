@@ -11,12 +11,9 @@ use File;
 use DB;
 use App\Traits\ChartData;
 use Carbon\Carbon;
-use Yajra\DataTables\DataTables;
 use App\Exports\ExpenseExport;
 use App\Imports\ExpenseImport;
-use Illuminate\Support\Facades\File as FacadesFile;
 use Maatwebsite\Excel\Facades\Excel as Excel;
-use Illuminate\Support\Facades\Storage;
 
 class ExpenseController extends Controller
 {
@@ -134,7 +131,7 @@ class ExpenseController extends Controller
 
     public function downloadSample()
     {
-        $file = FacadesFile::get(storage_path('sample/expense.ods'));
+        $file = File::get(storage_path('sample/expense.ods'));
         return $file;
     }
 }
