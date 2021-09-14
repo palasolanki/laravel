@@ -233,7 +233,6 @@ function Expense() {
             }
         });
         formData.append("_method", "put");
-        console.log(formData);
         api.post(`/expenses/${expenseId}`, formData).then(res => {
             handleCloseEdit();
             ToastsStore.success(res.data.message);
@@ -301,6 +300,7 @@ function Expense() {
                 });
                 fileSaver.saveAs(blob, "expense.xlsx");
             })
+
             .catch(function() {
                 ToastsStore.error("Something went wrong!");
             });
@@ -325,25 +325,16 @@ function Expense() {
     };
 
     const downloadSample = () => {
-        api.get("/downloadSample", { responseType: "blob" })
+        api.get("/expense/download-sample", { responseType: "arraybuffer" })
             .then(res => {
-                downloadFile(res);
+                var blob = new Blob([res.data], {
+                    type: "text/csv"
+                });
+                fileSaver.saveAs(blob, "expense.csv");
             })
             .catch(res => {
                 ToastsStore.error("Something went wrong!");
             });
-    };
-
-    const downloadFile = res => {
-        const url = URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        let fileName = "expense.ods";
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
     };
 
     return (

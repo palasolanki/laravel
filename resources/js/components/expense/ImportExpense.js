@@ -1,4 +1,5 @@
 import React, { useState, Fragment } from "react";
+import { Link } from "react-router-dom";
 
 export default function ImportExpense(props) {
     const closeModalSpanStyle = {
@@ -42,12 +43,12 @@ export default function ImportExpense(props) {
                                         type="file"
                                         onChange={onFileChange}
                                     />
-                                    <a
-                                        href="javascript:void()"
+                                    <Link
+                                        to="/expenses"
                                         onClick={props.downloadSample}
                                     >
                                         Download Sample File
-                                    </a>
+                                    </Link>
                                 </div>
 
                                 <div className="form-group text-right">

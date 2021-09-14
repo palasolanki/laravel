@@ -131,7 +131,7 @@ class ExpenseController extends Controller
 
     public function downloadSample()
     {
-        $file = File::get(storage_path('sample/expense.ods'));
+        $file = File::get(storage_path('sample/expense.csv'));
         return $file;
     }
 }
