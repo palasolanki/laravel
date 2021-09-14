@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Income;
 use File;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\Client;
+use App\Client;
 
 class ClientRequest extends FormRequest
 {

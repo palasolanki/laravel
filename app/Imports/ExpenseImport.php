@@ -3,16 +3,10 @@
 namespace App\Imports;
 
 use App\Expense;
-use App\Models\Medium;
+use App\Medium;
 use App\Tag;
-use Exception;
-use MongoDB\Client;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Illuminate\Support\Facades\DB;
 
 class ExpenseImport implements ToCollection, WithCustomCsvSettings
 {
@@ -26,21 +20,21 @@ class ExpenseImport implements ToCollection, WithCustomCsvSettings
 
     public function collection($rows)
     {
+        $mediumList = Medium::all();
         foreach ($rows as $row) {
-            $medium = Medium::where('medium', $row[3])->first();
-            logger($medium);
+            $medium = $mediumList->where('medium', $row[3])->first();
             $tags = explode(";", $row[4]);
             foreach ($tags as $t) {
                 $getExpenseTag = Tag::select('_id', 'type')->where('tag', $t)->first();
                 if (!$getExpenseTag) {
                     $tag = new Tag;
                     $tag->tag = $t;
-                    $tag->type = 'expense';
+                    $tag->type = Tag::TYPE_EXPENSE;
                     $tag->save();
                     $expenseTag[] = $tag->_id;
                     continue;
                 }
-                if ($getExpenseTag->type == 'expense') {
+                if ($getExpenseTag->type == Tag::TYPE_EXPENSE) {
                     $expenseTag[] = $getExpenseTag->_id;
                 }
             }
@@ -50,7 +44,6 @@ class ExpenseImport implements ToCollection, WithCustomCsvSettings
                 'item' => $row[1],
                 'amount' => $row[2],
                 'medium' => ['id' => $medium->_id, 'medium' => $medium->medium],
-                'tag_ids' => $expenseTag,
                 'notes' => $row[5],
             ]);
 

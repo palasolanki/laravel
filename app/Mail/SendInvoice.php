@@ -5,29 +5,18 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Models\Invoice;
+use App\Invoice;
 use Illuminate\Support\Facades\Storage;
 
 class SendInvoice extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public $invoice;
-    public $fileName;
-    public $msg;
-
-    public function __construct(Invoice $invoice, $fileName, $msg)
+    public function __construct(Invoice $invoice, $fileName, $message)
     {
-
         $this->invoice = $invoice;
         $this->fileName = $fileName;
-        $this->msg = $msg;
+        $this->message = $message;
     }
 
     /**
@@ -37,7 +26,7 @@ class SendInvoice extends Mailable
      */
     public function build()
     {
-        return $this->view('invoice-mail')
+        return $this->view('emails.invoice')
             ->attach(Storage::disk('local')->path($this->fileName));
     }
 }

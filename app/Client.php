@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
@@ -14,10 +14,12 @@ class Client extends Eloquent
     {
         return $this->hasOne('App\Country', '_id', 'country_id');
     }
+
     public function medium()
     {
-        return $this->hasOne('App\Models\Medium', '_id', 'payment_medium_id');
+        return $this->hasOne('App\Medium', '_id', 'payment_medium_id');
     }
+
     public function getCompanyLogoUrlAttribute()
     {
         return url("storage/clients/$this->_id/company_logo/" . $this->company_logo);

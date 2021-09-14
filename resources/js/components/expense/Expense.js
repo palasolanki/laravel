@@ -316,7 +316,7 @@ function Expense() {
         api.post("/importExpense", formData)
             .then(res => {
                 closeImportModal();
-                ToastsStore.success("Data Import Successfully!");
+                ToastsStore.success("Data imported successfully.");
                 dataTable.ajax.reload();
             })
             .catch(() => {

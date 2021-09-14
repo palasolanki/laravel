@@ -58,21 +58,18 @@ const AddInvoices = (props) => {
                 setClients(res.data.clients);
             })
             .catch(res => { });
-        api.get("/invoices/get-next-invoice-number")
+        api.get("/invoices/next-invoice-number")
         .then(res=>{
-            setInvoice({ ...invoice, number:res.data.nextInvoiceNumber });
-
+            setInvoice({ ...invoice, number : res.data.nextInvoiceNumber });
         });
-
-
     },[]);
 
     useEffect(() => {
         if (!invoiceId) return;
-        api.get("/getInvoices/" + invoiceId)
+        api.get("/invoice/" + invoiceId)
             .then((res) => {
-                let date= new Date(res.data.editInvoice[0].date) ;
-                let dueDate=new Date(res.data.editInvoice[0].due_date);
+                let date = new Date(res.data.editInvoice[0].date) ;
+                let dueDate = new Date(res.data.editInvoice[0].due_date);
                 const respEditInvoice = {...res.data.editInvoice[0], date, due_date:dueDate};
                 setInvoice(respEditInvoice);
             })
@@ -120,7 +117,6 @@ const AddInvoices = (props) => {
     };
 
     const addRow = () => {
-        console.log(invoice);
         setInvoice({ ...invoice, lines: [...invoice.lines, initialRow] });
     };
 
@@ -170,7 +166,7 @@ const AddInvoices = (props) => {
         }
         api.post(`/invoices/edit`, { ...invoice}, {responseType: 'blob'})
         .then(res => {
-            ToastsStore.success('Invoice Edited successfully.');
+            ToastsStore.success('Invoice updated successfully.');
             downloadFile(res);
         })
         .catch(function (err) {

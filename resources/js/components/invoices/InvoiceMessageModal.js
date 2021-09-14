@@ -1,26 +1,26 @@
-import React, { Component, Fragment, useState } from 'react'
+import React, { Component, Fragment, useState } from 'react';
 
-
-function InvoiceMsgModal(props) {
+function InvoiceMessageModal(props) {
     const closeModalSpanStyle = {
         color: '#000',
         float: 'right',
         fontSize: '20px',
         cursor: 'pointer'
     };
-    const[message,setMessage]=useState('');
+
+    const [message, setMessage] = useState('');
 
     const onChange =  (e) => {
         setMessage(e.target.value);
     }
 
     return (
-            <Fragment>
+        <Fragment>
             <div className="modal" style={{ display: "block", transition: 'display 1s' }} >
                 <div className="modal-dialog modal-dialog-centered register-modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header align-items-center">
-                            <h3 className="heading mb-0"> Mail Invoice</h3>
+                            <h3 className="heading mb-0">Email Invoice</h3>
                             <div className="gradient_border-2">
                                 <span onClick={props.handleCloseMsgModal} style={closeModalSpanStyle}>X</span>
                             </div>
@@ -43,8 +43,8 @@ function InvoiceMsgModal(props) {
                 </div>
             </div>
             <div className="modal-backdrop show" />
-            </Fragment>
+        </Fragment>
     )
 }
 
-export default InvoiceMsgModal
+export default InvoiceMessageModal;
