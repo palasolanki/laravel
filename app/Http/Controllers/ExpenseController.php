@@ -11,7 +11,6 @@ use File;
 use DB;
 use App\Traits\ChartData;
 use Carbon\Carbon;
-use Yajra\DataTables\DataTables;
 use App\Exports\ExpenseExport;
 use App\Imports\ExpenseImport;
 use Maatwebsite\Excel\Facades\Excel as Excel;
@@ -128,5 +127,11 @@ class ExpenseController extends Controller
         $file = $request->file('expenseFile')->store('import');
         Excel::import(new ExpenseImport, $file);
         return;
+    }
+
+    public function downloadSample()
+    {
+        $file = File::get(storage_path('sample/expense.csv'));
+        return $file;
     }
 }

@@ -85,4 +85,5 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/invoice/{invoiceId}', 'InvoiceController@edit');
 
     Route::post('/importExpense', 'ExpenseController@importExpense');
+    Route::get('expense/download-sample', 'ExpenseController@downloadSample');
 });
