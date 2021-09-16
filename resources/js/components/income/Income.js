@@ -40,6 +40,7 @@ export default function Income() {
 
     const editRow = income => {
         if (income) {
+            setErrors([]);
             setCurrentIncome(income);
             openShowEdit();
         }
