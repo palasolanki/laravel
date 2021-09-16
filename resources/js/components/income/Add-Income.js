@@ -74,9 +74,15 @@ function AddIncome() {
                 ["date"]: event
             };
         } else if (event.target.name === "client_id") {
-            rows[key].medium = clients.find(
-                client => client._id === event.target.value
-            ).payment_medium_id;
+            if (event.target.value != "") {
+                rows[key].medium = clients.find(
+                    client => client._id === event.target.value
+                ).payment_medium_id;
+            }
+            rows[key] = {
+                ...rows[key],
+                [event.target.name]: event.target.value
+            };
         } else {
             rows[key] = {
                 ...rows[key],
@@ -110,7 +116,6 @@ function AddIncome() {
         setIncomeData([...array]);
     };
     const saveIncomes = () => {
-        console.log([...incomeData]);
         const tempIncomeData = incomeData.map((incomeItem, key) => {
             return { ...incomeItem, date: formatDate(incomeItem.date) };
         });

@@ -28,29 +28,28 @@ class IncomeRequest extends FormRequest
     public function rules()
     {
         return [
-            'data.*.date'   => 'required',
-            'data.*.amount' => 'required|integer',
-            'data.*.medium' => 'required',
-            'data.*.client' => 'required',
-            'data.*.tags'   => 'required',
+            'data.*.date'      => 'required',
+            'data.*.amount'    => 'required|integer',
+            'data.*.medium'    => 'required',
+            'data.*.client_id' => 'required',
+            'data.*.tags'      => 'required',
         ];
     }
 
     public function messages()
     {
         return [
-            'data.*.date.required'   => 'Date is required',
-            'data.*.amount.required' => 'Amount is required',
-            'data.*.amount.integer'  => 'Amount must be a number',
-            'data.*.medium.required' => 'Medium is required',
-            'data.*.client.required' => 'Client is required',
-            'data.*.tags.required'   => 'Tags is required',
+            'data.*.date.required'      => 'Date is required',
+            'data.*.amount.required'    => 'Amount is required',
+            'data.*.amount.integer'     => 'Amount must be a number',
+            'data.*.medium.required'    => 'Medium is required',
+            'data.*.client_id.required' => 'Client is required',
+            'data.*.tags.required'      => 'Tags is required',
         ];
     }
 
     public function save($income = null)
     {
-        dd($this);
         foreach ($this->data as $value) {
             if (!$income) {
                 $income = new Income;
