@@ -183,6 +183,7 @@ function AddExpense() {
                                         onChange={handleInputChange(key)}
                                         value={expenseItem.amount}
                                         className="form-control"
+                                        min="1"
                                     />
                                 </div>
                             </div>

@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Expense;
-use File;
 use App\Medium;
+use File;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
 
 class ExpenseRequest extends FormRequest
@@ -28,9 +28,9 @@ class ExpenseRequest extends FormRequest
     public function rules()
     {
         return [
-            'data.*.date' => 'required',
-            'data.*.item' => 'required',
-            'data.*.amount' => 'required|integer',
+            'data.*.date'   => 'required',
+            'data.*.item'   => 'required',
+            'data.*.amount' => 'required|integer|min:0',
             'data.*.medium' => 'required',
         ];
     }
@@ -38,25 +38,27 @@ class ExpenseRequest extends FormRequest
     public function messages()
     {
         return [
-            'data.*.date.required' => 'Date Field is required',
-            'data.*.item.required' => 'Item Field is required',
-            'data.*.amount.required' => 'Amount Field is required',
-            'data.*.amount.integer' => 'Amount Field is Must Number',
-            'data.*.medium.required' => 'Medium Field is required',
+            'data.*.date.required'      => 'Date is required',
+            'data.*.item.required'      => 'Item is required',
+            'data.*.amount.required'    => 'Amount is required',
+            'data.*.amount.integer'     => 'Amount must be a number',
+            'data.*.amount.min'         => 'Amount must be greater than 0',
+            'data.*.medium.required'    => 'Medium is required',
         ];
     }
 
-    public function save($expense = null) {
+    public function save($expense = null)
+    {
         foreach ($this->data as $value) {
-            if(!$expense) {
+            if (!$expense) {
                 $expense = new Expense;
             }
-            $medium = Medium::find($value['medium']);
-            $expense->date = Carbon::parse($value['date']);
-            $expense->item = $value['item'];
+            $medium          = Medium::find($value['medium']);
+            $expense->date   = Carbon::parse($value['date']);
+            $expense->item   = $value['item'];
             $expense->amount = $value['amount'];
             $expense->medium = ['id' => $medium->_id, 'medium' => $medium->medium];
-            $expense->notes = $value['notes'];
+            $expense->notes  = $value['notes'];
             $expense->save();
             $this->saveExpenseTags($expense, $value);
             $this->addFileAttachment($value, $expense);
@@ -67,22 +69,22 @@ class ExpenseRequest extends FormRequest
 
     public function addFileAttachment($value, $expense)
     {
-        if ( key_exists('file', $value)) {
+        if (key_exists('file', $value)) {
             $uploadedFile = $value['file'];
 
-            if(!File::exists(storage_path('uploads/expense/' . $expense->_id))){
+            if (!File::exists(storage_path('uploads/expense/' . $expense->_id))) {
                 File::makeDirectory(storage_path('uploads/expense/' . $expense->_id), $mode = 0777, true, true);
             }
-            $file = $uploadedFile->getClientOriginalName();
+            $file             = $uploadedFile->getClientOriginalName();
             $originalFileName = pathinfo($file, PATHINFO_FILENAME);
-            $fileName = $originalFileName . '-' . time() . '.' . $uploadedFile->getClientOriginalExtension();
+            $fileName         = $originalFileName . '-' . time() . '.' . $uploadedFile->getClientOriginalExtension();
             $uploadedFile->move(storage_path('uploads/expense/' . $expense->_id), $fileName);
 
             $filesArray = [];
-            if($expense->file_attachments){
+            if ($expense->file_attachments) {
                 $filesArray = $expense->file_attachments;
-                array_push($filesArray,['type' => Expense::FILE_TYPE_INVOICE, 'filename' => $fileName]);
-            } else{
+                array_push($filesArray, ['type' => Expense::FILE_TYPE_INVOICE, 'filename' => $fileName]);
+            } else {
                 $filesArray = [['type' => Expense::FILE_TYPE_INVOICE, 'filename' => $fileName]];
             }
 
@@ -91,7 +93,8 @@ class ExpenseRequest extends FormRequest
         }
     }
 
-    public function saveExpenseTags($expense, $value) {
+    public function saveExpenseTags($expense, $value)
+    {
         if (array_key_exists('tagsArray', $value)) {
             $expense->wasRecentlyCreated
                 ? $expense->tags()->attach($value['tagsArray'])

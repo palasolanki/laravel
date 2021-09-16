@@ -153,6 +153,7 @@ function EditIncome(props) {
                                         name="amount"
                                         value={income.amount}
                                         onChange={handleInputChange}
+                                        min="1"
                                     />
                                 </div>
                                 <div className="form-group">

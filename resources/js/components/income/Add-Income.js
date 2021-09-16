@@ -180,6 +180,7 @@ function AddIncome() {
                                         onChange={handleInputChange(key)}
                                         value={incomeItem.amount}
                                         className="form-control"
+                                        min="1"
                                     />
                                 </div>
                             </div>
