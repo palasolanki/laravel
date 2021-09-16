@@ -135,7 +135,6 @@ function AddExpense() {
                     }
                 }
                 setErrorList(errors);
-                ToastsStore.error(error.response.data.message);
             });
     };
     return (
@@ -145,7 +144,7 @@ function AddExpense() {
                     <h2 className="heading mb-3">Add-Expenses</h2>
                 </div>
                 {errorList.length > 0 ? (
-                    <div className="alert alert-danger">
+                    <div className="alert alert-danger pb-0">
                         {errorList.map((value, key) => (
                             <p key={key}>{value}</p>
                         ))}

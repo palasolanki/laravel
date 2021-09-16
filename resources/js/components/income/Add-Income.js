@@ -110,10 +110,11 @@ function AddIncome() {
         setIncomeData([...array]);
     };
     const saveIncomes = () => {
-        incomeData.map((incomeItem, key) => {
-            incomeItem.date = formatDate(incomeItem.date);
+        console.log([...incomeData]);
+        const tempIncomeData = incomeData.map((incomeItem, key) => {
+            return { ...incomeItem, date: formatDate(incomeItem.date) };
         });
-        api.post(`/incomes`, { data: incomeData })
+        api.post(`/incomes`, { data: tempIncomeData })
             .then(res => {
                 setIncomeData([data]);
                 setErrorList([]);
@@ -126,8 +127,7 @@ function AddIncome() {
                         errors.push(tmp[key][0]);
                     }
                 }
-                setErrorList(errors);
-                ToastsStore.error(error.response.data.message);
+                setErrorList([...errors]);
             });
     };
     return (
@@ -135,7 +135,7 @@ function AddIncome() {
             <div className="bg-white p-3">
                 <h2 className="heading mb-3">Add-Income</h2>
                 {errorList.length > 0 ? (
-                    <div className="alert alert-danger">
+                    <div className="alert alert-danger pb-0">
                         {errorList.map((value, key) => (
                             <p key={key}>{value}</p>
                         ))}

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Income;
 use App\Client;
+use App\Income;
 use App\Medium;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Carbon;
@@ -28,36 +28,42 @@ class IncomeRequest extends FormRequest
     public function rules()
     {
         return [
-            'data.*.date' => 'required',
+            'data.*.date'   => 'required',
             'data.*.amount' => 'required|integer',
             'data.*.medium' => 'required',
+            'data.*.client' => 'required',
+            'data.*.tags'   => 'required',
         ];
     }
 
     public function messages()
     {
         return [
-            'data.*.date.required' => 'Date is required',
+            'data.*.date.required'   => 'Date is required',
             'data.*.amount.required' => 'Amount is required',
-            'data.*.amount.integer' => 'Amount must be a number',
+            'data.*.amount.integer'  => 'Amount must be a number',
             'data.*.medium.required' => 'Medium is required',
+            'data.*.client.required' => 'Client is required',
+            'data.*.tags.required'   => 'Tags is required',
         ];
     }
 
-    public function save($income = null) {
+    public function save($income = null)
+    {
+        dd($this);
         foreach ($this->data as $value) {
             if (!$income) {
                 $income = new Income;
             }
             if ($value['client_id']) {
-                $client = Client::find($value['client_id']);
+                $client         = Client::find($value['client_id']);
                 $income->client = ['id' => $client->_id, 'name' => $client->name];
             }
-            $medium = Medium::find($value['medium']);
-            $income->date = Carbon::parse($value['date']);
+            $medium         = Medium::find($value['medium']);
+            $income->date   = Carbon::parse($value['date']);
             $income->amount = $value['amount'];
             $income->medium = ['id' => $medium->_id, 'medium' => $medium->medium];
-            $income->notes = $value['notes'];
+            $income->notes  = $value['notes'];
             $income->save();
             $this->saveIncomeTags($income, $value);
             $income = null;
@@ -65,7 +71,8 @@ class IncomeRequest extends FormRequest
         return true;
     }
 
-    public function saveIncomeTags($income, $value) {
+    public function saveIncomeTags($income, $value)
+    {
         if (array_key_exists('tagsArray', $value)) {
             $income->wasRecentlyCreated
                 ? $income->tags()->attach($value['tagsArray'])
