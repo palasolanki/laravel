@@ -39,11 +39,11 @@ class ExpenseRequest extends FormRequest
     public function messages()
     {
         return [
-            'data.*.date.required'      => 'Date Field is required',
-            'data.*.item.required'      => 'Item Field is required',
-            'data.*.amount.required'    => 'Amount Field is required',
-            'data.*.amount.integer'     => 'Amount Field is Must Number',
-            'data.*.medium.required'    => 'Medium Field is required',
+            'data.*.date.required'      => 'Date is required',
+            'data.*.item.required'      => 'Item is required',
+            'data.*.amount.required'    => 'Amount is required',
+            'data.*.amount.integer'     => 'Amount is Must Number',
+            'data.*.medium.required'    => 'Medium is required',
             'data.*.tags.required'      => 'Tags is required',
 
         ];

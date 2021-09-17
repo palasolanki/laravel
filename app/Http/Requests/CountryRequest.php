@@ -27,7 +27,16 @@ class CountryRequest extends FormRequest
             'name' => 'required'
         ];
     }
-    public function save($countryObj) {
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Country is required',
+        ];
+    }
+
+    public function save($countryObj)
+    {
         $countryObj->name = $this->name;
         $countryObj->save();
         return $countryObj;

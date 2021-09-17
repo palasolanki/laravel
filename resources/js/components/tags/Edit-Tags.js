@@ -74,6 +74,7 @@ function EditTags(props) {
                                         name="type"
                                         onChange={handleInputChange}
                                         value={tag.type}
+                                        disabled
                                     >
                                         <option value="">Select Type</option>
                                         <option value="expense">Expense</option>

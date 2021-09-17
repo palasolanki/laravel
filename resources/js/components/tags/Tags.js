@@ -20,7 +20,6 @@ function Tags() {
     const handleCloseEdit = () => setEditShow(false);
     const handleCloseDelete = () => setDeleteShow(false);
 
-    const openShow = () => setShow(true);
     const openShowEdit = () => setEditShow(true);
     const openShowDelete = () => setDeleteShow(true);
     const [errors, setErrors] = useState([]);
@@ -28,6 +27,10 @@ function Tags() {
     //For get tags from server and display list of tags
     const tagsData = [];
 
+    const openShow = () => {
+        setErrors([]);
+        setShow(true);
+    };
     const [tags, setTags] = useState(tagsData);
     useEffect(() => {
         api.get("/tags")
@@ -39,11 +42,21 @@ function Tags() {
 
     //For add new tag in database
     const addTag = tag => {
-        api.post(`/tags`, tag).then(res => {
-            setTags([...tags, res.data.addedTag]);
-            ToastsStore.success(res.data.message);
-            handleClose();
-        });
+        api.post(`/tags`, tag)
+            .then(res => {
+                setTags([...tags, res.data.addedTag]);
+                ToastsStore.success(res.data.message);
+                handleClose();
+            })
+            .catch(res => {
+                const tmp = res.response.data.errors;
+                for (const key in tmp) {
+                    if (!errors.includes(tmp[key][0])) {
+                        errors.push(tmp[key][0]);
+                    }
+                }
+                setErrors([...errors]);
+            });
     };
 
     //For delete tag
@@ -179,7 +192,11 @@ function Tags() {
             </table>
 
             {showAddModal && (
-                <AddTags handleClose={handleClose} addTag={addTag} />
+                <AddTags
+                    handleClose={handleClose}
+                    addTag={addTag}
+                    errors={errors}
+                />
             )}
             {showEditModal && (
                 <EditTags

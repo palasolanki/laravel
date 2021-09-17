@@ -17,13 +17,17 @@ function Mediums() {
     const handleCloseEdit = () => setEditShow(false);
     const handleCloseDelete = () => setDeleteShow(false);
 
-    const openShow = () => setShow(true);
     const openShowEdit = () => setEditShow(true);
     const openShowDelete = () => setDeleteShow(true);
     const [errors, setErrors] = useState([]);
 
     //For get mediums from server and display list of mediums
     const mediumsData = [];
+
+    const openShow = () => {
+        setErrors([]);
+        setShow(true);
+    };
 
     const [mediums, setMediums] = useState(mediumsData);
     useEffect(() => {
@@ -36,11 +40,21 @@ function Mediums() {
 
     //For add new medium in database
     const addMedium = medium => {
-        api.post(`/mediums`, medium).then(res => {
-            setMediums([...mediums, res.data.addedMedium]);
-            ToastsStore.success(res.data.message);
-            handleClose();
-        });
+        api.post(`/mediums`, medium)
+            .then(res => {
+                setMediums([...mediums, res.data.addedMedium]);
+                ToastsStore.success(res.data.message);
+                handleClose();
+            })
+            .catch(res => {
+                const tmp = res.response.data.errors;
+                for (const key in tmp) {
+                    if (!errors.includes(tmp[key][0])) {
+                        errors.push(tmp[key][0]);
+                    }
+                }
+                setErrors([...errors]);
+            });
     };
 
     //For delete medium
@@ -175,7 +189,11 @@ function Mediums() {
             </table>
 
             {showAddModal && (
-                <AddMediums handleClose={handleClose} addMedium={addMedium} />
+                <AddMediums
+                    handleClose={handleClose}
+                    addMedium={addMedium}
+                    errors={errors}
+                />
             )}
             {showEditModal && (
                 <EditMediums
