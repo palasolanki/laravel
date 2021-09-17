@@ -44,6 +44,7 @@ function Expense() {
     const closeImportModal = () => {
         setImportShow(false);
     };
+    const [errors, setErrors] = useState([]);
 
     useEffect(() => {
         initDatatables();
@@ -203,6 +204,7 @@ function Expense() {
     const [currentExpense, setCurrentExpense] = useState();
     const editRow = expense => {
         if (expense) {
+            setErrors([]);
             setCurrentExpense(expense);
             openShowEdit();
         }
@@ -233,11 +235,20 @@ function Expense() {
             }
         });
         formData.append("_method", "put");
-        api.post(`/expenses/${expenseId}`, formData).then(res => {
-            handleCloseEdit();
-            ToastsStore.success(res.data.message);
-            dataTable.ajax.reload();
-        });
+        api.post(`/expenses/${expenseId}`, formData)
+            .then(res => {
+                handleCloseEdit();
+                ToastsStore.success(res.data.message);
+                dataTable.ajax.reload();
+            })
+            .catch(res => {
+                const tmpErrors = [];
+                const tmp = res.response.data.errors;
+                for (const key in tmp) {
+                    tmpErrors.push(tmp[key][0]);
+                }
+                setErrors(tmpErrors);
+            });
     };
 
     const [deleteExpenseId, setDeleteExpenseId] = useState();
@@ -435,6 +446,7 @@ function Expense() {
                     mediums={mediums}
                     options={options}
                     updateExpense={updateExpense}
+                    errors={errors}
                 />
             )}
             {showDeleteModal && (

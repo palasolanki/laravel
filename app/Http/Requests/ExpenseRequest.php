@@ -28,22 +28,24 @@ class ExpenseRequest extends FormRequest
     public function rules()
     {
         return [
-            'data.*.date'   => 'required',
-            'data.*.item'   => 'required',
-            'data.*.amount' => 'required|integer|min:0',
-            'data.*.medium' => 'required',
+            'data.*.date'      => 'required',
+            'data.*.item'      => 'required',
+            'data.*.amount'    => 'required|integer',
+            'data.*.medium'    => 'required',
+            'data.*.tags'      => 'required',
         ];
     }
 
     public function messages()
     {
         return [
-            'data.*.date.required'      => 'Date is required',
-            'data.*.item.required'      => 'Item is required',
-            'data.*.amount.required'    => 'Amount is required',
-            'data.*.amount.integer'     => 'Amount must be a number',
-            'data.*.amount.min'         => 'Amount must be greater than 0',
-            'data.*.medium.required'    => 'Medium is required',
+            'data.*.date.required'      => 'Date Field is required',
+            'data.*.item.required'      => 'Item Field is required',
+            'data.*.amount.required'    => 'Amount Field is required',
+            'data.*.amount.integer'     => 'Amount Field is Must Number',
+            'data.*.medium.required'    => 'Medium Field is required',
+            'data.*.tags.required'      => 'Tags is required',
+
         ];
     }
 

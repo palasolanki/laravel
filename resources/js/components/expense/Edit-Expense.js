@@ -99,9 +99,13 @@ function EditExpenses(props) {
         <Fragment>
             <div
                 className="modal"
-                style={{ display: "block", transition: "display 1s" }}
+                style={{
+                    display: "block",
+                    transition: "display 1s",
+                    overflow: "auto"
+                }}
             >
-                <div className="modal-dialog modal-dialog-centered register-modal-dialog">
+                <div className="modal-dialog register-modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header align-items-center">
                             <h3 className="heading">Edit Expense</h3>
@@ -115,6 +119,15 @@ function EditExpenses(props) {
                             </div>
                         </div>
                         <div className="modal-body">
+                            {props.errors.length > 0 ? (
+                                <div className="alert alert-danger pb-0">
+                                    {props.errors.map((value, key) => (
+                                        <p key={key}>{value}</p>
+                                    ))}
+                                </div>
+                            ) : (
+                                ""
+                            )}
                             <form
                                 onSubmit={event => {
                                     event.preventDefault();
@@ -170,6 +183,8 @@ function EditExpenses(props) {
                                     </select>
                                 </div>
                                 <div className="form-group pt-1">
+                                    <label>Tags:</label>
+
                                     <Select
                                         value={expense.tags}
                                         onChange={handleSelectChange}
@@ -214,7 +229,6 @@ function EditExpenses(props) {
                                         )
                                     )}
                                     <input
-                                        style={{ paddingTop: "8px" }}
                                         type="file"
                                         name="file"
                                         onChange={handleFileChange}
