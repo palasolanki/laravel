@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
 use App\Http\Requests\InvoiceRequest;
-use App\Mail\SendInvoice;
 use App\Invoice;
+use App\Mail\SendInvoice;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-use Pimlie\DataTables\MongodbDataTable;
 use PDF;
+use Pimlie\DataTables\MongodbDataTable;
 
 class InvoiceController extends Controller
 {
@@ -30,8 +30,8 @@ class InvoiceController extends Controller
         $inputs = $request->validated();
 
         $invoice =  Invoice::create($inputs);
-
-        $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
+        dd($invoice);
+        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
         $fileName = 'invoice_' . $invoice->number . '.pdf';
 
         return $pdf->stream($fileName);
@@ -59,24 +59,30 @@ class InvoiceController extends Controller
     {
         $invoice = Invoice::where('_id', $request->_id)
             ->update([
-                'client_id' => $request->client_id,
-                'number' => $request->number,
-                'lines' => $request->lines,
-                'date' => $request->date,
-                'due_date' => $request->due_date,
-                'status' => $request->status,
-                'amount_due' => $request->amount_due,
+                'client_id'   => $request->client_id,
+                'number'      => $request->number,
+                'lines'       => $request->lines,
+                'date'        => $request->date,
+                'due_date'    => $request->due_date,
+                'status'      => $request->status,
+                'amount_due'  => $request->amount_due,
                 'amount_paid' => $request->amount_paid,
-                'notes' => $request->notes,
-                'bill_from' => $request->bill_from,
-                'bill_to' => $request->bill_to,
+                'notes'       => $request->notes,
+                'bill_from'   => $request->bill_from,
+                'bill_to'     => $request->bill_to,
             ]);
-        return response()->json(['Data' => $invoice]);
+
+        $getCurrentInvoice = Invoice::where('_id', $request->_id)->first();
+
+        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $getCurrentInvoice])->setPaper('a4', 'portrait');
+        $fileName = 'invoice_' . $getCurrentInvoice->number . '.pdf';
+
+        return $pdf->stream($fileName);
     }
 
     public function sendInvoice(Invoice $invoice, Request $request)
     {
-        $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
+        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
         $fileName = 'public/invoice/invoice_' . $invoice->number . '.pdf';
         Storage::put($fileName, $pdf->output());
 
