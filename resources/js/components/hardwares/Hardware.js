@@ -74,12 +74,13 @@ function Hardware() {
                 handleCloseEdit();
             })
             .catch(res => {
-                var tmpErrors = [];
                 const tmp = res.response.data.errors;
                 for (const key in tmp) {
-                    tmpErrors.push(tmp[key][0]);
+                    if (!errors.includes(tmp[key][0])) {
+                        errors.push(tmp[key][0]);
+                    }
                 }
-                setErrors(tmpErrors);
+                setErrors([...errors]);
             });
     };
 

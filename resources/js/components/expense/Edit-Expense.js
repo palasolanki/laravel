@@ -195,6 +195,7 @@ function EditExpenses(props) {
                                 <div className="form-group">
                                     <label>Notes:</label>
                                     <textarea
+                                        style={{ resize: "none" }}
                                         className="form-control"
                                         placeholder="Enter Notes"
                                         name="notes"
