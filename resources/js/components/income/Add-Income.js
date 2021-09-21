@@ -198,7 +198,7 @@ function AddIncome() {
                                 </div>
                                 <div className="col form-group px-0 px-lg-3 px-md-2 mb-md-0">
                                     <Select
-                                        value={incomeData.tags}
+                                        value={incomeItem.tags}
                                         onChange={handleSelectChange(key)}
                                         isMulti
                                         options={tagOptions}
@@ -225,8 +225,7 @@ function AddIncome() {
                                         value={key}
                                         onClick={removeIncome}
                                     >
-                                        {" "}
-                                        Remove{" "}
+                                        Remove
                                     </button>
                                 </div>
                             </div>
@@ -241,7 +240,6 @@ function AddIncome() {
                             className="btn btn-success mr-2"
                             onClick={addIncome}
                         >
-                            {" "}
                             Add New
                         </button>
                     </div>
@@ -250,8 +248,7 @@ function AddIncome() {
                             className="btn btn--prime"
                             onClick={saveIncomes}
                         >
-                            {" "}
-                            Save{" "}
+                            Save
                         </button>
                     </div>
                 </div>
