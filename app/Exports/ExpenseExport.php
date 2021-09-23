@@ -35,7 +35,7 @@ class ExpenseExport implements FromQuery, WithHeadings, WithMapping
                 })
                 ->when($selectedTags, function ($expense) use ($selectedTags) {
                     return $expense->whereIn('tag_ids', $selectedTags);
-                });
+                })->orderBy('date');
     }
 
     public function headings(): array
