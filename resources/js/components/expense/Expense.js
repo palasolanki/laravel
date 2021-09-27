@@ -269,7 +269,7 @@ function Expense() {
     };
 
     const onDateChange = datevalue => {
-        handleFilterOnDateChange(datevalue);
+        handleFilterOnDateChange(datevalue, setDate, setDateRange);
     };
 
     useEffect(
