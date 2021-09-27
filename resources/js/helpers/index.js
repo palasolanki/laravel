@@ -31,3 +31,35 @@ export function errorResponse(res, errors, setErrors) {
     }
     setErrors([...errors]);
 }
+
+export function handleFilterOnDateChange(datevalue, setDate, setDateRange) {
+    if (datevalue === null) {
+        setDate([null, null]);
+        setDateRange([null, null]);
+        return;
+    }
+
+    if (datevalue && datevalue[0] && datevalue[1]) {
+        const dateForDateRangePicker = datevalue ? datevalue : [null, null];
+        const data = datevalue
+            ? [datevalue[0].toISOString(), datevalue[1].toISOString()]
+            : [null, null];
+        setDate(dateForDateRangePicker);
+        setDateRange(data);
+        return;
+    }
+
+    if (datevalue[0]) {
+        setDate([datevalue[0], date[1]]);
+        setDateRange([
+            datevalue[0].toISOString(),
+            date[1] ? date[1].toISOString() : null
+        ]);
+    } else if (datevalue[1]) {
+        setDate([date[0], datevalue[1]]);
+        setDateRange([
+            date[0] ? date[0].toISOString() : null,
+            datevalue[1].toISOString()
+        ]);
+    }
+}

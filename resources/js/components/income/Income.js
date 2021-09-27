@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../helpers/api";
-import { errorResponse, formatDate, intVal } from "../../helpers";
+import {
+    errorResponse,
+    formatDate,
+    handleFilterOnDateChange,
+    intVal
+} from "../../helpers";
 import { numberFormat } from "../../helpers";
 import { ToastsStore } from "react-toasts";
 import EditIncomes from "./Edit-Income";
@@ -227,34 +232,9 @@ export default function Income() {
         });
     };
     const onDateChange = datevalue => {
-        if (datevalue === null) {
-            setDate([null, null]);
-            setDateRange([null, null]);
-            return;
-        } else if (datevalue && datevalue[0] && datevalue[1]) {
-            const dateForDateRangePicker = datevalue ? datevalue : [null, null];
-            const data = datevalue
-                ? [datevalue[0].toISOString(), datevalue[1].toISOString()]
-                : [null, null];
-            setDate(dateForDateRangePicker);
-            setDateRange(data);
-            return;
-        }
-
-        if (datevalue[0]) {
-            setDate([datevalue[0], date[1]]);
-            setDateRange([
-                datevalue[0].toISOString(),
-                date[1] ? date[1].toISOString() : null
-            ]);
-        } else if (datevalue[1]) {
-            setDate([date[0], datevalue[1]]);
-            setDateRange([
-                date[0] ? date[0].toISOString() : null,
-                datevalue[1].toISOString()
-            ]);
-        }
+        handleFilterOnDateChange(datevalue);
     };
+
     const handleClientFilterChange = event => {
         setFilterClient(event.target.value);
     };

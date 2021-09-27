@@ -1,7 +1,12 @@
 import React, { Component, Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../helpers/api";
-import { errorResponse, formatDate, numberFormat } from "../../helpers";
+import {
+    errorResponse,
+    formatDate,
+    handleFilterOnDateChange,
+    numberFormat
+} from "../../helpers";
 import { intVal } from "../../helpers";
 import { ToastsStore } from "react-toasts";
 import EditExpenses from "./Edit-Expense";
@@ -264,33 +269,7 @@ function Expense() {
     };
 
     const onDateChange = datevalue => {
-        if (datevalue === null) {
-            setDate([null, null]);
-            setDateRange([null, null]);
-            return;
-        } else if (datevalue && datevalue[0] && datevalue[1]) {
-            const dateForDateRangePicker = datevalue ? datevalue : [null, null];
-            const data = datevalue
-                ? [datevalue[0].toISOString(), datevalue[1].toISOString()]
-                : [null, null];
-            setDate(dateForDateRangePicker);
-            setDateRange(data);
-            return;
-        }
-
-        if (datevalue[0]) {
-            setDate([datevalue[0], date[1]]);
-            setDateRange([
-                datevalue[0].toISOString(),
-                date[1] ? date[1].toISOString() : null
-            ]);
-        } else if (datevalue[1]) {
-            setDate([date[0], datevalue[1]]);
-            setDateRange([
-                date[0] ? date[0].toISOString() : null,
-                datevalue[1].toISOString()
-            ]);
-        }
+        handleFilterOnDateChange(datevalue);
     };
 
     useEffect(
