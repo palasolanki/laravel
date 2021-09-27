@@ -1,7 +1,12 @@
 import React, { Component, Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../helpers/api";
-import { formatDate, numberFormat } from "../../helpers";
+import {
+    errorResponse,
+    formatDate,
+    handleFilterOnDateChange,
+    numberFormat
+} from "../../helpers";
 import { intVal } from "../../helpers";
 import { ToastsStore } from "react-toasts";
 import EditExpenses from "./Edit-Expense";
@@ -44,27 +49,31 @@ function Expense() {
     const closeImportModal = () => {
         setImportShow(false);
     };
+    const [errors, setErrors] = useState([]);
 
     useEffect(() => {
         initDatatables();
     }, []);
 
-    useEffect(() => {
-        if (dataTable) {
-            registerEvent();
-            api.get("/get-expense-mediums").then(res => {
-                if (res.data.medium) {
-                    setMediums(res.data.medium);
-                    setMediumsOptionForFilter(
-                        createMediumOption(res.data.medium)
-                    );
-                }
-            }),
-                api.get("/get-expense-tags").then(res => {
-                    createTagOptions(res.data.tags);
-                });
-        }
-    }, [dataTable]);
+    useEffect(
+        () => {
+            if (dataTable) {
+                registerEvent();
+                api.get("/get-expense-mediums").then(res => {
+                    if (res.data.medium) {
+                        setMediums(res.data.medium);
+                        setMediumsOptionForFilter(
+                            createMediumOption(res.data.medium)
+                        );
+                    }
+                }),
+                    api.get("/get-expense-tags").then(res => {
+                        createTagOptions(res.data.tags);
+                    });
+            }
+        },
+        [dataTable]
+    );
 
     const createMediumOption = mediums => {
         return mediums.map((medium, key) => {
@@ -203,6 +212,7 @@ function Expense() {
     const [currentExpense, setCurrentExpense] = useState();
     const editRow = expense => {
         if (expense) {
+            setErrors([]);
             setCurrentExpense(expense);
             openShowEdit();
         }
@@ -233,11 +243,15 @@ function Expense() {
             }
         });
         formData.append("_method", "put");
-        api.post(`/expenses/${expenseId}`, formData).then(res => {
-            handleCloseEdit();
-            ToastsStore.success(res.data.message);
-            dataTable.ajax.reload();
-        });
+        api.post(`/expenses/${expenseId}`, formData)
+            .then(res => {
+                handleCloseEdit();
+                ToastsStore.success(res.data.message);
+                dataTable.ajax.reload();
+            })
+            .catch(res => {
+                errorResponse(res, errors, setErrors);
+            });
     };
 
     const [deleteExpenseId, setDeleteExpenseId] = useState();
@@ -255,20 +269,18 @@ function Expense() {
     };
 
     const onDateChange = datevalue => {
-        const dateForDateRangePicker = datevalue ? datevalue : [null, null];
-        const data = datevalue
-            ? [datevalue[0].toISOString(), datevalue[1].toISOString()]
-            : [null, null];
-        setDate(dateForDateRangePicker);
-        setDateRange(data);
+        handleFilterOnDateChange(datevalue);
     };
 
-    useEffect(() => {
-        if (dataTable && date) {
-            dataTable.destroy();
-            initDatatables();
-        }
-    }, [date, selectedMediumsForFilter, selectedTagsForFilter]);
+    useEffect(
+        () => {
+            if (dataTable || (date[0] && date[1])) {
+                dataTable.destroy();
+                initDatatables();
+            }
+        },
+        [date, selectedMediumsForFilter, selectedTagsForFilter]
+    );
 
     const handleSelectChange = selectFor => event => {
         const tmp = event
@@ -435,6 +447,7 @@ function Expense() {
                     mediums={mediums}
                     options={options}
                     updateExpense={updateExpense}
+                    errors={errors}
                 />
             )}
             {showDeleteModal && (

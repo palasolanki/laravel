@@ -67,26 +67,28 @@ function AddIncome() {
         });
 
     const handleInputChange = key => event => {
-
         const rows = [...incomeData];
-        const { name, value } = event.target;
         if (event instanceof Date) {
             rows[key] = {
                 ...rows[key],
                 ["date"]: event
             };
-        }
-        else{
+        } else if (event.target.name === "client_id") {
+            if (event.target.value != "") {
+                rows[key].medium = clients.find(
+                    client => client._id === event.target.value
+                ).payment_medium_id;
+            }
             rows[key] = {
                 ...rows[key],
-                [name]: value
+                [event.target.name]: event.target.value
+            };
+        } else {
+            rows[key] = {
+                ...rows[key],
+                [event.target.name]: event.target.value
             };
         }
-
-        if (name === 'client_id') {
-            rows[key].medium = clients.find((client) => client._id === value).payment_medium_id;
-        }
-
         setIncomeData(rows);
     };
 
@@ -114,10 +116,10 @@ function AddIncome() {
         setIncomeData([...array]);
     };
     const saveIncomes = () => {
-        incomeData.map((incomeItem, key) => {
-            incomeItem.date = formatDate(incomeItem.date);
+        const tempIncomeData = incomeData.map((incomeItem, key) => {
+            return { ...incomeItem, date: formatDate(incomeItem.date) };
         });
-        api.post(`/incomes`, { data: incomeData })
+        api.post(`/incomes`, { data: tempIncomeData })
             .then(res => {
                 setIncomeData([data]);
                 setErrorList([]);
@@ -130,25 +132,21 @@ function AddIncome() {
                         errors.push(tmp[key][0]);
                     }
                 }
-                setErrorList(errors);
-                ToastsStore.error(error.response.data.message);
+                setErrorList([...errors]);
             });
     };
     return (
         <Fragment>
             <div className="bg-white p-3">
                 <h2 className="heading mb-3">Add-Income</h2>
-                {errorList.length > 0 ? (
-                    <div className="alert alert-danger">
+                {errorList.length > 0 && (
+                    <div className="alert alert-danger pb-0">
                         {errorList.map((value, key) => (
                             <p key={key}>{value}</p>
                         ))}
                     </div>
-                ) : (
-                    ""
                 )}
                 {incomeData.map((incomeItem, key) => (
-
                     <div className="row mx-0 mb-2" key={key}>
                         <div className="col-xl-6 custom__col col-md-10 border p-xl-4 p-3 mb-3">
                             <div className="row mx-0 mt-2 flex-column flex-md-row">
@@ -180,6 +178,7 @@ function AddIncome() {
                                         onChange={handleInputChange(key)}
                                         value={incomeItem.amount}
                                         className="form-control"
+                                        min="1"
                                     />
                                 </div>
                             </div>
@@ -197,7 +196,7 @@ function AddIncome() {
                                 </div>
                                 <div className="col form-group px-0 px-lg-3 px-md-2 mb-md-0">
                                     <Select
-                                        value={incomeData.tags}
+                                        value={incomeItem.tags}
                                         onChange={handleSelectChange(key)}
                                         isMulti
                                         options={tagOptions}
@@ -224,8 +223,7 @@ function AddIncome() {
                                         value={key}
                                         onClick={removeIncome}
                                     >
-                                        {" "}
-                                        Remove{" "}
+                                        Remove
                                     </button>
                                 </div>
                             </div>
@@ -240,7 +238,6 @@ function AddIncome() {
                             className="btn btn-success mr-2"
                             onClick={addIncome}
                         >
-                            {" "}
                             Add New
                         </button>
                     </div>
@@ -249,8 +246,7 @@ function AddIncome() {
                             className="btn btn--prime"
                             onClick={saveIncomes}
                         >
-                            {" "}
-                            Save{" "}
+                            Save
                         </button>
                     </div>
                 </div>

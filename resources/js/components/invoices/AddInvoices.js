@@ -2,8 +2,9 @@ import React, { useState, Fragment, useEffect } from "react";
 import api from "../../helpers/api";
 import DatePicker from "react-datepicker";
 import { ToastsStore } from "react-toasts";
+const $ = require("jquery");
 
-const AddInvoices = (props) => {
+const AddInvoices = props => {
     const invoiceId = props.match.params.id || null;
 
     const initialRow = {
@@ -14,20 +15,19 @@ const AddInvoices = (props) => {
     };
 
     const [invoice, setInvoice] = useState({
-        client_id: '',
-        number: '',
+        client_id: "",
+        number: "",
         lines: [initialRow],
         date: new Date(),
         due_date: new Date(new Date().setDate(new Date().getDate() + 10)),
         amount_due: 0,
         amount_paid: 0,
-        notes: '',
-        status: 'open',
-        bill_from:
-        `Radicalloop Technolabs LLP,
+        notes: "",
+        status: "open",
+        bill_from: `Radicalloop Technolabs LLP,
         India
         GST No.: 24AAUFR2815E1Z6`,
-        bill_to: { name: '', address: '' },
+        bill_to: { name: "", address: "" }
     });
 
     const [currencySign, setCurrencySign] = useState("$");
@@ -35,10 +35,9 @@ const AddInvoices = (props) => {
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
 
-
-    const handleChange = (index) => (e) => {
-        let name = e.target.getAttribute('name');
-        if (typeof (index) !== "number") {
+    const handleChange = index => e => {
+        let name = e.target.getAttribute("name");
+        if (typeof index !== "number") {
             setInvoice({ ...invoice, [name]: e.target.innerText });
             return;
         }
@@ -57,26 +56,28 @@ const AddInvoices = (props) => {
             .then(res => {
                 setClients(res.data.clients);
             })
-            .catch(res => { });
-        api.get("/invoices/next-invoice-number")
-        .then(res=>{
-            setInvoice({ ...invoice, number : res.data.nextInvoiceNumber });
+            .catch(res => {});
+        if (invoiceId) return;
+        api.get("/invoices/next-invoice-number").then(res => {
+            setInvoice({ ...invoice, number: res.data.nextInvoiceNumber });
         });
-    },[]);
+    }, []);
 
     useEffect(() => {
         if (!invoiceId) return;
         api.get("/invoice/" + invoiceId)
-            .then((res) => {
-                let date = new Date(res.data.editInvoice[0].date) ;
+            .then(res => {
+                let date = new Date(res.data.editInvoice[0].date);
                 let dueDate = new Date(res.data.editInvoice[0].due_date);
-                const respEditInvoice = {...res.data.editInvoice[0], date, due_date:dueDate};
+                const respEditInvoice = {
+                    ...res.data.editInvoice[0],
+                    date,
+                    due_date: dueDate
+                };
                 setInvoice(respEditInvoice);
             })
-            .catch((err) => {
-
-            });
-    },[invoiceId]);
+            .catch(err => {});
+    }, [invoiceId]);
 
     const clientList =
         clients &&
@@ -98,7 +99,7 @@ const AddInvoices = (props) => {
     }, [invoice.lines]);
 
     const getTotalAmount = () => {
-        return invoice.lines.reduce(function (prev, cur) {
+        return invoice.lines.reduce(function(prev, cur) {
             return prev + cur.amount;
         }, 0);
     };
@@ -143,20 +144,28 @@ const AddInvoices = (props) => {
         setInvoice({ ...invoice, [e.target.name]: val });
     };
 
-    const saveInvoice = () => {
+    const saveInvoice = event => {
+        $("#edit_save_button").attr("disabled", "disabled");
         if (!invoice.lines.length || !total || !invoice.bill_from) {
             ToastsStore.error("Required fields missing.");
             return;
         }
-        api.post(`/invoices/add`, { ...invoice, amount_due: total}, {responseType: 'blob'})
-        .then(res => {
-            ToastsStore.success('Invoice saved successfully.');
-            downloadFile(res);
-            props.history.push('/invoices');
-        })
-        .catch(function (err) {
-            console.log(err);
-        });
+        api.post(
+            `/invoices/add`,
+            { ...invoice, amount_due: total },
+            { responseType: "blob" }
+        )
+            .then(res => {
+                $("#edit_save_button").removeAttr("disabled", "disabled");
+
+                ToastsStore.success("Invoice saved successfully.");
+                downloadFile(res);
+                props.history.push("/invoices");
+            })
+            .catch(function(err) {
+                $("#edit_save_button").removeAttr("disabled", "disabled");
+                console.log(err);
+            });
     };
 
     const editInvoice = () => {
@@ -164,34 +173,34 @@ const AddInvoices = (props) => {
             ToastsStore.error("Required fields missing.");
             return;
         }
-        api.post(`/invoices/edit`, { ...invoice}, {responseType: 'blob'})
-        .then(res => {
-            ToastsStore.success('Invoice updated successfully.');
-            downloadFile(res);
-        })
-        .catch(function (err) {
-            console.log(err);
-        });
+        api.post(`/invoices/edit`, { ...invoice }, { responseType: "blob" })
+            .then(res => {
+                ToastsStore.success("Invoice updated successfully.");
+                downloadFile(res);
+            })
+            .catch(function(err) {
+                console.log(err);
+            });
     };
 
-    const downloadFile = (res) => {
+    const downloadFile = res => {
         const url = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        const contentDisposition = res.headers['content-disposition'];
-        let fileName = 'invoice.pdf';
+        const contentDisposition = res.headers["content-disposition"];
+        let fileName = "invoice.pdf";
         if (contentDisposition) {
             const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
             if (fileNameMatch.length === 2) {
                 fileName = fileNameMatch[1];
             }
         }
-        link.setAttribute('download', fileName);
+        link.setAttribute("download", fileName);
         document.body.appendChild(link);
         link.click();
         link.remove();
         window.URL.revokeObjectURL(url);
-    }
+    };
 
     return (
         <Fragment>
@@ -213,7 +222,10 @@ const AddInvoices = (props) => {
                         <div style={{ float: "left", width: "20%" }}>
                             <div>
                                 <span>Bill To:</span>
-                                <div contentEditable={true} suppressContentEditableWarning={true} >
+                                <div
+                                    contentEditable={true}
+                                    suppressContentEditableWarning={true}
+                                >
                                     <select
                                         name="client_id"
                                         onChange={onChange}
@@ -230,7 +242,10 @@ const AddInvoices = (props) => {
                             </div>
                             <div className="mt-5">
                                 <span>Status:</span>
-                                <div contentEditable={true} suppressContentEditableWarning={true} >
+                                <div
+                                    contentEditable={true}
+                                    suppressContentEditableWarning={true}
+                                >
                                     <select
                                         name="status"
                                         onChange={onChange}
@@ -242,7 +257,6 @@ const AddInvoices = (props) => {
                                     </select>
                                 </div>
                             </div>
-
                         </div>
                         <div className="invoice-table">
                             <div style={{ float: "right", width: "80%" }}>
@@ -260,10 +274,7 @@ const AddInvoices = (props) => {
                                                 </span>
                                             </th>
                                             <td>
-                                                <span
-                                                    name="number"
-
-                                                >
+                                                <span name="number">
                                                     {invoice.number}
                                                 </span>
                                             </td>
@@ -433,7 +444,7 @@ const AddInvoices = (props) => {
                                                         true
                                                     }
                                                     name="rate"
-                                                onBlur={handleChange(index)}
+                                                    onBlur={handleChange(index)}
                                                 >
                                                     {row.rate}
                                                 </span>
@@ -513,17 +524,21 @@ const AddInvoices = (props) => {
                                 placeholder="Enter Note"
                                 name="notes"
                                 onChange={onChange}
-                                value={invoice.notes  || ''}
+                                value={invoice.notes || ""}
                             />
                         </div>
                     </aside>
                     <div className="form-group text-right invoice-save-btn">
                         <button
                             type="button"
-                            onClick={(invoiceId) ? editInvoice : saveInvoice}
-                            className="btn btn--prime mr-1">
-                                {(invoiceId) ? 'Update & Download' : 'Save & Download'}
-                          </button>
+                            id="edit_save_button"
+                            onClick={invoiceId ? editInvoice : saveInvoice}
+                            className="btn btn--prime mr-1"
+                        >
+                            {invoiceId
+                                ? "Update & Download"
+                                : "Save & Download"}
+                        </button>
                     </div>
                 </div>
             </div>
