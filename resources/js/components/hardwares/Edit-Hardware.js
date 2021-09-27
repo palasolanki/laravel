@@ -61,15 +61,14 @@ function EditHardware(props) {
                             </div>
                         </div>
                         <div className="modal-body">
-                            {props.errors && props.errors.length > 0 ? (
-                                <div className="alert alert-danger pb-0">
-                                    {props.errors.map((value, key) => (
-                                        <p key={key}>{value}</p>
-                                    ))}
-                                </div>
-                            ) : (
-                                ""
-                            )}
+                            {props.errors &&
+                                props.errors.length > 0 && (
+                                    <div className="alert alert-danger pb-0">
+                                        {props.errors.map((value, key) => (
+                                            <p key={key}>{value}</p>
+                                        ))}
+                                    </div>
+                                )}
                             <form
                                 onSubmit={event => {
                                     event.preventDefault();

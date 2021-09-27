@@ -99,14 +99,12 @@ function AddHardware() {
         <Fragment>
             <div className="bg-white p-3">
                 <h2 className="heading mb-3">Add-Hardware</h2>
-                {errorList.length > 0 ? (
+                {errorList.length > 0 && (
                     <div className="alert alert-danger pb-0">
                         {errorList.map((value, key) => (
                             <p key={key}>{value}</p>
                         ))}
                     </div>
-                ) : (
-                    ""
                 )}
                 {hardwareData.map((hardwareItem, key) => (
                     <div className="" key={key}>

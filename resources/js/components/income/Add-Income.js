@@ -139,14 +139,12 @@ function AddIncome() {
         <Fragment>
             <div className="bg-white p-3">
                 <h2 className="heading mb-3">Add-Income</h2>
-                {errorList.length > 0 ? (
+                {errorList.length > 0 && (
                     <div className="alert alert-danger pb-0">
                         {errorList.map((value, key) => (
                             <p key={key}>{value}</p>
                         ))}
                     </div>
-                ) : (
-                    ""
                 )}
                 {incomeData.map((incomeItem, key) => (
                     <div className="row mx-0 mb-2" key={key}>

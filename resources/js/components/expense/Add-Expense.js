@@ -143,14 +143,12 @@ function AddExpense() {
                 <div className="row mx-0">
                     <h2 className="heading mb-3">Add-Expenses</h2>
                 </div>
-                {errorList.length > 0 ? (
+                {errorList.length > 0 && (
                     <div className="alert alert-danger pb-0">
                         {errorList.map((value, key) => (
                             <p key={key}>{value}</p>
                         ))}
                     </div>
-                ) : (
-                    ""
                 )}
                 {expenseData.map((expenseItem, key) => (
                     <div className="row mx-0" key={key}>

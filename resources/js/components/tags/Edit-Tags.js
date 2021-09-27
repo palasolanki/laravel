@@ -39,14 +39,12 @@ function EditTags(props) {
                             </div>
                         </div>
                         <div className="modal-body">
-                            {props.errors.length > 0 ? (
+                            {props.errors.length > 0 && (
                                 <div className="alert alert-danger pb-0">
                                     {props.errors.map((value, key) => (
                                         <p key={key}>{value}</p>
                                     ))}
                                 </div>
-                            ) : (
-                                ""
                             )}
                             <form
                                 onSubmit={event => {

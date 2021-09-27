@@ -88,14 +88,10 @@ const AddClient = props => {
         <Fragment>
             <div className="bg-white p-3">
                 <h2 className="heading mb-3">Add Client</h2>
-                {errors.length > 0 ? (
+                {errors.length > 0 && (
                     <div className="alert alert-danger pb-0">
-                        {errors.map((value, key) => (
-                            <p key={key}>{value}</p>
-                        ))}
+                        {errors.map((value, key) => <p key={key}>{value}</p>)}
                     </div>
-                ) : (
-                    ""
                 )}
                 <form
                     onSubmit={addClient}

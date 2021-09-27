@@ -29,8 +29,7 @@ class InvoiceController extends Controller
     {
         $inputs = $request->validated();
 
-        $invoice =  Invoice::create($inputs);
-        dd($invoice);
+        $invoice  =  Invoice::create($inputs);
         $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
         $fileName = 'invoice_' . $invoice->number . '.pdf';
 
@@ -72,10 +71,10 @@ class InvoiceController extends Controller
                 'bill_to'     => $request->bill_to,
             ]);
 
-        $getCurrentInvoice = Invoice::where('_id', $request->_id)->first();
+        $invoice = $invoice->first();
 
-        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $getCurrentInvoice])->setPaper('a4', 'portrait');
-        $fileName = 'invoice_' . $getCurrentInvoice->number . '.pdf';
+        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
+        $fileName = 'invoice_' . $invoice->number . '.pdf';
 
         return $pdf->stream($fileName);
     }
