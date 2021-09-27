@@ -2,6 +2,7 @@ import React, { useState, Fragment, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../helpers/api";
 import { ToastsStore } from "react-toasts";
+import { errorResponse } from "../../helpers";
 
 const EditClient = props => {
     const initialFormState = {
@@ -89,13 +90,7 @@ const EditClient = props => {
                 props.history.push("/clients");
             })
             .catch(res => {
-                const tmp = res.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
-                }
-                setErrors([...errors]);
+                errorResponse(res, errors, setErrors);
             });
     };
 

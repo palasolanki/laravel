@@ -9,6 +9,7 @@ import EditTags from "./Edit-Tags";
 import { ToastsStore } from "react-toasts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { errorResponse } from "../../helpers";
 
 function Tags() {
     //For modal open/close
@@ -49,13 +50,7 @@ function Tags() {
                 handleClose();
             })
             .catch(res => {
-                const tmp = res.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
-                }
-                setErrors([...errors]);
+                errorResponse(res, errors, setErrors);
             });
     };
 
@@ -89,21 +84,15 @@ function Tags() {
         api.patch(`/tags/${tagId}`, updatedTag)
             .then(res => {
                 setTags(
-                    tags.map(tag =>
-                        tag._id === tagId ? res.data.updatedTag : tag
+                    tags.map(
+                        tag => (tag._id === tagId ? res.data.updatedTag : tag)
                     )
                 );
                 ToastsStore.success(res.data.message);
                 handleCloseEdit();
             })
             .catch(res => {
-                const tmp = res.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
-                }
-                setErrors([...errors]);
+                errorResponse(res, errors, setErrors);
             });
     };
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../helpers/api";
-import { formatDate, intVal } from "../../helpers";
+import { errorResponse, formatDate, intVal } from "../../helpers";
 import { numberFormat } from "../../helpers";
 import { ToastsStore } from "react-toasts";
 import EditIncomes from "./Edit-Income";
@@ -182,11 +182,14 @@ export default function Income() {
         setTagOptions(options);
     };
 
-    useEffect(() => {
-        if (dataTable) {
-            registerEvent();
-        }
-    }, [dataTable]);
+    useEffect(
+        () => {
+            if (dataTable) {
+                registerEvent();
+            }
+        },
+        [dataTable]
+    );
 
     const updateIncome = (incomeId, updatedIncome) => {
         const tempIncomeData = updatedIncome.map((incomeItem, key) => {
@@ -199,13 +202,7 @@ export default function Income() {
                 dataTable.ajax.reload();
             })
             .catch(res => {
-                const tmp = res.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
-                }
-                setErrors([...errors]);
+                errorResponse(res, errors, setErrors);
             });
     };
 
@@ -262,12 +259,15 @@ export default function Income() {
         setFilterClient(event.target.value);
     };
 
-    useEffect(() => {
-        if (dataTable || (date[0] && date[1])) {
-            dataTable.destroy();
-            initDatatables();
-        }
-    }, [date, filterClient, selectedMediumsForFilter, selectedTagsForFilter]);
+    useEffect(
+        () => {
+            if (dataTable || (date[0] && date[1])) {
+                dataTable.destroy();
+                initDatatables();
+            }
+        },
+        [date, filterClient, selectedMediumsForFilter, selectedTagsForFilter]
+    );
 
     const createMediumOption = mediums => {
         return mediums.map((medium, key) => {

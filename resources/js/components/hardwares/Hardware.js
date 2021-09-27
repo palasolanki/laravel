@@ -5,6 +5,7 @@ import { ToastsStore } from "react-toasts";
 import EditHardwares from "./Edit-Hardware";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { errorResponse } from "../../helpers";
 
 function Hardware() {
     const [hardwares, setHardwares] = useState([]);
@@ -64,23 +65,18 @@ function Hardware() {
         })
             .then(res => {
                 setHardwares(
-                    hardwares.map(hardware =>
-                        hardware._id === hardwareId
-                            ? res.data.updateHardware
-                            : hardware
+                    hardwares.map(
+                        hardware =>
+                            hardware._id === hardwareId
+                                ? res.data.updateHardware
+                                : hardware
                     )
                 );
                 ToastsStore.success(res.data.message);
                 handleCloseEdit();
             })
             .catch(res => {
-                const tmp = res.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
-                }
-                setErrors([...errors]);
+                errorResponse(res, errors, setErrors);
             });
     };
 

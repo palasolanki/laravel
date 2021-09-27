@@ -6,6 +6,7 @@ import { ToastsStore } from "react-toasts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import ConfirmationComponent from "../ConfirmationComponent";
+import { errorResponse } from "../../helpers";
 
 function Country() {
     const [showAddModal, setShow] = useState(false);
@@ -41,13 +42,7 @@ function Country() {
                 handleClose();
             })
             .catch(res => {
-                const tmp = res.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
-                }
-                setErrors([...errors]);
+                errorResponse(res, errors, setErrors);
             });
     };
 
@@ -76,21 +71,16 @@ function Country() {
         api.patch(`/countries/${countryId}`, updatedCountry)
             .then(res => {
                 setCountry(
-                    country.map(value =>
-                        value._id === countryId ? updatedCountry : value
+                    country.map(
+                        value =>
+                            value._id === countryId ? updatedCountry : value
                     )
                 );
                 ToastsStore.success(res.data.message);
                 handleCloseEdit();
             })
             .catch(res => {
-                const tmp = res.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
-                }
-                setErrors([...errors]);
+                errorResponse(res, errors, setErrors);
             });
     };
 

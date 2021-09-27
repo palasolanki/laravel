@@ -2,7 +2,7 @@ import React, { useState, Fragment, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../helpers/api";
 import { ToastsStore } from "react-toasts";
-import { extendWith } from "lodash";
+import { errorResponse } from "../../helpers";
 
 const AddClient = props => {
     const initialFormState = {
@@ -74,13 +74,7 @@ const AddClient = props => {
                 ToastsStore.success(res.data.message);
             })
             .catch(res => {
-                const tmp = res.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
-                }
-                setErrors([...errors]);
+                errorResponse(res, errors, setErrors);
             });
     };
 

@@ -1,7 +1,7 @@
 import React, { Component, Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../helpers/api";
-import { formatDate, numberFormat } from "../../helpers";
+import { errorResponse, formatDate, numberFormat } from "../../helpers";
 import { intVal } from "../../helpers";
 import { ToastsStore } from "react-toasts";
 import EditExpenses from "./Edit-Expense";
@@ -50,22 +50,25 @@ function Expense() {
         initDatatables();
     }, []);
 
-    useEffect(() => {
-        if (dataTable) {
-            registerEvent();
-            api.get("/get-expense-mediums").then(res => {
-                if (res.data.medium) {
-                    setMediums(res.data.medium);
-                    setMediumsOptionForFilter(
-                        createMediumOption(res.data.medium)
-                    );
-                }
-            }),
-                api.get("/get-expense-tags").then(res => {
-                    createTagOptions(res.data.tags);
-                });
-        }
-    }, [dataTable]);
+    useEffect(
+        () => {
+            if (dataTable) {
+                registerEvent();
+                api.get("/get-expense-mediums").then(res => {
+                    if (res.data.medium) {
+                        setMediums(res.data.medium);
+                        setMediumsOptionForFilter(
+                            createMediumOption(res.data.medium)
+                        );
+                    }
+                }),
+                    api.get("/get-expense-tags").then(res => {
+                        createTagOptions(res.data.tags);
+                    });
+            }
+        },
+        [dataTable]
+    );
 
     const createMediumOption = mediums => {
         return mediums.map((medium, key) => {
@@ -242,13 +245,7 @@ function Expense() {
                 dataTable.ajax.reload();
             })
             .catch(res => {
-                const tmp = res.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
-                }
-                setErrors([...errors]);
+                errorResponse(res, errors, setErrors);
             });
     };
 
@@ -296,12 +293,15 @@ function Expense() {
         }
     };
 
-    useEffect(() => {
-        if (dataTable || (date[0] && date[1])) {
-            dataTable.destroy();
-            initDatatables();
-        }
-    }, [date, selectedMediumsForFilter, selectedTagsForFilter]);
+    useEffect(
+        () => {
+            if (dataTable || (date[0] && date[1])) {
+                dataTable.destroy();
+                initDatatables();
+            }
+        },
+        [date, selectedMediumsForFilter, selectedTagsForFilter]
+    );
 
     const handleSelectChange = selectFor => event => {
         const tmp = event

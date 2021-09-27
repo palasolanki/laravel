@@ -6,6 +6,7 @@ import EditMediums from "./Edit-Mediums";
 import { ToastsStore } from "react-toasts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { errorResponse } from "../../helpers";
 
 function Mediums() {
     //For modal open/close
@@ -47,13 +48,7 @@ function Mediums() {
                 handleClose();
             })
             .catch(res => {
-                const tmp = res.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
-                }
-                setErrors([...errors]);
+                errorResponse(res, errors, setErrors);
             });
     };
 
@@ -87,10 +82,11 @@ function Mediums() {
         api.patch(`/mediums/${mediumId}`, updatedMedium)
             .then(res => {
                 setMediums(
-                    mediums.map(medium =>
-                        medium._id === mediumId
-                            ? res.data.updatedMedium
-                            : medium
+                    mediums.map(
+                        medium =>
+                            medium._id === mediumId
+                                ? res.data.updatedMedium
+                                : medium
                     )
                 );
                 ToastsStore.success(res.data.message);
