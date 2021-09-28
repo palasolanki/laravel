@@ -65,18 +65,17 @@ function Hardware() {
         })
             .then(res => {
                 setHardwares(
-                    hardwares.map(
-                        hardware =>
-                            hardware._id === hardwareId
-                                ? res.data.updateHardware
-                                : hardware
+                    hardwares.map(hardware =>
+                        hardware._id === hardwareId
+                            ? res.data.updateHardware
+                            : hardware
                     )
                 );
                 ToastsStore.success(res.data.message);
                 handleCloseEdit();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 

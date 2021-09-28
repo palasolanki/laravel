@@ -187,14 +187,11 @@ export default function Income() {
         setTagOptions(options);
     };
 
-    useEffect(
-        () => {
-            if (dataTable) {
-                registerEvent();
-            }
-        },
-        [dataTable]
-    );
+    useEffect(() => {
+        if (dataTable) {
+            registerEvent();
+        }
+    }, [dataTable]);
 
     const updateIncome = (incomeId, updatedIncome) => {
         const tempIncomeData = updatedIncome.map((incomeItem, key) => {
@@ -207,7 +204,7 @@ export default function Income() {
                 dataTable.ajax.reload();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -239,15 +236,12 @@ export default function Income() {
         setFilterClient(event.target.value);
     };
 
-    useEffect(
-        () => {
-            if (dataTable || (date[0] && date[1])) {
-                dataTable.destroy();
-                initDatatables();
-            }
-        },
-        [date, filterClient, selectedMediumsForFilter, selectedTagsForFilter]
-    );
+    useEffect(() => {
+        if (dataTable || (date[0] && date[1])) {
+            dataTable.destroy();
+            initDatatables();
+        }
+    }, [date, filterClient, selectedMediumsForFilter, selectedTagsForFilter]);
 
     const createMediumOption = mediums => {
         return mediums.map((medium, key) => {

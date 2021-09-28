@@ -2,10 +2,10 @@ import React, { Component, Fragment, useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import api from "../../helpers/api";
 import { ToastsStore } from "react-toasts";
+import { errorResponse } from "../../helpers";
 
 function AddHardware() {
-    let errors = [];
-    const [errorList, setErrorList] = useState(errors);
+    const [errors, setErrors] = useState([]);
 
     const data = {
         date: new Date(),
@@ -81,27 +81,20 @@ function AddHardware() {
         api.post(`/hardwares`, { data: changeDateFormat() })
             .then(res => {
                 setHardwareData([data]);
-                setErrorList([]);
+                setErrors([]);
                 ToastsStore.success(res.data.message);
             })
-            .catch(function(error) {
-                const tmp = error.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
-                }
-                setErrorList(errors);
-                ToastsStore.error(error.response.data.message);
+            .catch(function(res) {
+                errorResponse(res, setErrors);
             });
     };
     return (
         <Fragment>
             <div className="bg-white p-3">
                 <h2 className="heading mb-3">Add-Hardware</h2>
-                {errorList.length > 0 && (
+                {errors.length > 0 && (
                     <div className="alert alert-danger pb-0">
-                        {errorList.map((value, key) => (
+                        {errors.map((value, key) => (
                             <p key={key}>{value}</p>
                         ))}
                     </div>

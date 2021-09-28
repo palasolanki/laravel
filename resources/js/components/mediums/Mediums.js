@@ -48,7 +48,7 @@ function Mediums() {
                 handleClose();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -82,11 +82,10 @@ function Mediums() {
         api.patch(`/mediums/${mediumId}`, updatedMedium)
             .then(res => {
                 setMediums(
-                    mediums.map(
-                        medium =>
-                            medium._id === mediumId
-                                ? res.data.updatedMedium
-                                : medium
+                    mediums.map(medium =>
+                        medium._id === mediumId
+                            ? res.data.updatedMedium
+                            : medium
                     )
                 );
                 ToastsStore.success(res.data.message);
@@ -94,7 +93,11 @@ function Mediums() {
             })
             .catch(res => {
                 const tmp = res.response.data.errors;
-                setErrors(tmp["medium"]);
+                let tmpErrors = [];
+                for (const key in tmp) {
+                    tmpErrors.push(tmp[key][0]);
+                }
+                setErrors(tmpErrors);
             });
     };
 

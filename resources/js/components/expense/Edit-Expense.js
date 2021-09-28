@@ -165,7 +165,6 @@ function EditExpenses(props) {
                                         name="amount"
                                         value={expense.amount}
                                         onChange={handleInputChange}
-                                        min="1"
                                     />
                                 </div>
                                 <div className="form-group">

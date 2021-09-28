@@ -30,7 +30,7 @@ class ExpenseRequest extends FormRequest
         return [
             'data.*.date'      => 'required',
             'data.*.item'      => 'required',
-            'data.*.amount'    => 'required|integer',
+            'data.*.amount'    => 'required|numeric|min:0',
             'data.*.medium'    => 'required',
             'data.*.tags'      => 'required',
         ];
@@ -42,7 +42,8 @@ class ExpenseRequest extends FormRequest
             'data.*.date.required'      => 'Date is required',
             'data.*.item.required'      => 'Item is required',
             'data.*.amount.required'    => 'Amount is required',
-            'data.*.amount.integer'     => 'Amount is Must Number',
+            'data.*.amount.numeric'     => 'Amount must be a number',
+            'data.*.amount.min'         => 'Amount must be a positive number',
             'data.*.medium.required'    => 'Medium is required',
             'data.*.tags.required'      => 'Tags is required',
 

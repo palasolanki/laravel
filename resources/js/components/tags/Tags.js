@@ -50,7 +50,7 @@ function Tags() {
                 handleClose();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -84,15 +84,15 @@ function Tags() {
         api.patch(`/tags/${tagId}`, updatedTag)
             .then(res => {
                 setTags(
-                    tags.map(
-                        tag => (tag._id === tagId ? res.data.updatedTag : tag)
+                    tags.map(tag =>
+                        tag._id === tagId ? res.data.updatedTag : tag
                     )
                 );
                 ToastsStore.success(res.data.message);
                 handleCloseEdit();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 

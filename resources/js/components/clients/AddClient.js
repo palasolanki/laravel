@@ -74,7 +74,7 @@ const AddClient = props => {
                 ToastsStore.success(res.data.message);
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -84,7 +84,9 @@ const AddClient = props => {
                 <h2 className="heading mb-3">Add Client</h2>
                 {errors.length > 0 && (
                     <div className="alert alert-danger pb-0">
-                        {errors.map((value, key) => <p key={key}>{value}</p>)}
+                        {errors.map((value, key) => (
+                            <p key={key}>{value}</p>
+                        ))}
                     </div>
                 )}
                 <form

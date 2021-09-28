@@ -3,12 +3,11 @@ import DatePicker from "react-datepicker";
 import api from "../../helpers/api";
 import Select from "react-select";
 import { ToastsStore } from "react-toasts";
-import { formatDate } from "../../helpers";
+import { formatDate, errorResponse } from "../../helpers";
 const $ = require("jquery");
 
 function AddExpense() {
-    let errors = [];
-    const [errorList, setErrorList] = useState(errors);
+    const [errors, setErrors] = useState([]);
     const data = {
         date: new Date(),
         item: "",
@@ -123,18 +122,12 @@ function AddExpense() {
         api.post(`/expenses`, formData)
             .then(res => {
                 setExpenseData([data]);
-                setErrorList([]);
+                setErrors([]);
                 $("#file").val("");
                 ToastsStore.success(res.data.message);
             })
-            .catch(function(error) {
-                const tmp = error.response.data.errors;
-                for (const key in tmp) {
-                    if (!errors.includes(tmp[key][0])) {
-                        errors.push(tmp[key][0]);
-                    }
-                }
-                setErrorList(errors);
+            .catch(function(res) {
+                errorResponse(res, setErrors);
             });
     };
     return (
@@ -143,9 +136,9 @@ function AddExpense() {
                 <div className="row mx-0">
                     <h2 className="heading mb-3">Add-Expenses</h2>
                 </div>
-                {errorList.length > 0 && (
+                {errors.length > 0 && (
                     <div className="alert alert-danger pb-0">
-                        {errorList.map((value, key) => (
+                        {errors.map((value, key) => (
                             <p key={key}>{value}</p>
                         ))}
                     </div>
@@ -181,7 +174,6 @@ function AddExpense() {
                                         onChange={handleInputChange(key)}
                                         value={expenseItem.amount}
                                         className="form-control"
-                                        min="1"
                                     />
                                 </div>
                             </div>

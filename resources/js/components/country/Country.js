@@ -42,7 +42,7 @@ function Country() {
                 handleClose();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -71,16 +71,15 @@ function Country() {
         api.patch(`/countries/${countryId}`, updatedCountry)
             .then(res => {
                 setCountry(
-                    country.map(
-                        value =>
-                            value._id === countryId ? updatedCountry : value
+                    country.map(value =>
+                        value._id === countryId ? updatedCountry : value
                     )
                 );
                 ToastsStore.success(res.data.message);
                 handleCloseEdit();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 
