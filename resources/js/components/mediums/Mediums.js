@@ -96,12 +96,7 @@ function Mediums() {
                 handleCloseEdit();
             })
             .catch(res => {
-                const tmp = res.response.data.errors;
-                let tmpErrors = [];
-                for (const key in tmp) {
-                    tmpErrors.push(tmp[key][0]);
-                }
-                setErrors(tmpErrors);
+                errorResponse(res, setErrors);
             });
     };
 
