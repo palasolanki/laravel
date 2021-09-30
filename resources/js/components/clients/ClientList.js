@@ -154,7 +154,7 @@ const ClientList = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={3}>No clients</td>
+                                    <td colSpan={3}>No Clients</td>
                                 </tr>
                             )}
                         </tbody>

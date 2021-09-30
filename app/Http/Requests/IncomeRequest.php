@@ -45,7 +45,7 @@ class IncomeRequest extends FormRequest
             'data.*.amount.min'         => 'Amount must be a positive number',
             'data.*.medium.required'    => 'Medium is required',
             'data.*.client_id.required' => 'Client is required',
-            'data.*.tags.required'      => 'Tags is required',
+            'data.*.tags.required'      => 'Tags are required',
         ];
     }
 

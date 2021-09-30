@@ -58,6 +58,7 @@ export default function ImportExpense(props) {
                                         onClick={() =>
                                             props.importData(fileState)
                                         }
+                                        disabled={props.disabled}
                                     >
                                         Upload
                                     </button>

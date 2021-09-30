@@ -18,8 +18,9 @@ function AddExpense() {
         notes: ""
     };
     const [options, setOptions] = useState([]);
-
     const [mediums, setMediums] = useState([]);
+    const [disabled, setDisabled] = useState(false);
+
     useEffect(() => {
         api.get("/get-expense-mediums").then(res => {
             setMediums(res.data.medium);
@@ -93,6 +94,7 @@ function AddExpense() {
         setExpenseData([...array]);
     };
     const saveExpenses = () => {
+        setDisabled(true);
         var formData = new FormData();
 
         Object.keys(expenseData).map(key => {
@@ -121,12 +123,14 @@ function AddExpense() {
         });
         api.post(`/expenses`, formData)
             .then(res => {
+                setDisabled(false);
                 setExpenseData([data]);
                 setErrors([]);
                 $("#file").val("");
                 ToastsStore.success(res.data.message);
             })
             .catch(function(res) {
+                setDisabled(false);
                 errorResponse(res, setErrors);
             });
     };
@@ -251,6 +255,7 @@ function AddExpense() {
                         <button
                             className="btn btn--prime"
                             onClick={saveExpenses}
+                            disabled={disabled}
                         >
                             Save
                         </button>

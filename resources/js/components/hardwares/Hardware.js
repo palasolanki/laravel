@@ -6,6 +6,7 @@ import EditHardwares from "./Edit-Hardware";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { errorResponse } from "../../helpers";
+import moment from "moment";
 
 function Hardware() {
     const [hardwares, setHardwares] = useState([]);
@@ -123,7 +124,9 @@ function Hardware() {
                                 <tr key={hardware._id}>
                                     <td>
                                         {hardware.date
-                                            ? hardware.date
+                                            ? moment(hardware.date).format(
+                                                  "DD-MM-YYYY"
+                                              )
                                             : "Not available"}
                                     </td>
                                     <td>{hardware.item}</td>

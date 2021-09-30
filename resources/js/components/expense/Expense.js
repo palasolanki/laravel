@@ -50,6 +50,7 @@ function Expense() {
         setImportShow(false);
     };
     const [errors, setErrors] = useState([]);
+    const [disabled, setDisabled] = useState(false);
 
     useEffect(() => {
         initDatatables();
@@ -317,15 +318,18 @@ function Expense() {
     };
 
     const importData = fileState => {
+        setDisabled(true);
         const formData = new FormData();
         formData.append("expenseFile", fileState.selectedFile);
         api.post("/importExpense", formData)
             .then(res => {
+                setDisabled(false);
                 closeImportModal();
                 ToastsStore.success("Data imported successfully.");
                 dataTable.ajax.reload();
             })
             .catch(() => {
+                setDisabled(false);
                 ToastsStore.error("Something went wrong!");
             });
     };
@@ -457,6 +461,7 @@ function Expense() {
                     handleCloseImportModal={closeImportModal}
                     importData={importData}
                     downloadSample={downloadSample}
+                    disabled={disabled}
                 />
             )}
         </div>

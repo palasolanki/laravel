@@ -34,6 +34,7 @@ const AddInvoices = props => {
     const [total, setTotal] = useState(0);
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
+    const [disabled, setDisabled] = useState(false);
 
     const handleChange = index => e => {
         let name = e.target.getAttribute("name");
@@ -145,8 +146,9 @@ const AddInvoices = props => {
     };
 
     const saveInvoice = event => {
-        $("#edit_save_button").attr("disabled", "disabled");
+        setDisabled(true);
         if (!invoice.lines.length || !total || !invoice.bill_from) {
+            setDisabled(false);
             ToastsStore.error("Required fields missing.");
             return;
         }
@@ -156,29 +158,32 @@ const AddInvoices = props => {
             { responseType: "blob" }
         )
             .then(res => {
-                $("#edit_save_button").removeAttr("disabled", "disabled");
-
+                setDisabled(false);
                 ToastsStore.success("Invoice saved successfully.");
                 downloadFile(res);
                 props.history.push("/invoices");
             })
             .catch(function(err) {
-                $("#edit_save_button").removeAttr("disabled", "disabled");
+                setDisabled(false);
                 console.log(err);
             });
     };
 
     const editInvoice = () => {
+        setDisabled(true);
         if (!invoice.lines.length || !total || !invoice.bill_from) {
+            setDisabled(false);
             ToastsStore.error("Required fields missing.");
             return;
         }
         api.post(`/invoices/edit`, { ...invoice }, { responseType: "blob" })
             .then(res => {
+                setDisabled(false);
                 ToastsStore.success("Invoice updated successfully.");
                 downloadFile(res);
             })
             .catch(function(err) {
+                setDisabled(false);
                 console.log(err);
             });
     };
@@ -534,6 +539,7 @@ const AddInvoices = props => {
                             id="edit_save_button"
                             onClick={invoiceId ? editInvoice : saveInvoice}
                             className="btn btn--prime mr-1"
+                            disabled={disabled}
                         >
                             {invoiceId
                                 ? "Update & Download"

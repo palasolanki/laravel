@@ -48,7 +48,6 @@ function AddMediums(props) {
                                 onSubmit={event => {
                                     event.preventDefault();
                                     props.addMedium(medium);
-                                    setMedium(initialFormState);
                                 }}
                             >
                                 <div className="form-group">
@@ -80,6 +79,7 @@ function AddMediums(props) {
                                         type="submit"
                                         style={{ margin: "0 10px 0 0" }}
                                         className="btn btn--prime"
+                                        disabled={props.disabled}
                                     >
                                         Submit
                                     </button>

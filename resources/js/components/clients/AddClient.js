@@ -20,6 +20,7 @@ const AddClient = props => {
     const [mediums, setMediums] = useState([]);
     const [logoUrl, setLogoUrl] = useState("");
     const [errors, setErrors] = useState([]);
+    const [disabled, setDisabled] = useState(false);
 
     const logoDiv = {
         width: "170px",
@@ -62,6 +63,7 @@ const AddClient = props => {
     };
 
     const addClient = event => {
+        setDisabled(true);
         event.preventDefault();
         const data = new FormData();
         for (let [key, value] of Object.entries(client)) {
@@ -70,10 +72,12 @@ const AddClient = props => {
         return api
             .post("/addClient", data)
             .then(res => {
+                setDisabled(false);
                 props.history.push("/clients");
                 ToastsStore.success(res.data.message);
             })
             .catch(res => {
+                setDisabled(false);
                 errorResponse(res, setErrors);
             });
     };
@@ -81,7 +85,7 @@ const AddClient = props => {
     return (
         <Fragment>
             <div className="bg-white p-3">
-                <h2 className="heading mb-3">Add Client</h2>
+                <h2 className="heading mb-3">Add-Client</h2>
                 {errors.length > 0 && (
                     <div className="alert alert-danger pb-0">
                         {errors.map((value, key) => (
@@ -246,6 +250,7 @@ const AddClient = props => {
                             <button
                                 type="submit"
                                 className="btn btn--prime mr-1"
+                                disabled={disabled}
                             >
                                 Save
                             </button>

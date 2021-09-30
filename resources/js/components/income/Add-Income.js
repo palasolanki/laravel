@@ -19,6 +19,8 @@ function AddIncome() {
     const [mediums, setMediums] = useState([]);
     const [clients, setClients] = useState([]);
     const [tagOptions, setTagOptions] = useState([]);
+    const [disabled, setDisabled] = useState(false);
+
     useEffect(() => {
         api.get("/get-income-mediums")
             .then(res => {
@@ -115,16 +117,19 @@ function AddIncome() {
         setIncomeData([...array]);
     };
     const saveIncomes = () => {
+        setDisabled(true);
         const tempIncomeData = incomeData.map((incomeItem, key) => {
             return { ...incomeItem, date: formatDate(incomeItem.date) };
         });
         api.post(`/incomes`, { data: tempIncomeData })
             .then(res => {
+                setDisabled(false);
                 setIncomeData([data]);
                 setErrors([]);
                 ToastsStore.success(res.data.message);
             })
             .catch(function(res) {
+                setDisabled(false);
                 errorResponse(res, setErrors);
             });
     };
@@ -237,6 +242,7 @@ function AddIncome() {
                         <button
                             className="btn btn--prime"
                             onClick={saveIncomes}
+                            disabled={disabled}
                         >
                             Save
                         </button>

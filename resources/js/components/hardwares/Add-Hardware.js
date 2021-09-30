@@ -6,6 +6,7 @@ import { errorResponse } from "../../helpers";
 
 function AddHardware() {
     const [errors, setErrors] = useState([]);
+    const [disabled, setDisabled] = useState(false);
 
     const data = {
         date: new Date(),
@@ -78,13 +79,16 @@ function AddHardware() {
         return newData;
     };
     const saveHardwares = () => {
+        setDisabled(true);
         api.post(`/hardwares`, { data: changeDateFormat() })
             .then(res => {
+                setDisabled(false);
                 setHardwareData([data]);
                 setErrors([]);
                 ToastsStore.success(res.data.message);
             })
             .catch(function(res) {
+                setDisabled(false);
                 errorResponse(res, setErrors);
             });
     };
@@ -213,6 +217,7 @@ function AddHardware() {
                         <button
                             className="btn btn--prime"
                             onClick={saveHardwares}
+                            disabled={disabled}
                         >
                             Save
                         </button>

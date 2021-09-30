@@ -55,7 +55,9 @@ const EditClient = props => {
                         address: data.address,
                         company_logo: data.company_logo
                     });
-                    setLogoUrl(data.company_logo_url);
+                    data.company_logo === null
+                        ? ""
+                        : setLogoUrl(data.company_logo_url);
                 })
                 .catch(err => {
                     console.log(err);

@@ -15,7 +15,6 @@ function AddTags(props) {
 
     const handleInputChange = event => {
         const { name, value } = event.target;
-
         setTag({ ...tag, [name]: value });
     };
 
@@ -47,7 +46,6 @@ function AddTags(props) {
                                 onSubmit={event => {
                                     event.preventDefault();
                                     props.addTag(tag);
-                                    setTag(initialFormState);
                                 }}
                             >
                                 <div className="form-group">
@@ -79,6 +77,7 @@ function AddTags(props) {
                                         type="submit"
                                         style={{ margin: "0 10px 0 0" }}
                                         className="btn btn--prime"
+                                        disabled={props.disabled}
                                     >
                                         Submit
                                     </button>

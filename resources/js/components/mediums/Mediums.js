@@ -21,6 +21,7 @@ function Mediums() {
     const openShowEdit = () => setEditShow(true);
     const openShowDelete = () => setDeleteShow(true);
     const [errors, setErrors] = useState([]);
+    const [disabled, setDisabled] = useState(false);
 
     //For get mediums from server and display list of mediums
     const mediumsData = [];
@@ -41,13 +42,16 @@ function Mediums() {
 
     //For add new medium in database
     const addMedium = medium => {
+        setDisabled(true);
         api.post(`/mediums`, medium)
             .then(res => {
+                setDisabled(false);
                 setMediums([...mediums, res.data.addedMedium]);
                 ToastsStore.success(res.data.message);
                 handleClose();
             })
             .catch(res => {
+                setDisabled(false);
                 errorResponse(res, setErrors);
             });
     };
@@ -192,6 +196,7 @@ function Mediums() {
                     handleClose={handleClose}
                     addMedium={addMedium}
                     errors={errors}
+                    disabled={disabled}
                 />
             )}
             {showEditModal && (

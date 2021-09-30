@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Requests\TagRequest;
 use App\Tag;
-use Illuminate\Http\Request;
 
 class TagController extends Controller
 {
@@ -24,7 +24,8 @@ class TagController extends Controller
         return response()->json(['message' => 'Tag Delete Success!']);
     }
 
-    public function update($id, TagRequest $request){
+    public function update($id, TagRequest $request)
+    {
         $tag = $request->save($id);
         return response()->json(['updatedTag' => $tag, 'message' => 'Tag Updated Successfully...']);
     }
