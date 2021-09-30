@@ -51,6 +51,8 @@ function Expense() {
     };
     const [errors, setErrors] = useState([]);
     const [disabled, setDisabled] = useState(false);
+    const [selectedMediums, setSelectedMediums] = useState();
+    const [selectedTags, setSelectedTags] = useState();
 
     useEffect(() => {
         initDatatables();
@@ -285,8 +287,10 @@ function Expense() {
             : [];
         const data = event ? tmp : null;
         if (selectFor == "mediums") {
+            setSelectedMediums(event);
             setSelectedMediumsForFilter(data);
         } else if (selectFor == "tags") {
+            setSelectedTags(event);
             setSelectedTagsForFilter(data);
         }
     };
@@ -411,6 +415,7 @@ function Expense() {
                                     isMulti
                                     options={mediumsOptionForFilter}
                                     placeholder="Select Mediums"
+                                    value={selectedMediums}
                                 />
                             </div>
                         </div>
@@ -421,6 +426,7 @@ function Expense() {
                                     isMulti
                                     options={options}
                                     placeholder="Select Tags"
+                                    value={selectedTags}
                                 />
                             </div>
                         </div>
