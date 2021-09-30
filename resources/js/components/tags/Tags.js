@@ -24,6 +24,7 @@ function Tags() {
     const openShowEdit = () => setEditShow(true);
     const openShowDelete = () => setDeleteShow(true);
     const [errors, setErrors] = useState([]);
+    const [disabled, setDisabled] = useState(false);
 
     //For get tags from server and display list of tags
     const tagsData = [];
@@ -43,14 +44,17 @@ function Tags() {
 
     //For add new tag in database
     const addTag = tag => {
+        setDisabled(true);
         api.post(`/tags`, tag)
             .then(res => {
+                setDisabled(false);
                 setTags([...tags, res.data.addedTag]);
                 ToastsStore.success(res.data.message);
                 handleClose();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                setDisabled(false);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -84,15 +88,15 @@ function Tags() {
         api.patch(`/tags/${tagId}`, updatedTag)
             .then(res => {
                 setTags(
-                    tags.map(
-                        tag => (tag._id === tagId ? res.data.updatedTag : tag)
+                    tags.map(tag =>
+                        tag._id === tagId ? res.data.updatedTag : tag
                     )
                 );
                 ToastsStore.success(res.data.message);
                 handleCloseEdit();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -185,6 +189,7 @@ function Tags() {
                     handleClose={handleClose}
                     addTag={addTag}
                     errors={errors}
+                    disabled={disabled}
                 />
             )}
             {showEditModal && (

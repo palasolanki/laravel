@@ -23,7 +23,11 @@ function EditTags(props) {
         <Fragment>
             <div
                 className="modal"
-                style={{ display: "block", transition: "display 1s" }}
+                style={{
+                    display: "block",
+                    transition: "display 1s",
+                    overflow: "auto"
+                }}
             >
                 <div className="modal-dialog modal-dialog-centered register-modal-dialog">
                     <div className="modal-content">

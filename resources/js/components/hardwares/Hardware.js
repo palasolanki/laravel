@@ -6,6 +6,7 @@ import EditHardwares from "./Edit-Hardware";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { errorResponse } from "../../helpers";
+import moment from "moment";
 
 function Hardware() {
     const [hardwares, setHardwares] = useState([]);
@@ -65,18 +66,17 @@ function Hardware() {
         })
             .then(res => {
                 setHardwares(
-                    hardwares.map(
-                        hardware =>
-                            hardware._id === hardwareId
-                                ? res.data.updateHardware
-                                : hardware
+                    hardwares.map(hardware =>
+                        hardware._id === hardwareId
+                            ? res.data.updateHardware
+                            : hardware
                     )
                 );
                 ToastsStore.success(res.data.message);
                 handleCloseEdit();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -124,7 +124,9 @@ function Hardware() {
                                 <tr key={hardware._id}>
                                     <td>
                                         {hardware.date
-                                            ? hardware.date
+                                            ? moment(hardware.date).format(
+                                                  "DD-MM-YYYY"
+                                              )
                                             : "Not available"}
                                     </td>
                                     <td>{hardware.item}</td>

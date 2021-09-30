@@ -29,7 +29,7 @@ class IncomeRequest extends FormRequest
     {
         return [
             'data.*.date'      => 'required',
-            'data.*.amount'    => 'required|integer|min:0',
+            'data.*.amount'    => 'required|numeric|min:0',
             'data.*.medium'    => 'required',
             'data.*.client_id' => 'required',
             'data.*.tags'      => 'required',
@@ -41,11 +41,11 @@ class IncomeRequest extends FormRequest
         return [
             'data.*.date.required'      => 'Date is required',
             'data.*.amount.required'    => 'Amount is required',
-            'data.*.amount.integer'     => 'Amount must be a number',
-            'data.*.amount.min'         => 'Amount must be greater than 0',
+            'data.*.amount.numeric'     => 'Amount must be a number',
+            'data.*.amount.min'         => 'Amount must be a positive number',
             'data.*.medium.required'    => 'Medium is required',
             'data.*.client_id.required' => 'Client is required',
-            'data.*.tags.required'      => 'Tags is required',
+            'data.*.tags.required'      => 'Tags are required',
         ];
     }
 

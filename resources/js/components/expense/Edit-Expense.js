@@ -30,7 +30,10 @@ function EditExpenses(props) {
         date: new Date(props.currentExpense.selectedDateForEdit),
         item: props.currentExpense.item,
         amount: props.currentExpense.amount,
-        medium: props.currentExpense.medium.id,
+        medium:
+            "medium" in props.currentExpense
+                ? props.currentExpense.medium.id
+                : "",
         tags: tmpTagsList(props.currentExpense.tags),
         file_attachments: selectedFile,
         notes: props.currentExpense.notes
@@ -165,7 +168,6 @@ function EditExpenses(props) {
                                         name="amount"
                                         value={expense.amount}
                                         onChange={handleInputChange}
-                                        min="1"
                                     />
                                 </div>
                                 <div className="form-group">

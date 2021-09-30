@@ -58,7 +58,7 @@ class ExpenseExport implements FromQuery, WithHeadings, WithMapping
             Carbon::parse($expense->date)->format('d-m-Y'),
             $expense->item,
             $expense->amount,
-            $expense->medium['medium'],
+            $expense->medium['medium'] ?? 'N/A',
             $expense->notes ?? 'N/A',
             implode(', ', $expense->tags->pluck('tag')->toArray()),
         ];

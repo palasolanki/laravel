@@ -22,6 +22,7 @@ function Country() {
 
     const [country, setCountry] = useState([]);
     const [errors, setErrors] = useState([]);
+    const [disabled, setDisabled] = useState(false);
 
     const openShow = () => {
         setErrors([]);
@@ -35,14 +36,17 @@ function Country() {
     }, []);
 
     const addCountry = addcountry => {
+        setDisabled(true);
         api.post(`/countries`, { name: addcountry })
             .then(res => {
+                setDisabled(false);
                 setCountry([...country, res.data.country]);
                 ToastsStore.success(res.data.message);
                 handleClose();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                setDisabled(false);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -71,16 +75,15 @@ function Country() {
         api.patch(`/countries/${countryId}`, updatedCountry)
             .then(res => {
                 setCountry(
-                    country.map(
-                        value =>
-                            value._id === countryId ? updatedCountry : value
+                    country.map(value =>
+                        value._id === countryId ? res.data.updateCountry : value
                     )
                 );
                 ToastsStore.success(res.data.message);
                 handleCloseEdit();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -108,6 +111,7 @@ function Country() {
                     {country.length > 0 ? (
                         country.map((value, index) => (
                             <tr key={index}>
+                                {console.log(value)}
                                 <td>{value.name}</td>
                                 <td>
                                     <button
@@ -143,6 +147,7 @@ function Country() {
                     handleClose={handleClose}
                     addCountry={addCountry}
                     errors={errors}
+                    disabled={disabled}
                 />
             )}
             {showEditModal && (

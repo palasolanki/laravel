@@ -55,7 +55,9 @@ const EditClient = props => {
                         address: data.address,
                         company_logo: data.company_logo
                     });
-                    setLogoUrl(data.company_logo_url);
+                    data.company_logo === null
+                        ? ""
+                        : setLogoUrl(data.company_logo_url);
                 })
                 .catch(err => {
                     console.log(err);
@@ -85,12 +87,11 @@ const EditClient = props => {
         return api
             .post(`/client/${id}`, data)
             .then(res => {
-                setSendRequest(false);
                 ToastsStore.success(res.data.message);
                 props.history.push("/clients");
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -111,7 +112,9 @@ const EditClient = props => {
                 <h2 className="heading mb-3">Edit Client</h2>
                 {errors.length > 0 && (
                     <div className="alert alert-danger pb-0">
-                        {errors.map((value, key) => <p key={key}>{value}</p>)}
+                        {errors.map((value, key) => (
+                            <p key={key}>{value}</p>
+                        ))}
                     </div>
                 )}
                 <form

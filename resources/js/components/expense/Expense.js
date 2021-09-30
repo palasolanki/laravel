@@ -50,30 +50,30 @@ function Expense() {
         setImportShow(false);
     };
     const [errors, setErrors] = useState([]);
+    const [disabled, setDisabled] = useState(false);
+    const [selectedMediums, setSelectedMediums] = useState();
+    const [selectedTags, setSelectedTags] = useState();
 
     useEffect(() => {
         initDatatables();
     }, []);
 
-    useEffect(
-        () => {
-            if (dataTable) {
-                registerEvent();
-                api.get("/get-expense-mediums").then(res => {
-                    if (res.data.medium) {
-                        setMediums(res.data.medium);
-                        setMediumsOptionForFilter(
-                            createMediumOption(res.data.medium)
-                        );
-                    }
-                }),
-                    api.get("/get-expense-tags").then(res => {
-                        createTagOptions(res.data.tags);
-                    });
-            }
-        },
-        [dataTable]
-    );
+    useEffect(() => {
+        if (dataTable) {
+            registerEvent();
+            api.get("/get-expense-mediums").then(res => {
+                if (res.data.medium) {
+                    setMediums(res.data.medium);
+                    setMediumsOptionForFilter(
+                        createMediumOption(res.data.medium)
+                    );
+                }
+            }),
+                api.get("/get-expense-tags").then(res => {
+                    createTagOptions(res.data.tags);
+                });
+        }
+    }, [dataTable]);
 
     const createMediumOption = mediums => {
         return mediums.map((medium, key) => {
@@ -250,7 +250,7 @@ function Expense() {
                 dataTable.ajax.reload();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -272,15 +272,12 @@ function Expense() {
         handleFilterOnDateChange(datevalue, setDate, setDateRange);
     };
 
-    useEffect(
-        () => {
-            if (dataTable || (date[0] && date[1])) {
-                dataTable.destroy();
-                initDatatables();
-            }
-        },
-        [date, selectedMediumsForFilter, selectedTagsForFilter]
-    );
+    useEffect(() => {
+        if (dataTable || (date[0] && date[1])) {
+            dataTable.destroy();
+            initDatatables();
+        }
+    }, [date, selectedMediumsForFilter, selectedTagsForFilter]);
 
     const handleSelectChange = selectFor => event => {
         const tmp = event
@@ -290,8 +287,10 @@ function Expense() {
             : [];
         const data = event ? tmp : null;
         if (selectFor == "mediums") {
+            setSelectedMediums(event);
             setSelectedMediumsForFilter(data);
         } else if (selectFor == "tags") {
+            setSelectedTags(event);
             setSelectedTagsForFilter(data);
         }
     };
@@ -323,15 +322,18 @@ function Expense() {
     };
 
     const importData = fileState => {
+        setDisabled(true);
         const formData = new FormData();
         formData.append("expenseFile", fileState.selectedFile);
         api.post("/importExpense", formData)
             .then(res => {
+                setDisabled(false);
                 closeImportModal();
                 ToastsStore.success("Data imported successfully.");
                 dataTable.ajax.reload();
             })
             .catch(() => {
+                setDisabled(false);
                 ToastsStore.error("Something went wrong!");
             });
     };
@@ -413,6 +415,7 @@ function Expense() {
                                     isMulti
                                     options={mediumsOptionForFilter}
                                     placeholder="Select Mediums"
+                                    value={selectedMediums}
                                 />
                             </div>
                         </div>
@@ -423,6 +426,7 @@ function Expense() {
                                     isMulti
                                     options={options}
                                     placeholder="Select Tags"
+                                    value={selectedTags}
                                 />
                             </div>
                         </div>
@@ -463,6 +467,7 @@ function Expense() {
                     handleCloseImportModal={closeImportModal}
                     importData={importData}
                     downloadSample={downloadSample}
+                    disabled={disabled}
                 />
             )}
         </div>

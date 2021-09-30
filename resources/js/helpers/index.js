@@ -2,8 +2,8 @@ export function intVal(i) {
     return typeof i === "string"
         ? i.replace(/[\$,]/g, "") * 1
         : typeof i === "number"
-            ? i
-            : 0;
+        ? i
+        : 0;
 }
 
 export function numberFormat(data) {
@@ -22,14 +22,13 @@ export function formatDate(date) {
     return [year, month, day].join("-");
 }
 
-export function errorResponse(res, errors, setErrors) {
+export function errorResponse(res, setErrors) {
     const tmp = res.response.data.errors;
+    let tmpErrors = [];
     for (const key in tmp) {
-        if (!errors.includes(tmp[key][0])) {
-            errors.push(tmp[key][0]);
-        }
+        tmpErrors.push(tmp[key][0]);
     }
-    setErrors([...errors]);
+    setErrors(tmpErrors);
 }
 
 export function handleFilterOnDateChange(datevalue, setDate, setDateRange) {

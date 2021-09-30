@@ -21,6 +21,7 @@ function Mediums() {
     const openShowEdit = () => setEditShow(true);
     const openShowDelete = () => setDeleteShow(true);
     const [errors, setErrors] = useState([]);
+    const [disabled, setDisabled] = useState(false);
 
     //For get mediums from server and display list of mediums
     const mediumsData = [];
@@ -41,14 +42,17 @@ function Mediums() {
 
     //For add new medium in database
     const addMedium = medium => {
+        setDisabled(true);
         api.post(`/mediums`, medium)
             .then(res => {
+                setDisabled(false);
                 setMediums([...mediums, res.data.addedMedium]);
                 ToastsStore.success(res.data.message);
                 handleClose();
             })
             .catch(res => {
-                errorResponse(res, errors, setErrors);
+                setDisabled(false);
+                errorResponse(res, setErrors);
             });
     };
 
@@ -82,11 +86,10 @@ function Mediums() {
         api.patch(`/mediums/${mediumId}`, updatedMedium)
             .then(res => {
                 setMediums(
-                    mediums.map(
-                        medium =>
-                            medium._id === mediumId
-                                ? res.data.updatedMedium
-                                : medium
+                    mediums.map(medium =>
+                        medium._id === mediumId
+                            ? res.data.updatedMedium
+                            : medium
                     )
                 );
                 ToastsStore.success(res.data.message);
@@ -94,7 +97,11 @@ function Mediums() {
             })
             .catch(res => {
                 const tmp = res.response.data.errors;
-                setErrors(tmp["medium"]);
+                let tmpErrors = [];
+                for (const key in tmp) {
+                    tmpErrors.push(tmp[key][0]);
+                }
+                setErrors(tmpErrors);
             });
     };
 
@@ -189,6 +196,7 @@ function Mediums() {
                     handleClose={handleClose}
                     addMedium={addMedium}
                     errors={errors}
+                    disabled={disabled}
                 />
             )}
             {showEditModal && (

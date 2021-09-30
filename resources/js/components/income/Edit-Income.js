@@ -77,7 +77,11 @@ function EditIncome(props) {
         <Fragment>
             <div
                 className="modal"
-                style={{ display: "block", transition: "display 1s" }}
+                style={{
+                    display: "block",
+                    transition: "display 1s",
+                    overflow: "auto"
+                }}
             >
                 <div className="modal-dialog modal-dialog-centered register-modal-dialog">
                     <div className="modal-content">
@@ -151,7 +155,6 @@ function EditIncome(props) {
                                         name="amount"
                                         value={income.amount}
                                         onChange={handleInputChange}
-                                        min="1"
                                     />
                                 </div>
                                 <div className="form-group">

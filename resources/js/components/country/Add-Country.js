@@ -60,6 +60,7 @@ function AddCountry(props) {
                                         type="submit"
                                         style={{ margin: "0 10px 0 0" }}
                                         className="btn btn--prime"
+                                        disabled={props.disabled}
                                     >
                                         Submit
                                     </button>
