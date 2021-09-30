@@ -40,6 +40,8 @@ export default function Income() {
     const [errors, setErrors] = useState([]);
 
     const [currentIncome, setCurrentIncome] = useState();
+    const [selectedMediums, setSelectedMediums] = useState();
+    const [selectedTags, setSelectedTags] = useState();
 
     var totalAmount = 0;
 
@@ -260,8 +262,10 @@ export default function Income() {
             : [];
         const data = event ? tmp : null;
         if (selectFor == "mediums") {
+            setSelectedMediums(event);
             setSelectedMediumsForFilter(data);
         } else if (selectFor == "tags") {
+            setSelectedTags(event);
             setSelectedTagsForFilter(data);
         }
     };
@@ -329,6 +333,7 @@ export default function Income() {
                                     isMulti
                                     options={mediumsOptionForFilter}
                                     placeholder="Select Mediums"
+                                    value={selectedMediums}
                                 />
                             </div>
                             <div className="col form-group px-0 px-lg-3 px-md-2">
@@ -337,6 +342,7 @@ export default function Income() {
                                     isMulti
                                     options={tagOptions}
                                     placeholder="Select Tags"
+                                    value={selectedTags}
                                 />
                             </div>
                         </div>
