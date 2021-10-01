@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Client;
 use App\Country;
 use App\Http\Requests\CountryRequest;
-use Illuminate\Http\Request;
 
 class CountryController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $country = Country::all();
         return ['country' => $country];
     }
 
-    public function store(CountryRequest $request) {
+    public function store(CountryRequest $request)
+    {
         $country = new Country;
         $request->save($country);
         return ['message' => 'Add Success!', 'country' => $country];
@@ -28,6 +30,7 @@ class CountryController extends Controller
     public function destroy(Country $country)
     {
         $country->delete();
+        Client::where('country_id', $country->_id)->unset('country_id');
         return ['message' => 'Delete Success!'];
     }
 }

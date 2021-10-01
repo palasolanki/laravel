@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Client;
 use App\Expense;
 use App\Http\Requests\MediumRequest;
 use App\Income;
@@ -22,22 +24,26 @@ class MediumController extends Controller
     public function destroy($id)
     {
         $medium = Medium::findOrFail($id);
-        $model = ['income' => new Income, 'expense' => new Expense ];
+        $model  = ['income' => new Income, 'expense' => new Expense];
         $model[$medium->type]::where('medium.id', $medium->_id)->unset('medium');
+        Client::where('payment_medium_id', $medium->_id)->unset('payment_medium_id');
         $medium->delete();
         return response()->json(['message' => 'Medium Delete Success!']);
     }
 
-    public function update($id, MediumRequest $request){
+    public function update($id, MediumRequest $request)
+    {
         $medium = $request->save($id);
         return response()->json(['updatedMedium' => $medium, 'message' => 'Medium Updated Successfully...']);
     }
 
-    public function getExpenseMediumList() {
+    public function getExpenseMediumList()
+    {
         return response()->json(['medium' => Medium::select('_id', 'medium')->where('type', 'expense')->get()]);
     }
 
-    public function getIncomeMediumList() {
+    public function getIncomeMediumList()
+    {
         return response()->json(['medium' => Medium::select('_id', 'medium')->where('type', 'income')->get()]);
     }
 }

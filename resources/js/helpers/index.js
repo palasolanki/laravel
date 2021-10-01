@@ -23,12 +23,14 @@ export function formatDate(date) {
 }
 
 export function errorResponse(res, setErrors) {
-    const tmp = res.response.data.errors;
-    let tmpErrors = [];
-    for (const key in tmp) {
-        tmpErrors.push(tmp[key][0]);
+    const errorList = [];
+    const responseErrors = res.response.data.errors;
+    for (const key in responseErrors) {
+        if (!errorList.includes(responseErrors[key][0])) {
+            errorList.push(responseErrors[key][0]);
+        }
     }
-    setErrors(tmpErrors);
+    setErrors([...errorList]);
 }
 
 export function handleFilterOnDateChange(datevalue, setDate, setDateRange) {

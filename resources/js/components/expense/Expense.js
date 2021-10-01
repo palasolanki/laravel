@@ -117,7 +117,12 @@ function Expense() {
                     data: "medium.medium",
                     defaultContent: "N/A"
                 },
-                { title: "Tags", data: "tags", orderable: false },
+                {
+                    title: "Tags",
+                    data: "N/A",
+                    orderable: false,
+                    defaultContent: "N/A"
+                },
                 {
                     title: "Notes",
                     data: "notes",

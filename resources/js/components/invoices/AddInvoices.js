@@ -32,6 +32,7 @@ const AddInvoices = props => {
 
     const [currencySign, setCurrencySign] = useState("$");
     const [total, setTotal] = useState(0);
+    const [amountPaid, setAmountPaid] = useState(0.0);
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
     const [disabled, setDisabled] = useState(false);
@@ -50,6 +51,18 @@ const AddInvoices = props => {
             setCheckAmount(true);
         }
     };
+
+    const handleAmountChange = e => {
+        setAmountPaid(parseInt(e.target.innerHTML));
+    };
+
+    useEffect(() => {
+        setInvoice({
+            ...invoice,
+            amount_paid: amountPaid,
+            amount_due: total - amountPaid
+        });
+    }, [amountPaid, total]);
 
     useEffect(() => {
         setTotalAmount();
@@ -352,7 +365,7 @@ const AddInvoices = props => {
                                                     {currencySign}
                                                 </span>
                                                 <span id="amount_due">
-                                                    {total}
+                                                    {invoice.amount_due}
                                                 </span>
                                             </td>
                                         </tr>
@@ -507,8 +520,10 @@ const AddInvoices = props => {
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
+                                                name="amount_paid"
+                                                onBlur={handleAmountChange}
                                             >
-                                                0.00
+                                                {amountPaid}
                                             </span>
                                         </td>
                                     </tr>
