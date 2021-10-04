@@ -231,7 +231,7 @@ export default function Income() {
         });
     };
     const onDateChange = datevalue => {
-        handleFilterOnDateChange(datevalue, setDate, setDateRange);
+        handleFilterOnDateChange(datevalue, setDate, setDateRange, date);
     };
 
     const handleClientFilterChange = event => {

@@ -223,7 +223,7 @@ const AddInvoices = props => {
     return (
         <Fragment>
             <div className="invoice-form">
-                <div className="invoice-body">
+                <div className="invoice-body" style={{ overflow: "auto" }}>
                     <div className="invoice-header">
                         <h1 className="invoice-h1">Invoice</h1>
                         <div
