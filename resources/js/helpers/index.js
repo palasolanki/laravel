@@ -33,7 +33,12 @@ export function errorResponse(res, setErrors) {
     setErrors([...errorList]);
 }
 
-export function handleFilterOnDateChange(datevalue, setDate, setDateRange) {
+export function handleFilterOnDateChange(
+    datevalue,
+    setDate,
+    setDateRange,
+    date
+) {
     if (datevalue === null) {
         setDate([null, null]);
         setDateRange([null, null]);
