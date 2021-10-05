@@ -78,7 +78,10 @@ function AddIncome() {
             if (event.target.value != "") {
                 rows[key].medium = clients.find(
                     client => client._id === event.target.value
-                ).payment_medium_id;
+                ).payment_medium_id
+                    ? clients.find(client => client._id === event.target.value)
+                          .payment_medium_id
+                    : "";
             }
             rows[key] = {
                 ...rows[key],

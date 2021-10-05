@@ -111,7 +111,6 @@ function Country() {
                     {country.length > 0 ? (
                         country.map((value, index) => (
                             <tr key={index}>
-                                {console.log(value)}
                                 <td>{value.name}</td>
                                 <td>
                                     <button
