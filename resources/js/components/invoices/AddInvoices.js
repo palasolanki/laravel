@@ -62,9 +62,14 @@ const AddInvoices = props => {
             amount_paid: amountPaid,
             amount_due: total - amountPaid
         });
-    }, [amountPaid, total]);
+    }, [amountPaid]);
 
     useEffect(() => {
+        setInvoice({ ...invoice, amount_due: total - invoice.amount_paid });
+    }, [total]);
+
+    useEffect(() => {
+        console.log("second");
         setTotalAmount();
         api.get("/getClients")
             .then(res => {
@@ -79,6 +84,7 @@ const AddInvoices = props => {
 
     useEffect(() => {
         if (!invoiceId) return;
+
         api.get("/invoice/" + invoiceId)
             .then(res => {
                 let date = new Date(res.data.editInvoice[0].date);
@@ -165,11 +171,7 @@ const AddInvoices = props => {
             ToastsStore.error("Required fields missing.");
             return;
         }
-        api.post(
-            `/invoices/add`,
-            { ...invoice, amount_due: total },
-            { responseType: "blob" }
-        )
+        api.post(`/invoices/add`, { ...invoice }, { responseType: "blob" })
             .then(res => {
                 setDisabled(false);
                 ToastsStore.success("Invoice saved successfully.");
@@ -523,7 +525,8 @@ const AddInvoices = props => {
                                                 name="amount_paid"
                                                 onBlur={handleAmountChange}
                                             >
-                                                {amountPaid}
+                                                {invoice.amount_paid ||
+                                                    amountPaid}
                                             </span>
                                         </td>
                                     </tr>
