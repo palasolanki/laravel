@@ -237,6 +237,7 @@ const EditClient = props => {
                                 className="form-control"
                                 name="company_logo"
                                 onChange={handleInputChange}
+                                style={{ paddingBottom: "35px" }}
                             />
                         </div>
                     </div>

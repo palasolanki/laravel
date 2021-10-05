@@ -47,7 +47,7 @@ export default class Sidebar extends Component {
 
     componentDidMount() {
         this.setState({
-            activeNav: this.props.match.path
+            activeNav: "/" + window.location.pathname.split("/")[1]
         });
     }
 
