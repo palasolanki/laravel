@@ -437,6 +437,9 @@ const AddInvoices = props => {
                                                     }
                                                     name="item"
                                                     onBlur={handleChange(index)}
+                                                    style={{
+                                                        wordBreak: "break-all"
+                                                    }}
                                                 >
                                                     {row.item}
                                                 </span>
