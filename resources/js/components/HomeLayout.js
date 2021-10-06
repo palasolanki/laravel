@@ -13,8 +13,8 @@ import Expense from "./expense/Expense";
 import Income from "./income/Income";
 import AddExpense from "./expense/Add-Expense";
 import AddIncome from "./income/Add-Income";
-import Client from "./clients/AddClient";
-import EditClient from "./clients/EditClient";
+import Client from "./clients/Add-Client";
+import EditClient from "./clients/Edit-Client";
 import Hardware from "./hardwares/Hardware";
 import AddHardware from "./hardwares/Add-Hardware";
 import {
@@ -94,7 +94,7 @@ export default class Home extends Component {
                     <Switch>
                         <Route exact path="/" component={Dashboard} />
                         <Route exact path="/clients" component={ClientList} />
-                        <Route exact path="/addClient" component={Client} />
+                        <Route exact path="/clients/add" component={Client} />
                         <Route
                             exact
                             path="/editClient/:id"
