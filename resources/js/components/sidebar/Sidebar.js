@@ -3,10 +3,9 @@ import { Link } from "react-router-dom";
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-// import {
-//   faBars,
-// } from '@fortawesome/free-solid-svg-icons';
-// library.add(faHome);
+import { setActiveNav } from "../../store/actions/auth";
+import { connect } from "react-redux";
+
 import {
     faHome,
     faUsers,
@@ -18,12 +17,11 @@ import {
     faGlobeAmericas,
     faFileInvoiceDollar
 } from "@fortawesome/free-solid-svg-icons";
-export default class Sidebar extends Component {
+class Sidebar extends Component {
     constructor(props) {
         super(props);
         this.navTitles = [
             { brandicon: faHome, title: "Dashboard", url: "/" },
-            // { title: 'Projects', url: '/project' },
             { brandicon: faDollarSign, title: "Income", url: "/incomes" },
             { brandicon: faCoins, title: "Expenses", url: "/expenses" },
             { brandicon: faUsers, title: "Clients", url: "/clients" },
@@ -37,34 +35,13 @@ export default class Sidebar extends Component {
                 url: "/invoices"
             }
         ];
-
-        this.state = {
-            activeNav: null
-        };
-
-        this.activeNav = this.activeNav.bind(this);
     }
 
     componentDidMount() {
-        this.setState({
-            activeNav: "/" + window.location.pathname.split("/")[1]
-        });
-    }
-
-    activeNav(url) {
-        this.setState({
-            activeNav: url
-        });
-        if (url !== "/") this.props.onDashboardActive(false);
-    }
-
-    componentDidUpdate(prevProps) {
-        if (!prevProps.isDashboardActive && this.props.isDashboardActive)
-            this.activeNav("/");
+        this.props.setActiveNav("/" + window.location.pathname.split("/")[1]);
     }
 
     render() {
-        const { activeNav } = this.state;
         const { isSidebarOpen } = this.props;
         return (
             <div className={classNames({ open: isSidebarOpen }, "sidebar")}>
@@ -72,16 +49,19 @@ export default class Sidebar extends Component {
                     {this.navTitles.map((navTitle, i) => {
                         return (
                             <li className="nav-item" key={i}>
-                                {/* {console.log(navTitle.url)} */}
                                 <Link
                                     to={`${navTitle.url}`}
                                     className={classNames(
                                         {
-                                            active: activeNav === navTitle.url
+                                            active:
+                                                this.props.activeNav ===
+                                                navTitle.url
                                         },
                                         "nav-link"
                                     )}
-                                    onClick={() => this.activeNav(navTitle.url)}
+                                    onClick={() => {
+                                        this.props.setActiveNav(navTitle.url);
+                                    }}
                                 >
                                     <FontAwesomeIcon
                                         className="mr-2"
@@ -97,3 +77,20 @@ export default class Sidebar extends Component {
         );
     }
 }
+
+const mapStateToProps = props => {
+    return {
+        activeNav: props.activeNav
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setActiveNav: url => dispatch(setActiveNav(url))
+    };
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Sidebar);

@@ -34,7 +34,6 @@ export default class Home extends Component {
         };
         this.toggleSidebar = this.toggleSidebar.bind(this);
         this.checkSidebarMode = this.checkSidebarMode.bind(this);
-        this.onDashboardActive = this.onDashboardActive.bind(this);
     }
 
     componentDidMount() {
@@ -45,13 +44,11 @@ export default class Home extends Component {
     checkSidebarMode() {
         if (window.matchMedia("(max-width: 991px)").matches) {
             this.setState({
-                isSidebarOpen: false,
-                isDashboardActive: false
+                isSidebarOpen: false
             });
         } else {
             this.setState({
-                isSidebarOpen: true,
-                isDashboardActive: false
+                isSidebarOpen: true
             });
         }
     }
@@ -65,27 +62,13 @@ export default class Home extends Component {
         window.removeEventListener("resize", this.checkSidebarMode, true);
     }
 
-    onDashboardActive(flag) {
-        this.setState({
-            isDashboardActive: flag
-        });
-    }
-
     render() {
         const { match } = this.props;
-        const { isSidebarOpen, isDashboardActive } = this.state;
+        const { isSidebarOpen } = this.state;
         return (
             <Fragment>
-                <Header
-                    toggleSidebar={this.toggleSidebar}
-                    onDashboardActive={this.onDashboardActive}
-                />
-                <Sidebar
-                    match={match}
-                    isSidebarOpen={isSidebarOpen}
-                    isDashboardActive={isDashboardActive}
-                    onDashboardActive={this.onDashboardActive}
-                />
+                <Header toggleSidebar={this.toggleSidebar} />
+                <Sidebar match={match} isSidebarOpen={isSidebarOpen} />
                 <ToastsContainer
                     position={ToastsContainerPosition.TOP_RIGHT}
                     store={ToastsStore}
