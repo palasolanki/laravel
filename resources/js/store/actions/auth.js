@@ -56,7 +56,3 @@ export function setLogout() {
     setAuthorizationToken(false);
     return { type: LOGOUT };
 }
-
-export function setActiveNav(url) {
-    return { type: url };
-}

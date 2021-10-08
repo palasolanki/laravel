@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../../../images/favicon.png";
 import { connect } from "react-redux";
 import { logout } from "../../store/actions/auth";
-import { setActiveNav } from "../../store/actions/auth";
+import { setActiveNav } from "../../store/actions/activeNav";
 
 import {
     faUserCircle,
@@ -31,7 +31,7 @@ export class Header extends Component {
                     <Link
                         to={"/"}
                         onClick={() => {
-                            this.props.setActiveNav("/");
+                            this.props.setActiveNav("dashboard");
                         }}
                     >
                         <img
@@ -60,7 +60,9 @@ export class Header extends Component {
                             <li>
                                 <Link
                                     to={"/profile"}
-                                    onClick={() => this.props.setActiveNav("")}
+                                    onClick={() =>
+                                        this.props.setActiveNav("profile")
+                                    }
                                 >
                                     <FontAwesomeIcon size="1x" icon={faUser} />
                                     <span className="ml-2">Account</span>
