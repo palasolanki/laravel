@@ -69,7 +69,6 @@ const AddInvoices = props => {
     }, [total]);
 
     useEffect(() => {
-        console.log("second");
         setTotalAmount();
         api.get("/getClients")
             .then(res => {

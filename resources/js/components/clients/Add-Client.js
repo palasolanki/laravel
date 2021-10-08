@@ -70,7 +70,7 @@ const AddClient = props => {
             data.append(key, value || "");
         }
         return api
-            .post("/addClient", data)
+            .post("/clients/add", data)
             .then(res => {
                 setDisabled(false);
                 props.history.push("/clients");
@@ -224,7 +224,7 @@ const AddClient = props => {
                                 className="form-control"
                                 name="company_logo"
                                 onChange={handleInputChange}
-                                style={{paddingBottom:"35px"}}
+                                style={{ paddingBottom: "35px" }}
                             />
                         </div>
                     </div>

@@ -98,7 +98,7 @@ const ClientList = () => {
                 )}
                 <div className="d-flex align-items-center pb-2">
                     <h2 className="heading">Clients</h2>
-                    <Link to="/addClient" className="btn btn--prime ml-auto">
+                    <Link to="/clients/add" className="btn btn--prime ml-auto">
                         <FontAwesomeIcon className="mr-2" icon={faPlus} /> Add
                         Client
                     </Link>
@@ -125,12 +125,12 @@ const ClientList = () => {
                                         <td>
                                             {client.country
                                                 ? client.country.name
-                                                : "-"}
+                                                : "N/A"}
                                         </td>
                                         <td>
                                             {client.medium
                                                 ? client.medium.medium
-                                                : ""}
+                                                : "N/A"}
                                         </td>
 
                                         <td>

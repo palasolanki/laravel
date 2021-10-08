@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../../../images/favicon.png";
 import { connect } from "react-redux";
 import { logout } from "../../store/actions/auth";
+import { setActiveNav } from "../../store/actions/auth";
+
 import {
     faUserCircle,
     faSignOutAlt,
@@ -22,11 +24,16 @@ export class Header extends Component {
     }
 
     render() {
-        const { toggleSidebar, onDashboardActive } = this.props;
+        const { toggleSidebar } = this.props;
         return (
             <header className="header d-flex align-items-center justify-content-between py-0">
                 <div className="flex-row d-flex align-items-center">
-                    <Link to={"/"} onClick={() => onDashboardActive(true)}>
+                    <Link
+                        to={"/"}
+                        onClick={() => {
+                            this.props.setActiveNav("/");
+                        }}
+                    >
                         <img
                             className="logo rounded-circle"
                             src={logo}
@@ -51,7 +58,10 @@ export class Header extends Component {
                         </div>
                         <ul className="logout__dropdown pl-0 list-unstyled px-3 mb-0">
                             <li>
-                                <Link to={"/profile"}>
+                                <Link
+                                    to={"/profile"}
+                                    onClick={() => this.props.setActiveNav("")}
+                                >
                                     <FontAwesomeIcon size="1x" icon={faUser} />
                                     <span className="ml-2">Account</span>
                                 </Link>
@@ -79,12 +89,14 @@ export class Header extends Component {
 
 const mapStateToProps = state => {
     return {
+        activeNav: state.activeNav,
         name: state.auth.user.name
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
+        setActiveNav: url => dispatch(setActiveNav(url)),
         logout: () => dispatch(logout())
     };
 };

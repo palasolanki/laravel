@@ -13,8 +13,8 @@ import Expense from "./expense/Expense";
 import Income from "./income/Income";
 import AddExpense from "./expense/Add-Expense";
 import AddIncome from "./income/Add-Income";
-import Client from "./clients/AddClient";
-import EditClient from "./clients/EditClient";
+import Client from "./clients/Add-Client";
+import EditClient from "./clients/Edit-Client";
 import Hardware from "./hardwares/Hardware";
 import AddHardware from "./hardwares/Add-Hardware";
 import {
@@ -34,7 +34,6 @@ export default class Home extends Component {
         };
         this.toggleSidebar = this.toggleSidebar.bind(this);
         this.checkSidebarMode = this.checkSidebarMode.bind(this);
-        this.onDashboardActive = this.onDashboardActive.bind(this);
     }
 
     componentDidMount() {
@@ -45,13 +44,11 @@ export default class Home extends Component {
     checkSidebarMode() {
         if (window.matchMedia("(max-width: 991px)").matches) {
             this.setState({
-                isSidebarOpen: false,
-                isDashboardActive: false
+                isSidebarOpen: false
             });
         } else {
             this.setState({
-                isSidebarOpen: true,
-                isDashboardActive: false
+                isSidebarOpen: true
             });
         }
     }
@@ -65,27 +62,13 @@ export default class Home extends Component {
         window.removeEventListener("resize", this.checkSidebarMode, true);
     }
 
-    onDashboardActive(flag) {
-        this.setState({
-            isDashboardActive: flag
-        });
-    }
-
     render() {
         const { match } = this.props;
-        const { isSidebarOpen, isDashboardActive } = this.state;
+        const { isSidebarOpen } = this.state;
         return (
             <Fragment>
-                <Header
-                    toggleSidebar={this.toggleSidebar}
-                    onDashboardActive={this.onDashboardActive}
-                />
-                <Sidebar
-                    match={match}
-                    isSidebarOpen={isSidebarOpen}
-                    isDashboardActive={isDashboardActive}
-                    onDashboardActive={this.onDashboardActive}
-                />
+                <Header toggleSidebar={this.toggleSidebar} />
+                <Sidebar match={match} isSidebarOpen={isSidebarOpen} />
                 <ToastsContainer
                     position={ToastsContainerPosition.TOP_RIGHT}
                     store={ToastsStore}
@@ -94,7 +77,7 @@ export default class Home extends Component {
                     <Switch>
                         <Route exact path="/" component={Dashboard} />
                         <Route exact path="/clients" component={ClientList} />
-                        <Route exact path="/addClient" component={Client} />
+                        <Route exact path="/clients/add" component={Client} />
                         <Route
                             exact
                             path="/editClient/:id"
