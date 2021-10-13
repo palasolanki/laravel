@@ -149,6 +149,8 @@ function Invoices(props) {
                 closeMsgModal();
             })
             .catch(function(err) {
+                setIsLoading(false);
+                ToastsStore.error("Error ! unable to send invoice");
                 console.log(err);
             });
     };

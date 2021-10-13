@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { setActiveNav } from "../../store/actions/auth";
+import { setActiveNav } from "../../store/actions/activeNav";
 import { connect } from "react-redux";
 
 import {
