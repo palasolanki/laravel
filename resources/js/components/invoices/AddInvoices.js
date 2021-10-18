@@ -24,6 +24,7 @@ const AddInvoices = props => {
         amount_paid: 0,
         notes: "",
         status: "open",
+        currency: "USD",
         bill_from: `Radicalloop Technolabs LLP,
         India
         GST No.: 24AAUFR2815E1Z6`,
@@ -83,7 +84,6 @@ const AddInvoices = props => {
 
     useEffect(() => {
         if (!invoiceId) return;
-
         api.get("/invoice/" + invoiceId)
             .then(res => {
                 let date = new Date(res.data.editInvoice[0].date);
@@ -93,6 +93,19 @@ const AddInvoices = props => {
                     date,
                     due_date: dueDate
                 };
+                switch (res.data.editInvoice[0].currency) {
+                    case "USD":
+                        setCurrencySign("$");
+                        break;
+
+                    case "EUR":
+                        setCurrencySign("&euro");
+                        break;
+
+                    default:
+                        break;
+                }
+
                 setInvoice(respEditInvoice);
             })
             .catch(err => {});
@@ -160,6 +173,23 @@ const AddInvoices = props => {
             setInvoice({ ...invoice, client_id: val, bill_to: bill_to });
             return;
         }
+        if (e.target.name === "currency") {
+            switch (val) {
+                case "USD":
+                    setCurrencySign("$");
+                    break;
+
+                case "EUR":
+                    setCurrencySign("€");
+                    break;
+
+                default:
+                    break;
+            }
+            setInvoice({ ...invoice, currency: val });
+
+            return;
+        }
         setInvoice({ ...invoice, [e.target.name]: val });
     };
 
@@ -167,10 +197,14 @@ const AddInvoices = props => {
         setDisabled(true);
         if (!invoice.lines.length || !total || !invoice.bill_from) {
             setDisabled(false);
-            ToastsStore.error("Required fields missing.");
+            ToastsStore.error("Oops something's missing! Re-generate invoice.");
             return;
         }
-        api.post(`/invoices/add`, { ...invoice }, { responseType: "blob" })
+        api.post(
+            `/invoices/add`,
+            { ...invoice, total, currencySign },
+            { responseType: "blob" }
+        )
             .then(res => {
                 setDisabled(false);
                 ToastsStore.success("Invoice saved successfully.");
@@ -178,6 +212,9 @@ const AddInvoices = props => {
                 props.history.push("/invoices");
             })
             .catch(function(err) {
+                ToastsStore.error(
+                    "Oops something's missing! Re-generate invoice."
+                );
                 setDisabled(false);
                 console.log(err);
             });
@@ -190,13 +227,22 @@ const AddInvoices = props => {
             ToastsStore.error("Required fields missing.");
             return;
         }
-        api.post(`/invoices/edit`, { ...invoice }, { responseType: "blob" })
+        api.post(
+            `/invoices/edit`,
+            { ...invoice, total, currencySign },
+            {
+                responseType: "blob"
+            }
+        )
             .then(res => {
                 setDisabled(false);
                 ToastsStore.success("Invoice updated successfully.");
                 downloadFile(res);
             })
             .catch(function(err) {
+                ToastsStore.error(
+                    "Something went wrong! Please generate invoice again."
+                );
                 setDisabled(false);
                 console.log(err);
             });
@@ -348,6 +394,33 @@ const AddInvoices = props => {
                                                         true
                                                     }
                                                 >
+                                                    Currency
+                                                </span>
+                                            </th>
+                                            <td>
+                                                <select
+                                                    name="currency"
+                                                    onChange={onChange}
+                                                    value={invoice.currency}
+                                                    className="form-control"
+                                                >
+                                                    <option value="USD">
+                                                        USD
+                                                    </option>
+                                                    <option value="EUR">
+                                                        EUR
+                                                    </option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <span
+                                                    contentEditable={true}
+                                                    suppressContentEditableWarning={
+                                                        true
+                                                    }
+                                                >
                                                     Amount Due
                                                 </span>
                                             </th>
@@ -357,11 +430,11 @@ const AddInvoices = props => {
                                                     suppressContentEditableWarning={
                                                         true
                                                     }
-                                                    onBlur={e =>
+                                                    onBlur={e => {
                                                         setCurrencySign(
                                                             e.target.innerText
-                                                        )
-                                                    }
+                                                        );
+                                                    }}
                                                 >
                                                     {currencySign}
                                                 </span>

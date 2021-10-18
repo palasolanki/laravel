@@ -27,10 +27,9 @@ class InvoiceController extends Controller
 
     public function store(InvoiceRequest $request)
     {
-        $inputs = $request->validated();
-
+        $inputs   = $request->validated();
         $invoice  =  Invoice::create($inputs);
-        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
+        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $invoice, 'total'=>$request->total, 'currency_sign'=>$request->currencySign])->setPaper('a4', 'portrait');
         $fileName = 'invoice_' . $invoice->number . '.pdf';
 
         return $pdf->stream($fileName);
@@ -69,10 +68,11 @@ class InvoiceController extends Controller
                 'notes'       => $request->notes,
                 'bill_from'   => $request->bill_from,
                 'bill_to'     => $request->bill_to,
+                'currency'    => $request->currency
             ]);
 
         $invoice           = Invoice::where('_id', $request->_id)->first();
-        $pdf               = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
+        $pdf               = PDF::loadView('invoice.pdf', ['invoice' => $invoice, 'total'=>$request->total, 'currency_sign'=>$request->currencySign])->setPaper('a4', 'portrait');
         $fileName          = 'invoice_' . $invoice->number . '.pdf';
 
         return $pdf->stream($fileName);
