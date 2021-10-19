@@ -24,17 +24,18 @@ class InvoiceRequest extends FormRequest
     public function rules()
     {
         return [
-            'client_id' => 'nullable',
-            'number' => 'nullable',
-            'lines' => 'required',
-            'date' => 'required',
-            'due_date' => 'required',
-            'status' => 'required',
-            'amount_due' => 'required',
+            'client_id'   => 'nullable',
+            'number'      => 'nullable',
+            'lines'       => 'required',
+            'date'        => 'required',
+            'due_date'    => 'required',
+            'status'      => 'required',
+            'amount_due'  => 'required',
             'amount_paid' => 'required',
-            'notes' => 'nullable',
-            'bill_from' => 'required',
-            'bill_to' => 'required',
+            'notes'       => 'nullable',
+            'bill_from'   => 'required',
+            'bill_to'     => 'required',
+            'currency'    => 'required'
         ];
     }
 }
