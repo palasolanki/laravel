@@ -275,22 +275,23 @@ const AddInvoices = props => {
                         <h1 className="invoice-h1">Invoice</h1>
                         <div
                             className="invoice-address"
-                            contentEditable={true}
                             suppressContentEditableWarning={true}
                             name="bill_from"
                             onBlur={handleChange()}
                         >
-                            {invoice.bill_from}
+                            Radicalloop Technolabs LLP
+                            <br /> C-510, Titanium City Center, 100 Ft. Anand
+                            Nagar Road,
+                            <br /> Ahmedabad - 380015, Gujarat, India.
+                            <br /> GSTIN: 24AAUFR2815E1Z6
+                            <br /> www.radicalloop.com | hello@radicalloop.com
                         </div>
                     </div>
                     <article>
                         <div style={{ float: "left", width: "20%" }}>
                             <div>
                                 <span>Bill To:</span>
-                                <div
-                                    contentEditable={true}
-                                    suppressContentEditableWarning={true}
-                                >
+                                <div suppressContentEditableWarning={true}>
                                     <select
                                         name="client_id"
                                         onChange={onChange}
@@ -330,7 +331,6 @@ const AddInvoices = props => {
                                         <tr>
                                             <th>
                                                 <span
-                                                    contentEditable={true}
                                                     suppressContentEditableWarning={
                                                         true
                                                     }
@@ -347,7 +347,6 @@ const AddInvoices = props => {
                                         <tr>
                                             <th>
                                                 <span
-                                                    contentEditable={true}
                                                     suppressContentEditableWarning={
                                                         true
                                                     }
@@ -368,7 +367,6 @@ const AddInvoices = props => {
                                         <tr>
                                             <th>
                                                 <span
-                                                    contentEditable={true}
                                                     suppressContentEditableWarning={
                                                         true
                                                     }
@@ -389,7 +387,6 @@ const AddInvoices = props => {
                                         <tr>
                                             <th>
                                                 <span
-                                                    contentEditable={true}
                                                     suppressContentEditableWarning={
                                                         true
                                                     }
@@ -413,36 +410,6 @@ const AddInvoices = props => {
                                                 </select>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <th>
-                                                <span
-                                                    contentEditable={true}
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                >
-                                                    Amount Due
-                                                </span>
-                                            </th>
-                                            <td>
-                                                <span
-                                                    contentEditable={true}
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                    onBlur={e => {
-                                                        setCurrencySign(
-                                                            e.target.innerText
-                                                        );
-                                                    }}
-                                                >
-                                                    {currencySign}
-                                                </span>
-                                                <span id="amount_due">
-                                                    {invoice.amount_due}
-                                                </span>
-                                            </td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -451,7 +418,6 @@ const AddInvoices = props => {
                                     <tr>
                                         <th>
                                             <span
-                                                contentEditable={true}
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
@@ -461,27 +427,24 @@ const AddInvoices = props => {
                                         </th>
                                         <th>
                                             <span
-                                                contentEditable={true}
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
                                             >
-                                                Qty / Hours
+                                                Qty. / Hrs.
                                             </span>
                                         </th>
                                         <th>
                                             <span
-                                                contentEditable={true}
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
                                             >
-                                                Rate
+                                                Unit Price
                                             </span>
                                         </th>
                                         <th>
                                             <span
-                                                contentEditable={true}
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
@@ -562,7 +525,23 @@ const AddInvoices = props => {
                                     <tr>
                                         <th>
                                             <span
-                                                contentEditable={true}
+                                                suppressContentEditableWarning={
+                                                    true
+                                                }
+                                            >
+                                                Subtotal
+                                            </span>
+                                        </th>
+                                        <td>
+                                            <span data-prefix>
+                                                {currencySign}
+                                            </span>
+                                            <span>{total}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            <span
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
@@ -580,12 +559,11 @@ const AddInvoices = props => {
                                     <tr>
                                         <th>
                                             <span
-                                                contentEditable={true}
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
                                             >
-                                                Amount Paid
+                                                Paid
                                             </span>
                                         </th>
                                         <td>
@@ -602,6 +580,35 @@ const AddInvoices = props => {
                                             >
                                                 {invoice.amount_paid ||
                                                     amountPaid}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            <span
+                                                suppressContentEditableWarning={
+                                                    true
+                                                }
+                                            >
+                                                Amount Due
+                                            </span>
+                                        </th>
+                                        <td>
+                                            <span
+                                                contentEditable={true}
+                                                suppressContentEditableWarning={
+                                                    true
+                                                }
+                                                onBlur={e => {
+                                                    setCurrencySign(
+                                                        e.target.innerText
+                                                    );
+                                                }}
+                                            >
+                                                {currencySign}
+                                            </span>
+                                            <span id="amount_due">
+                                                {invoice.amount_due}
                                             </span>
                                         </td>
                                     </tr>
