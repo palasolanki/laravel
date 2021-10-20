@@ -226,7 +226,7 @@
 
 									</tr>
 									<tr>
-										<td class="text-success"><strong>Total: </strong></td>
+										<td class="text-success align-middle"><strong>Total: </strong></td>
 										<td class="text-right"><strong class="font-16">{{$currency_sign}}{{$invoice->total}}</strong></td>
 
 									</tr>
@@ -235,7 +235,7 @@
 										<td class="text-right">{{$currency_sign}}{{$invoice->amount_paid}}</td>
 									</tr>
 									<tr>
-										<td class="text-success"><strong>Amount Due:</strong></td>
+										<td class="text-success align-middle"><strong>Amount Due:</strong></td>
 										<td class="text-right"><strong class="font-16">{{$currency_sign}}{{$invoice->amount_due}}</strong></td>
 									</tr>
 
