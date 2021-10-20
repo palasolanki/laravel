@@ -54,6 +54,10 @@
 		hr {
 			opacity: 0.5;
 		}
+
+		.font-16{
+			font-size: 16px;
+		}
 	</style>
 
 	<body>
@@ -166,18 +170,18 @@
 				<thead>
 					<tr>
 						<th scope="col">Item</th>
-						<th scope="col" class="text-right">Qty. / Hrs.</th>
-						<th scope="col" class="text-right">Unit Price</th>
-						<th scope="col" class="text-right pr-5">Amount</th>
+						<th scope="col" class="text-right text-nowrap">Qty. / Hrs.</th>
+						<th scope="col" class="text-right text-nowrap">Unit Price</th>
+						<th scope="col" class="text-right text-nowrap pr-5">Amount</th>
 					</tr>
 				</thead>
 				<tbody>
 					@foreach($invoice->lines as $line)
 					<tr>
-						<td scope="row">{{ $line["item"] }}</td>
-						<td class="text-right">{{ $line["quantity"] }}</td>
-						<td class="text-right">{{$currency_sign}}{{ $line["rate"] }}</td>
-						<td class="text-right pr-5">{{$currency_sign}}{{ $line["amount"] }}</td>
+						<td >{{ $line["item"] }}</td>
+						<td class="text-right text-nowrap">{{ $line["quantity"] }}</td>
+						<td class="text-right text-nowrap">{{$currency_sign}}{{ $line["rate"] }}</td>
+						<td class="text-right text-nowrap pr-5">{{$currency_sign}}{{ $line["amount"] }}</td>
 					</tr>
 					@endforeach
 
@@ -222,9 +226,8 @@
 
 									</tr>
 									<tr>
-										<td class="text-success"><strong>Total:</strong> </td>
-										<td class="text-right"><strong>{{$currency_sign}}{{$invoice->total}}</strong>
-										</td>
+										<td class="text-success"><strong>Totl: </strong></td>
+										<td class="text-right"><strong class="font-16">{{$currency_sign}}{{$invoice->total}}</strong></td>
 
 									</tr>
 									<tr>
@@ -233,9 +236,7 @@
 									</tr>
 									<tr>
 										<td class="text-success"><strong>Amount Due:</strong></td>
-										<td class="text-right">
-											<strong>{{$currency_sign}}{{$invoice->amount_due}}</strong>
-										</td>
+										<td class="text-right"><strong class="font-16">{{$currency_sign}}{{$invoice->amount_due}}</strong></td>
 									</tr>
 
 								</tbody>
