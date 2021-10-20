@@ -15,4 +15,4 @@
 //     return view('welcome');
 // });
 
-Route::view('/{path?}', 'app')->where('path', '.*');;
+Route::view('/{path?}', 'app')->where('path', '.*');
