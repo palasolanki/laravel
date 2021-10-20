@@ -7,8 +7,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 class Invoice extends Eloquent
 {
     protected $collection = 'invoices';
-    protected $guarded = [];
-    public const START_INVOICE_NUMBER = 100;
+    protected $guarded    = [];
 
     public function setNumberAttribute()
     {
@@ -21,9 +20,9 @@ class Invoice extends Eloquent
     {
         $prevNum = Invoice::select('number')->latest('number')->first();
 
-        $number = (!$prevNum) ? self::START_INVOICE_NUMBER : ((int) $prevNum->number + 1);
+        $number = (!$prevNum) ? config('expense_tracker.start_invoice_number') : ((int) $prevNum->number + 1);
 
-        return str_pad($number, 4, "0", STR_PAD_LEFT);
+        return str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 
     public function client()
