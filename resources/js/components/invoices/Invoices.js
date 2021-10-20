@@ -1,9 +1,9 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../helpers/api";
 import { ToastsStore } from "react-toasts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import InvoiceMessageModal from "./InvoiceMessageModal";
 import ConfirmationComponent from "../ConfirmationComponent";
 import moment from "moment";
@@ -15,6 +15,7 @@ function Invoices(props) {
     const [dataTable, setDataTable] = useState(null);
     const [openMsgModal, setOpenMsgModal] = useState(false);
     const [showDeleteModal, setDeleteShow] = useState(false);
+    const [clientName, setClientName] = useState("");
     const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
 
@@ -35,10 +36,10 @@ function Invoices(props) {
         }
     }, [dataTable]);
 
-    const setSendInvoiceId = (invoiceId) => {
+    const setSendInvoiceId = invoiceId => {
         setInvoiceDataId(invoiceId);
         setOpenMsgModal(true);
-    }
+    };
 
     const initDatatables = () => {
         var table = $("#datatable").DataTable({
@@ -53,7 +54,7 @@ function Invoices(props) {
                 url: `/api/invoices`,
                 dataType: "json",
                 type: "post",
-                beforeSend: function (xhr) {
+                beforeSend: function(xhr) {
                     xhr.setRequestHeader(
                         "Authorization",
                         "Bearer " + localStorage.getItem("token")
@@ -62,10 +63,18 @@ function Invoices(props) {
             },
             columns: [
                 { title: "Number", data: "number" },
-                { title: "Client Name", data: "client.name", defaultContent: "N/A" },
+                {
+                    title: "Client Name",
+                    data: "client.name",
+                    defaultContent: "N/A"
+                },
                 { title: "Date", data: "date" },
                 { title: "Status", data: "status", defaultContent: "open" },
-                { title: "Last Sent At", data: 'last_sent_at', defaultContent: "N/A" },
+                {
+                    title: "Last Sent At",
+                    data: "last_sent_at",
+                    defaultContent: "N/A"
+                },
                 { title: "Amount Due", data: "amount_due" },
                 {
                     title: "Action",
@@ -75,63 +84,75 @@ function Invoices(props) {
             ],
             columnDefs: [
                 {
-                    "searchable": false,
-                    "targets": [1, 4]
+                    searchable: false,
+                    targets: [1, 4]
                 },
                 {
-                    "orderable": false,
-                    "targets": [1, 4]
-                },
+                    orderable: false,
+                    targets: [1, 4]
+                }
             ],
-            rowCallback: function (row, data, index) {
+            rowCallback: function(row, data, index) {
                 if (data.date) {
                     $("td:eq(2)", row).html(
-                        moment(data.date).format('MMMM DD, YYYY')
+                        moment(data.date).format("MMMM DD, YYYY")
                     );
                 }
 
-                let action =`<button id=${data._id} class="btn btn-sm btn--prime mr-2 editData" >Edit</button>
-                <button id=${data._id} class="btn btn-sm btn--cancel deleteData" >Delete</button>
-                <button id=${data._id} class="btn btn-sm ml-2 btn-dark sendData">Send Invoice</button>`;
-
+                let action = `<button id=${
+                    data._id
+                } class="btn btn-sm btn--prime mr-2 editData" >Edit</button>
+                <button id=${
+                    data._id
+                } class="btn btn-sm btn--cancel deleteData" >Delete</button>
+                <button id=${data._id} client-id=${
+                    data.client_id
+                } class="btn btn-sm ml-2 btn-dark sendData">Send Invoice</button>`;
 
                 $("td:eq(6)", row).html(action);
-            },
+            }
         });
         setDataTable(table);
     };
 
     const [deleteInvoiceId, setDeleteInvoiceId] = useState();
     const registerEvent = () => {
-        $("#datatable").on("click", "tbody .deleteData", function (e) {
+        $("#datatable").on("click", "tbody .deleteData", function(e) {
             setDeleteInvoiceIdFunction($(e.target).attr("id"));
-            // setDeleteShow(true);
         });
 
-        $("#datatable").on("click", "tbody .editData", function (e) {
+        $("#datatable").on("click", "tbody .editData", function(e) {
             history.push(`invoices/edit/${$(e.target).attr("id")}`);
         });
 
-        $('#datatable').on('click','tbody .sendData', function (e) {
-            let invoiceId = $(e.target).attr('id');
+        $("#datatable").on("click", "tbody .sendData", function(e) {
+            let invoiceId = $(e.target).attr("id");
+            let clientId = $(e.target).attr("client-id");
             setSendInvoiceId(invoiceId);
+            getClientName(clientId);
         });
-
     };
 
-    const sendInvoice = (e,message) => {
-        setIsLoading(true);
-        api.post(`/invoices/send/${invoiceId}`, {message})
-        .then(res => {
-            dataTable.ajax.reload();
-            setIsLoading(false);
-            ToastsStore.success('Invoice emailed successfully.');
-            closeMsgModal();
-
-        })
-        .catch(function (err) {
-            console.log(err);
+    const getClientName = clientId => {
+        api.get(`/client/${clientId}`).then(res => {
+            setClientName(res.data.client.name);
         });
+    };
+
+    const sendInvoice = (e, message) => {
+        setIsLoading(true);
+        api.post(`/invoices/send/${invoiceId}`, { message })
+            .then(res => {
+                dataTable.ajax.reload();
+                setIsLoading(false);
+                ToastsStore.success("Invoice emailed successfully.");
+                closeMsgModal();
+            })
+            .catch(function(err) {
+                setIsLoading(false);
+                ToastsStore.error("Error ! unable to send invoice");
+                console.log(err);
+            });
     };
 
     const setDeleteInvoiceIdFunction = currentDeleteInvoiceId => {
@@ -168,7 +189,14 @@ function Invoices(props) {
                     </tfoot>
                 </table>
             </div>
-            {openMsgModal && <InvoiceMessageModal handleCloseMsgModal={closeMsgModal} sendInvoice={sendInvoice} isLoading={isLoading} />}
+            {openMsgModal && (
+                <InvoiceMessageModal
+                    handleCloseMsgModal={closeMsgModal}
+                    sendInvoice={sendInvoice}
+                    isLoading={isLoading}
+                    clientName={clientName}
+                />
+            )}
             {showDeleteModal && (
                 <ConfirmationComponent
                     title="Are you sure to delete this Invoice?"

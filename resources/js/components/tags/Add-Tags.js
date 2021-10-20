@@ -9,16 +9,12 @@ function AddTags(props) {
         fontSize: "20px",
         cursor: "pointer"
     };
-    //   const modalHeader = {
-    //     textAlign: 'center',
-    //   };
 
     const initialFormState = {};
     const [tag, setTag] = useState(initialFormState);
 
     const handleInputChange = event => {
         const { name, value } = event.target;
-
         setTag({ ...tag, [name]: value });
     };
 
@@ -39,15 +35,17 @@ function AddTags(props) {
                             </div>
                         </div>
                         <div className="modal-body">
+                            {props.errors.length > 0 && (
+                                <div className="alert alert-danger pb-0">
+                                    {props.errors.map((value, key) => (
+                                        <p key={key}>{value}</p>
+                                    ))}
+                                </div>
+                            )}
                             <form
                                 onSubmit={event => {
                                     event.preventDefault();
-                                    if (!tag.tag || !tag.type) {
-                                        ToastsStore.error("Tags Field is required");
-                                        return;
-                                    }
                                     props.addTag(tag);
-                                    setTag(initialFormState);
                                 }}
                             >
                                 <div className="form-group">
@@ -79,6 +77,7 @@ function AddTags(props) {
                                         type="submit"
                                         style={{ margin: "0 10px 0 0" }}
                                         className="btn btn--prime"
+                                        disabled={props.disabled}
                                     >
                                         Submit
                                     </button>

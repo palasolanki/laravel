@@ -2,8 +2,9 @@ import React, { useState, Fragment, useEffect } from "react";
 import api from "../../helpers/api";
 import DatePicker from "react-datepicker";
 import { ToastsStore } from "react-toasts";
+const $ = require("jquery");
 
-const AddInvoices = (props) => {
+const AddInvoices = props => {
     const invoiceId = props.match.params.id || null;
 
     const initialRow = {
@@ -14,31 +15,32 @@ const AddInvoices = (props) => {
     };
 
     const [invoice, setInvoice] = useState({
-        client_id: '',
-        number: '',
+        client_id: "",
+        number: "",
         lines: [initialRow],
         date: new Date(),
         due_date: new Date(new Date().setDate(new Date().getDate() + 10)),
         amount_due: 0,
         amount_paid: 0,
-        notes: '',
-        status: 'open',
-        bill_from:
-        `Radicalloop Technolabs LLP,
+        notes: "",
+        status: "open",
+        currency: "USD",
+        bill_from: `Radicalloop Technolabs LLP,
         India
         GST No.: 24AAUFR2815E1Z6`,
-        bill_to: { name: '', address: '' },
+        bill_to: { name: "", address: "" }
     });
 
     const [currencySign, setCurrencySign] = useState("$");
     const [total, setTotal] = useState(0);
+    const [amountPaid, setAmountPaid] = useState(0.0);
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
+    const [disabled, setDisabled] = useState(false);
 
-
-    const handleChange = (index) => (e) => {
-        let name = e.target.getAttribute('name');
-        if (typeof (index) !== "number") {
+    const handleChange = index => e => {
+        let name = e.target.getAttribute("name");
+        if (typeof index !== "number") {
             setInvoice({ ...invoice, [name]: e.target.innerText });
             return;
         }
@@ -51,32 +53,63 @@ const AddInvoices = (props) => {
         }
     };
 
+    const handleAmountChange = e => {
+        setAmountPaid(parseInt(e.target.innerHTML));
+    };
+
+    useEffect(() => {
+        setInvoice({
+            ...invoice,
+            amount_paid: amountPaid,
+            amount_due: total - amountPaid
+        });
+    }, [amountPaid]);
+
+    useEffect(() => {
+        setInvoice({ ...invoice, amount_due: total - invoice.amount_paid });
+    }, [total]);
+
     useEffect(() => {
         setTotalAmount();
         api.get("/getClients")
             .then(res => {
                 setClients(res.data.clients);
             })
-            .catch(res => { });
-        api.get("/invoices/next-invoice-number")
-        .then(res=>{
-            setInvoice({ ...invoice, number : res.data.nextInvoiceNumber });
+            .catch(res => {});
+        if (invoiceId) return;
+        api.get("/invoices/next-invoice-number").then(res => {
+            setInvoice({ ...invoice, number: res.data.nextInvoiceNumber });
         });
-    },[]);
+    }, []);
 
     useEffect(() => {
         if (!invoiceId) return;
         api.get("/invoice/" + invoiceId)
-            .then((res) => {
-                let date = new Date(res.data.editInvoice[0].date) ;
+            .then(res => {
+                let date = new Date(res.data.editInvoice[0].date);
                 let dueDate = new Date(res.data.editInvoice[0].due_date);
-                const respEditInvoice = {...res.data.editInvoice[0], date, due_date:dueDate};
+                const respEditInvoice = {
+                    ...res.data.editInvoice[0],
+                    date,
+                    due_date: dueDate
+                };
+                switch (res.data.editInvoice[0].currency) {
+                    case "USD":
+                        setCurrencySign("$");
+                        break;
+
+                    case "EUR":
+                        setCurrencySign("&euro");
+                        break;
+
+                    default:
+                        break;
+                }
+
                 setInvoice(respEditInvoice);
             })
-            .catch((err) => {
-
-            });
-    },[invoiceId]);
+            .catch(err => {});
+    }, [invoiceId]);
 
     const clientList =
         clients &&
@@ -98,7 +131,7 @@ const AddInvoices = (props) => {
     }, [invoice.lines]);
 
     const getTotalAmount = () => {
-        return invoice.lines.reduce(function (prev, cur) {
+        return invoice.lines.reduce(function(prev, cur) {
             return prev + cur.amount;
         }, 0);
     };
@@ -140,80 +173,125 @@ const AddInvoices = (props) => {
             setInvoice({ ...invoice, client_id: val, bill_to: bill_to });
             return;
         }
+        if (e.target.name === "currency") {
+            switch (val) {
+                case "USD":
+                    setCurrencySign("$");
+                    break;
+
+                case "EUR":
+                    setCurrencySign("€");
+                    break;
+
+                default:
+                    break;
+            }
+            setInvoice({ ...invoice, currency: val });
+
+            return;
+        }
         setInvoice({ ...invoice, [e.target.name]: val });
     };
 
-    const saveInvoice = () => {
+    const saveInvoice = event => {
+        setDisabled(true);
         if (!invoice.lines.length || !total || !invoice.bill_from) {
-            ToastsStore.error("Required fields missing.");
+            setDisabled(false);
+            ToastsStore.error("Oops something's missing! Re-generate invoice.");
             return;
         }
-        api.post(`/invoices/add`, { ...invoice, amount_due: total}, {responseType: 'blob'})
-        .then(res => {
-            ToastsStore.success('Invoice saved successfully.');
-            downloadFile(res);
-            props.history.push('/invoices');
-        })
-        .catch(function (err) {
-            console.log(err);
-        });
+        api.post(
+            `/invoices/add`,
+            { ...invoice, total },
+            { responseType: "blob" }
+        )
+            .then(res => {
+                setDisabled(false);
+                ToastsStore.success("Invoice saved successfully.");
+                downloadFile(res);
+                props.history.push("/invoices");
+            })
+            .catch(function(err) {
+                ToastsStore.error(
+                    "Oops something's missing! Re-generate invoice."
+                );
+                setDisabled(false);
+                console.log(err);
+            });
     };
 
     const editInvoice = () => {
+        setDisabled(true);
         if (!invoice.lines.length || !total || !invoice.bill_from) {
+            setDisabled(false);
             ToastsStore.error("Required fields missing.");
             return;
         }
-        api.post(`/invoices/edit`, { ...invoice}, {responseType: 'blob'})
-        .then(res => {
-            ToastsStore.success('Invoice updated successfully.');
-            downloadFile(res);
-        })
-        .catch(function (err) {
-            console.log(err);
-        });
+        api.post(
+            `/invoices/edit`,
+            { ...invoice, total },
+            {
+                responseType: "blob"
+            }
+        )
+            .then(res => {
+                setDisabled(false);
+                ToastsStore.success("Invoice updated successfully.");
+                downloadFile(res);
+            })
+            .catch(function(err) {
+                ToastsStore.error(
+                    "Something went wrong! Please generate invoice again."
+                );
+                setDisabled(false);
+                console.log(err);
+            });
     };
 
-    const downloadFile = (res) => {
+    const downloadFile = res => {
         const url = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        const contentDisposition = res.headers['content-disposition'];
-        let fileName = 'invoice.pdf';
+        const contentDisposition = res.headers["content-disposition"];
+        let fileName = "invoice.pdf";
         if (contentDisposition) {
             const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
             if (fileNameMatch.length === 2) {
                 fileName = fileNameMatch[1];
             }
         }
-        link.setAttribute('download', fileName);
+        link.setAttribute("download", fileName);
         document.body.appendChild(link);
         link.click();
         link.remove();
         window.URL.revokeObjectURL(url);
-    }
+    };
 
     return (
         <Fragment>
             <div className="invoice-form">
-                <div className="invoice-body">
+                <div className="invoice-body" style={{ overflow: "auto" }}>
                     <div className="invoice-header">
                         <h1 className="invoice-h1">Invoice</h1>
                         <div
                             className="invoice-address"
-                            contentEditable={true}
                             suppressContentEditableWarning={true}
                             name="bill_from"
                             onBlur={handleChange()}
                         >
-                            {invoice.bill_from}
+                            Radicalloop Technolabs LLP
+                            <br /> C-510, Titanium City Center, 100 Ft. Anand
+                            Nagar Road,
+                            <br /> Ahmedabad - 380015, Gujarat, India.
+                            <br /> GSTIN: 24AAUFR2815E1Z6
+                            <br /> www.radicalloop.com | hello@radicalloop.com
                         </div>
                     </div>
                     <article>
                         <div style={{ float: "left", width: "20%" }}>
                             <div>
                                 <span>Bill To:</span>
-                                <div contentEditable={true} suppressContentEditableWarning={true} >
+                                <div suppressContentEditableWarning={true}>
                                     <select
                                         name="client_id"
                                         onChange={onChange}
@@ -230,7 +308,10 @@ const AddInvoices = (props) => {
                             </div>
                             <div className="mt-5">
                                 <span>Status:</span>
-                                <div contentEditable={true} suppressContentEditableWarning={true} >
+                                <div
+                                    contentEditable={true}
+                                    suppressContentEditableWarning={true}
+                                >
                                     <select
                                         name="status"
                                         onChange={onChange}
@@ -242,7 +323,6 @@ const AddInvoices = (props) => {
                                     </select>
                                 </div>
                             </div>
-
                         </div>
                         <div className="invoice-table">
                             <div style={{ float: "right", width: "80%" }}>
@@ -251,7 +331,6 @@ const AddInvoices = (props) => {
                                         <tr>
                                             <th>
                                                 <span
-                                                    contentEditable={true}
                                                     suppressContentEditableWarning={
                                                         true
                                                     }
@@ -260,10 +339,7 @@ const AddInvoices = (props) => {
                                                 </span>
                                             </th>
                                             <td>
-                                                <span
-                                                    name="number"
-
-                                                >
+                                                <span name="number">
                                                     {invoice.number}
                                                 </span>
                                             </td>
@@ -271,7 +347,6 @@ const AddInvoices = (props) => {
                                         <tr>
                                             <th>
                                                 <span
-                                                    contentEditable={true}
                                                     suppressContentEditableWarning={
                                                         true
                                                     }
@@ -292,7 +367,6 @@ const AddInvoices = (props) => {
                                         <tr>
                                             <th>
                                                 <span
-                                                    contentEditable={true}
                                                     suppressContentEditableWarning={
                                                         true
                                                     }
@@ -313,31 +387,27 @@ const AddInvoices = (props) => {
                                         <tr>
                                             <th>
                                                 <span
-                                                    contentEditable={true}
                                                     suppressContentEditableWarning={
                                                         true
                                                     }
                                                 >
-                                                    Amount Due
+                                                    Currency
                                                 </span>
                                             </th>
                                             <td>
-                                                <span
-                                                    contentEditable={true}
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                    onBlur={e =>
-                                                        setCurrencySign(
-                                                            e.target.innerText
-                                                        )
-                                                    }
+                                                <select
+                                                    name="currency"
+                                                    onChange={onChange}
+                                                    value={invoice.currency}
+                                                    className="form-control"
                                                 >
-                                                    {currencySign}
-                                                </span>
-                                                <span id="amount_due">
-                                                    {total}
-                                                </span>
+                                                    <option value="USD">
+                                                        USD
+                                                    </option>
+                                                    <option value="EUR">
+                                                        EUR
+                                                    </option>
+                                                </select>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -348,7 +418,6 @@ const AddInvoices = (props) => {
                                     <tr>
                                         <th>
                                             <span
-                                                contentEditable={true}
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
@@ -358,27 +427,24 @@ const AddInvoices = (props) => {
                                         </th>
                                         <th>
                                             <span
-                                                contentEditable={true}
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
                                             >
-                                                Qty / Hours
+                                                Qty. / Hrs.
                                             </span>
                                         </th>
                                         <th>
                                             <span
-                                                contentEditable={true}
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
                                             >
-                                                Rate
+                                                Unit Price
                                             </span>
                                         </th>
                                         <th>
                                             <span
-                                                contentEditable={true}
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
@@ -406,6 +472,9 @@ const AddInvoices = (props) => {
                                                     }
                                                     name="item"
                                                     onBlur={handleChange(index)}
+                                                    style={{
+                                                        wordBreak: "break-all"
+                                                    }}
                                                 >
                                                     {row.item}
                                                 </span>
@@ -433,7 +502,7 @@ const AddInvoices = (props) => {
                                                         true
                                                     }
                                                     name="rate"
-                                                onBlur={handleChange(index)}
+                                                    onBlur={handleChange(index)}
                                                 >
                                                     {row.rate}
                                                 </span>
@@ -456,7 +525,23 @@ const AddInvoices = (props) => {
                                     <tr>
                                         <th>
                                             <span
-                                                contentEditable={true}
+                                                suppressContentEditableWarning={
+                                                    true
+                                                }
+                                            >
+                                                Subtotal
+                                            </span>
+                                        </th>
+                                        <td>
+                                            <span data-prefix>
+                                                {currencySign}
+                                            </span>
+                                            <span>{total}</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            <span
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
@@ -474,12 +559,11 @@ const AddInvoices = (props) => {
                                     <tr>
                                         <th>
                                             <span
-                                                contentEditable={true}
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
                                             >
-                                                Amount Paid
+                                                Paid
                                             </span>
                                         </th>
                                         <td>
@@ -491,8 +575,40 @@ const AddInvoices = (props) => {
                                                 suppressContentEditableWarning={
                                                     true
                                                 }
+                                                name="amount_paid"
+                                                onBlur={handleAmountChange}
                                             >
-                                                0.00
+                                                {invoice.amount_paid ||
+                                                    amountPaid}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            <span
+                                                suppressContentEditableWarning={
+                                                    true
+                                                }
+                                            >
+                                                Amount Due
+                                            </span>
+                                        </th>
+                                        <td>
+                                            <span
+                                                contentEditable={true}
+                                                suppressContentEditableWarning={
+                                                    true
+                                                }
+                                                onBlur={e => {
+                                                    setCurrencySign(
+                                                        e.target.innerText
+                                                    );
+                                                }}
+                                            >
+                                                {currencySign}
+                                            </span>
+                                            <span id="amount_due">
+                                                {invoice.amount_due}
                                             </span>
                                         </td>
                                     </tr>
@@ -513,17 +629,22 @@ const AddInvoices = (props) => {
                                 placeholder="Enter Note"
                                 name="notes"
                                 onChange={onChange}
-                                value={invoice.notes  || ''}
+                                value={invoice.notes || ""}
                             />
                         </div>
                     </aside>
                     <div className="form-group text-right invoice-save-btn">
                         <button
                             type="button"
-                            onClick={(invoiceId) ? editInvoice : saveInvoice}
-                            className="btn btn--prime mr-1">
-                                {(invoiceId) ? 'Update & Download' : 'Save & Download'}
-                          </button>
+                            id="edit_save_button"
+                            onClick={invoiceId ? editInvoice : saveInvoice}
+                            className="btn btn--prime mr-1"
+                            disabled={disabled}
+                        >
+                            {invoiceId
+                                ? "Update & Download"
+                                : "Save & Download"}
+                        </button>
                     </div>
                 </div>
             </div>

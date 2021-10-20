@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Client;
 use App\Income;
 use File;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Client;
 
 class ClientRequest extends FormRequest
 {
@@ -29,13 +29,25 @@ class ClientRequest extends FormRequest
         $stringOrFileRule = is_string($this->company_logo) ? 'string' : 'file';
 
         return [
-            'name' => 'required',
-            'email' => 'required|email',
-            'company_name' => 'required',
-            'country_id' => 'required',
+            'name'              => 'required',
+            'email'             => 'required|email',
+            'company_name'      => 'required',
+            'country_id'        => 'required',
             'payment_medium_id' => 'required',
-            'company_logo' => "sometimes|nullable|$stringOrFileRule",
-            'address' => 'nullable',
+            'company_logo'      => "sometimes|nullable|$stringOrFileRule",
+            'address'           => 'nullable',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required'                 => 'Name is required',
+            'email.required'                => 'Email is required',
+            'email.email'                   => 'Please enter valid email address',
+            'company_name.required'         => 'Company Name is required',
+            'country_id.required'           => 'Country is required',
+            'payment_medium_id.required'    => 'Payment Medium is required',
         ];
     }
 
@@ -46,13 +58,13 @@ class ClientRequest extends FormRequest
             $this->addFileAttachment($this->company_logo, $client);
             return $client;
         }
-        $client = Client::find($id);
-        $client->name = $this->name;
-        $client->email = $this->email;
-        $client->company_name = $this->company_name;
-        $client->country_id = $this->country_id;
+        $client                    = Client::find($id);
+        $client->name              = $this->name;
+        $client->email             = $this->email;
+        $client->company_name      = $this->company_name;
+        $client->country_id        = $this->country_id;
         $client->payment_medium_id = $this->payment_medium_id;
-        $client->address = $this->address;
+        $client->address           = $this->address;
         $client->save();
         $this->addFileAttachment($this->company_logo, $client);
         if ($client->wasChanged('name')) {

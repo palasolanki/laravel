@@ -10,9 +10,6 @@ function AddMediums(props) {
         fontSize: "20px",
         cursor: "pointer"
     };
-    //   const modalHeader = {
-    //     textAlign: 'center',
-    //   };
 
     const initialFormState = {};
     const [medium, setMedium] = useState(initialFormState);
@@ -40,18 +37,17 @@ function AddMediums(props) {
                             </div>
                         </div>
                         <div className="modal-body">
+                            {props.errors.length > 0 && (
+                                <div className="alert alert-danger pb-0">
+                                    {props.errors.map((value, key) => (
+                                        <p key={key}>{value}</p>
+                                    ))}
+                                </div>
+                            )}
                             <form
                                 onSubmit={event => {
                                     event.preventDefault();
-                                    if (!medium.medium || !medium.type) {
-                                        ToastsStore.error(
-                                            "Mediums Field is required"
-                                        );
-                                        return;
-                                    }
-
                                     props.addMedium(medium);
-                                    setMedium(initialFormState);
                                 }}
                             >
                                 <div className="form-group">
@@ -83,6 +79,7 @@ function AddMediums(props) {
                                         type="submit"
                                         style={{ margin: "0 10px 0 0" }}
                                         className="btn btn--prime"
+                                        disabled={props.disabled}
                                     >
                                         Submit
                                     </button>

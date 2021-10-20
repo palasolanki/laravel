@@ -23,7 +23,11 @@ function EditTags(props) {
         <Fragment>
             <div
                 className="modal"
-                style={{ display: "block", transition: "display 1s" }}
+                style={{
+                    display: "block",
+                    transition: "display 1s",
+                    overflow: "auto"
+                }}
             >
                 <div className="modal-dialog modal-dialog-centered register-modal-dialog">
                     <div className="modal-content">
@@ -39,6 +43,13 @@ function EditTags(props) {
                             </div>
                         </div>
                         <div className="modal-body">
+                            {props.errors.length > 0 && (
+                                <div className="alert alert-danger pb-0">
+                                    {props.errors.map((value, key) => (
+                                        <p key={key}>{value}</p>
+                                    ))}
+                                </div>
+                            )}
                             <form
                                 onSubmit={event => {
                                     event.preventDefault();
@@ -65,6 +76,7 @@ function EditTags(props) {
                                         name="type"
                                         onChange={handleInputChange}
                                         value={tag.type}
+                                        disabled
                                     >
                                         <option value="">Select Type</option>
                                         <option value="expense">Expense</option>

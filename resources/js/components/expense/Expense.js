@@ -1,7 +1,12 @@
 import React, { Component, Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../helpers/api";
-import { formatDate, numberFormat } from "../../helpers";
+import {
+    errorResponse,
+    formatDate,
+    handleFilterOnDateChange,
+    numberFormat
+} from "../../helpers";
 import { intVal } from "../../helpers";
 import { ToastsStore } from "react-toasts";
 import EditExpenses from "./Edit-Expense";
@@ -44,6 +49,10 @@ function Expense() {
     const closeImportModal = () => {
         setImportShow(false);
     };
+    const [errors, setErrors] = useState([]);
+    const [disabled, setDisabled] = useState(false);
+    const [selectedMediums, setSelectedMediums] = useState();
+    const [selectedTags, setSelectedTags] = useState();
 
     useEffect(() => {
         initDatatables();
@@ -108,7 +117,12 @@ function Expense() {
                     data: "medium.medium",
                     defaultContent: "N/A"
                 },
-                { title: "Tags", data: "tags", orderable: false },
+                {
+                    title: "Tags",
+                    data: "N/A",
+                    orderable: false,
+                    defaultContent: "N/A"
+                },
                 {
                     title: "Notes",
                     data: "notes",
@@ -143,29 +157,26 @@ function Expense() {
                     );
                 }
                 if (data.amount) {
-                    $("td:eq(2)", row).html(
-                        numberFormat(data.amount)
-                    );
+                    $("td:eq(2)", row).html(numberFormat(data.amount));
                 }
             },
             footerCallback: function(row, data, start, end, display) {
                 var api = this.api(),
-                totalAmount,
-                currentPageTotalAmount;
+                    totalAmount,
+                    currentPageTotalAmount;
 
                 totalAmount = api
-                .column(2)
-                .data()
-                .reduce(function(a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
+                    .column(2)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
                 currentPageTotalAmount = api
-                .column(2, { page: "current" })
-                .data()
-                .reduce(function(a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0);
-
+                    .column(2, { page: "current" })
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
 
                 var totalHtml =
                     "<div>" +
@@ -206,6 +217,7 @@ function Expense() {
     const [currentExpense, setCurrentExpense] = useState();
     const editRow = expense => {
         if (expense) {
+            setErrors([]);
             setCurrentExpense(expense);
             openShowEdit();
         }
@@ -215,7 +227,10 @@ function Expense() {
         var formData = new FormData();
         Object.keys(updatedExpense[0]).map(key => {
             if (key == "date") {
-                formData.append("data[" + 0 + "][" + key + "]", formatDate(updatedExpense[0][key]));
+                formData.append(
+                    "data[" + 0 + "][" + key + "]",
+                    formatDate(updatedExpense[0][key])
+                );
             } else {
                 if (key == "tagsArray") {
                     updatedExpense[0][key].map(value => {
@@ -233,11 +248,15 @@ function Expense() {
             }
         });
         formData.append("_method", "put");
-        api.post(`/expenses/${expenseId}`, formData).then(res => {
-            handleCloseEdit();
-            ToastsStore.success(res.data.message);
-            dataTable.ajax.reload();
-        });
+        api.post(`/expenses/${expenseId}`, formData)
+            .then(res => {
+                handleCloseEdit();
+                ToastsStore.success(res.data.message);
+                dataTable.ajax.reload();
+            })
+            .catch(res => {
+                errorResponse(res, setErrors);
+            });
     };
 
     const [deleteExpenseId, setDeleteExpenseId] = useState();
@@ -255,16 +274,11 @@ function Expense() {
     };
 
     const onDateChange = datevalue => {
-        const dateForDateRangePicker = datevalue ? datevalue : [null, null];
-        const data = datevalue
-            ? [datevalue[0].toISOString(), datevalue[1].toISOString()]
-            : [null, null];
-        setDate(dateForDateRangePicker);
-        setDateRange(data);
+        handleFilterOnDateChange(datevalue, setDate, setDateRange, date);
     };
 
     useEffect(() => {
-        if (dataTable && date) {
+        if (dataTable || (date[0] && date[1])) {
             dataTable.destroy();
             initDatatables();
         }
@@ -278,8 +292,10 @@ function Expense() {
             : [];
         const data = event ? tmp : null;
         if (selectFor == "mediums") {
+            setSelectedMediums(event);
             setSelectedMediumsForFilter(data);
         } else if (selectFor == "tags") {
+            setSelectedTags(event);
             setSelectedTagsForFilter(data);
         }
     };
@@ -293,39 +309,52 @@ function Expense() {
         api.post("/export/expense", exportDataFilters, {
             responseType: "arraybuffer"
         })
-        .then(response => {
-            var blob = new Blob([response.data], {
-                type:
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            .then(response => {
+                var blob = new Blob([response.data], {
+                    type:
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                });
+                fileSaver.saveAs(blob, "expense.xlsx");
+            })
+
+            .catch(function() {
+                ToastsStore.error("Something went wrong!");
             });
-            fileSaver.saveAs(blob, "expense.xlsx");
-        })
-        .catch(function() {
-            ToastsStore.error("Something went wrong!");
-        });
     };
 
     const importShow = () => {
         setImportShow(true);
-    }
+    };
 
-    const importData = (fileState) => {
-
+    const importData = fileState => {
+        setDisabled(true);
         const formData = new FormData();
-        formData.append(
-            "expenseFile",
-            fileState.selectedFile
-        )
+        formData.append("expenseFile", fileState.selectedFile);
         api.post("/importExpense", formData)
-        .then(res => {
-            closeImportModal();
-            ToastsStore.success("Data imported successfully.");
-            dataTable.ajax.reload();
-        })
-        .catch( () => {
-            ToastsStore.error("Something went wrong!");
-        });
-    }
+            .then(res => {
+                setDisabled(false);
+                closeImportModal();
+                ToastsStore.success("Data imported successfully.");
+                dataTable.ajax.reload();
+            })
+            .catch(() => {
+                setDisabled(false);
+                ToastsStore.error("Something went wrong!");
+            });
+    };
+
+    const downloadSample = () => {
+        api.get("/expense/download-sample", { responseType: "arraybuffer" })
+            .then(res => {
+                var blob = new Blob([res.data], {
+                    type: "text/csv"
+                });
+                fileSaver.saveAs(blob, "expense.csv");
+            })
+            .catch(res => {
+                ToastsStore.error("Something went wrong!");
+            });
+    };
 
     return (
         <div className="bg-white p-3">
@@ -391,6 +420,7 @@ function Expense() {
                                     isMulti
                                     options={mediumsOptionForFilter}
                                     placeholder="Select Mediums"
+                                    value={selectedMediums}
                                 />
                             </div>
                         </div>
@@ -401,6 +431,7 @@ function Expense() {
                                     isMulti
                                     options={options}
                                     placeholder="Select Tags"
+                                    value={selectedTags}
                                 />
                             </div>
                         </div>
@@ -425,6 +456,7 @@ function Expense() {
                     mediums={mediums}
                     options={options}
                     updateExpense={updateExpense}
+                    errors={errors}
                 />
             )}
             {showDeleteModal && (
@@ -436,7 +468,12 @@ function Expense() {
                 />
             )}
             {showImportModal && (
-                <ImportExpense handleCloseImportModal={closeImportModal} importData={importData}/>
+                <ImportExpense
+                    handleCloseImportModal={closeImportModal}
+                    importData={importData}
+                    downloadSample={downloadSample}
+                    disabled={disabled}
+                />
             )}
         </div>
     );

@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import api from '../../helpers/api';
-import { formatDate, intVal } from '../../helpers';
-import { numberFormat } from "../../helpers";
-import { ToastsStore } from 'react-toasts';
-import EditIncomes from "./Edit-Income";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import DateRangePicker from '@wojtekmaj/react-daterange-picker';
+import api from "../../helpers/api";
 import {
-    faFilter,
-    faPlus
-} from '@fortawesome/free-solid-svg-icons';
-import ConfirmationComponent from '../ConfirmationComponent';
-import Select from 'react-select';
-const $ = require('jquery')
-$.DataTable = require('datatables.net')
+    errorResponse,
+    formatDate,
+    handleFilterOnDateChange,
+    intVal
+} from "../../helpers";
+import { numberFormat } from "../../helpers";
+import { ToastsStore } from "react-toasts";
+import EditIncomes from "./Edit-Income";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import DateRangePicker from "@wojtekmaj/react-daterange-picker";
+import { faFilter, faPlus } from "@fortawesome/free-solid-svg-icons";
+import ConfirmationComponent from "../ConfirmationComponent";
+import Select from "react-select";
+const $ = require("jquery");
+$.DataTable = require("datatables.net");
 
 export default function Income() {
     const [dataTable, setDataTable] = useState(null);
@@ -23,9 +25,11 @@ export default function Income() {
     const [clients, setClients] = useState([]);
     const [mediums, setMediums] = useState([]);
     const [mediumsOptionForFilter, setMediumsOptionForFilter] = useState([]);
-    const [selectedMediumsForFilter, setSelectedMediumsForFilter] = useState(null);
+    const [selectedMediumsForFilter, setSelectedMediumsForFilter] = useState(
+        null
+    );
     const [selectedTagsForFilter, setSelectedTagsForFilter] = useState(null);
-    const [filterClient, setFilterClient] = useState('all');
+    const [filterClient, setFilterClient] = useState("all");
     const [showEditModal, setEditShow] = useState(false);
     const [tagOptions, setTagOptions] = useState([]);
     const openShowEdit = () => setEditShow(true);
@@ -33,17 +37,21 @@ export default function Income() {
     const [advanceFilter, setAdvanceFilter] = useState(false);
     const [showDeleteModal, setDeleteShow] = useState(false);
     const handleCloseDelete = () => setDeleteShow(false);
+    const [errors, setErrors] = useState([]);
 
     const [currentIncome, setCurrentIncome] = useState();
-    
+    const [selectedMediums, setSelectedMediums] = useState();
+    const [selectedTags, setSelectedTags] = useState();
+
     var totalAmount = 0;
 
     const editRow = income => {
         if (income) {
-            setCurrentIncome(income)
+            setErrors([]);
+            setCurrentIncome(income);
             openShowEdit();
         }
-    }
+    };
     const initDatatables = () => {
         var table = $("#datatable").DataTable({
             serverSide: true,
@@ -68,10 +76,10 @@ export default function Income() {
                         "Bearer " + localStorage.getItem("token")
                     );
                 },
-                dataSrc: function ( json ) {
+                dataSrc: function(json) {
                     totalAmount = json.totalAmount;
                     return json.data;
-                },
+                }
             },
             columns: [
                 { title: "Date", data: "date", searchable: false },
@@ -127,21 +135,18 @@ export default function Income() {
                     );
                 }
                 if (data.amount) {
-                    $("td:eq(2)", row).html(
-                        numberFormat(data.amount)
-                    );
+                    $("td:eq(2)", row).html(numberFormat(data.amount));
                 }
             },
             footerCallback: function(row, data, start, end, display) {
                 var api = this.api(),
                     currentPageTotalAmount;
-                
+
                 currentPageTotalAmount = api
                     .column(2, { page: "current" })
                     .data()
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
-                    
                     }, 0);
 
                 var totalHtml =
@@ -158,22 +163,20 @@ export default function Income() {
             }
         });
         setDataTable(table);
-    }
+    };
 
     useEffect(() => {
         initDatatables();
-        api.get('/getClients')
-            .then((res) => {
-                setClients(res.data.clients);
-            })
-        api.get('/get-income-mediums')
-            .then((res) => {
-                setMediums(res.data.medium);
-                setMediumsOptionForFilter(createMediumOption(res.data.medium));
-            })
-        api.get('/get-income-tags').then((res) => {
+        api.get("/getClients").then(res => {
+            setClients(res.data.clients);
+        });
+        api.get("/get-income-mediums").then(res => {
+            setMediums(res.data.medium);
+            setMediumsOptionForFilter(createMediumOption(res.data.medium));
+        });
+        api.get("/get-income-tags").then(res => {
             createTagOptions(res.data.tags);
-        })
+        });
     }, []);
 
     const createTagOptions = data => {
@@ -181,10 +184,10 @@ export default function Income() {
             return {
                 value: value._id,
                 label: value.tag
-            }
+            };
         });
         setTagOptions(options);
-    }
+    };
 
     useEffect(() => {
         if (dataTable) {
@@ -193,50 +196,50 @@ export default function Income() {
     }, [dataTable]);
 
     const updateIncome = (incomeId, updatedIncome) => {
-        updatedIncome.map((incomeItem, key) => {
-            incomeItem.date = formatDate(incomeItem.date);
+        const tempIncomeData = updatedIncome.map((incomeItem, key) => {
+            return { ...incomeItem, date: formatDate(incomeItem.date) };
         });
-        api.patch(`/incomes/${incomeId}`, { data: updatedIncome })
-            .then((res) => {
+        api.patch(`/incomes/${incomeId}`, { data: tempIncomeData })
+            .then(res => {
                 handleCloseEdit();
                 ToastsStore.success(res.data.message);
                 dataTable.ajax.reload();
             })
-    }
+            .catch(res => {
+                errorResponse(res, setErrors);
+            });
+    };
 
     const [deleteIncomeId, setDeleteIncomeId] = useState();
 
     const deleteIncome = incomeId => {
-        api.delete(`/incomes/${incomeId}`)
-            .then((res) => {
-                handleCloseDelete();
-                ToastsStore.success(res.data.message);
-                dataTable.ajax.reload();
-            })
-    }
+        api.delete(`/incomes/${incomeId}`).then(res => {
+            handleCloseDelete();
+            ToastsStore.success(res.data.message);
+            dataTable.ajax.reload();
+        });
+    };
 
     const registerEvent = () => {
-        $("#datatable").on("click", "tbody .editData", function (e) {
-            var income = dataTable.row($(e.target).parents('tr')).data();
-            editRow(income)
+        $("#datatable").on("click", "tbody .editData", function(e) {
+            var income = dataTable.row($(e.target).parents("tr")).data();
+            editRow(income);
         });
-        $("#datatable").on("click", "tbody .deletData", function (e) {
-            setDeleteIncomeId($(e.target).attr('id'));
+        $("#datatable").on("click", "tbody .deletData", function(e) {
+            setDeleteIncomeId($(e.target).attr("id"));
             setDeleteShow(true);
         });
-    }
+    };
     const onDateChange = datevalue => {
-        const dateForDateRangePicker = (datevalue) ? datevalue : [null, null];
-        const data = (datevalue) ? [datevalue[0].toISOString(), datevalue[1].toISOString()] : [null, null];
-        setDate(dateForDateRangePicker);
-        setDateRange(data);
-    }
-    const handleClientFilterChange = (event) => {
-        setFilterClient(event.target.value)
-    }
+        handleFilterOnDateChange(datevalue, setDate, setDateRange, date);
+    };
+
+    const handleClientFilterChange = event => {
+        setFilterClient(event.target.value);
+    };
 
     useEffect(() => {
-        if (dataTable && date) {
+        if (dataTable || (date[0] && date[1])) {
             dataTable.destroy();
             initDatatables();
         }
@@ -247,21 +250,25 @@ export default function Income() {
             return {
                 value: medium._id,
                 label: medium.medium
-            }
+            };
         });
-    }
+    };
 
     const handleSelectChange = selectFor => event => {
-        const tmp = event ? event.map(value => {
-            return value['value'];
-        }) : [];
-        const data = (event) ? tmp : null;
-        if (selectFor == 'mediums') {
+        const tmp = event
+            ? event.map(value => {
+                  return value["value"];
+              })
+            : [];
+        const data = event ? tmp : null;
+        if (selectFor == "mediums") {
+            setSelectedMediums(event);
             setSelectedMediumsForFilter(data);
-        } else if (selectFor == 'tags') {
+        } else if (selectFor == "tags") {
+            setSelectedTags(event);
             setSelectedTagsForFilter(data);
         }
-    }
+    };
     return (
         <div className="bg-white p-3">
             <div className="row mx-0 align-items-center">
@@ -310,7 +317,10 @@ export default function Income() {
                                                 value={client._id}
                                                 key={client._id}
                                             >
-                                                {client.name + ` (` + client.company_name + `)`}
+                                                {client.name +
+                                                    ` (` +
+                                                    client.company_name +
+                                                    `)`}
                                             </option>
                                         ))}
                                 </select>
@@ -323,6 +333,7 @@ export default function Income() {
                                     isMulti
                                     options={mediumsOptionForFilter}
                                     placeholder="Select Mediums"
+                                    value={selectedMediums}
                                 />
                             </div>
                             <div className="col form-group px-0 px-lg-3 px-md-2">
@@ -331,6 +342,7 @@ export default function Income() {
                                     isMulti
                                     options={tagOptions}
                                     placeholder="Select Tags"
+                                    value={selectedTags}
                                 />
                             </div>
                         </div>
@@ -339,11 +351,7 @@ export default function Income() {
             </div>
 
             <div className="table-responsive-md table-income-expense">
-                <table
-                    id="datatable"
-                    className="display table"
-                    width="100%"
-                >
+                <table id="datatable" className="display table" width="100%">
                     <tfoot>
                         <tr>
                             <th colSpan="2" />
@@ -360,6 +368,7 @@ export default function Income() {
                     clients={clients}
                     tagOptions={tagOptions}
                     updateIncome={updateIncome}
+                    errors={errors}
                 />
             )}
             {showDeleteModal && (

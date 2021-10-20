@@ -3,22 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Expense;
-use Illuminate\Http\Request;
+use App\Exports\ExpenseExport;
 use App\Http\Requests\ExpenseRequest;
-use Pimlie\DataTables\MongodbDataTable;
+use App\Imports\ExpenseImport;
 use App\Tag;
-use File;
-use DB;
 use App\Traits\ChartData;
 use Carbon\Carbon;
-use Yajra\DataTables\DataTables;
-use App\Exports\ExpenseExport;
-use App\Imports\ExpenseImport;
+use DB;
+use File;
+use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel as Excel;
+use Pimlie\DataTables\MongodbDataTable;
 
 class ExpenseController extends Controller
 {
     use ChartData;
+
     /**
      * Display a listing of the resource.
      *
@@ -27,11 +27,11 @@ class ExpenseController extends Controller
     public function index(Request $request)
     {
         $from = ($request->daterange[0]) ? Carbon::parse($request->daterange[0]) : null;
-        $to = ($request->daterange[1]) ? Carbon::parse($request->daterange[1]) : null;
+        $to   = ($request->daterange[1]) ? Carbon::parse($request->daterange[1]) : null;
 
         $selectedMediums = $request->mediums;
-        $selectedTags = $request->tags;
-        $expense = Expense::with('tags')
+        $selectedTags    = $request->tags;
+        $expense         = Expense::with('tags')
             ->when($from, function ($expense) use ($from, $to) {
                 return $expense->whereBetween('date', [$from, $to]);
             })
@@ -45,7 +45,7 @@ class ExpenseController extends Controller
         return (new MongodbDataTable($expense))
             ->addColumn('selectedDateForEdit', function ($expense) {
                 return $expense->date;
-            })
+            })->escapeColumns('item')
             ->make(true);
     }
 
@@ -128,5 +128,11 @@ class ExpenseController extends Controller
         $file = $request->file('expenseFile')->store('import');
         Excel::import(new ExpenseImport, $file);
         return;
+    }
+
+    public function downloadSample()
+    {
+        $file = File::get(storage_path('sample/expense.csv'));
+        return $file;
     }
 }

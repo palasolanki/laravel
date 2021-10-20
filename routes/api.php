@@ -1,6 +1,5 @@
 <?php
 
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -12,12 +11,9 @@
 |
 */
 
-use Illuminate\Http\Resources\Json\Resource;
-
 Route::post('login', 'LoginController@login');
 
 Route::group(['middleware' => 'auth:api'], function () {
-
     Route::post('logout', 'LoginController@logout');
 
     Route::apiResource('projects', 'ProjectController');
@@ -58,7 +54,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/getHardwareType', 'HardwareController@getHardwareType');
 
     Route::get('/clients', 'ClientController@index');
-    Route::post('/addClient', 'ClientController@store');
+    Route::post('/clients/add', 'ClientController@store');
     Route::get('/client/{client}', 'ClientController@show');
     Route::post('/client/{client}', 'ClientController@update');
     Route::delete('/client/{client}', 'ClientController@destroy');
@@ -85,4 +81,5 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/invoice/{invoiceId}', 'InvoiceController@edit');
 
     Route::post('/importExpense', 'ExpenseController@importExpense');
+    Route::get('expense/download-sample', 'ExpenseController@downloadSample');
 });
