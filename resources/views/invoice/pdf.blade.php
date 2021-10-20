@@ -57,6 +57,18 @@
 	</style>
 
 	<body>
+
+		@switch($invoice->currency)
+			@case ('USD')
+				@php $currency_sign = '$' @endphp
+				@break
+			@case ('EUR')
+				@php $currency_sign = '€' @endphp
+				@break
+			@default
+				@break
+		@endswitch
+
 		<div class="container-fluid">
 
 			<table class="table table-borderless">
@@ -206,12 +218,13 @@
 								<tbody>
 									<tr>
 										<td>Subtotal:</td>
-										<td class="text-right">{{$currency_sign}}{{$total}}</td>
+										<td class="text-right">{{$currency_sign}}{{$invoice->total}}</td>
 
 									</tr>
 									<tr>
 										<td class="text-success"><strong>Total:</strong> </td>
-										<td class="text-right"><strong>{{$currency_sign}}{{$total}}</strong></td>
+										<td class="text-right"><strong>{{$currency_sign}}{{$invoice->total}}</strong>
+										</td>
 
 									</tr>
 									<tr>
@@ -221,7 +234,7 @@
 									<tr>
 										<td class="text-success"><strong>Amount Due:</strong></td>
 										<td class="text-right">
-											<strong>{{$currency_sign}}{{$invoice->amount_paid}}</strong>
+											<strong>{{$currency_sign}}{{$invoice->amount_due}}</strong>
 										</td>
 									</tr>
 

@@ -35,7 +35,9 @@ class InvoiceRequest extends FormRequest
             'notes'       => 'nullable',
             'bill_from'   => 'required',
             'bill_to'     => 'required',
-            'currency'    => 'required'
+            'currency'    => 'required',
+            'total'       => 'required',
+
         ];
     }
 }

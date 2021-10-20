@@ -202,7 +202,7 @@ const AddInvoices = props => {
         }
         api.post(
             `/invoices/add`,
-            { ...invoice, total, currencySign },
+            { ...invoice, total },
             { responseType: "blob" }
         )
             .then(res => {
@@ -229,7 +229,7 @@ const AddInvoices = props => {
         }
         api.post(
             `/invoices/edit`,
-            { ...invoice, total, currencySign },
+            { ...invoice, total },
             {
                 responseType: "blob"
             }
