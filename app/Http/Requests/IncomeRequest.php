@@ -31,8 +31,6 @@ class IncomeRequest extends FormRequest
             'data.*.date'      => 'required',
             'data.*.amount'    => 'required|numeric|min:0',
             'data.*.medium'    => 'required',
-            'data.*.client_id' => 'required',
-            'data.*.tags'      => 'required',
         ];
     }
 
@@ -44,8 +42,6 @@ class IncomeRequest extends FormRequest
             'data.*.amount.numeric'     => 'Amount must be a number',
             'data.*.amount.min'         => 'Amount must be a positive number',
             'data.*.medium.required'    => 'Medium is required',
-            'data.*.client_id.required' => 'Client is required',
-            'data.*.tags.required'      => 'Tags are required',
         ];
     }
 
