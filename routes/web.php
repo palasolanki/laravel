@@ -15,11 +15,4 @@
 //     return view('welcome');
 // });
 
-use App\Invoice;
-
-Route::get('/pdf', function () {
-    $invoice = Invoice::first();
-    return view('invoice.pdf', ['invoice' => $invoice, 'total'=>800, 'currency_sign'=>'$']);
-});
-
 Route::view('/{path?}', 'app')->where('path', '.*');
