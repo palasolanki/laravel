@@ -226,7 +226,7 @@
 
 									</tr>
 									<tr>
-										<td class="text-success"><strong>Totl: </strong></td>
+										<td class="text-success"><strong>Total: </strong></td>
 										<td class="text-right"><strong class="font-16">{{$currency_sign}}{{$invoice->total}}</strong></td>
 
 									</tr>
