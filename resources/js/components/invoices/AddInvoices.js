@@ -301,12 +301,12 @@ const AddInvoices = props => {
                                         <option value="">Select Client</option>
                                         {clientList}
                                     </select>
-                                    <div className="mt-2 invoice-address">
-                                        {invoice.bill_to.address}
-                                    </div>
                                 </div>
                             </div>
-                            <div className="mt-5">
+                            <div className="invoice-address">
+                                {invoice.bill_to.address}
+                            </div>
+                            <div className="mt-3 mb-4">
                                 <span>Status:</span>
                                 <div
                                     contentEditable={true}
