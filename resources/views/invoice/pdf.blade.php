@@ -21,8 +21,12 @@
 		}
 
 		.company_details {
-			font-size: 11px;
-			color: gray;
+			font-size: 12.5px;
+			color: rgb(73, 73, 73);
+		}
+
+		.company_details_closure{
+			font-size: 12px;
 		}
 
 		.width-100 {
@@ -93,7 +97,7 @@
 												Ahmedabad - 380015,
 												Gujarat, India.<br>
 												GSTIN: 24AAUFR2815E1Z6<br>
-												www.radicalloop.com | hello@radicalloop.com</div>
+												<span class="company_details_closure">www.radicalloop.com | hello@radicalloop.com</span></div>
 										</td>
 									</tr>
 								</tbody>
@@ -135,8 +139,10 @@
 							<p><span class="text-success">Bill to:</span><br />
 								<strong>{{$invoice->bill_to["name"]}}</strong> <br />
 								@if($invoice->bill_to["address"])
-								{{$invoice->bill_to["address"]}}<br />
+								{{-- {{$invoice->bill_to["address"]}}<br /> --}}
+								{!! nl2br($invoice->bill_to["address"]) !!}<br/>
 								@endif
+
 								{{$invoice->bill_to["email"]}}
 							</p>
 
