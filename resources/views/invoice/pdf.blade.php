@@ -272,7 +272,7 @@
         <table class="table table-borderless table-td-p-0 ml-2 width-450">
             <tbody>
                 <tr>
-                    <td colspan="2" class="text-success">Payment details:</td>
+                    <td colspan="2" class="text-success">Benificiary details:</td>
                 </tr>
                 <tr>
                     <td>Account Name:</td>
@@ -280,18 +280,22 @@
 
                 </tr>
                 <tr>
-                    <td>Beneficiary Bank Name:</td>
+                    <td>Bank Name:</td>
                     <td>Kotak Mahindra Bank</td>
 
                 </tr>
                 <tr>
-                    <td>Beneficiary Bank Account Number:</td>
+                    <td>Bank Account Number:</td>
                     <td>9612495570</td>
                 </tr>
                 <tr>
                     <td>SWIFT Code:</td>
                     <td>KKBKINBB</td>
                 </tr>
+								<tr>
+									<td>Bank IFSC code:</td>
+									<td>KKBK0002587</td>
+							</tr>
 
             </tbody>
         </table>
