@@ -272,7 +272,10 @@
         <table class="table table-borderless table-td-p-0 ml-2 width-450">
             <tbody>
                 <tr>
-                    <td colspan="2" class="text-success">Benificiary details:</td>
+                    <td colspan="2" class="text-success">Payment details:</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-decoration: underline;">Beneficiary details:</td>
                 </tr>
                 <tr>
                     <td>Account Name:</td>
@@ -292,10 +295,10 @@
                     <td>SWIFT Code:</td>
                     <td>KKBKINBB</td>
                 </tr>
-								<tr>
-									<td>Bank IFSC code:</td>
-									<td>KKBK0002587</td>
-							</tr>
+                <tr>
+                    <td>Bank IFSC code:</td>
+                    <td>KKBK0002587</td>
+                </tr>
 
             </tbody>
         </table>
