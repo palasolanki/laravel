@@ -275,22 +275,29 @@
                     <td colspan="2" class="text-success">Payment details:</td>
                 </tr>
                 <tr>
+                    <td colspan="2" style="text-decoration: underline;">Beneficiary details:</td>
+                </tr>
+                <tr>
                     <td>Account Name:</td>
                     <td>Radicalloop Technolabs LLP</td>
 
                 </tr>
                 <tr>
-                    <td>Beneficiary Bank Name:</td>
+                    <td>Bank Name:</td>
                     <td>Kotak Mahindra Bank</td>
 
                 </tr>
                 <tr>
-                    <td>Beneficiary Bank Account Number:</td>
+                    <td>Bank Account Number:</td>
                     <td>9612495570</td>
                 </tr>
                 <tr>
                     <td>SWIFT Code:</td>
                     <td>KKBKINBB</td>
+                </tr>
+                <tr>
+                    <td>Bank IFSC code:</td>
+                    <td>KKBK0002587</td>
                 </tr>
 
             </tbody>
