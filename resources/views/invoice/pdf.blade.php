@@ -187,7 +187,7 @@
                 <tr>
                     <td>{{ $line["item"] }}</td>
                     <td class="text-right text-nowrap">{{ $line["quantity"] }}</td>
-                    <td class="text-right text-nowrap">{{$currency_sign}}{{ $line["rate"] }}</td>
+                    <td class="text-right text-nowrap">{{$currency_sign}}{{ $line["hourly_rate"] }}</td>
                     <td class="text-right text-nowrap pr-5">{{$currency_sign}}{{ $line["amount"] }}</td>
                 </tr>
                 @endforeach

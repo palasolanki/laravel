@@ -62,6 +62,7 @@ class ClientRequest extends FormRequest
         $client->name              = $this->name;
         $client->email             = $this->email;
         $client->company_name      = $this->company_name;
+        $client->hourly_rate       = $this->hourly_rate;
         $client->country_id        = $this->country_id;
         $client->payment_medium_id = $this->payment_medium_id;
         $client->address           = $this->address;

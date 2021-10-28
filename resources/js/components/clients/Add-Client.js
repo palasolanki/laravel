@@ -9,6 +9,7 @@ const AddClient = props => {
         name: "",
         email: "",
         company_name: "",
+        hourly_rate: "",
         country_id: "",
         payment_medium_id: "",
         company_logo: "",
@@ -149,6 +150,25 @@ const AddClient = props => {
                                 placeholder="Enter Company Name"
                                 name="company_name"
                                 value={client.company_name}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="form-group">
+                        <label
+                            className="control-label col-auto px-0"
+                            htmlFor="hourly_rate"
+                        >
+                            Hourly Rate:
+                        </label>
+                        <div className="col-sm-10 pl-0">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Enter Hourly Rate"
+                                name="hourly_rate"
+                                value={client.hourly_rate}
                                 onChange={handleInputChange}
                             />
                         </div>
