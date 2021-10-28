@@ -180,6 +180,7 @@ const AddInvoices = props => {
                 bill_to: bill_to,
                 lines: [...newArr]
             });
+            setCheckAmount(true);
             return;
         }
         if (e.target.name === "currency") {
@@ -513,8 +514,10 @@ const AddInvoices = props => {
                                                     name="hourly_rate"
                                                     onBlur={handleChange(index)}
                                                 >
-                                                    {invoice.bill_to
-                                                        .hourly_rate || 0}
+                                                    {row.hourly_rate ||
+                                                        invoice.bill_to
+                                                            .hourly_rate ||
+                                                        0}
                                                 </span>
                                             </td>
                                             <td>
