@@ -10,7 +10,7 @@ const AddInvoices = props => {
     const initialRow = {
         item: "",
         quantity: 0,
-        rate: 0,
+        hourly_rate: 0,
         amount: 0
     };
 
@@ -28,7 +28,7 @@ const AddInvoices = props => {
         bill_from: `Radicalloop Technolabs LLP,
         India
         GST No.: 24AAUFR2815E1Z6`,
-        bill_to: { name: "", address: "" }
+        bill_to: { name: "", address: "", hourly_rate: 0 }
     });
 
     const [currencySign, setCurrencySign] = useState("$");
@@ -40,6 +40,7 @@ const AddInvoices = props => {
 
     const handleChange = index => e => {
         let name = e.target.getAttribute("name");
+
         if (typeof index !== "number") {
             setInvoice({ ...invoice, [name]: e.target.innerText });
             return;
@@ -48,7 +49,7 @@ const AddInvoices = props => {
         newArr[index] = { ...newArr[index], [name]: e.target.innerText };
         setInvoice({ ...invoice, lines: [...newArr] });
 
-        if (name == "quantity" || name == "rate") {
+        if (name == "quantity" || name == "hourly_rate") {
             setCheckAmount(true);
         }
     };
@@ -142,7 +143,7 @@ const AddInvoices = props => {
             let modifiedItem = Object.assign({}, item);
             return {
                 ...modifiedItem,
-                amount: modifiedItem.quantity * modifiedItem.rate
+                amount: modifiedItem.quantity * modifiedItem.hourly_rate
             };
         });
         setInvoice({ ...invoice, lines: [...modifiedArr] });
@@ -168,9 +169,17 @@ const AddInvoices = props => {
         if (e.target.name === "client_id") {
             let bill_to = clients.find(client => client._id === val) || {
                 name: "",
-                address: ""
+                address: "",
+                hourly_rate: 0
             };
-            setInvoice({ ...invoice, client_id: val, bill_to: bill_to });
+            let newArr = [...invoice.lines];
+            newArr[0] = { ...newArr[0], hourly_rate: bill_to.hourly_rate };
+            setInvoice({
+                ...invoice,
+                client_id: val,
+                bill_to: bill_to,
+                lines: [...newArr]
+            });
             return;
         }
         if (e.target.name === "currency") {
@@ -501,10 +510,11 @@ const AddInvoices = props => {
                                                     suppressContentEditableWarning={
                                                         true
                                                     }
-                                                    name="rate"
+                                                    name="hourly_rate"
                                                     onBlur={handleChange(index)}
                                                 >
-                                                    {row.rate}
+                                                    {invoice.bill_to
+                                                        .hourly_rate || 0}
                                                 </span>
                                             </td>
                                             <td>
