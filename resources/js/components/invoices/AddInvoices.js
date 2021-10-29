@@ -173,7 +173,11 @@ const AddInvoices = props => {
                 hourly_rate: 0
             };
             let newArr = [...invoice.lines];
-            newArr[0] = { ...newArr[0], hourly_rate: bill_to.hourly_rate };
+
+            newArr[0] = {
+                ...newArr[0],
+                hourly_rate: bill_to.hourly_rate || 0
+            };
             setInvoice({
                 ...invoice,
                 client_id: val,
