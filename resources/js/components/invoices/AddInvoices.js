@@ -58,17 +58,23 @@ const AddInvoices = props => {
         setAmountPaid(parseInt(e.target.innerHTML));
     };
 
-    useEffect(() => {
-        setInvoice({
-            ...invoice,
-            amount_paid: amountPaid,
-            amount_due: total - amountPaid
-        });
-    }, [amountPaid]);
+    useEffect(
+        () => {
+            setInvoice({
+                ...invoice,
+                amount_paid: amountPaid,
+                amount_due: total - amountPaid
+            });
+        },
+        [amountPaid]
+    );
 
-    useEffect(() => {
-        setInvoice({ ...invoice, amount_due: total - invoice.amount_paid });
-    }, [total]);
+    useEffect(
+        () => {
+            setInvoice({ ...invoice, amount_due: total - invoice.amount_paid });
+        },
+        [total]
+    );
 
     useEffect(() => {
         setTotalAmount();
@@ -83,34 +89,37 @@ const AddInvoices = props => {
         });
     }, []);
 
-    useEffect(() => {
-        if (!invoiceId) return;
-        api.get("/invoice/" + invoiceId)
-            .then(res => {
-                let date = new Date(res.data.editInvoice[0].date);
-                let dueDate = new Date(res.data.editInvoice[0].due_date);
-                const respEditInvoice = {
-                    ...res.data.editInvoice[0],
-                    date,
-                    due_date: dueDate
-                };
-                switch (res.data.editInvoice[0].currency) {
-                    case "USD":
-                        setCurrencySign("$");
-                        break;
+    useEffect(
+        () => {
+            if (!invoiceId) return;
+            api.get("/invoice/" + invoiceId)
+                .then(res => {
+                    let date = new Date(res.data.editInvoice[0].date);
+                    let dueDate = new Date(res.data.editInvoice[0].due_date);
+                    const respEditInvoice = {
+                        ...res.data.editInvoice[0],
+                        date,
+                        due_date: dueDate
+                    };
+                    switch (res.data.editInvoice[0].currency) {
+                        case "USD":
+                            setCurrencySign("$");
+                            break;
 
-                    case "EUR":
-                        setCurrencySign("&euro");
-                        break;
+                        case "EUR":
+                            setCurrencySign("&euro");
+                            break;
 
-                    default:
-                        break;
-                }
+                        default:
+                            break;
+                    }
 
-                setInvoice(respEditInvoice);
-            })
-            .catch(err => {});
-    }, [invoiceId]);
+                    setInvoice(respEditInvoice);
+                })
+                .catch(err => {});
+        },
+        [invoiceId]
+    );
 
     const clientList =
         clients &&
@@ -122,14 +131,20 @@ const AddInvoices = props => {
             );
         });
 
-    useEffect(() => {
-        if (!isCheckAmount) return;
-        setTotalAmount();
-    }, [isCheckAmount]);
+    useEffect(
+        () => {
+            if (!isCheckAmount) return;
+            setTotalAmount();
+        },
+        [isCheckAmount]
+    );
 
-    useEffect(() => {
-        setTotal(getTotalAmount());
-    }, [invoice.lines]);
+    useEffect(
+        () => {
+            setTotal(getTotalAmount());
+        },
+        [invoice.lines]
+    );
 
     const getTotalAmount = () => {
         return invoice.lines.reduce(function(prev, cur) {
@@ -294,8 +309,8 @@ const AddInvoices = props => {
                             onBlur={handleChange()}
                         >
                             Radicalloop Technolabs LLP
-                            <br /> C-510, Titanium City Center, 100 Ft. Anand
-                            Nagar Road,
+                            <br /> 601/A, Parshwanath Esquare, Corporate Road,
+                            Prahladnagar,
                             <br /> Ahmedabad - 380015, Gujarat, India.
                             <br /> GSTIN: 24AAUFR2815E1Z6
                             <br /> www.radicalloop.com | hello@radicalloop.com
