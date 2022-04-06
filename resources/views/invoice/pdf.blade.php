@@ -92,8 +92,8 @@
                                 <tr>
                                     <td class="p-0">
                                         <p class="mb-0" style="font-size: 1.4em;">Radicalloop Technolabs LLP</p>
-                                        <div class="company_details mt-1">C-510, Titanium City Center,
-                                            100 Ft. Anand Nagar Road,<br />
+                                        <div class="company_details mt-1">601/A, Parshwanath Esquare, Corporate Road,
+                            Prahladnagar,<br />
                                             Ahmedabad - 380015,
                                             Gujarat, India.<br>
                                             GSTIN: 24AAUFR2815E1Z6<br>
