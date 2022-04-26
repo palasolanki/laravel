@@ -173,6 +173,26 @@ const AddClient = props => {
                             />
                         </div>
                     </div>
+
+                    <div className="form-group">
+                        <label
+                            className="control-label col-auto px-0"
+                            htmlFor="invoice_item_title"
+                        >
+                            Invoice Item Title:
+                        </label>
+                        <div className="col-sm-10 pl-0">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Enter Invoice Item Title"
+                                name="invoice_item_title"
+                                value={client.invoice_item_title}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                    </div>
+
                     <div className="form-group">
                         <label
                             className="control-label col-auto px-0"

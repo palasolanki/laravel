@@ -191,7 +191,8 @@ const AddInvoices = props => {
 
             newArr[0] = {
                 ...newArr[0],
-                hourly_rate: bill_to.hourly_rate || 0
+                hourly_rate: bill_to.hourly_rate || 0,
+                item: bill_to.invoice_item_title || ""
             };
             setInvoice({
                 ...invoice,
