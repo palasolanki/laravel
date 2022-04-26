@@ -250,7 +250,7 @@ const AddInvoices = props => {
             });
     };
 
-    const editInvoice = () => {
+    const editInvoice = (isDownload = true) => {
         setDisabled(true);
         if (!invoice.lines.length || !total || !invoice.bill_from) {
             setDisabled(false);
@@ -267,7 +267,10 @@ const AddInvoices = props => {
             .then(res => {
                 setDisabled(false);
                 ToastsStore.success("Invoice updated successfully.");
-                downloadFile(res);
+                if(isDownload)
+                {
+                    downloadFile(res);
+                }
             })
             .catch(function(err) {
                 ToastsStore.error(
@@ -667,6 +670,18 @@ const AddInvoices = props => {
                         </div>
                     </aside>
                     <div className="form-group text-right invoice-save-btn">
+                        {invoiceId && (
+                                <button
+                                    type="button"
+                                    id="edit_save_button"
+                                    onClick={() => editInvoice(false)}
+                                    className="btn btn--prime mr-1"
+                                    disabled={disabled}
+                                >
+                                    update
+                                </button>
+                            )
+                        }
                         <button
                             type="button"
                             id="edit_save_button"
@@ -677,7 +692,7 @@ const AddInvoices = props => {
                             {invoiceId
                                 ? "Update & Download"
                                 : "Save & Download"}
-                        </button>
+                        </button> 
                     </div>
                 </div>
             </div>
