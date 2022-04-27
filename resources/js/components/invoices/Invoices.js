@@ -103,10 +103,11 @@ function Invoices(props) {
                         moment(data.date).format("MMMM DD, YYYY")
                     );
                 }
-
+                let markPaid = ``;
                 if(data.status == 'open')
                 {
                     $("td:eq(3)", row).addClass('text-danger');
+                    markPaid = `<button id = ${data._id} class="btn btn-sm ml-2 btn-success markPaid">Mark Paid</button>`
                 }
 
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
@@ -121,8 +122,8 @@ function Invoices(props) {
                 <button id=${data._id} client-id=${
                     data.client_id
                 } class="btn btn-sm ml-2 btn-dark sendData">Send Invoice</button>`;
-
-                $("td:eq(7)", row).html(action);
+                
+                $("td:eq(7)", row).html(action + markPaid);
 
             }
         });
@@ -155,6 +156,10 @@ function Invoices(props) {
             setEditNotesModal(true)
             
         })
+
+        $("#datatable").on("click", "tbody .markPaid", function(e) {
+            updateStatus($(e.target).attr("id"));
+        });
     };
 
     const setSendInvoiceId = invoiceId => {
@@ -197,8 +202,15 @@ function Invoices(props) {
         });
     };
 
+    const updateStatus = invoiceId => {
+        api.post(`/invoices/${invoiceId}/mark-paid`).then(res => {
+            ToastsStore.success(res.data.message);
+            dataTable.ajax.reload();
+        });
+    }
+
     const updateNotes = (updatedNotes) => {
-        api.post(`/notes/${updatedNotes.id}`, { note: updatedNotes.notes })
+        api.post(`/invoices/${updatedNotes.id}/notes`, { note: updatedNotes.notes })
             .then(res => {
                 dataTable.ajax.reload();
                 ToastsStore.success(res.data.message);
