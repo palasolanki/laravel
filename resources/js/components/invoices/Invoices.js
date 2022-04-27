@@ -104,6 +104,11 @@ function Invoices(props) {
                     );
                 }
 
+                if(data.status == 'open')
+                {
+                    $("td:eq(3)", row).addClass('text-danger');
+                }
+
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
                 $("td:eq(6)", row).html(notes);
 
