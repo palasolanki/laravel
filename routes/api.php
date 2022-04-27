@@ -77,6 +77,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('/invoices/next-invoice-number', 'InvoiceController@getNextInvoiceNumber');
     Route::post('/invoices/edit', 'InvoiceController@update');
     Route::post('/invoices/send/{invoice}', 'InvoiceController@sendInvoice');
+    Route::post('/notes/{invoice}', 'InvoiceController@updateNotes');
 
     Route::get('/invoice/{invoiceId}', 'InvoiceController@edit');
 

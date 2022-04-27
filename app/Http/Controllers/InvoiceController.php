@@ -94,4 +94,13 @@ class InvoiceController extends Controller
 
         return;
     }
+
+    public function updateNotes(Invoice $invoice, Request $request)
+    {
+        $invoice->notes = $request->note;
+        $invoice->save();
+        
+        return response()->json(['message' => 'Note Updated Successfully...']);
+        
+    }
 }
