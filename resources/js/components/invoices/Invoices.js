@@ -78,7 +78,7 @@ function Invoices(props) {
                 { title: "Amount Due", data: "amount_due" },
                 {
                     title: "Notes",
-                    data: null,
+                    data: "null",
                     defaultContent: "N/A"
                 },
                 {
