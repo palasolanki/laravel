@@ -100,15 +100,15 @@ class InvoiceController extends Controller
         $invoice->notes = $request->note;
         $invoice->save();
         
-        return response()->json(['message' => 'Note Updated Successfully...']);
+        return response()->json(['message' => 'Note Updated Successfully']);
         
     }
 
-    public function updateStatus(Invoice $invoice)
+    public function markAsPaid(Invoice $invoice)
     {
         $invoice->status = 'paid';
-        $invoice->amount_paid = $invoice->amount_due;
+        $invoice->amount_paid = $invoice->total;
         $invoice->save();
-        return response()->json(['message' => 'Status Marked As Paid Successfully...']);
+        return response()->json(['message' => 'Status Marked As Paid Successfully']);
     }
 }

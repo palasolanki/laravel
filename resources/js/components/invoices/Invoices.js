@@ -158,7 +158,7 @@ function Invoices(props) {
         })
 
         $("#datatable").on("click", "tbody .markPaid", function(e) {
-            updateStatus($(e.target).attr("id"));
+            markAsPaid($(e.target).attr("id"));
         });
     };
 
@@ -202,7 +202,7 @@ function Invoices(props) {
         });
     };
 
-    const updateStatus = invoiceId => {
+    const markAsPaid = invoiceId => {
         api.post(`/invoices/${invoiceId}/mark-paid`).then(res => {
             ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
