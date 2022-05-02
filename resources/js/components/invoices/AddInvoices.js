@@ -126,7 +126,7 @@ const AddInvoices = props => {
         clients.map((client, key) => {
             return (
                 <option value={client._id} key={key}>
-                    {client.name + ` (` + client.company_name + `)`}
+                    {client.name + ` (` + (client.company_name || "N/A") + `)`}
                 </option>
             );
         });

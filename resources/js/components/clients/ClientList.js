@@ -121,7 +121,10 @@ const ClientList = () => {
                                     <tr key={client._id}>
                                         <td>{index + 1}</td>
                                         <td>{client.name}</td>
-                                        <td>{client.company_name}</td>
+                                        <td>{client.company_name 
+                                                ? client.company_name 
+                                                : "N/A"}
+                                        </td>
                                         <td>
                                             {client.country
                                                 ? client.country.name

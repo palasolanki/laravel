@@ -22,6 +22,8 @@ function Invoices(props) {
     const [invoiceId, setInvoiceDataId] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const [currentNotes, setCurrentNotes] = useState({});
+    const [showMarkAsPaidModal, setMarkAsPaid] = useState(false);
+    const [markAsPaidInvoiceId, setMarkAsPaidInvoiceId] = useState();
 
     useEffect(() => {
         initDatatables();
@@ -36,6 +38,8 @@ function Invoices(props) {
     const handleCloseEditNotesModal = () => setEditNotesModal(false);
     const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
+    const openShowMarkAsPaid = () => setMarkAsPaid(true);
+    const handleCloseMarkAsPaid = () => setMarkAsPaid(false);
 
     const closeMsgModal = () => {
         setOpenMsgModal(false);
@@ -158,7 +162,7 @@ function Invoices(props) {
         })
 
         $("#datatable").on("click", "tbody .markPaid", function(e) {
-            markAsPaid($(e.target).attr("id"));
+            setMarkAsPaidInvoiceIdFunction($(e.target).attr("id"))
         });
     };
 
@@ -194,6 +198,11 @@ function Invoices(props) {
         openShowDelete();
     };
 
+    const setMarkAsPaidInvoiceIdFunction = currentMarkAsPaidInvoiceId => {
+        setMarkAsPaidInvoiceId(currentMarkAsPaidInvoiceId);
+        openShowMarkAsPaid();
+    };
+
     const deleteInvoice = invoiceId => {
         api.delete(`/invoices/${invoiceId}`).then(res => {
             handleCloseDelete();
@@ -204,6 +213,7 @@ function Invoices(props) {
 
     const markAsPaid = invoiceId => {
         api.post(`/invoices/${invoiceId}/mark-paid`).then(res => {
+            handleCloseMarkAsPaid();
             ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
         });
@@ -257,6 +267,15 @@ function Invoices(props) {
                     handleCloseDelete={handleCloseDelete}
                     btnName="Delete"
                     action={() => deleteInvoice(deleteInvoiceId)}
+                />
+            )}
+
+            {showMarkAsPaidModal && (
+                <ConfirmationComponent
+                    title="Are you sure you want to mark invoice as paid?"
+                    handleCloseDelete={handleCloseMarkAsPaid}
+                    btnName="Mark As Paid"
+                    action={() => markAsPaid(markAsPaidInvoiceId)}
                 />
             )}
 
