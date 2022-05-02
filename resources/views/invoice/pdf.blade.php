@@ -140,6 +140,9 @@
                     <td class="py-0 pt-2">
                         <p><span class="text-success">Bill to:</span><br />
                             <strong>{{$invoice->bill_to["name"]}}</strong> <br />
+                            @if($invoice->bill_to["company_name"])
+                                {{$invoice->bill_to["company_name"]}}<br />
+                            @endif
                             @if($invoice->bill_to["address"])
                             {!! nl2br($invoice->bill_to["address"]) !!}<br />
                             @endif
