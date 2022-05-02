@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import InvoiceMessageModal from "./InvoiceMessageModal";
 import ConfirmationComponent from "../ConfirmationComponent";
+import EditNotes from "./EditNotes";
 import moment from "moment";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
@@ -16,15 +17,11 @@ function Invoices(props) {
     const [openMsgModal, setOpenMsgModal] = useState(false);
     const [showDeleteModal, setDeleteShow] = useState(false);
     const [clientName, setClientName] = useState("");
-    const openShowDelete = () => setDeleteShow(true);
-    const handleCloseDelete = () => setDeleteShow(false);
-
-    const closeMsgModal = () => {
-        setOpenMsgModal(false);
-    };
-
+    const [deleteInvoiceId, setDeleteInvoiceId] = useState();
+    const [editNotesModal, setEditNotesModal] = useState(false);
     const [invoiceId, setInvoiceDataId] = useState();
     const [isLoading, setIsLoading] = useState(false);
+    const [currentNotes, setCurrentNotes] = useState({});
 
     useEffect(() => {
         initDatatables();
@@ -36,9 +33,12 @@ function Invoices(props) {
         }
     }, [dataTable]);
 
-    const setSendInvoiceId = invoiceId => {
-        setInvoiceDataId(invoiceId);
-        setOpenMsgModal(true);
+    const handleCloseEditNotesModal = () => setEditNotesModal(false);
+    const openShowDelete = () => setDeleteShow(true);
+    const handleCloseDelete = () => setDeleteShow(false);
+
+    const closeMsgModal = () => {
+        setOpenMsgModal(false);
     };
 
     const initDatatables = () => {
@@ -59,7 +59,7 @@ function Invoices(props) {
                         "Authorization",
                         "Bearer " + localStorage.getItem("token")
                     );
-                }
+                },
             },
             columns: [
                 { title: "Number", data: "number" },
@@ -76,6 +76,11 @@ function Invoices(props) {
                     defaultContent: "N/A"
                 },
                 { title: "Amount Due", data: "amount_due" },
+                {
+                    title: "Notes",
+                    data: "null",
+                    defaultContent: "N/A"
+                },
                 {
                     title: "Action",
                     data: "null",
@@ -98,6 +103,15 @@ function Invoices(props) {
                         moment(data.date).format("MMMM DD, YYYY")
                     );
                 }
+                let markPaid = ``;
+                if(data.status == 'open')
+                {
+                    $("td:eq(3)", row).addClass('text-danger');
+                    markPaid = `<button id = ${data._id} class="btn btn-sm ml-2 btn-success markPaid">Mark Paid</button>`
+                }
+
+                let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
+                $("td:eq(6)", row).html(notes);
 
                 let action = `<button id=${
                     data._id
@@ -108,14 +122,16 @@ function Invoices(props) {
                 <button id=${data._id} client-id=${
                     data.client_id
                 } class="btn btn-sm ml-2 btn-dark sendData">Send Invoice</button>`;
+                
+                $("td:eq(7)", row).html(action + markPaid);
 
-                $("td:eq(6)", row).html(action);
             }
         });
         setDataTable(table);
     };
+    
 
-    const [deleteInvoiceId, setDeleteInvoiceId] = useState();
+
     const registerEvent = () => {
         $("#datatable").on("click", "tbody .deleteData", function(e) {
             setDeleteInvoiceIdFunction($(e.target).attr("id"));
@@ -131,6 +147,24 @@ function Invoices(props) {
             setSendInvoiceId(invoiceId);
             getClientName(clientId);
         });
+
+        $("#datatable").on("click", "tbody .notes", function(e){
+            let invoiceId = $(e.target).attr("id");
+            let invoices = dataTable.rows().data().toArray();
+            let currentInvoice = invoices.find(invoice => invoice._id === invoiceId);
+            setCurrentNotes({id: currentInvoice._id, notes: currentInvoice.notes})
+            setEditNotesModal(true)
+            
+        })
+
+        $("#datatable").on("click", "tbody .markPaid", function(e) {
+            markAsPaid($(e.target).attr("id"));
+        });
+    };
+
+    const setSendInvoiceId = invoiceId => {
+        setInvoiceDataId(invoiceId);
+        setOpenMsgModal(true);
     };
 
     const getClientName = clientId => {
@@ -168,6 +202,26 @@ function Invoices(props) {
         });
     };
 
+    const markAsPaid = invoiceId => {
+        api.post(`/invoices/${invoiceId}/mark-paid`).then(res => {
+            ToastsStore.success(res.data.message);
+            dataTable.ajax.reload();
+        });
+    }
+
+    const updateNotes = (updatedNotes) => {
+        api.post(`/invoices/${updatedNotes.id}/notes`, { note: updatedNotes.notes })
+            .then(res => {
+                dataTable.ajax.reload();
+                ToastsStore.success(res.data.message);
+                handleCloseEditNotesModal();
+            })
+            .catch(err => {
+                ToastsStore.success('Unable to update Note!');
+                handleCloseEditNotesModal();
+            });
+    }
+
     return (
         <div className="bg-white p-3">
             <div className="row mx-0 align-items-center">
@@ -203,6 +257,14 @@ function Invoices(props) {
                     handleCloseDelete={handleCloseDelete}
                     btnName="Delete"
                     action={() => deleteInvoice(deleteInvoiceId)}
+                />
+            )}
+
+            {editNotesModal && (
+                <EditNotes
+                handleCloseEditNotesModal={handleCloseEditNotesModal}
+                updateNotes={updateNotes}
+                currentNotes = {currentNotes}
                 />
             )}
         </div>

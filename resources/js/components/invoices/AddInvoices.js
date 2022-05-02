@@ -19,7 +19,7 @@ const AddInvoices = props => {
         number: "",
         lines: [initialRow],
         date: new Date(),
-        due_date: new Date(new Date().setDate(new Date().getDate() + 10)),
+        due_date: new Date(new Date().setDate(new Date().getDate() + 5)),
         amount_due: 0,
         amount_paid: 0,
         notes: "",
@@ -191,7 +191,8 @@ const AddInvoices = props => {
 
             newArr[0] = {
                 ...newArr[0],
-                hourly_rate: bill_to.hourly_rate || 0
+                hourly_rate: bill_to.hourly_rate || 0,
+                item: bill_to.invoice_item_title || ""
             };
             setInvoice({
                 ...invoice,
@@ -249,7 +250,7 @@ const AddInvoices = props => {
             });
     };
 
-    const editInvoice = () => {
+    const editInvoice = (isDownload = true) => {
         setDisabled(true);
         if (!invoice.lines.length || !total || !invoice.bill_from) {
             setDisabled(false);
@@ -266,7 +267,10 @@ const AddInvoices = props => {
             .then(res => {
                 setDisabled(false);
                 ToastsStore.success("Invoice updated successfully.");
-                downloadFile(res);
+                if(isDownload)
+                {
+                    downloadFile(res);
+                }
             })
             .catch(function(err) {
                 ToastsStore.error(
@@ -666,6 +670,18 @@ const AddInvoices = props => {
                         </div>
                     </aside>
                     <div className="form-group text-right invoice-save-btn">
+                        {invoiceId && (
+                                <button
+                                    type="button"
+                                    id="edit_save_button"
+                                    onClick={() => editInvoice(false)}
+                                    className="btn btn--prime mr-1"
+                                    disabled={disabled}
+                                >
+                                    Update
+                                </button>
+                            )
+                        }
                         <button
                             type="button"
                             id="edit_save_button"
@@ -676,7 +692,7 @@ const AddInvoices = props => {
                             {invoiceId
                                 ? "Update & Download"
                                 : "Save & Download"}
-                        </button>
+                        </button> 
                     </div>
                 </div>
             </div>

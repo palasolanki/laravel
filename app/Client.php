@@ -7,7 +7,7 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 class Client extends Eloquent
 {
     protected $collection = 'clients';
-    protected $fillable   = ['name', 'company_name', 'hourly_rate', 'country_id', 'payment_medium_id', 'company_logo', 'address', 'email'];
+    protected $fillable   = ['name', 'company_name', 'hourly_rate', 'country_id', 'payment_medium_id', 'company_logo', 'address', 'email', 'invoice_item_title'];
     protected $appends    = ['company_logo_url'];
 
     public function country()
