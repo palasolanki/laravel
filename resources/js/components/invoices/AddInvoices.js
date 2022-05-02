@@ -678,7 +678,7 @@ const AddInvoices = props => {
                                     className="btn btn--prime mr-1"
                                     disabled={disabled}
                                 >
-                                    update
+                                    Update
                                 </button>
                             )
                         }
