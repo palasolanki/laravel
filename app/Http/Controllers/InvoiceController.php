@@ -108,6 +108,7 @@ class InvoiceController extends Controller
     {
         $invoice->status = 'paid';
         $invoice->amount_paid = $invoice->total;
+        $invoice->amount_due = 0;
         $invoice->save();
         return response()->json(['message' => 'Status Marked As Paid Successfully']);
     }

@@ -31,7 +31,7 @@ class ClientRequest extends FormRequest
         return [
             'name'              => 'required',
             'email'             => 'required|email',
-            'company_name'      => 'required',
+            'company_name'      => 'nullable',
             'country_id'        => 'required',
             'payment_medium_id' => 'required',
             'company_logo'      => "sometimes|nullable|$stringOrFileRule",
@@ -46,7 +46,6 @@ class ClientRequest extends FormRequest
             'name.required'                 => 'Name is required',
             'email.required'                => 'Email is required',
             'email.email'                   => 'Please enter valid email address',
-            'company_name.required'         => 'Company Name is required',
             'country_id.required'           => 'Country is required',
             'payment_medium_id.required'    => 'Payment Medium is required',
         ];
