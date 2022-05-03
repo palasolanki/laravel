@@ -36,7 +36,8 @@ const AddInvoices = props => {
     const [amountPaid, setAmountPaid] = useState(0.0);
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
-    const [disabled, setDisabled] = useState(false);
+    const [updateDisabled, setUpdateDisabled] = useState(false);
+    const [updateAndSaveDisabled, setUpdateAndSaveDisabled] = useState(false);
 
     const handleChange = index => e => {
         let name = e.target.getAttribute("name");
@@ -238,7 +239,7 @@ const AddInvoices = props => {
     };
 
     const saveInvoice = event => {
-        setDisabled(true);
+        setUpdateAndSaveDisabled(true);
         if (!invoice.lines.length || !total || !invoice.bill_from) {
             setDisabled(false);
             ToastsStore.error("Oops something's missing! Re-generate invoice.");
@@ -250,7 +251,7 @@ const AddInvoices = props => {
             { responseType: "blob" }
         )
             .then(res => {
-                setDisabled(false);
+                setUpdateAndSaveDisabled(false);
                 ToastsStore.success("Invoice saved successfully.");
                 downloadFile(res);
                 props.history.push("/invoices");
@@ -259,15 +260,17 @@ const AddInvoices = props => {
                 ToastsStore.error(
                     "Oops something's missing! Re-generate invoice."
                 );
-                setDisabled(false);
+                setUpdateAndSaveDisabled(false);
                 console.log(err);
             });
     };
 
     const editInvoice = (isDownload = true) => {
-        setDisabled(true);
+
+        isDownload ? setUpdateAndSaveDisabled(true) : setUpdateDisabled(true);
+
         if (!invoice.lines.length || !total || !invoice.bill_from) {
-            setDisabled(false);
+            isDownload ? setUpdateAndSaveDisabled(false) : setUpdateDisabled(false)
             ToastsStore.error("Required fields missing.");
             return;
         }
@@ -279,18 +282,19 @@ const AddInvoices = props => {
             }
         )
             .then(res => {
-                setDisabled(false);
-                ToastsStore.success("Invoice updated successfully.");
+                setUpdateDisabled(false)
                 if(isDownload)
                 {
+                    setUpdateAndSaveDisabled(false);
                     downloadFile(res);
                 }
+                ToastsStore.success("Invoice updated successfully.");
             })
             .catch(function(err) {
                 ToastsStore.error(
                     "Something went wrong! Please generate invoice again."
                 );
-                setDisabled(false);
+                isDownload ? setUpdateAndSaveDisabled(false) : setUpdateDisabled(false);
                 console.log(err);
             });
     };
@@ -690,7 +694,7 @@ const AddInvoices = props => {
                                     id="edit_save_button"
                                     onClick={() => editInvoice(false)}
                                     className="btn btn--prime mr-1"
-                                    disabled={disabled}
+                                    disabled={updateDisabled}
                                 >
                                     Update
                                 </button>
@@ -701,7 +705,7 @@ const AddInvoices = props => {
                             id="edit_save_button"
                             onClick={invoiceId ? editInvoice : saveInvoice}
                             className="btn btn--prime mr-1"
-                            disabled={disabled}
+                            disabled={updateAndSaveDisabled}
                         >
                             {invoiceId
                                 ? "Update & Download"
