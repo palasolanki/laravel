@@ -152,7 +152,7 @@ const AddInvoices = props => {
         }, 0);
     };
 
-    const setTotalAmount = () => {
+    const setTotalAmount = () => { 
         if (invoice.lines.length === 0) return;
         let modifiedArr = invoice.lines.map(item => {
             let modifiedItem = Object.assign({}, item);
@@ -166,7 +166,7 @@ const AddInvoices = props => {
     };
 
     const addRow = () => {
-        setInvoice({ ...invoice, lines: [...invoice.lines, initialRow] });
+        setInvoice({ ...invoice, lines: [...invoice.lines, {...initialRow, hourly_rate: invoice.lines[0].hourly_rate}]});
     };
 
     const removeRow = index => {
