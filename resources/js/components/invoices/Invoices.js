@@ -162,7 +162,8 @@ function Invoices(props) {
         })
 
         $("#datatable").on("click", "tbody .markPaid", function(e) {
-            setMarkAsPaidInvoiceIdFunction($(e.target).attr("id"))
+            setMarkAsPaidInvoiceId($(e.target).attr("id"));
+            openShowMarkAsPaid();
         });
     };
 
@@ -196,11 +197,6 @@ function Invoices(props) {
     const setDeleteInvoiceIdFunction = currentDeleteInvoiceId => {
         setDeleteInvoiceId(currentDeleteInvoiceId);
         openShowDelete();
-    };
-
-    const setMarkAsPaidInvoiceIdFunction = currentMarkAsPaidInvoiceId => {
-        setMarkAsPaidInvoiceId(currentMarkAsPaidInvoiceId);
-        openShowMarkAsPaid();
     };
 
     const deleteInvoice = invoiceId => {
