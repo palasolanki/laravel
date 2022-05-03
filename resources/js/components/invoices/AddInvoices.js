@@ -56,7 +56,7 @@ const AddInvoices = props => {
     };
 
     const handleAmountChange = e => {
-        setAmountPaid(parseInt(e.target.innerHTML));
+        setAmountPaid(e.target.innerHTML);
     };
 
     useEffect(
@@ -266,6 +266,12 @@ const AddInvoices = props => {
     };
 
     const editInvoice = (isDownload = true) => {
+
+        if(isNaN(invoice.amount_paid))
+        {
+            ToastsStore.error("Amount Paid is not a number");
+            return;
+        }
 
         isDownload ? setUpdateAndSaveDisabled(true) : setUpdateDisabled(true);
 
@@ -649,10 +655,6 @@ const AddInvoices = props => {
                                         </th>
                                         <td>
                                             <span
-                                                contentEditable={true}
-                                                suppressContentEditableWarning={
-                                                    true
-                                                }
                                                 onBlur={e => {
                                                     setCurrencySign(
                                                         e.target.innerText
