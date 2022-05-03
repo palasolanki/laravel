@@ -1,7 +1,7 @@
 import React from 'react'
 
 export default function ConfirmationComponent(props) {
-    const { title, handleCloseDelete, action, btnName } = props;
+    const { title, handleCloseDelete, action, btnName, color} = props;
     return (
         <div>
             <div style={{ display: 'block' }} className="modal">
@@ -12,7 +12,7 @@ export default function ConfirmationComponent(props) {
                     </div>
                     <div style={{textAlign: 'center',}} className="modal-body">
                         <button style={{color: '#fff',}} className="btn btn--prime mr-1" onClick={handleCloseDelete}>Cancel</button>&nbsp;
-                        <button className="btn btn--cancel ml-1" onClick={action}>{btnName}</button>
+                        <button className={`btn ${color || "btn--cancel"} ml-1`} onClick={action}>{btnName}</button>
                     </div>
                 </div>
                 </div>

@@ -146,6 +146,20 @@ const AddInvoices = props => {
         [invoice.lines]
     );
 
+    useEffect(
+        () => {
+            if(invoice.amount_due == 0 && invoice.status == "open")
+            {
+                setInvoice({...invoice, status: "paid"})
+            }
+            else if(invoice.status == "paid")
+            {
+                setInvoice({...invoice, status: "open"})
+            }
+        },
+        [invoice.amount_due]
+    );
+
     const getTotalAmount = () => {
         return invoice.lines.reduce(function(prev, cur) {
             return prev + cur.amount;

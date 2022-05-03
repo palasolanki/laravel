@@ -271,6 +271,7 @@ function Invoices(props) {
                     title="Are you sure you want to mark invoice as paid?"
                     handleCloseDelete={handleCloseMarkAsPaid}
                     btnName="Mark As Paid"
+                    color="btn-success"
                     action={() => markAsPaid(markAsPaidInvoiceId)}
                 />
             )}
