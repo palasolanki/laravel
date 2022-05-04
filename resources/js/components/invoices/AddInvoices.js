@@ -36,8 +36,8 @@ const AddInvoices = props => {
     const [amountPaid, setAmountPaid] = useState(0.0);
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
-    const [updateDisabled, setUpdateDisabled] = useState(false);
-    const [updateAndSaveDisabled, setUpdateAndSaveDisabled] = useState(false);
+    const [disabled, setDisabled] = useState(false);
+  
 
     const handleChange = index => e => {
         let name = e.target.getAttribute("name");
@@ -149,16 +149,16 @@ const AddInvoices = props => {
 
     useEffect(
         () => {
-            if(invoice.amount_due == 0 && invoice.status == "open")
-            {
-                setInvoice({...invoice, status: "paid"})
-            }
-            else if(invoice.status == "paid")
+            if(invoice.amount_due != 0)
             {
                 setInvoice({...invoice, status: "open"})
             }
+            else
+            {
+                setInvoice({...invoice, status: "paid"})
+            }
         },
-        [invoice.amount_due]
+        [invoice.amount_due, invoice.status]
     );
 
     const getTotalAmount = () => {
@@ -239,9 +239,9 @@ const AddInvoices = props => {
     };
 
     const saveInvoice = event => {
-        setUpdateAndSaveDisabled(true);
+        setDisabled(true);
         if (!invoice.lines.length || !total) {
-            setUpdateAndSaveDisabled(false);
+            setDisabled(false);
             ToastsStore.error("Invalid Invoice Item or total");
             return;
         }
@@ -251,7 +251,7 @@ const AddInvoices = props => {
             { responseType: "blob" }
         )
             .then(res => {
-                setUpdateAndSaveDisabled(false);
+                setDisabled(false);
                 ToastsStore.success("Invoice saved successfully.");
                 downloadFile(res);
                 props.history.push("/invoices");
@@ -260,7 +260,7 @@ const AddInvoices = props => {
                 ToastsStore.error(
                     "Oops something's missing! Re-generate invoice."
                 );
-                setUpdateAndSaveDisabled(false);
+                setDisabled(false);
                 console.log(err);
             });
     };
@@ -273,10 +273,10 @@ const AddInvoices = props => {
             return;
         }
 
-        isDownload ? setUpdateAndSaveDisabled(true) : setUpdateDisabled(true);
+        setDisabled(true);
 
         if (!invoice.lines.length || !total) {
-            isDownload ? setUpdateAndSaveDisabled(false) : setUpdateDisabled(false)
+            setDisabled(false)
             ToastsStore.error("Invalid Invoice Item or Total");
             return;
         }
@@ -288,19 +288,18 @@ const AddInvoices = props => {
             }
         )
             .then(res => {
-                setUpdateDisabled(false)
+                setDisabled(false);
                 if(isDownload)
                 {
-                    setUpdateAndSaveDisabled(false);
                     downloadFile(res);
                 }
                 ToastsStore.success("Invoice updated successfully.");
             })
             .catch(function(err) {
+                setDisabled(false);
                 ToastsStore.error(
                     "Something went wrong! Please generate invoice again."
                 );
-                isDownload ? setUpdateAndSaveDisabled(false) : setUpdateDisabled(false);
                 console.log(err);
             });
     };
@@ -696,7 +695,7 @@ const AddInvoices = props => {
                                     id="edit_save_button"
                                     onClick={() => editInvoice(false)}
                                     className="btn btn--prime mr-1"
-                                    disabled={updateDisabled}
+                                    disabled={disabled}
                                 >
                                     Update
                                 </button>
@@ -707,7 +706,7 @@ const AddInvoices = props => {
                             id="edit_save_button"
                             onClick={invoiceId ? editInvoice : saveInvoice}
                             className="btn btn--prime mr-1"
-                            disabled={updateAndSaveDisabled}
+                            disabled={disabled}
                         >
                             {invoiceId
                                 ? "Update & Download"
