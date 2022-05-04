@@ -108,7 +108,7 @@ const AddInvoices = props => {
                             break;
 
                         case "EUR":
-                            setCurrencySign("&euro");
+                            setCurrencySign("€");
                             break;
 
                         default:
