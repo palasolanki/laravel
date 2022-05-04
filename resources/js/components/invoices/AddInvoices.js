@@ -240,9 +240,9 @@ const AddInvoices = props => {
 
     const saveInvoice = event => {
         setUpdateAndSaveDisabled(true);
-        if (!invoice.lines.length || !total || !invoice.bill_from) {
-            setDisabled(false);
-            ToastsStore.error("Oops something's missing! Re-generate invoice.");
+        if (!invoice.lines.length || !total) {
+            setUpdateAndSaveDisabled(false);
+            ToastsStore.error("Invalid Invoice Item or total");
             return;
         }
         api.post(
@@ -275,9 +275,9 @@ const AddInvoices = props => {
 
         isDownload ? setUpdateAndSaveDisabled(true) : setUpdateDisabled(true);
 
-        if (!invoice.lines.length || !total || !invoice.bill_from) {
+        if (!invoice.lines.length || !total) {
             isDownload ? setUpdateAndSaveDisabled(false) : setUpdateDisabled(false)
-            ToastsStore.error("Required fields missing.");
+            ToastsStore.error("Invalid Invoice Item or Total");
             return;
         }
         api.post(
