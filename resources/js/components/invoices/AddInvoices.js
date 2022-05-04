@@ -149,14 +149,7 @@ const AddInvoices = props => {
 
     useEffect(
         () => {
-            if(invoice.amount_due != 0)
-            {
-                setInvoice({...invoice, status: "open"})
-            }
-            else
-            {
-                setInvoice({...invoice, status: "paid"})
-            }
+            setInvoice({...invoice, status: (invoice.amount_due > 0) ? "open" : "paid"})
         },
         [invoice.amount_due, invoice.status]
     );
