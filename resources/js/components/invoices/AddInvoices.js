@@ -151,7 +151,7 @@ const AddInvoices = props => {
         () => {
             setInvoice({...invoice, status: (invoice.amount_due > 0) ? "open" : "paid"})
         },
-        [invoice.amount_due, invoice.status]
+        [invoice.amount_due]
     );
 
     const getTotalAmount = () => {
