@@ -56,7 +56,8 @@ const AddInvoices = props => {
     };
 
     const handleAmountChange = e => {
-        setAmountPaid(e.target.innerHTML);
+        let value = (e.target.innerHTML != ' ')  ? e.target.innerHTML : 0;
+        setAmountPaid(value);
     };
 
     useEffect(
@@ -183,7 +184,7 @@ const AddInvoices = props => {
         setInvoice({ ...invoice, lines: [...array] });
     };
 
-    const onChange = (e, name) => {
+    const onChange = (e, name) => {        
         if (e instanceof Date) {
             setInvoice({ ...invoice, [name]: e });
             return;
@@ -233,6 +234,13 @@ const AddInvoices = props => {
 
     const saveInvoice = event => {
         setDisabled(true);
+
+        if(isNaN(invoice.amount_paid))
+        {
+            ToastsStore.error("Amount Paid is not a number");
+            return;
+        }
+
         if (!invoice.lines.length || !total) {
             setDisabled(false);
             ToastsStore.error("Invalid Invoice Item or total");
