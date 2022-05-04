@@ -37,6 +37,7 @@ const AddInvoices = props => {
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
     const [disabled, setDisabled] = useState(false);
+  
 
     const handleChange = index => e => {
         let name = e.target.getAttribute("name");
@@ -55,7 +56,7 @@ const AddInvoices = props => {
     };
 
     const handleAmountChange = e => {
-        setAmountPaid(parseInt(e.target.innerHTML));
+        setAmountPaid(e.target.innerHTML);
     };
 
     useEffect(
@@ -146,13 +147,20 @@ const AddInvoices = props => {
         [invoice.lines]
     );
 
+    useEffect(
+        () => {
+            setInvoice({...invoice, status: (invoice.amount_due > 0) ? "open" : "paid"})
+        },
+        [invoice.amount_due]
+    );
+
     const getTotalAmount = () => {
         return invoice.lines.reduce(function(prev, cur) {
             return prev + cur.amount;
         }, 0);
     };
 
-    const setTotalAmount = () => {
+    const setTotalAmount = () => { 
         if (invoice.lines.length === 0) return;
         let modifiedArr = invoice.lines.map(item => {
             let modifiedItem = Object.assign({}, item);
@@ -166,7 +174,7 @@ const AddInvoices = props => {
     };
 
     const addRow = () => {
-        setInvoice({ ...invoice, lines: [...invoice.lines, initialRow] });
+        setInvoice({ ...invoice, lines: [...invoice.lines, {...initialRow, hourly_rate: invoice.lines[0].hourly_rate}]});
     };
 
     const removeRow = index => {
@@ -225,9 +233,9 @@ const AddInvoices = props => {
 
     const saveInvoice = event => {
         setDisabled(true);
-        if (!invoice.lines.length || !total || !invoice.bill_from) {
+        if (!invoice.lines.length || !total) {
             setDisabled(false);
-            ToastsStore.error("Oops something's missing! Re-generate invoice.");
+            ToastsStore.error("Invalid Invoice Item or total");
             return;
         }
         api.post(
@@ -251,10 +259,18 @@ const AddInvoices = props => {
     };
 
     const editInvoice = (isDownload = true) => {
+
+        if(isNaN(invoice.amount_paid))
+        {
+            ToastsStore.error("Amount Paid is not a number");
+            return;
+        }
+
         setDisabled(true);
-        if (!invoice.lines.length || !total || !invoice.bill_from) {
-            setDisabled(false);
-            ToastsStore.error("Required fields missing.");
+
+        if (!invoice.lines.length || !total) {
+            setDisabled(false)
+            ToastsStore.error("Invalid Invoice Item or Total");
             return;
         }
         api.post(
@@ -266,17 +282,17 @@ const AddInvoices = props => {
         )
             .then(res => {
                 setDisabled(false);
-                ToastsStore.success("Invoice updated successfully.");
                 if(isDownload)
                 {
                     downloadFile(res);
                 }
+                ToastsStore.success("Invoice updated successfully.");
             })
             .catch(function(err) {
+                setDisabled(false);
                 ToastsStore.error(
                     "Something went wrong! Please generate invoice again."
                 );
-                setDisabled(false);
                 console.log(err);
             });
     };
@@ -631,10 +647,6 @@ const AddInvoices = props => {
                                         </th>
                                         <td>
                                             <span
-                                                contentEditable={true}
-                                                suppressContentEditableWarning={
-                                                    true
-                                                }
                                                 onBlur={e => {
                                                     setCurrencySign(
                                                         e.target.innerText
