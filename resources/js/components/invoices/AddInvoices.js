@@ -59,7 +59,7 @@ const AddInvoices = props => {
     };
 
     const handleAmountChange = e => {
-        let value = (e.target.innerHTML != ' ')  ? e.target.innerHTML : 0;
+        let value = (e.target.innerHTML != '')  ? e.target.innerHTML : 0;
         setShouldChangeStatus(true);
         setAmountPaid(value);
     };
@@ -248,10 +248,11 @@ const AddInvoices = props => {
 
         if(isNaN(invoice.amount_paid))
         {
+            setDisabled(false);
             ToastsStore.error("Amount Paid is not a number");
             return;
         }
-
+        
         if (!invoice.lines.length || !total) {
             setDisabled(false);
             ToastsStore.error("Invalid Invoice Item or total");
@@ -279,13 +280,14 @@ const AddInvoices = props => {
 
     const editInvoice = (isDownload = true) => {
 
+        setDisabled(true);
+
         if(isNaN(invoice.amount_paid))
         {
+            setDisabled(false);
             ToastsStore.error("Amount Paid is not a number");
             return;
         }
-
-        setDisabled(true);
 
         if (!invoice.lines.length || !total) {
             setDisabled(false)
