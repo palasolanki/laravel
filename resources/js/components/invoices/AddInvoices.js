@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect } from "react";
+import React, { useState, Fragment, useEffect, useRef } from "react";
 import api from "../../helpers/api";
 import DatePicker from "react-datepicker";
 import { ToastsStore } from "react-toasts";
@@ -37,6 +37,7 @@ const AddInvoices = props => {
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
     const [disabled, setDisabled] = useState(false);
+    const firstRender = useRef(false);
   
 
     const handleChange = index => e => {
@@ -52,11 +53,13 @@ const AddInvoices = props => {
 
         if (name == "quantity" || name == "hourly_rate") {
             setCheckAmount(true);
+            firstRender.current = true;
         }
     };
 
     const handleAmountChange = e => {
         let value = (e.target.innerHTML != ' ')  ? e.target.innerHTML : 0;
+        firstRender.current = true;
         setAmountPaid(value);
     };
 
@@ -150,7 +153,9 @@ const AddInvoices = props => {
 
     useEffect(
         () => {
-            setInvoice({...invoice, status: (invoice.amount_due > 0) ? "open" : "paid"})
+            if (firstRender.current){
+                setInvoice({...invoice, status: (invoice.amount_due > 0) ? "open" : "paid"});
+            }
         },
         [invoice.amount_due]
     );
@@ -196,13 +201,18 @@ const AddInvoices = props => {
                 address: "",
                 hourly_rate: 0
             };
+
             let newArr = [...invoice.lines];
 
-            newArr[0] = {
-                ...newArr[0],
-                hourly_rate: bill_to.hourly_rate || 0,
-                item: bill_to.invoice_item_title || ""
-            };
+            // logic to change unit price for all row in invoice list when client change.
+            invoice.lines.map((line, key) => {
+                newArr[key] = {
+                    ...newArr[key],
+                    hourly_rate: bill_to.hourly_rate || 0,
+                    item: (key == 0) ? bill_to.invoice_item_title : ''
+                };
+            });        
+
             setInvoice({
                 ...invoice,
                 client_id: val,
