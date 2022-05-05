@@ -37,7 +37,7 @@ const AddInvoices = props => {
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
     const [disabled, setDisabled] = useState(false);
-    const [firstRender, setFirstRender] = useState(false);
+    const [shouldChangeStatus, setShouldChangeStatus] = useState(false);
     
   
 
@@ -54,13 +54,13 @@ const AddInvoices = props => {
 
         if (name == "quantity" || name == "hourly_rate") {
             setCheckAmount(true);
-            setFirstRender(true);
+            setShouldChangeStatus(true);
         }
     };
 
     const handleAmountChange = e => {
         let value = (e.target.innerHTML != ' ')  ? e.target.innerHTML : 0;
-        setFirstRender(true);
+        setShouldChangeStatus(true);
         setAmountPaid(value);
     };
 
@@ -154,7 +154,7 @@ const AddInvoices = props => {
 
     useEffect(
         () => {
-            if (firstRender){
+            if (shouldChangeStatus){
                 setInvoice({...invoice, status: (invoice.amount_due > 0) ? "open" : "paid"});
             }
         },
