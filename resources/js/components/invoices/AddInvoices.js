@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect, useRef } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import api from "../../helpers/api";
 import DatePicker from "react-datepicker";
 import { ToastsStore } from "react-toasts";
@@ -37,7 +37,8 @@ const AddInvoices = props => {
     const [isCheckAmount, setCheckAmount] = useState(false);
     const [clients, setClients] = useState([]);
     const [disabled, setDisabled] = useState(false);
-    const firstRender = useRef(false);
+    const [shouldChangeStatus, setShouldChangeStatus] = useState(false);
+    
   
 
     const handleChange = index => e => {
@@ -53,13 +54,13 @@ const AddInvoices = props => {
 
         if (name == "quantity" || name == "hourly_rate") {
             setCheckAmount(true);
-            firstRender.current = true;
+            setShouldChangeStatus(true);
         }
     };
 
     const handleAmountChange = e => {
         let value = (e.target.innerHTML != ' ')  ? e.target.innerHTML : 0;
-        firstRender.current = true;
+        setShouldChangeStatus(true);
         setAmountPaid(value);
     };
 
@@ -153,7 +154,7 @@ const AddInvoices = props => {
 
     useEffect(
         () => {
-            if (firstRender.current){
+            if (shouldChangeStatus){
                 setInvoice({...invoice, status: (invoice.amount_due > 0) ? "open" : "paid"});
             }
         },
