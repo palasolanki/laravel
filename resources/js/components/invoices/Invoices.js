@@ -50,6 +50,7 @@ function Invoices(props) {
             serverSide: true,
             processing: true,
             bSort: true,
+            aaSorting: [[ 9, "desc" ]],
             oLanguage: {
                 sSearch: "_INPUT_",
                 sSearchPlaceholder: "Search"
@@ -79,6 +80,7 @@ function Invoices(props) {
                     data: "last_sent_at",
                     defaultContent: "N/A"
                 },
+                { title: 'Amount', data: "total"},
                 { title: "Amount Due", data: "amount_due" },
                 {
                     title: "Notes",
@@ -89,6 +91,11 @@ function Invoices(props) {
                     title: "Action",
                     data: "null",
                     defaultContent: "N/A"
+                },
+                { 
+                    title: "Created At", 
+                    data: 'created_at',
+                    visible: false
                 }
             ],
             columnDefs: [
@@ -114,8 +121,14 @@ function Invoices(props) {
                     markPaid = `<button id = ${data._id} class="btn btn-sm ml-2 btn-success markPaid">Mark Paid</button>`
                 }
 
+                let currencySigns = {
+                    'USD': '$',
+                    'EUR': '€'
+                }
+                $("td:eq(6)", row).html((currencySigns[data.currency] || data.currency) + data.amount_due);
+
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
-                $("td:eq(6)", row).html(notes);
+                $("td:eq(7)", row).html(notes);
 
                 let action = `<button id=${
                     data._id
@@ -127,7 +140,7 @@ function Invoices(props) {
                     data.client_id
                 } class="btn btn-sm ml-2 btn-dark sendData">Send Invoice</button>`;
                 
-                $("td:eq(7)", row).html(action + markPaid);
+                $("td:eq(8)", row).html(action + markPaid);
 
             }
         });
