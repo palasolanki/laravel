@@ -50,6 +50,7 @@ function Invoices(props) {
             serverSide: true,
             processing: true,
             bSort: true,
+            aaSorting: [[ 8, "asc" ]],
             oLanguage: {
                 sSearch: "_INPUT_",
                 sSearchPlaceholder: "Search"
@@ -89,6 +90,11 @@ function Invoices(props) {
                     title: "Action",
                     data: "null",
                     defaultContent: "N/A"
+                },
+                { 
+                    title: "Created At", 
+                    data: 'created_at',
+                    visible: false
                 }
             ],
             columnDefs: [
@@ -113,6 +119,12 @@ function Invoices(props) {
                     $("td:eq(3)", row).addClass('text-danger');
                     markPaid = `<button id = ${data._id} class="btn btn-sm ml-2 btn-success markPaid">Mark Paid</button>`
                 }
+
+                let currencySigns = {
+                    'USD': '$',
+                    'EUR': '€'
+                }
+                $("td:eq(5)", row).html((currencySigns[data.currency] || data.currency) + data.amount_due);
 
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
                 $("td:eq(6)", row).html(notes);
