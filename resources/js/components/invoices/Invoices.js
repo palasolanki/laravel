@@ -50,7 +50,7 @@ function Invoices(props) {
             serverSide: true,
             processing: true,
             bSort: true,
-            aaSorting: [[ 9, "asc" ]],
+            aaSorting: [[ 9, "desc" ]],
             oLanguage: {
                 sSearch: "_INPUT_",
                 sSearchPlaceholder: "Search"
