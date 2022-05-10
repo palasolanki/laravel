@@ -125,6 +125,8 @@ function Invoices(props) {
                     'USD': '$',
                     'EUR': '€'
                 }
+                $("td:eq(5)", row).html((currencySigns[data.currency] || data.currency) + data.total);
+
                 $("td:eq(6)", row).html((currencySigns[data.currency] || data.currency) + data.amount_due);
 
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
