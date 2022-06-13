@@ -246,18 +246,18 @@
                                 </tr>
                                 @if($invoice->gst_option === 'same_state')
                                     <tr>
-                                        <td>SGST 9%</td>
+                                        <td>SGST {{$configs['SGST']}}%</td>
                                         <td class="text-right currency_sign">{{$currency_sign}}{{($configs['SGST']*$invoice->sub_total)/100}}</td>
 
                                     </tr>
                                     <tr>
-                                        <td>CGST 9%</td>
+                                        <td>CGST {{$configs['CGST']}}%</td>
                                         <td class="text-right currency_sign">{{$currency_sign}}{{($configs['CGST']*$invoice->sub_total)/100}}</td>
 
                                     </tr>
                                 @elseif($invoice->gst_option === 'other_state')
                                     <tr>
-                                        <td>IGST 18%</td>
+                                        <td>IGST {{$configs['IGST']}}%</td>
                                         <td class="text-right currency_sign">{{$currency_sign}}{{($configs['IGST']*$invoice->sub_total)/100}}</td>
 
                                     </tr>

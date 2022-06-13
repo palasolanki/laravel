@@ -95,7 +95,7 @@ const AddInvoices = props => {
 
     useEffect(() => {
         setTotalAmount();
-        api.get("/get-config")
+        api.get("/configs")
             .then(res => {
                 setConfigs(res.data.configs);
 
