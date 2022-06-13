@@ -123,7 +123,8 @@ function Invoices(props) {
 
                 let currencySigns = {
                     'USD': '$',
-                    'EUR': '€'
+                    'EUR': '€',
+                    'INR': '₹'
                 }
                 $("td:eq(5)", row).html((currencySigns[data.currency] || data.currency) + data.total);
 

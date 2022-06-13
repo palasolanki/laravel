@@ -25,6 +25,7 @@ const AddInvoices = props => {
         notes: "",
         status: "open",
         currency: "USD",
+        gst_option: "no",
         bill_from: `Radicalloop Technolabs LLP,
         India
         GST No.: 24AAUFR2815E1Z6`,
@@ -38,6 +39,16 @@ const AddInvoices = props => {
     const [clients, setClients] = useState([]);
     const [disabled, setDisabled] = useState(false);
     const [shouldChangeStatus, setShouldChangeStatus] = useState(false);
+    const [configs, setConfigs]=useState({});
+    const [subTotal, setSubTotal] = useState(0);
+    const [taxes, setTaxes]=useState({
+        IGST:0,
+        SGST:0,
+        CGST:0
+    });
+
+
+    
     
   
 
@@ -84,6 +95,13 @@ const AddInvoices = props => {
 
     useEffect(() => {
         setTotalAmount();
+        api.get("/get-config")
+            .then(res => {
+                setConfigs(res.data.configs);
+
+            })
+            .catch(res => {});
+
         api.get("/getClients")
             .then(res => {
                 setClients(res.data.clients);
@@ -115,6 +133,9 @@ const AddInvoices = props => {
                         case "EUR":
                             setCurrencySign("€");
                             break;
+                        
+                        case "INR":
+                            setCurrencySign("₹");
 
                         default:
                             break;
@@ -147,10 +168,22 @@ const AddInvoices = props => {
 
     useEffect(
         () => {
-            setTotal(getTotalAmount());
+            setSubTotal(getTotalAmount());
         },
         [invoice.lines]
     );
+
+    useEffect(
+        () => {
+            setTotal(subTotal+taxes.IGST+taxes.SGST+taxes.CGST);
+        },
+        [subTotal,invoice.gst_option]
+    );
+
+    useEffect(()=>{
+        if(subTotal === 0) return;
+        calculateTaxes(invoice.gst_option);
+    }, [subTotal])
 
     useEffect(
         () => {
@@ -190,12 +223,39 @@ const AddInvoices = props => {
         setInvoice({ ...invoice, lines: [...array] });
     };
 
+    const calculateTaxes = (val) => {
+        switch (val) {
+            case "same_state":
+                setTaxes({...taxes, SGST:(configs.SGST*subTotal)/100, CGST:(configs.CGST*subTotal)/100, IGST: 0 });
+                break;
+    
+            case "other_state":
+                setTaxes({...taxes, IGST:(configs.IGST*subTotal)/100, SGST:0, CGST:0});
+                break;
+    
+            case "no":
+                setTaxes({...taxes, IGST:0, SGST:0, CGST:0});
+                break;
+            default:
+                break;
+        }
+
+    }
+
     const onChange = (e, name) => {        
         if (e instanceof Date) {
             setInvoice({ ...invoice, [name]: e });
             return;
         }
         let val = e.target.value;
+        if(e.target.name === "gst_option"){
+            calculateTaxes(val);
+            setInvoice({
+                ...invoice,
+                gst_option: e.target.value
+            })
+        }
+
         if (e.target.name === "client_id") {
             let bill_to = clients.find(client => client._id === val) || {
                 name: "",
@@ -233,6 +293,9 @@ const AddInvoices = props => {
                     setCurrencySign("€");
                     break;
 
+                case "INR":
+                    setCurrencySign("₹");
+
                 default:
                     break;
             }
@@ -260,7 +323,7 @@ const AddInvoices = props => {
         }
         api.post(
             `/invoices/add`,
-            { ...invoice, total },
+            { ...invoice, total, sub_total: subTotal },
             { responseType: "blob" }
         )
             .then(res => {
@@ -296,7 +359,7 @@ const AddInvoices = props => {
         }
         api.post(
             `/invoices/edit`,
-            { ...invoice, total },
+            { ...invoice, total, sub_total: subTotal },
             {
                 responseType: "blob"
             }
@@ -477,6 +540,9 @@ const AddInvoices = props => {
                                                     <option value="EUR">
                                                         EUR
                                                     </option>
+                                                    <option value="INR">
+                                                        INR
+                                                    </option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -493,6 +559,15 @@ const AddInvoices = props => {
                                                 }
                                             >
                                                 Item
+                                            </span>
+                                        </th>
+                                        <th>
+                                            <span
+                                                suppressContentEditableWarning={
+                                                    true
+                                                }
+                                            >
+                                                SAC Code
                                             </span>
                                         </th>
                                         <th>
@@ -549,6 +624,9 @@ const AddInvoices = props => {
                                                     {row.item}
                                                 </span>
                                             </td>
+                                            <td>
+                                                <span>{configs.SAC_code}</span>
+                                            </td>
 
                                             <td>
                                                 <span
@@ -593,96 +671,176 @@ const AddInvoices = props => {
                             <a className="add-invoice-btn" onClick={addRow}>
                                 +
                             </a>
-                            <table className="balance">
-                                <tbody>
-                                    <tr>
-                                        <th>
-                                            <span
-                                                suppressContentEditableWarning={
-                                                    true
-                                                }
-                                            >
-                                                Subtotal
-                                            </span>
-                                        </th>
-                                        <td>
-                                            <span data-prefix>
-                                                {currencySign}
-                                            </span>
-                                            <span>{total}</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                            <span
-                                                suppressContentEditableWarning={
-                                                    true
-                                                }
-                                            >
-                                                Total
-                                            </span>
-                                        </th>
-                                        <td>
-                                            <span data-prefix>
-                                                {currencySign}
-                                            </span>
-                                            <span>{total}</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                            <span
-                                                suppressContentEditableWarning={
-                                                    true
-                                                }
-                                            >
-                                                Paid
-                                            </span>
-                                        </th>
-                                        <td>
-                                            <span data-prefix>
-                                                {currencySign}
-                                            </span>
-                                            <span
-                                                contentEditable={true}
-                                                suppressContentEditableWarning={
-                                                    true
-                                                }
-                                                name="amount_paid"
-                                                onBlur={handleAmountChange}
-                                            >
-                                                {invoice.amount_paid ||
-                                                    amountPaid}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                            <span
-                                                suppressContentEditableWarning={
-                                                    true
-                                                }
-                                            >
-                                                Amount Due
-                                            </span>
-                                        </th>
-                                        <td>
-                                            <span
-                                                onBlur={e => {
-                                                    setCurrencySign(
-                                                        e.target.innerText
-                                                    );
-                                                }}
-                                            >
-                                                {currencySign}
-                                            </span>
-                                            <span id="amount_due">
-                                                {invoice.amount_due}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div style={{ float: "left", width: "20%" }}>                                
+                                <div className="mt-3 mb-4">
+                                    <span>GST ?</span>
+                                    <div
+                                        contentEditable={true}
+                                        suppressContentEditableWarning={true}
+                                    >
+                                        <select
+                                            name="gst_option"
+                                            onChange={onChange}
+                                            value={invoice.gst_option}
+                                            className="form-control"
+                                        >
+                                            <option value="no">No</option>
+                                            <option value="same_state">Same State</option>
+                                            <option value="other_state">Other State</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style={{ float: "right", width: "80%" }}>
+                                <table className="balance">
+                                    <tbody>
+                                        <tr>
+                                            <th>
+                                                <span
+                                                    suppressContentEditableWarning={
+                                                        true
+                                                    }
+                                                >
+                                                    Subtotal
+                                                </span>
+                                            </th>
+                                            <td>
+                                                <span data-prefix>
+                                                    {currencySign}
+                                                </span>
+                                                <span>{subTotal}</span>
+                                            </td>
+                                        </tr>
+                                        {invoice.gst_option === 'same_state' && (
+                                            <>
+                                                <tr>
+                                                    <th>
+                                                        <span
+                                                            suppressContentEditableWarning={
+                                                                true
+                                                            }
+                                                        >
+                                                            SGST 9%
+                                                        </span>
+                                                    </th>
+                                                    <td>
+                                                        <span data-prefix>
+                                                            {currencySign}
+                                                        </span>
+                                                        <span>{taxes.SGST}</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        <span
+                                                            suppressContentEditableWarning={
+                                                                true
+                                                            }
+                                                        >
+                                                            CGST 9%
+                                                        </span>
+                                                    </th>
+                                                    <td>
+                                                        <span data-prefix>
+                                                            {currencySign}
+                                                        </span>
+                                                        <span>{taxes.CGST}</span>
+                                                    </td>
+                                                </tr>
+                                            </>
+                                        )}
+
+                                        {invoice.gst_option === 'other_state' && (
+                                            <tr>
+                                                <th>
+                                                    <span
+                                                        suppressContentEditableWarning={
+                                                            true
+                                                        }
+                                                    >
+                                                        IGST 18%
+                                                    </span>
+                                                </th>
+                                                <td>
+                                                    <span data-prefix>
+                                                        {currencySign}
+                                                    </span>
+                                                    <span>{taxes.IGST}</span>
+                                                </td>
+                                            </tr>
+                                        )}
+                                        <tr>
+                                            <th>
+                                                <span
+                                                    suppressContentEditableWarning={
+                                                        true
+                                                    }
+                                                >
+                                                    Total
+                                                </span>
+                                            </th>
+                                            <td>
+                                                <span data-prefix>
+                                                    {currencySign}
+                                                </span>
+                                                <span>{total}</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <span
+                                                    suppressContentEditableWarning={
+                                                        true
+                                                    }
+                                                >
+                                                    Paid
+                                                </span>
+                                            </th>
+                                            <td>
+                                                <span data-prefix>
+                                                    {currencySign}
+                                                </span>
+                                                <span
+                                                    contentEditable={true}
+                                                    suppressContentEditableWarning={
+                                                        true
+                                                    }
+                                                    name="amount_paid"
+                                                    onBlur={handleAmountChange}
+                                                >
+                                                    {invoice.amount_paid ||
+                                                        amountPaid}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <span
+                                                    suppressContentEditableWarning={
+                                                        true
+                                                    }
+                                                >
+                                                    Amount Due
+                                                </span>
+                                            </th>
+                                            <td>
+                                                <span
+                                                    onBlur={e => {
+                                                        setCurrencySign(
+                                                            e.target.innerText
+                                                        );
+                                                    }}
+                                                >
+                                                    {currencySign}
+                                                </span>
+                                                <span id="amount_due">
+                                                    {invoice.amount_due}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </article>
                     <aside>
