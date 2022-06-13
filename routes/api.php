@@ -81,6 +81,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/invoices/{invoice}/mark-paid', 'InvoiceController@markAsPaid');
 
     Route::get('/invoice/{invoiceId}', 'InvoiceController@edit');
+    Route::get('/get-config', 'InvoiceController@getConfig');
 
     Route::post('/importExpense', 'ExpenseController@importExpense');
     Route::get('expense/download-sample', 'ExpenseController@downloadSample');

@@ -37,6 +37,8 @@ class InvoiceRequest extends FormRequest
             'bill_to'     => 'required',
             'currency'    => 'required',
             'total'       => 'required',
+            'sub_total'   => 'required',
+            'gst_option'  => 'required',
 
         ];
     }

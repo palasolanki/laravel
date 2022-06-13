@@ -3,7 +3,7 @@
 
 <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
@@ -18,6 +18,10 @@
 <style>
     body {
         font-family: 'Open Sans', sans-serif;
+    }
+
+    .currency_sign {
+        font-family: DejaVu Sans, sans-serif;
     }
 
     .company_details {
@@ -72,6 +76,9 @@
     @break
     @case ('EUR')
     @php $currency_sign = '€' @endphp
+    @break
+    @case ('INR')
+    @php $currency_sign = '₹' @endphp
     @break
     @default
     @break
@@ -180,6 +187,7 @@
             <thead>
                 <tr>
                     <th scope="col">Item</th>
+                    <th scope="col" class="text-right text-nowrap">SAC Code</th>
                     <th scope="col" class="text-right text-nowrap">Qty. / Hrs.</th>
                     <th scope="col" class="text-right text-nowrap">Unit Price</th>
                     <th scope="col" class="text-right text-nowrap pr-5">Amount</th>
@@ -189,9 +197,10 @@
                 @foreach($invoice->lines as $line)
                 <tr>
                     <td>{{ $line["item"] }}</td>
+                    <td class="text-right text-nowrap">{{ $configs['SAC_code'] }}</td>
                     <td class="text-right text-nowrap">{{ $line["quantity"] }}</td>
-                    <td class="text-right text-nowrap">{{$currency_sign}}{{ $line["hourly_rate"] }}</td>
-                    <td class="text-right text-nowrap pr-5">{{$currency_sign}}{{ $line["amount"] }}</td>
+                    <td class="text-right text-nowrap currency_sign">{{$currency_sign}}{{ $line["hourly_rate"] }}</td>
+                    <td class="text-right text-nowrap pr-5 currency_sign">{{$currency_sign}}{{ $line["amount"] }}</td>
                 </tr>
                 @endforeach
 
@@ -231,23 +240,41 @@
                         <table class="table table-borderless float-right table-td-p-0">
                             <tbody>
                                 <tr>
-                                    <td>Subtotal:</td>
-                                    <td class="text-right">{{$currency_sign}}{{$invoice->total}}</td>
+                                    <td>Subtotal</td>
+                                    <td class="text-right currency_sign">{{$currency_sign}}{{$invoice->sub_total}}</td>
 
                                 </tr>
+                                @if($invoice->gst_option === 'same_state')
+                                    <tr>
+                                        <td>SGST 9%</td>
+                                        <td class="text-right currency_sign">{{$currency_sign}}{{($configs['SGST']*$invoice->sub_total)/100}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>CGST 9%</td>
+                                        <td class="text-right currency_sign">{{$currency_sign}}{{($configs['CGST']*$invoice->sub_total)/100}}</td>
+
+                                    </tr>
+                                @elseif($invoice->gst_option === 'other_state')
+                                    <tr>
+                                        <td>IGST 18%</td>
+                                        <td class="text-right currency_sign">{{$currency_sign}}{{($configs['IGST']*$invoice->sub_total)/100}}</td>
+
+                                    </tr>
+                                @endif
                                 <tr>
-                                    <td class="text-success align-middle"><strong>Total: </strong></td>
-                                    <td class="text-right"><strong
+                                    <td class="text-success align-middle"><strong>Total </strong></td>
+                                    <td class="text-right currency_sign"><strong
                                             class="font-16">{{$currency_sign}}{{$invoice->total}}</strong></td>
 
                                 </tr>
                                 <tr>
-                                    <td>Paid:</td>
-                                    <td class="text-right">{{$currency_sign}}{{$invoice->amount_paid}}</td>
+                                    <td>Paid</td>
+                                    <td class="text-right currency_sign">{{$currency_sign}}{{$invoice->amount_paid}}</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-success align-middle"><strong>Amount Due:</strong></td>
-                                    <td class="text-right"><strong
+                                    <td class="text-success align-middle"><strong>Amount Due</strong></td>
+                                    <td class="text-right currency_sign"><strong
                                             class="font-16">{{$currency_sign}}{{$invoice->amount_due}}</strong></td>
                                 </tr>
 
@@ -257,7 +284,7 @@
                 </tr>
             </tbody>
         </table>
-        <hr style="margin-top:100px" />
+        <hr style="margin-top:150px" />
 
         @if($invoice->notes)
         <table class="table table-borderless table-td-p-0 ml-2">
