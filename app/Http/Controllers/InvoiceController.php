@@ -14,7 +14,7 @@ use PDF;
 use Pimlie\DataTables\MongodbDataTable;
 
 class InvoiceController extends Controller
-{
+{    
     public function index(): JsonResponse
     {
         $invoice = Invoice::with(['client' => function ($query) {
@@ -29,7 +29,7 @@ class InvoiceController extends Controller
     {
         $inputs   = $request->validated();
         $invoice  =  Invoice::create($inputs);
-        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
+        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $invoice, 'configs' => $this->prepareConfigs()])->setPaper('a4', 'portrait');
         $fileName = 'invoice_' . $invoice->number . '.pdf';
 
         return $pdf->stream($fileName);
@@ -70,11 +70,13 @@ class InvoiceController extends Controller
                 'bill_to'     => $request->bill_to,
                 'currency'    => $request->currency,
                 'total'       => $request->total,
+                'sub_total'   => $request->sub_total,
+                'gst_option'  => $request->gst_option,
 
             ]);
 
         $invoice           = Invoice::where('_id', $request->_id)->first();
-        $pdf               = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
+        $pdf               = PDF::loadView('invoice.pdf', ['invoice' => $invoice, 'configs' => $this->prepareConfigs()])->setPaper('a4', 'portrait');
         $fileName          = 'invoice_' . $invoice->number . '.pdf';
 
         return $pdf->stream($fileName);
@@ -111,5 +113,21 @@ class InvoiceController extends Controller
         $invoice->amount_due = 0;
         $invoice->save();
         return response()->json(['message' => 'Status Marked As Paid Successfully']);
+    }
+
+    public function getConfig()
+    {
+        return response()->json(['configs' => $this->prepareConfigs()]);
+    }
+
+    public function prepareConfigs()
+    {
+        $configs = [
+            'SAC_code' => config('expense_tracker.SAC_code'),
+            'IGST' => config('expense_tracker.IGST'),
+            'SGST' => config('expense_tracker.SGST'),
+            'CGST' => config('expense_tracker.CGST'),
+        ];
+        return $configs;
     }
 }
