@@ -126,7 +126,7 @@ class InvoiceController extends Controller
             'SAC_code' => config('expense_tracker.SAC_code'),
             'IGST' => config('expense_tracker.IGST'),
             'SGST' => config('expense_tracker.SGST'),
-            'CGST' => config('expense_tracker.SGST'),
+            'CGST' => config('expense_tracker.CGST'),
         ];
         return $configs;
     }

@@ -47,11 +47,6 @@ const AddInvoices = props => {
         CGST:0
     });
 
-
-    
-    
-  
-
     const handleChange = index => e => {
         let name = e.target.getAttribute("name");
 
@@ -95,10 +90,9 @@ const AddInvoices = props => {
 
     useEffect(() => {
         setTotalAmount();
-        api.get("/get-config")
+        api.get("/configs")
             .then(res => {
                 setConfigs(res.data.configs);
-
             })
             .catch(res => {});
 
@@ -175,7 +169,7 @@ const AddInvoices = props => {
 
     useEffect(
         () => {
-            setTotal(subTotal+taxes.IGST+taxes.SGST+taxes.CGST);
+            calculateTotal();
         },
         [subTotal,invoice.gst_option]
     );
@@ -185,6 +179,10 @@ const AddInvoices = props => {
         calculateTaxes(invoice.gst_option);
     }, [subTotal])
 
+    useEffect(()=>{
+        calculateTotal();
+    }, [taxes])
+
     useEffect(
         () => {
             if (shouldChangeStatus){
@@ -193,6 +191,10 @@ const AddInvoices = props => {
         },
         [invoice.amount_due]
     );
+
+    const calculateTotal = () => {
+        setTotal(subTotal+taxes.IGST+taxes.SGST+taxes.CGST);
+    }
 
     const getTotalAmount = () => {
         return invoice.lines.reduce(function(prev, cur) {
