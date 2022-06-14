@@ -84,6 +84,11 @@
     @break
     @endswitch
 
+    @php
+        $currency_class = ($invoice->currency === 'INR') ? 'currency_sign' : ''
+    @endphp
+    
+
     <div class="container-fluid">
 
         <table class="table table-borderless">
@@ -199,8 +204,8 @@
                     <td>{{ $line["item"] }}</td>
                     <td class="text-right text-nowrap">{{ $configs['SAC_code'] }}</td>
                     <td class="text-right text-nowrap">{{ $line["quantity"] }}</td>
-                    <td class="text-right text-nowrap currency_sign">{{$currency_sign}}{{ $line["hourly_rate"] }}</td>
-                    <td class="text-right text-nowrap pr-5 currency_sign">{{$currency_sign}}{{ $line["amount"] }}</td>
+                    <td class="text-right text-nowrap {{$currency_class}}">{{$currency_sign}}{{ $line["hourly_rate"] }}</td>
+                    <td class="text-right text-nowrap pr-5 {{$currency_class}}">{{$currency_sign}}{{ $line["amount"] }}</td>
                 </tr>
                 @endforeach
 
@@ -240,41 +245,41 @@
                         <table class="table table-borderless float-right table-td-p-0">
                             <tbody>
                                 <tr>
-                                    <td>Subtotal</td>
-                                    <td class="text-right currency_sign">{{$currency_sign}}{{$invoice->sub_total}}</td>
+                                    <td class="{{$currency_class}}">Subtotal</td>
+                                    <td class="text-right {{$currency_class}}">{{$currency_sign}}{{$invoice->sub_total}}</td>
 
                                 </tr>
                                 @if($invoice->gst_option === 'same_state')
                                     <tr>
-                                        <td>SGST @ {{$configs['SGST']}}%</td>
-                                        <td class="text-right currency_sign">{{$currency_sign}}{{($configs['SGST']*$invoice->sub_total)/100}}</td>
+                                        <td class="{{$currency_class}}">SGST @ {{$configs['SGST']}}%</td>
+                                        <td class="text-right {{$currency_class}}">{{$currency_sign}}{{($configs['SGST']*$invoice->sub_total)/100}}</td>
 
                                     </tr>
                                     <tr>
-                                        <td>CGST @ {{$configs['CGST']}}%</td>
-                                        <td class="text-right currency_sign">{{$currency_sign}}{{($configs['CGST']*$invoice->sub_total)/100}}</td>
+                                        <td class="{{$currency_class}}">CGST @ {{$configs['CGST']}}%</td>
+                                        <td class="text-right {{$currency_class}}">{{$currency_sign}}{{($configs['CGST']*$invoice->sub_total)/100}}</td>
 
                                     </tr>
                                 @elseif($invoice->gst_option === 'other_state')
                                     <tr>
-                                        <td>IGST @ {{$configs['IGST']}}%</td>
-                                        <td class="text-right currency_sign">{{$currency_sign}}{{($configs['IGST']*$invoice->sub_total)/100}}</td>
+                                        <td class="{{$currency_class}}">IGST @ {{$configs['IGST']}}%</td>
+                                        <td class="text-right {{$currency_class}}">{{$currency_sign}}{{($configs['IGST']*$invoice->sub_total)/100}}</td>
 
                                     </tr>
                                 @endif
                                 <tr>
-                                    <td class="text-success align-middle"><strong>Total </strong></td>
-                                    <td class="text-right currency_sign"><strong
+                                    <td class="text-success align-middle {{$currency_class}}"><strong>Total </strong></td>
+                                    <td class="text-right {{$currency_class}}"><strong
                                             class="font-16">{{$currency_sign}}{{$invoice->total}}</strong></td>
 
                                 </tr>
                                 <tr>
-                                    <td>Paid</td>
-                                    <td class="text-right currency_sign">{{$currency_sign}}{{$invoice->amount_paid}}</td>
+                                    <td class="{{$currency_class}}">Paid</td>
+                                    <td class="text-right {{$currency_class}}">{{$currency_sign}}{{$invoice->amount_paid}}</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-success align-middle"><strong>Amount Due</strong></td>
-                                    <td class="text-right currency_sign"><strong
+                                    <td class="text-success align-middle {{$currency_class}}"><strong>Amount Due</strong></td>
+                                    <td class="text-right {{$currency_class}}"><strong
                                             class="font-16">{{$currency_sign}}{{$invoice->amount_due}}</strong></td>
                                 </tr>
 

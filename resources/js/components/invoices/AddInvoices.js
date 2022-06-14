@@ -722,7 +722,7 @@ const AddInvoices = props => {
                                                                 true
                                                             }
                                                         >
-                                                            SGST 9%
+                                                            SGST @ {configs.SGST}%
                                                         </span>
                                                     </th>
                                                     <td>
@@ -739,7 +739,7 @@ const AddInvoices = props => {
                                                                 true
                                                             }
                                                         >
-                                                            CGST 9%
+                                                            CGST @ {configs.CGST}%
                                                         </span>
                                                     </th>
                                                     <td>
@@ -760,7 +760,7 @@ const AddInvoices = props => {
                                                             true
                                                         }
                                                     >
-                                                        IGST 18%
+                                                        IGST @ {configs.IGST}%
                                                     </span>
                                                 </th>
                                                 <td>
