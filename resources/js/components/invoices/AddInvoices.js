@@ -676,10 +676,7 @@ const AddInvoices = props => {
                             <div style={{ float: "left", width: "20%" }}>                                
                                 <div className="mt-3 mb-4">
                                     <span>GST ?</span>
-                                    <div
-                                        contentEditable={true}
-                                        suppressContentEditableWarning={true}
-                                    >
+                                    <div>
                                         <select
                                             name="gst_option"
                                             onChange={onChange}
