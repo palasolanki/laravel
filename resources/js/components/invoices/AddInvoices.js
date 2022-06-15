@@ -55,7 +55,7 @@ const AddInvoices = props => {
                 setConfigs(res.data.configs);
             })
             .catch(res => {});
-
+        
         api.get("/getClients")
             .then(res => {
                 setClients(res.data.clients);
@@ -208,9 +208,22 @@ const AddInvoices = props => {
         if(isGstSelected)
         {
             calculateTaxes(invoice.gst_option);
-            tax=1.18;
+            switch(invoice.gst_option)
+            {
+                case "same_state":
+                    tax=(configs.SGST+configs.CGST+100)/100;
+                break;
+
+                case "other_state":
+                    tax=(configs.IGST+100)/100;
+                break;
+
+                default:
+                    tax = 1;
+                break;
+            }
         }
-        let total = subTotal*tax;
+        let total = subTotal * tax;
         setTotal(total);
         setInvoice({ ...invoice, amount_due: total-invoice.amount_paid });
 
@@ -583,14 +596,16 @@ const AddInvoices = props => {
                                     {invoice.lines.map((row, index) => (
                                         <tr key={index}>
                                             <td>
-                                                <a
-                                                    className="cut-invoice-btn"
-                                                    onClick={() =>
-                                                        removeRow(index)
-                                                    }
-                                                >
-                                                    -
-                                                </a>
+                                                {invoice.lines.length > 1 && (
+                                                    <a
+                                                        className="cut-invoice-btn"
+                                                        onClick={() =>
+                                                            removeRow(index)
+                                                        }
+                                                    >
+                                                        -
+                                                    </a>
+                                                )}
                                                 <span
                                                     contentEditable={true}
                                                     suppressContentEditableWarning={
