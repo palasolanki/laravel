@@ -50,11 +50,14 @@ const AddInvoices = props => {
     // initial effects
     useEffect(() => {
         calculateLineTotal();
-        api.get("/configs")
+        const fetchConfigs = async () => {
+            await api.get("/configs")
             .then(res => {
                 setConfigs(res.data.configs);
             })
             .catch(res => {});
+        }
+        fetchConfigs();
         
         api.get("/getClients")
             .then(res => {
