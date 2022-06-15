@@ -34,62 +34,22 @@ const AddInvoices = props => {
 
     const [currencySign, setCurrencySign] = useState("$");
     const [total, setTotal] = useState(0);
-    const [amountPaid, setAmountPaid] = useState(0.0);
-    const [isCheckAmount, setCheckAmount] = useState(false);
+    const [checkLineTotal, setCheckLineTotal] = useState(false);
     const [clients, setClients] = useState([]);
     const [disabled, setDisabled] = useState(false);
     const [shouldChangeStatus, setShouldChangeStatus] = useState(false);
-    const [configs, setConfigs]=useState({});
+    const [configs, setConfigs] = useState({});
     const [subTotal, setSubTotal] = useState(0);
-    const [taxes, setTaxes]=useState({
+    const [isGstSelected, setIsGstSelected] = useState(false);
+    const [taxes, setTaxes] = useState({
         IGST:0,
         SGST:0,
         CGST:0
     });
 
-    const handleChange = index => e => {
-        let name = e.target.getAttribute("name");
-
-        if (typeof index !== "number") {
-            setInvoice({ ...invoice, [name]: e.target.innerText });
-            return;
-        }
-        let newArr = [...invoice.lines];
-        newArr[index] = { ...newArr[index], [name]: e.target.innerText };
-        setInvoice({ ...invoice, lines: [...newArr] });
-
-        if (name == "quantity" || name == "hourly_rate") {
-            setCheckAmount(true);
-            setShouldChangeStatus(true);
-        }
-    };
-
-    const handleAmountChange = e => {
-        let value = (e.target.innerHTML != '')  ? e.target.innerHTML : 0;
-        setShouldChangeStatus(true);
-        setAmountPaid(value);
-    };
-
-    useEffect(
-        () => {
-            setInvoice({
-                ...invoice,
-                amount_paid: amountPaid,
-                amount_due: total - amountPaid
-            });
-        },
-        [amountPaid]
-    );
-
-    useEffect(
-        () => {
-            setInvoice({ ...invoice, amount_due: total - invoice.amount_paid });
-        },
-        [total]
-    );
-
+    // initial effects
     useEffect(() => {
-        setTotalAmount();
+        calculateLineTotal();
         api.get("/configs")
             .then(res => {
                 setConfigs(res.data.configs);
@@ -119,23 +79,10 @@ const AddInvoices = props => {
                         date,
                         due_date: dueDate
                     };
-                    switch (res.data.editInvoice[0].currency) {
-                        case "USD":
-                            setCurrencySign("$");
-                            break;
-
-                        case "EUR":
-                            setCurrencySign("€");
-                            break;
-                        
-                        case "INR":
-                            setCurrencySign("₹");
-
-                        default:
-                            break;
-                    }
-
+                    setCurrencySign(assignCurrencySign(res.data.editInvoice[0].currency));
                     setInvoice(respEditInvoice);
+                    setIsGstSelected((respEditInvoice.gst_option!='no')? true : false);
+
                 })
                 .catch(err => {});
         },
@@ -143,106 +90,42 @@ const AddInvoices = props => {
     );
 
     const clientList =
-        clients &&
-        clients.map((client, key) => {
-            return (
-                <option value={client._id} key={key}>
-                    {client.name + ` (` + (client.company_name || "N/A") + `)`}
-                </option>
-            );
-        });
+    clients &&
+    clients.map((client, key) => {
+        return (
+            <option value={client._id} key={key}>
+                {client.name + ` (` + (client.company_name || "N/A") + `)`}
+            </option>
+        );
+    });
 
-    useEffect(
-        () => {
-            if (!isCheckAmount) return;
-            setTotalAmount();
-        },
-        [isCheckAmount]
-    );
+    //Form handling events
+    const handleChange = index => e => {
+        let name = e.target.getAttribute("name");
 
-    useEffect(
-        () => {
-            setSubTotal(getTotalAmount());
-        },
-        [invoice.lines]
-    );
-
-    useEffect(
-        () => {
-            calculateTotal();
-        },
-        [subTotal,invoice.gst_option]
-    );
-
-    useEffect(()=>{
-        if(subTotal === 0) return;
-        calculateTaxes(invoice.gst_option);
-    }, [subTotal])
-
-    useEffect(()=>{
-        calculateTotal();
-    }, [taxes])
-
-    useEffect(
-        () => {
-            if (shouldChangeStatus){
-                setInvoice({...invoice, status: (invoice.amount_due > 0) ? "open" : "paid"});
-            }
-        },
-        [invoice.amount_due]
-    );
-
-    const calculateTotal = () => {
-        setTotal(subTotal+taxes.IGST+taxes.SGST+taxes.CGST);
-    }
-
-    const getTotalAmount = () => {
-        return invoice.lines.reduce(function(prev, cur) {
-            return prev + cur.amount;
-        }, 0);
-    };
-
-    const setTotalAmount = () => { 
-        if (invoice.lines.length === 0) return;
-        let modifiedArr = invoice.lines.map(item => {
-            let modifiedItem = Object.assign({}, item);
-            return {
-                ...modifiedItem,
-                amount: modifiedItem.quantity * modifiedItem.hourly_rate
-            };
-        });
-        setInvoice({ ...invoice, lines: [...modifiedArr] });
-        setCheckAmount(false);
-    };
-
-    const addRow = () => {
-        setInvoice({ ...invoice, lines: [...invoice.lines, {...initialRow, hourly_rate: invoice.lines[0].hourly_rate}]});
-    };
-
-    const removeRow = index => {
-        var array = [...invoice.lines];
-        array.splice(index, 1);
-        setInvoice({ ...invoice, lines: [...array] });
-    };
-
-    const calculateTaxes = (val) => {
-        switch (val) {
-            case "same_state":
-                setTaxes({...taxes, SGST:(configs.SGST*subTotal)/100, CGST:(configs.CGST*subTotal)/100, IGST: 0 });
-                break;
-    
-            case "other_state":
-                setTaxes({...taxes, IGST:(configs.IGST*subTotal)/100, SGST:0, CGST:0});
-                break;
-    
-            case "no":
-                setTaxes({...taxes, IGST:0, SGST:0, CGST:0});
-                break;
-            default:
-                break;
+        if (typeof index !== "number") {
+            setInvoice({ ...invoice, [name]: e.target.innerText });
+            return;
         }
+        let newArr = [...invoice.lines];
+        newArr[index] = { ...newArr[index], [name]: e.target.innerText };
+        setInvoice({ ...invoice, lines: [...newArr] });
 
-    }
+        if (name == "quantity" || name == "hourly_rate") {
+            setCheckLineTotal(true);
+            setShouldChangeStatus(true);
+        }
+    };
+
+    const onAmountPaidChange = e => {
+        let value = (e.target.innerHTML != '')  ? e.target.innerHTML : 0;
+        setShouldChangeStatus(true);
+        setInvoice({
+            ...invoice,
+            amount_paid: value,
+            amount_due: total - value
+        });
+    };
 
     const onChange = (e, name) => {        
         if (e instanceof Date) {
@@ -251,6 +134,7 @@ const AddInvoices = props => {
         }
         let val = e.target.value;
         if(e.target.name === "gst_option"){
+            setIsGstSelected((val!='no')? true : false);
             calculateTaxes(val);
             setInvoice({
                 ...invoice,
@@ -282,32 +166,129 @@ const AddInvoices = props => {
                 bill_to: bill_to,
                 lines: [...newArr]
             });
-            setCheckAmount(true);
+            setCheckLineTotal(true);
             return;
         }
         if (e.target.name === "currency") {
-            switch (val) {
-                case "USD":
-                    setCurrencySign("$");
-                    break;
-
-                case "EUR":
-                    setCurrencySign("€");
-                    break;
-
-                case "INR":
-                    setCurrencySign("₹");
-
-                default:
-                    break;
-            }
+            setCurrencySign(assignCurrencySign(val))
             setInvoice({ ...invoice, currency: val });
-
             return;
         }
         setInvoice({ ...invoice, [e.target.name]: val });
     };
 
+    //other useEffects
+
+    useEffect(
+        () => {
+            if (!checkLineTotal) return;
+            calculateLineTotal();
+        },
+        [checkLineTotal]
+    );
+
+    useEffect(
+        () => {
+            setSubTotal(getTotalAmount());
+        },
+        [invoice.lines]
+    );
+
+    useEffect(
+        () => {
+            if (shouldChangeStatus){
+                setInvoice({...invoice, status: (invoice.amount_due > 0) ? "open" : "paid"});
+            }
+        },
+        [invoice.amount_due]
+    );
+
+    useEffect(() => {
+        let tax = 1;
+        if(isGstSelected)
+        {
+            calculateTaxes(invoice.gst_option);
+            tax=1.18;
+        }
+        let total = subTotal*tax;
+        setTotal(total);
+        setInvoice({ ...invoice, amount_due: total-invoice.amount_paid });
+
+        
+    }, [subTotal, isGstSelected])
+
+    useEffect(() => {
+        calculateTaxes(invoice.gst_option);
+    }, [invoice.gst_option]);
+
+    //other functions
+    const getTotalAmount = () => {
+        return invoice.lines.reduce(function(prev, cur) {
+            return prev + cur.amount;
+        }, 0);
+    };
+
+    const calculateLineTotal = () => {
+        if (invoice.lines.length === 0) return;
+        let modifiedArr = invoice.lines.map(item => {
+            let modifiedItem = Object.assign({}, item);
+            return {
+                ...modifiedItem,
+                amount: modifiedItem.quantity * modifiedItem.hourly_rate
+            };
+        });
+        setInvoice({ ...invoice, lines: [...modifiedArr] });
+        setCheckLineTotal(false);
+    };
+
+    const calculateTaxes = (val) => {
+        if(subTotal === 0 || Object.keys(configs).length === 0) return;
+        switch (val) {
+            case "same_state":
+                setTaxes({...taxes, SGST:(configs.SGST*subTotal)/100, CGST:(configs.CGST*subTotal)/100, IGST: 0 });
+                break;
+    
+            case "other_state":
+                setTaxes({...taxes, IGST:(configs.IGST*subTotal)/100, SGST:0, CGST:0});
+                break;
+    
+            case "no":
+                setTaxes({...taxes, IGST:0, SGST:0, CGST:0});
+                break;
+            default:
+                break;
+        }
+    }
+
+    const assignCurrencySign = (val) => {
+
+        switch (val) {
+            case "USD":
+                return "$";
+
+            case "EUR":
+                return "€";
+
+            case "INR":
+                return "₹";
+
+            default:
+                break;
+        }
+    }
+
+    // add/remove items rows functions
+    const addRow = () => {
+        setInvoice({ ...invoice, lines: [...invoice.lines, {...initialRow, hourly_rate: invoice.lines[0].hourly_rate}]});
+    };
+
+    const removeRow = index => {
+        var array = [...invoice.lines];
+        array.splice(index, 1);
+        setInvoice({ ...invoice, lines: [...array] });
+    };
+
+    //Form submit events
     const saveInvoice = event => {
         setDisabled(true);
 
@@ -410,9 +391,7 @@ const AddInvoices = props => {
                         <h1 className="invoice-h1">Invoice</h1>
                         <div
                             className="invoice-address"
-                            suppressContentEditableWarning={true}
                             name="bill_from"
-                            onBlur={handleChange()}
                         >
                             Radicalloop Technolabs LLP
                             <br /> 601/A, Parshwanath Esquare, Corporate Road,
@@ -782,7 +761,7 @@ const AddInvoices = props => {
                                                 <span data-prefix>
                                                     {currencySign}
                                                 </span>
-                                                <span>{total}</span>
+                                                <span>{Number(total).toFixed(2)}</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -805,10 +784,9 @@ const AddInvoices = props => {
                                                         true
                                                     }
                                                     name="amount_paid"
-                                                    onBlur={handleAmountChange}
+                                                    onBlur={onAmountPaidChange}
                                                 >
-                                                    {invoice.amount_paid ||
-                                                        amountPaid}
+                                                    {invoice.amount_paid}
                                                 </span>
                                             </td>
                                         </tr>
@@ -833,7 +811,7 @@ const AddInvoices = props => {
                                                     {currencySign}
                                                 </span>
                                                 <span id="amount_due">
-                                                    {invoice.amount_due}
+                                                    {Number(invoice.amount_due).toFixed(2)}
                                                 </span>
                                             </td>
                                         </tr>
