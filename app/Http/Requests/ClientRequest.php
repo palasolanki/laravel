@@ -37,6 +37,7 @@ class ClientRequest extends FormRequest
             'company_logo'      => "sometimes|nullable|$stringOrFileRule",
             'address'           => 'nullable',
             'invoice_item_title'=> 'nullable',
+            'currency'          => 'required',
         ];
     }
 
@@ -48,6 +49,7 @@ class ClientRequest extends FormRequest
             'email.email'                   => 'Please enter valid email address',
             'country_id.required'           => 'Country is required',
             'payment_medium_id.required'    => 'Payment Medium is required',
+            'currency'                      => 'Currency is required'
         ];
     }
 
@@ -67,6 +69,7 @@ class ClientRequest extends FormRequest
         $client->payment_medium_id = $this->payment_medium_id;
         $client->address           = $this->address;
         $client->invoice_item_title= $this->invoice_item_title;
+        $client->currency          = $this->currency;
         $client->save();
         $this->addFileAttachment($this->company_logo, $client);
         if ($client->wasChanged('name')) {

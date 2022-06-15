@@ -80,6 +80,12 @@ function Invoices(props) {
                     data: "last_sent_at",
                     defaultContent: "N/A"
                 },
+                {
+                    title: "Currency",
+                    data: "client.currency",
+                    defaultContent: "N/A"
+
+                },
                 { title: 'Amount', data: "total"},
                 { title: "Amount Due", data: "amount_due" },
                 {
@@ -124,14 +130,16 @@ function Invoices(props) {
                 let currencySigns = {
                     'USD': '$',
                     'EUR': '€',
-                    'INR': '₹'
+                    'INR': '₹',
+                    'NZD': '$',
+                    'CAD': '$',
                 }
-                $("td:eq(5)", row).html((currencySigns[data.currency] || data.currency) + data.total);
+                $("td:eq(6)", row).html((currencySigns[data.currency] || data.currency) + data.total);
 
-                $("td:eq(6)", row).html((currencySigns[data.currency] || data.currency) + data.amount_due);
+                $("td:eq(7)", row).html((currencySigns[data.currency] || data.currency) + data.amount_due);
 
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
-                $("td:eq(7)", row).html(notes);
+                $("td:eq(8)", row).html(notes);
 
                 let action = `<button id=${
                     data._id
@@ -143,7 +151,7 @@ function Invoices(props) {
                     data.client_id
                 } class="btn btn-sm ml-2 btn-dark sendData">Send Invoice</button>`;
                 
-                $("td:eq(8)", row).html(action + markPaid);
+                $("td:eq(9)", row).html(action + markPaid);
 
             }
         });

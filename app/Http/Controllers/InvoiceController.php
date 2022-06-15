@@ -18,7 +18,7 @@ class InvoiceController extends Controller
     public function index(): JsonResponse
     {
         $invoice = Invoice::with(['client' => function ($query) {
-            $query->select('name');
+            $query->select('name','currency');
         }]);
 
         return (new MongodbDataTable($invoice))
