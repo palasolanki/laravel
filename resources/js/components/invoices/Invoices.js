@@ -8,6 +8,7 @@ import InvoiceMessageModal from "./InvoiceMessageModal";
 import ConfirmationComponent from "../ConfirmationComponent";
 import EditNotes from "./EditNotes";
 import moment from "moment";
+import { downloadFile } from "../../helpers";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
@@ -80,6 +81,12 @@ function Invoices(props) {
                     data: "last_sent_at",
                     defaultContent: "N/A"
                 },
+                {
+                    title: "Currency",
+                    data: "client.currency",
+                    defaultContent: "N/A"
+
+                },
                 { title: 'Amount', data: "total"},
                 { title: "Amount Due", data: "amount_due" },
                 {
@@ -118,32 +125,29 @@ function Invoices(props) {
                 if(data.status == 'open')
                 {
                     $("td:eq(3)", row).addClass('text-danger');
-                    markPaid = `<button id = ${data._id} class="btn btn-sm ml-2 btn-success markPaid">Mark Paid</button>`
+                    markPaid = `<button id = ${data._id} title="Mark as Paid" class="btn btn-sm btn-success ml-1 markPaid"><i class="fa fa-square-check"></i></button>`
                 }
 
                 let currencySigns = {
                     'USD': '$',
                     'EUR': '€',
-                    'INR': '₹'
+                    'INR': '₹',
+                    'NZD': '$',
+                    'CAD': '$',
                 }
-                $("td:eq(5)", row).html((currencySigns[data.currency] || data.currency) + data.total);
+                $("td:eq(6)", row).html((currencySigns[data.currency] || data.currency) + data.total);
 
-                $("td:eq(6)", row).html((currencySigns[data.currency] || data.currency) + data.amount_due);
+                $("td:eq(7)", row).html((currencySigns[data.currency] || data.currency) + data.amount_due);
 
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
-                $("td:eq(7)", row).html(notes);
+                $("td:eq(8)", row).html(notes);
 
-                let action = `<button id=${
-                    data._id
-                } class="btn btn-sm btn--prime mr-2 editData" >Edit</button>
-                <button id=${
-                    data._id
-                } class="btn btn-sm btn--cancel deleteData" >Delete</button>
-                <button id=${data._id} client-id=${
-                    data.client_id
-                } class="btn btn-sm ml-2 btn-dark sendData">Send Invoice</button>`;
+                let action = `<button id=${data._id} title="Edit Invoice" class="btn btn-sm btn--prime editData"><i class="fa fa-pencil"></i></button>
+                <button id=${data._id} title="Delete Invoice" class="btn btn-sm btn--cancel deleteData" ><i class="fa fa-trash"></i></button>
+                <button id=${data._id} client-id=${data.client_id} title="Send Mail" class="btn btn-sm btn-info sendData"><i class="fa fa-envelope"></i></button>
+                <button id=${data._id} title="Download Invoice" class="btn btn-sm btn-dark downloadInvoice"><i class="fa fa-download"></i></button>`;
                 
-                $("td:eq(8)", row).html(action + markPaid);
+                $("td:eq(9)", row).html(action + markPaid);
 
             }
         });
@@ -153,23 +157,23 @@ function Invoices(props) {
 
 
     const registerEvent = () => {
-        $("#datatable").on("click", "tbody .deleteData", function(e) {
-            setDeleteInvoiceIdFunction($(e.target).attr("id"));
+        $("#datatable").on("click", "tbody .deleteData", function() {
+            setDeleteInvoiceIdFunction($(this).attr("id"));
         });
 
-        $("#datatable").on("click", "tbody .editData", function(e) {
-            history.push(`invoices/edit/${$(e.target).attr("id")}`);
+        $("#datatable").on("click", "tbody .editData", function() {
+            history.push(`invoices/edit/${$(this).attr("id")}`);
         });
 
-        $("#datatable").on("click", "tbody .sendData", function(e) {
-            let invoiceId = $(e.target).attr("id");
-            let clientId = $(e.target).attr("client-id");
+        $("#datatable").on("click", "tbody .sendData", function() {
+            let invoiceId = $(this).attr("id");
+            let clientId = $(this).attr("client-id");
             setSendInvoiceId(invoiceId);
             getClientName(clientId);
         });
 
-        $("#datatable").on("click", "tbody .notes", function(e){
-            let invoiceId = $(e.target).attr("id");
+        $("#datatable").on("click", "tbody .notes", function(){
+            let invoiceId = $(this).attr("id");
             let invoices = dataTable.rows().data().toArray();
             let currentInvoice = invoices.find(invoice => invoice._id === invoiceId);
             setCurrentNotes({id: currentInvoice._id, notes: currentInvoice.notes})
@@ -177,9 +181,14 @@ function Invoices(props) {
             
         })
 
-        $("#datatable").on("click", "tbody .markPaid", function(e) {
-            setMarkAsPaidInvoiceId($(e.target).attr("id"));
+        $("#datatable").on("click", "tbody .markPaid", function() {
+            setMarkAsPaidInvoiceId($(this).attr("id"));
             openShowMarkAsPaid();
+        });
+
+        $("#datatable").on("click", "tbody .downloadInvoice", function() {
+            $(this).attr("disabled", 'disabled');
+            downloadInvoice($(this).attr("id"));
         });
     };
 
@@ -228,6 +237,20 @@ function Invoices(props) {
             handleCloseMarkAsPaid();
             ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
+        });
+    }
+
+    const downloadInvoice = invoiceId => {
+        api.post(`/invoices/${invoiceId}/download`, {}, { responseType: "blob" })
+        .then(res => {
+            downloadFile(res);
+            $('.downloadInvoice').removeAttr('disabled');
+            ToastsStore.success("Invoice downloaded successfully.");
+        })
+        .catch(err=>{
+            $('.downloadInvoice').removeAttr('disabled');
+            ToastsStore.error("Something went wrong! Please Download again.");
+            console.log(err);
         });
     }
 

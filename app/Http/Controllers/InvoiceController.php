@@ -18,7 +18,7 @@ class InvoiceController extends Controller
     public function index(): JsonResponse
     {
         $invoice = Invoice::with(['client' => function ($query) {
-            $query->select('name');
+            $query->select('name','currency');
         }]);
 
         return (new MongodbDataTable($invoice))
@@ -113,6 +113,13 @@ class InvoiceController extends Controller
         $invoice->amount_due = 0;
         $invoice->save();
         return response()->json(['message' => 'Status Marked As Paid Successfully']);
+    }
+
+    public function downloadInvoice(Invoice $invoice)
+    {
+        $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice, 'configs' => $this->prepareConfigs()])->setPaper('a4', 'portrait');
+        $fileName = 'invoice_' . $invoice->number . '.pdf';
+        return $pdf->stream($fileName);
     }
 
     public function getConfig()

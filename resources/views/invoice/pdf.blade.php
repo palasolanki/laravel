@@ -71,7 +71,7 @@
 <body>
 
     @switch($invoice->currency)
-    @case ('USD')
+    @case ('USD' || 'NZD' || 'CAD')
     @php $currency_sign = '$' @endphp
     @break
     @case ('EUR')

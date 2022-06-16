@@ -2,7 +2,8 @@ import React, { useState, Fragment, useEffect } from "react";
 import api from "../../helpers/api";
 import DatePicker from "react-datepicker";
 import { ToastsStore } from "react-toasts";
-const $ = require("jquery");
+import config from "../../helpers/config";
+import { downloadFile } from "../../helpers";
 
 const AddInvoices = props => {
     const invoiceId = props.match.params.id || null;
@@ -24,7 +25,7 @@ const AddInvoices = props => {
         amount_paid: 0,
         notes: "",
         status: "open",
-        currency: "USD",
+        currency: "",
         gst_option: "no",
         bill_from: `Radicalloop Technolabs LLP,
         India
@@ -167,6 +168,7 @@ const AddInvoices = props => {
                 ...invoice,
                 client_id: val,
                 bill_to: bill_to,
+                currency: bill_to.currency || "",
                 lines: [...newArr]
             });
             setCheckLineTotal(true);
@@ -279,7 +281,7 @@ const AddInvoices = props => {
     const assignCurrencySign = (val) => {
 
         switch (val) {
-            case "USD":
+            case "USD" || "NZD" || "CAD":
                 return "$";
 
             case "EUR":
@@ -378,25 +380,6 @@ const AddInvoices = props => {
                 );
                 console.log(err);
             });
-    };
-
-    const downloadFile = res => {
-        const url = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        const contentDisposition = res.headers["content-disposition"];
-        let fileName = "invoice.pdf";
-        if (contentDisposition) {
-            const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
-            if (fileNameMatch.length === 2) {
-                fileName = fileNameMatch[1];
-            }
-        }
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
     };
 
     return (
@@ -531,15 +514,17 @@ const AddInvoices = props => {
                                                     value={invoice.currency}
                                                     className="form-control"
                                                 >
-                                                    <option value="USD">
-                                                        USD
-                                                    </option>
-                                                    <option value="EUR">
-                                                        EUR
-                                                    </option>
-                                                    <option value="INR">
-                                                        INR
-                                                    </option>
+                                                    <option value="">Select Currency</option>
+                                                    {config.currency.map((value,key) => {
+                                                        return (
+                                                            <option
+                                                                value={value}
+                                                                key={key}
+                                                            >
+                                                                {value}
+                                                            </option>
+                                                        );
+                                                    })}
                                                 </select>
                                             </td>
                                         </tr>
