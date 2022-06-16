@@ -3,6 +3,7 @@ import api from "../../helpers/api";
 import DatePicker from "react-datepicker";
 import { ToastsStore } from "react-toasts";
 import config from "../../helpers/config";
+import { downloadFile } from "../../helpers";
 
 const AddInvoices = props => {
     const invoiceId = props.match.params.id || null;
@@ -379,25 +380,6 @@ const AddInvoices = props => {
                 );
                 console.log(err);
             });
-    };
-
-    const downloadFile = res => {
-        const url = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        const contentDisposition = res.headers["content-disposition"];
-        let fileName = "invoice.pdf";
-        if (contentDisposition) {
-            const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
-            if (fileNameMatch.length === 2) {
-                fileName = fileNameMatch[1];
-            }
-        }
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
     };
 
     return (

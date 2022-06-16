@@ -115,6 +115,13 @@ class InvoiceController extends Controller
         return response()->json(['message' => 'Status Marked As Paid Successfully']);
     }
 
+    public function downloadInvoice(Invoice $invoice)
+    {
+        $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice, 'configs' => $this->prepareConfigs()])->setPaper('a4', 'portrait');
+        $fileName = 'invoice_' . $invoice->number . '.pdf';
+        return $pdf->stream($fileName);
+    }
+
     public function getConfig()
     {
         return response()->json(['configs' => $this->prepareConfigs()]);
