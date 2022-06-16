@@ -25,7 +25,7 @@ const AddInvoices = props => {
         amount_paid: 0,
         notes: "",
         status: "open",
-        currency: "",
+        currency: "USD",
         gst_option: "no",
         bill_from: `Radicalloop Technolabs LLP,
         India
@@ -39,7 +39,7 @@ const AddInvoices = props => {
     const [clients, setClients] = useState([]);
     const [disabled, setDisabled] = useState(false);
     const [shouldChangeStatus, setShouldChangeStatus] = useState(false);
-    const [configs, setConfigs] = useState({});
+    const [gstConfigs, setGstConfigs] = useState({});
     const [subTotal, setSubTotal] = useState(0);
     const [isGstSelected, setIsGstSelected] = useState(false);
     const [taxes, setTaxes] = useState({
@@ -51,14 +51,14 @@ const AddInvoices = props => {
     // initial effects
     useEffect(() => {
         calculateLineTotal();
-        const fetchConfigs = async () => {
-            await api.get("/configs")
+        const fetchGstConfigs = async () => {
+            await api.get("/gst-configs")
             .then(res => {
-                setConfigs(res.data.configs);
+                setGstConfigs(res.data.gstConfigs);
             })
             .catch(res => {});
         }
-        fetchConfigs();
+        fetchGstConfigs();
         
         api.get("/getClients")
             .then(res => {
@@ -83,7 +83,7 @@ const AddInvoices = props => {
                         date,
                         due_date: dueDate
                     };
-                    setCurrencySign(assignCurrencySign(res.data.editInvoice[0].currency));
+                    setCurrencySign(config.currencies.find(currency => currency.code === res.data.editInvoice[0].currency).sign);
                     setInvoice(respEditInvoice);
                     setIsGstSelected((respEditInvoice.gst_option!='no')? true : false);
 
@@ -168,14 +168,14 @@ const AddInvoices = props => {
                 ...invoice,
                 client_id: val,
                 bill_to: bill_to,
-                currency: bill_to.currency || "",
+                currency: bill_to.currency || "USD",
                 lines: [...newArr]
             });
             setCheckLineTotal(true);
             return;
         }
         if (e.target.name === "currency") {
-            setCurrencySign(assignCurrencySign(val))
+            setCurrencySign(config.currencies.find(currency => currency.code === val).sign || "$");
             setInvoice({ ...invoice, currency: val });
             return;
         }
@@ -216,11 +216,11 @@ const AddInvoices = props => {
             switch(invoice.gst_option)
             {
                 case "same_state":
-                    tax=(configs.SGST+configs.CGST+100)/100;
+                    tax=(gstConfigs.SGST+gstConfigs.CGST+100)/100;
                 break;
 
                 case "other_state":
-                    tax=(configs.IGST+100)/100;
+                    tax=(gstConfigs.IGST+100)/100;
                 break;
 
                 default:
@@ -238,6 +238,10 @@ const AddInvoices = props => {
     useEffect(() => {
         calculateTaxes(invoice.gst_option);
     }, [invoice.gst_option]);
+
+    useEffect(() => {
+        setCurrencySign(config.currencies.find(currency => currency.code === invoice.currency).sign || "$")
+    },[invoice.currency])
 
     //other functions
     const getTotalAmount = () => {
@@ -260,36 +264,19 @@ const AddInvoices = props => {
     };
 
     const calculateTaxes = (val) => {
-        if(subTotal === 0 || Object.keys(configs).length === 0) return;
+        if(subTotal === 0 || Object.keys(gstConfigs).length === 0) return;
         switch (val) {
             case "same_state":
-                setTaxes({...taxes, SGST:(configs.SGST*subTotal)/100, CGST:(configs.CGST*subTotal)/100, IGST: 0 });
+                setTaxes({...taxes, SGST:(gstConfigs.SGST*subTotal)/100, CGST:(gstConfigs.CGST*subTotal)/100, IGST: 0 });
                 break;
     
             case "other_state":
-                setTaxes({...taxes, IGST:(configs.IGST*subTotal)/100, SGST:0, CGST:0});
+                setTaxes({...taxes, IGST:(gstConfigs.IGST*subTotal)/100, SGST:0, CGST:0});
                 break;
     
             case "no":
                 setTaxes({...taxes, IGST:0, SGST:0, CGST:0});
                 break;
-            default:
-                break;
-        }
-    }
-
-    const assignCurrencySign = (val) => {
-
-        switch (val) {
-            case "USD" || "NZD" || "CAD":
-                return "$";
-
-            case "EUR":
-                return "€";
-
-            case "INR":
-                return "₹";
-
             default:
                 break;
         }
@@ -514,14 +501,13 @@ const AddInvoices = props => {
                                                     value={invoice.currency}
                                                     className="form-control"
                                                 >
-                                                    <option value="">Select Currency</option>
-                                                    {config.currency.map((value,key) => {
+                                                    {config.currencies.map((value,key) => {
                                                         return (
                                                             <option
-                                                                value={value}
+                                                                value={value.code}
                                                                 key={key}
                                                             >
-                                                                {value}
+                                                                {value.code}
                                                             </option>
                                                         );
                                                     })}
@@ -609,7 +595,7 @@ const AddInvoices = props => {
                                                 </span>
                                             </td>
                                             <td>
-                                                <span>{configs.SAC_code}</span>
+                                                <span>{gstConfigs.SAC_code}</span>
                                             </td>
 
                                             <td>
@@ -701,7 +687,7 @@ const AddInvoices = props => {
                                                                 true
                                                             }
                                                         >
-                                                            SGST @ {configs.SGST}%
+                                                            SGST @ {gstConfigs.SGST}%
                                                         </span>
                                                     </th>
                                                     <td>
@@ -718,7 +704,7 @@ const AddInvoices = props => {
                                                                 true
                                                             }
                                                         >
-                                                            CGST @ {configs.CGST}%
+                                                            CGST @ {gstConfigs.CGST}%
                                                         </span>
                                                     </th>
                                                     <td>
@@ -739,7 +725,7 @@ const AddInvoices = props => {
                                                             true
                                                         }
                                                     >
-                                                        IGST @ {configs.IGST}%
+                                                        IGST @ {gstConfigs.IGST}%
                                                     </span>
                                                 </th>
                                                 <td>
@@ -804,13 +790,7 @@ const AddInvoices = props => {
                                                 </span>
                                             </th>
                                             <td>
-                                                <span
-                                                    onBlur={e => {
-                                                        setCurrencySign(
-                                                            e.target.innerText
-                                                        );
-                                                    }}
-                                                >
+                                                <span>
                                                     {currencySign}
                                                 </span>
                                                 <span id="amount_due">

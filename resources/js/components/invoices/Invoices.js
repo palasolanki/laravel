@@ -9,6 +9,7 @@ import ConfirmationComponent from "../ConfirmationComponent";
 import EditAdminNotes from "./EditAdminNotes";
 import moment from "moment";
 import { downloadFile } from "../../helpers";
+import config from "../../helpers/config";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
@@ -51,7 +52,7 @@ function Invoices(props) {
             serverSide: true,
             processing: true,
             bSort: true,
-            aaSorting: [[ 9, "desc" ]],
+            aaSorting: [[ 0, "asc" ]],
             oLanguage: {
                 sSearch: "_INPUT_",
                 sSearchPlaceholder: "Search"
@@ -83,7 +84,7 @@ function Invoices(props) {
                 },
                 {
                     title: "Currency",
-                    data: "client.currency",
+                    data: "currency",
                     defaultContent: "N/A"
 
                 },
@@ -108,11 +109,11 @@ function Invoices(props) {
             columnDefs: [
                 {
                     searchable: false,
-                    targets: [1, 4]
+                    targets: [1, 4, 8, 9]
                 },
                 {
                     orderable: false,
-                    targets: [1, 4]
+                    targets: [1, 4, 8, 9]
                 }
             ],
             rowCallback: function(row, data, index) {
@@ -127,17 +128,10 @@ function Invoices(props) {
                     $("td:eq(3)", row).addClass('text-danger');
                     markPaid = `<button id = ${data._id} title="Mark as Paid" class="btn btn-sm btn-success ml-1 markPaid"><i class="fa fa-square-check"></i></button>`
                 }
+                let currencySign = config.currencies.find(currency => currency.code === data.currency).sign || "$";
+                $("td:eq(6)", row).html(currencySign + data.total);
 
-                let currencySigns = {
-                    'USD': '$',
-                    'EUR': '€',
-                    'INR': '₹',
-                    'NZD': '$',
-                    'CAD': '$',
-                }
-                $("td:eq(6)", row).html((currencySigns[data.currency] || data.currency) + data.total);
-
-                $("td:eq(7)", row).html((currencySigns[data.currency] || data.currency) + data.amount_due);
+                $("td:eq(7)", row).html(currencySign + data.amount_due);
 
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
                 $("td:eq(8)", row).html(notes);
