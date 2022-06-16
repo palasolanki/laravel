@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 
-function EditNotes(props) {
+function EditAdminNotes(props) {
     const closeModalSpanStyle = {
         color: "#000",
         float: "right",
@@ -8,12 +8,12 @@ function EditNotes(props) {
         cursor: "pointer"
     };
 
-    const [notes, setNotes] = useState(props.currentNotes);
+    const [adminNotes, setAdminNotes] = useState(props.AdminNotes);
 
     const handleInputChange = event => {
         const { name, value } = event.target;
 
-        setNotes({ ...notes, [name]: value });
+        setAdminNotes({ ...adminNotes, [name]: value });
     };
     return (
         <Fragment>
@@ -28,10 +28,10 @@ function EditNotes(props) {
                 <div className="modal-dialog modal-dialog-centered register-modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header align-items-center">
-                            <h3 className="heading mb-0">Edit Notes</h3>
+                            <h3 className="heading mb-0">Edit Admin Notes</h3>
                             <div className="gradient_border-2">
                                 <span
-                                    onClick={props.handleCloseEditNotesModal}
+                                    onClick={props.closeEditAdminNotesModal}
                                     style={closeModalSpanStyle}
                                 >
                                     X
@@ -43,17 +43,17 @@ function EditNotes(props) {
                             <form
                                 onSubmit={event => {
                                     event.preventDefault();
-                                    props.updateNotes(notes);
+                                    props.updateAdminNotes(adminNotes);
                                 }}
                             >
                                 <div className="form-group">
-                                    <label>Notes:</label>
+                                    <label>Admin Notes:</label>
                                     <textarea
                                         className="form-control"
                                         rows="6"
-                                        placeholder="Enter Notes"
-                                        name="notes"
-                                        value={notes.notes || ''}
+                                        placeholder="Enter Admin Notes"
+                                        name="admin_notes"
+                                        value={adminNotes.admin_notes || ''}
                                         onChange={handleInputChange}
                                     />
                                 </div>
@@ -82,4 +82,4 @@ function EditNotes(props) {
     );
 }
 
-export default EditNotes;
+export default EditAdminNotes;

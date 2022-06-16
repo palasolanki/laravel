@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import InvoiceMessageModal from "./InvoiceMessageModal";
 import ConfirmationComponent from "../ConfirmationComponent";
-import EditNotes from "./EditNotes";
+import EditAdminNotes from "./EditAdminNotes";
 import moment from "moment";
 import { downloadFile } from "../../helpers";
 const $ = require("jquery");
@@ -19,10 +19,10 @@ function Invoices(props) {
     const [showDeleteModal, setDeleteShow] = useState(false);
     const [clientName, setClientName] = useState("");
     const [deleteInvoiceId, setDeleteInvoiceId] = useState();
-    const [editNotesModal, setEditNotesModal] = useState(false);
+    const [editAdminNotesModal, setEditAdminNotesModal] = useState(false);
     const [invoiceId, setInvoiceDataId] = useState();
     const [isLoading, setIsLoading] = useState(false);
-    const [currentNotes, setCurrentNotes] = useState({});
+    const [adminNotes, setAdminNotes] = useState({});
     const [showMarkAsPaidModal, setMarkAsPaid] = useState(false);
     const [markAsPaidInvoiceId, setMarkAsPaidInvoiceId] = useState();
 
@@ -36,7 +36,7 @@ function Invoices(props) {
         }
     }, [dataTable]);
 
-    const handleCloseEditNotesModal = () => setEditNotesModal(false);
+    const closeEditAdminNotesModal = () => setEditAdminNotesModal(false);
     const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
     const openShowMarkAsPaid = () => setMarkAsPaid(true);
@@ -90,7 +90,7 @@ function Invoices(props) {
                 { title: 'Amount', data: "total"},
                 { title: "Amount Due", data: "amount_due" },
                 {
-                    title: "Notes",
+                    title: "Admin Notes",
                     data: "null",
                     defaultContent: "N/A"
                 },
@@ -176,8 +176,8 @@ function Invoices(props) {
             let invoiceId = $(this).attr("id");
             let invoices = dataTable.rows().data().toArray();
             let currentInvoice = invoices.find(invoice => invoice._id === invoiceId);
-            setCurrentNotes({id: currentInvoice._id, notes: currentInvoice.notes})
-            setEditNotesModal(true)
+            setAdminNotes({id: currentInvoice._id, admin_notes: currentInvoice.admin_notes})
+            setEditAdminNotesModal(true)
             
         })
 
@@ -254,16 +254,16 @@ function Invoices(props) {
         });
     }
 
-    const updateNotes = (updatedNotes) => {
-        api.post(`/invoices/${updatedNotes.id}/notes`, { note: updatedNotes.notes })
+    const updateAdminNotes = (updatedAdminNotes) => {
+        api.post(`/invoices/${updatedAdminNotes.id}/admin-notes`, { admin_note: updatedAdminNotes.admin_notes })
             .then(res => {
                 dataTable.ajax.reload();
                 ToastsStore.success(res.data.message);
-                handleCloseEditNotesModal();
+                closeEditAdminNotesModal();
             })
             .catch(err => {
-                ToastsStore.success('Unable to update Note!');
-                handleCloseEditNotesModal();
+                ToastsStore.success('Unable to update Admin Note!');
+                closeEditAdminNotesModal();
             });
     }
 
@@ -315,11 +315,11 @@ function Invoices(props) {
                 />
             )}
 
-            {editNotesModal && (
-                <EditNotes
-                handleCloseEditNotesModal={handleCloseEditNotesModal}
-                updateNotes={updateNotes}
-                currentNotes = {currentNotes}
+            {editAdminNotesModal && (
+                <EditAdminNotes
+                closeEditAdminNotesModal={closeEditAdminNotesModal}
+                updateAdminNotes={updateAdminNotes}
+                AdminNotes = {adminNotes}
                 />
             )}
         </div>

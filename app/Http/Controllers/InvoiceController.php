@@ -97,12 +97,12 @@ class InvoiceController extends Controller
         return;
     }
 
-    public function updateNotes(Invoice $invoice, Request $request)
+    public function updateAdminNotes(Invoice $invoice, Request $request)
     {
-        $invoice->notes = $request->note;
+        $invoice->admin_notes = $request->admin_note;
         $invoice->save();
         
-        return response()->json(['message' => 'Note Updated Successfully']);
+        return response()->json(['message' => 'Admin Note Updated Successfully']);
         
     }
 
