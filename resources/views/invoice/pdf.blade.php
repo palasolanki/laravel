@@ -189,9 +189,9 @@
                 <tr>
                     <td>{{ $line["item"] }}</td>
                     <td class="text-right text-nowrap">{{ $gstConfigs['SAC_code'] }}</td>
-                    <td class="text-right text-nowrap">{{ $line["quantity"] }}</td>
+                    <td class="text-right text-nowrap">{{ number_format($line["quantity"],2) }}</td>
                     <td class="text-right text-nowrap {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{ $line["hourly_rate"] }}</td>
-                    <td class="text-right text-nowrap pr-5 {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{ $line["amount"] }}</td>
+                    <td class="text-right text-nowrap pr-5 {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{ number_format($line["amount"],2) }}</td>
                 </tr>
                 @endforeach
 
@@ -232,41 +232,39 @@
                             <tbody>
                                 <tr>
                                     <td class="{{$currency_class}}">Subtotal</td>
-                                    <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{$invoice->sub_total}}</td>
+                                    <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->sub_total,2)}}</td>
 
                                 </tr>
                                 @if($invoice->gst_option === 'same_state')
                                     <tr>
                                         <td class="{{$currency_class}}">SGST @ {{$gstConfigs['SGST']}}%</td>
-                                        <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{($gstConfigs['SGST']*$invoice->sub_total)/100}}</td>
+                                        <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['SGST']*$invoice->sub_total)/100,2)}}</td>
 
                                     </tr>
                                     <tr>
                                         <td class="{{$currency_class}}">CGST @ {{$gstConfigs['CGST']}}%</td>
-                                        <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{($gstConfigs['CGST']*$invoice->sub_total)/100}}</td>
+                                        <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['CGST']*$invoice->sub_total)/100,2)}}</td>
 
                                     </tr>
                                 @elseif($invoice->gst_option === 'other_state')
                                     <tr>
                                         <td class="{{$currency_class}}">IGST @ {{$gstConfigs['IGST']}}%</td>
-                                        <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{($gstConfigs['IGST']*$invoice->sub_total)/100}}</td>
+                                        <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['IGST']*$invoice->sub_total)/100,2)}}</td>
 
                                     </tr>
                                 @endif
                                 <tr>
                                     <td class="text-success align-middle {{$currency_class}}"><strong>Total </strong></td>
-                                    <td class="text-right {{$currency_class}}"><strong
-                                            class="font-16">{{$currencyConfigs[$invoice->currency]}}{{$invoice->total}}</strong></td>
+                                    <td class="text-right {{$currency_class}}"><strong>{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->total,2)}}</strong></td>
 
                                 </tr>
                                 <tr>
                                     <td class="{{$currency_class}}">Paid</td>
-                                    <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{$invoice->amount_paid}}</td>
+                                    <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->amount_paid,2)}}</td>
                                 </tr>
                                 <tr>
                                     <td class="text-success align-middle {{$currency_class}}"><strong>Amount Due</strong></td>
-                                    <td class="text-right {{$currency_class}}"><strong
-                                            class="font-16">{{$currencyConfigs[$invoice->currency]}}{{$invoice->amount_due}}</strong></td>
+                                    <td class="text-right {{$currency_class}}"><strong>{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->amount_due,2)}}</strong></td>
                                 </tr>
 
                             </tbody>

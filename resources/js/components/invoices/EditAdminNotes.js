@@ -66,7 +66,10 @@ function EditAdminNotes(props) {
                                         Save
                                     </button>
                                     <button
-                                        onClick={props.handleCloseEditNotesModal}
+                                        onClick={(event)=>{
+                                            props.closeEditAdminNotesModal();
+                                            event.preventDefault();
+                                        }}
                                         className="btn btn--cancel ml-1"
                                     >
                                         Cancel
