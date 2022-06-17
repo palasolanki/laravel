@@ -127,7 +127,7 @@ const AddInvoices = props => {
         setInvoice({
             ...invoice,
             amount_paid: value,
-            amount_due: total - value
+            amount_due: Number(total).toFixed(2) - value
         });
     };
 
@@ -607,7 +607,7 @@ const AddInvoices = props => {
                                                     name="quantity"
                                                     onBlur={handleChange(index)}
                                                 >
-                                                    {row.quantity}
+                                                    {Number(row.quantity).toFixed(2)}
                                                 </span>
                                             </td>
                                             <td>
@@ -632,7 +632,7 @@ const AddInvoices = props => {
                                                 <span data-prefix>
                                                     {currencySign}
                                                 </span>
-                                                <span>{row.amount}</span>
+                                                <span>{Number(row.amount).toFixed(2)}</span>
                                             </td>
                                         </tr>
                                     ))}
@@ -675,7 +675,7 @@ const AddInvoices = props => {
                                                 <span data-prefix>
                                                     {currencySign}
                                                 </span>
-                                                <span>{subTotal}</span>
+                                                <span>{Number(subTotal).toFixed(2)}</span>
                                             </td>
                                         </tr>
                                         {invoice.gst_option === 'same_state' && (
@@ -694,7 +694,7 @@ const AddInvoices = props => {
                                                         <span data-prefix>
                                                             {currencySign}
                                                         </span>
-                                                        <span>{taxes.SGST}</span>
+                                                        <span>{Number(taxes.SGST).toFixed(2)}</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -711,7 +711,7 @@ const AddInvoices = props => {
                                                         <span data-prefix>
                                                             {currencySign}
                                                         </span>
-                                                        <span>{taxes.CGST}</span>
+                                                        <span>{Number(taxes.CGST).toFixed(2)}</span>
                                                     </td>
                                                 </tr>
                                             </>
@@ -732,7 +732,7 @@ const AddInvoices = props => {
                                                     <span data-prefix>
                                                         {currencySign}
                                                     </span>
-                                                    <span>{taxes.IGST}</span>
+                                                    <span>{Number(taxes.IGST).toFixed(2)}</span>
                                                 </td>
                                             </tr>
                                         )}
@@ -775,7 +775,7 @@ const AddInvoices = props => {
                                                     name="amount_paid"
                                                     onBlur={onAmountPaidChange}
                                                 >
-                                                    {invoice.amount_paid}
+                                                    {Number(invoice.amount_paid).toFixed(2)}
                                                 </span>
                                             </td>
                                         </tr>
