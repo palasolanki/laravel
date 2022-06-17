@@ -1,12 +1,12 @@
 const config = {
     apiUrl: "/api",
-    currency: [
-      'USD',
-      'EUR',
-      'INR',
-      'NZD',
-      'CAD'
-    ]
+    currencies: [
+      {'code' : 'USD','sign' : '$'},
+      {'code' : 'EUR','sign' : '€'},
+      {'code' : 'INR','sign' : '₹'},
+      {'code' : 'NZD','sign' : '$'},
+      {'code' : 'CAD','sign' : '$'},
+    ],
   };
   
   export default config;

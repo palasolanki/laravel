@@ -192,13 +192,13 @@ const AddClient = props => {
                                 onChange={handleInputChange}
                             >
                                 <option value="">Select Currency</option>
-                                {config.currency.map((value, key) => {
+                                {config.currencies.map((value, key) => {
                                     return (
                                         <option
-                                            value={value}
+                                            value={value.code}
                                             key={key}
                                         >
-                                            {value}
+                                            {value.code}
                                         </option>
                                     );
                                 })}

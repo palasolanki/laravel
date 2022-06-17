@@ -82,7 +82,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/invoices/{invoice}/download', 'InvoiceController@downloadInvoice');
 
     Route::get('/invoice/{invoiceId}', 'InvoiceController@edit');
-    Route::get('/configs', 'InvoiceController@getConfig');
+    Route::get('/gst-configs', 'InvoiceController@getGstConfig');
 
     Route::post('/importExpense', 'ExpenseController@importExpense');
     Route::get('expense/download-sample', 'ExpenseController@downloadSample');

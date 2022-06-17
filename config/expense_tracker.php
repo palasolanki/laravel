@@ -8,8 +8,17 @@ return [
         'monitor'  => 'Monitor',
     ],
     'start_invoice_number' => env('START_INVOICE_NUMBER', 100),
-    'SAC_code' => 998314,
-    'IGST' => 18,
-    'SGST' => 9,
-    'CGST' => 9,
+    'currencies' => [
+        'USD' => '$',
+        'EUR' => '€',
+        'INR' => '₹',
+        'NZD' => '$',
+        'CAD' => '$',
+    ],
+    'gst' => [
+        'SAC_code' => 998314,
+        'IGST' => 18,
+        'SGST' => 9,
+        'CGST' => 9,
+    ]
 ];
