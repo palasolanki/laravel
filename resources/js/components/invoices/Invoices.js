@@ -51,6 +51,7 @@ function Invoices(props) {
         var table = $("#datatable").DataTable({
             serverSide: true,
             processing: true,
+            scrollX:true,
             bSort: true,
             aaSorting: [[ 0, "asc" ]],
             oLanguage: {
@@ -129,9 +130,9 @@ function Invoices(props) {
                     markPaid = `<button id = ${data._id} title="Mark as Paid" class="btn btn-sm btn-success ml-1 markPaid"><i class="fa fa-square-check"></i></button>`
                 }
                 let currencySign = config.currencies.find(currency => currency.code === data.currency).sign || "$";
-                $("td:eq(6)", row).html(currencySign + data.total);
+                $("td:eq(6)", row).html(currencySign + Number(data.total).toFixed(2));
 
-                $("td:eq(7)", row).html(currencySign + data.amount_due);
+                $("td:eq(7)", row).html(currencySign + Number(data.amount_due).toFixed(2));
 
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
                 $("td:eq(8)", row).html(notes);

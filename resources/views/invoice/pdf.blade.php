@@ -21,7 +21,7 @@
     }
 
     .currency_sign {
-        font-family: DejaVu Sans, sans-serif;
+        font-family: 'DejaVu Sans', sans-serif;
     }
 
     .company_details {
@@ -46,9 +46,9 @@
     .width-230 {
         width: 230px;
     }
-
-    .width-180 {
-        width: 180px;
+    
+    .width-280 {
+        width: 280px;
     }
 
     .width-450 {
@@ -68,12 +68,7 @@
     }
 </style>
 
-<body>
-
-    @php
-        $currency_class = ($invoice->currency === 'INR') ? 'currency_sign' : ''
-    @endphp
-    
+<body>    
 
     <div class="container-fluid">
 
@@ -190,8 +185,8 @@
                     <td>{{ $line["item"] }}</td>
                     <td class="text-right text-nowrap">{{ $gstConfigs['SAC_code'] }}</td>
                     <td class="text-right text-nowrap">{{ number_format($line["quantity"],2) }}</td>
-                    <td class="text-right text-nowrap {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{ $line["hourly_rate"] }}</td>
-                    <td class="text-right text-nowrap pr-5 {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{ number_format($line["amount"],2) }}</td>
+                    <td class="text-right text-nowrap currency_sign">{{$currencyConfigs[$invoice->currency]}}{{ $line["hourly_rate"] }}</td>
+                    <td class="text-right text-nowrap pr-5 currency_sign">{{$currencyConfigs[$invoice->currency]}}{{ number_format($line["amount"],2) }}</td>
                 </tr>
                 @endforeach
 
@@ -225,54 +220,52 @@
                                 </tr>
                             </tbody>
                         </table>
-
-                    </td>
-                    <td class="width-180">
-                        <table class="table table-borderless float-right table-td-p-0">
-                            <tbody>
-                                <tr>
-                                    <td class="{{$currency_class}}">Subtotal</td>
-                                    <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->sub_total,2)}}</td>
-
-                                </tr>
-                                @if($invoice->gst_option === 'same_state')
-                                    <tr>
-                                        <td class="{{$currency_class}}">SGST @ {{$gstConfigs['SGST']}}%</td>
-                                        <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['SGST']*$invoice->sub_total)/100,2)}}</td>
-
-                                    </tr>
-                                    <tr>
-                                        <td class="{{$currency_class}}">CGST @ {{$gstConfigs['CGST']}}%</td>
-                                        <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['CGST']*$invoice->sub_total)/100,2)}}</td>
-
-                                    </tr>
-                                @elseif($invoice->gst_option === 'other_state')
-                                    <tr>
-                                        <td class="{{$currency_class}}">IGST @ {{$gstConfigs['IGST']}}%</td>
-                                        <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['IGST']*$invoice->sub_total)/100,2)}}</td>
-
-                                    </tr>
-                                @endif
-                                <tr>
-                                    <td class="text-success align-middle {{$currency_class}}"><strong>Total </strong></td>
-                                    <td class="text-right {{$currency_class}}"><strong>{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->total,2)}}</strong></td>
-
-                                </tr>
-                                <tr>
-                                    <td class="{{$currency_class}}">Paid</td>
-                                    <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->amount_paid,2)}}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-success align-middle {{$currency_class}}"><strong>Amount Due</strong></td>
-                                    <td class="text-right {{$currency_class}}"><strong>{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->amount_due,2)}}</strong></td>
-                                </tr>
-
-                            </tbody>
-                        </table>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <table class="table table-borderless float-right table-td-p-0 width-280">
+            <tbody>
+                <tr>
+                    <td class="currency_sign">Subtotal</td>
+                    <td class="text-right currency_sign">{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->sub_total,2)}}</td>
+
+                </tr>
+                @if($invoice->gst_option === 'same_state')
+                    <tr>
+                        <td class="currency_sign">SGST @ {{$gstConfigs['SGST']}}%</td>
+                        <td class="text-right currency_sign">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['SGST']*$invoice->sub_total)/100,2)}}</td>
+
+                    </tr>
+                    <tr>
+                        <td class="currency_sign">CGST @ {{$gstConfigs['CGST']}}%</td>
+                        <td class="text-right currency_sign">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['CGST']*$invoice->sub_total)/100,2)}}</td>
+
+                    </tr>
+                @elseif($invoice->gst_option === 'other_state')
+                    <tr>
+                        <td class="currency_sign">IGST @ {{$gstConfigs['IGST']}}%</td>
+                        <td class="text-right currency_sign">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['IGST']*$invoice->sub_total)/100,2)}}</td>
+
+                    </tr>
+                @endif
+                <tr>
+                    <td class="text-success align-middle currency_sign"><strong>Total </strong></td>
+                    <td class="text-right currency_sign"><strong>{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->total,2)}}</strong></td>
+
+                </tr>
+                <tr>
+                    <td class="currency_sign">Paid</td>
+                    <td class="text-right currency_sign">{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->amount_paid,2)}}</td>
+                </tr>
+                <tr>
+                    <td class="text-success align-middle currency_sign"><strong>Amount Due</strong></td>
+                    <td class="text-right currency_sign"><strong>{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->amount_due,2)}}</strong></td>
+                </tr>
+
+            </tbody>
+        </table>
+        
         <hr style="margin-top:150px" />
 
         @if($invoice->notes)
