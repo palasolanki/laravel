@@ -8,7 +8,7 @@ import InvoiceMessageModal from "./InvoiceMessageModal";
 import ConfirmationComponent from "../ConfirmationComponent";
 import EditAdminNotes from "./EditAdminNotes";
 import moment from "moment";
-import { downloadFile } from "../../helpers";
+import { downloadFile, formatCurrency } from "../../helpers";
 import config from "../../helpers/config";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
@@ -130,9 +130,10 @@ function Invoices(props) {
                     markPaid = `<button id = ${data._id} title="Mark as Paid" class="btn btn-sm btn-success ml-1 markPaid"><i class="fa fa-square-check"></i></button>`
                 }
                 let currencySign = config.currencies.find(currency => currency.code === data.currency).sign || "$";
-                $("td:eq(6)", row).html(currencySign + Number(data.total).toFixed(2));
+               
+                $("td:eq(6)", row).html(currencySign + formatCurrency(data.total));
 
-                $("td:eq(7)", row).html(currencySign + Number(data.amount_due).toFixed(2));
+                $("td:eq(7)", row).html(currencySign + formatCurrency(data.amount_due));
 
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
                 $("td:eq(8)", row).html(notes);
