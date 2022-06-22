@@ -47,8 +47,8 @@
         width: 230px;
     }
     
-    .width-280 {
-        width: 280px;
+    .width-270 {
+        width: 270px;
     }
 
     .width-450 {
@@ -73,7 +73,6 @@
     }
 
     .total-table{
-        line-height: 1.3;
         margin-right: 10px;
     }
 
@@ -197,16 +196,16 @@
             <tbody>
                 @foreach($invoice->lines as $line)
                 <tr>
-                    <td>{{ $line["item"] }}</td>
-                    <td class="text-right text-nowrap">{{ $gstConfigs['SAC_code'] }}</td>
-                    <td class="text-right text-nowrap">{{ number_format($line["quantity"],2) }}</td>
+                    <td class="{{$currency_class}}">{{ $line["item"] }}</td>
+                    <td class="text-right text-nowrap {{$currency_class}}">{{ $gstConfigs['SAC_code'] }}</td>
+                    <td class="text-right text-nowrap {{$currency_class}}">{{ number_format($line["quantity"],2) }}</td>
                     <td class="text-right text-nowrap {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{ $line["hourly_rate"] }}</td>
                     <td class="text-right text-nowrap pr-5 {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{ number_format($line["amount"],2) }}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-        <table class="table table-borderless float-right table-td-p-0 width-280 total-table">
+        <table class="table table-borderless float-right table-td-p-0 width-270 total-table">
             <tbody>
                 <tr>
                     <td class="{{$currency_class}}">Subtotal</td>
