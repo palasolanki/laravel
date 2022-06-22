@@ -61,21 +61,36 @@
 
     hr {
         opacity: 0.5;
+        margin: 8px 0px;
     }
 
     .font-16 {
         font-size: 16px;
     }
+
+    .table-list th, .table-list td{
+        padding: 7px 12px;
+    }
+
+    .total-table{
+        line-height: 1.3;
+        margin-right: 10px;
+    }
+
 </style>
 
-<body>    
+<body>
+
+    @php
+        $currency_class = ($invoice->currency === 'INR') ? 'currency_sign' : '';
+    @endphp
 
     <div class="container-fluid">
 
         <table class="table table-borderless">
             <tbody class="mx-5">
                 <tr>
-                    <td>
+                    <td class="pb-0">
                         <table class="table table-borderless mb-0">
                             <tbody>
                                 <tr>
@@ -127,7 +142,7 @@
         <div class="banner mx-2 ">
         </div>
 
-        <table class="table table-borderless">
+        <table class="table table-borderless m-0">
             <tbody class="mx-5">
                 <tr>
                     <td class="py-0 pt-2">
@@ -169,7 +184,7 @@
             </tbody>
         </table>
 
-        <table class="table">
+        <table class="table table-list">
             <thead>
                 <tr>
                     <th scope="col">Item</th>
@@ -185,88 +200,55 @@
                     <td>{{ $line["item"] }}</td>
                     <td class="text-right text-nowrap">{{ $gstConfigs['SAC_code'] }}</td>
                     <td class="text-right text-nowrap">{{ number_format($line["quantity"],2) }}</td>
-                    <td class="text-right text-nowrap currency_sign">{{$currencyConfigs[$invoice->currency]}}{{ $line["hourly_rate"] }}</td>
-                    <td class="text-right text-nowrap pr-5 currency_sign">{{$currencyConfigs[$invoice->currency]}}{{ number_format($line["amount"],2) }}</td>
+                    <td class="text-right text-nowrap {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{ $line["hourly_rate"] }}</td>
+                    <td class="text-right text-nowrap pr-5 {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{ number_format($line["amount"],2) }}</td>
                 </tr>
                 @endforeach
-
-
             </tbody>
         </table>
-
-        <table class="table table-borderless">
-            <tbody class="mx-5">
-                <tr>
-                    <td>
-                        <table class="table table-borderless table-td-p-0">
-                            <tbody>
-                                <tr>
-                                    <td class="width-100 "></td>
-                                    <td></td>
-
-                                </tr>
-                                <tr>
-                                    <td class="width-100"></td>
-                                    <td></td>
-
-                                </tr>
-                                <tr>
-                                    <td class="width-100"></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="width-100"></td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="table table-borderless float-right table-td-p-0 width-280">
+        <table class="table table-borderless float-right table-td-p-0 width-280 total-table">
             <tbody>
                 <tr>
-                    <td class="currency_sign">Subtotal</td>
-                    <td class="text-right currency_sign">{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->sub_total,2)}}</td>
+                    <td class="{{$currency_class}}">Subtotal</td>
+                    <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->sub_total,2)}}</td>
 
                 </tr>
                 @if($invoice->gst_option === 'same_state')
                     <tr>
-                        <td class="currency_sign">SGST @ {{$gstConfigs['SGST']}}%</td>
-                        <td class="text-right currency_sign">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['SGST']*$invoice->sub_total)/100,2)}}</td>
+                        <td class="{{$currency_class}}">SGST @ {{$gstConfigs['SGST']}}%</td>
+                        <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['SGST']*$invoice->sub_total)/100,2)}}</td>
 
                     </tr>
                     <tr>
-                        <td class="currency_sign">CGST @ {{$gstConfigs['CGST']}}%</td>
-                        <td class="text-right currency_sign">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['CGST']*$invoice->sub_total)/100,2)}}</td>
+                        <td class="{{$currency_class}}">CGST @ {{$gstConfigs['CGST']}}%</td>
+                        <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['CGST']*$invoice->sub_total)/100,2)}}</td>
 
                     </tr>
                 @elseif($invoice->gst_option === 'other_state')
                     <tr>
-                        <td class="currency_sign">IGST @ {{$gstConfigs['IGST']}}%</td>
-                        <td class="text-right currency_sign">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['IGST']*$invoice->sub_total)/100,2)}}</td>
+                        <td class="{{$currency_class}}">IGST @ {{$gstConfigs['IGST']}}%</td>
+                        <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format(($gstConfigs['IGST']*$invoice->sub_total)/100,2)}}</td>
 
                     </tr>
                 @endif
                 <tr>
-                    <td class="text-success align-middle currency_sign"><strong>Total </strong></td>
-                    <td class="text-right currency_sign"><strong>{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->total,2)}}</strong></td>
+                    <td class="text-success align-middle {{$currency_class}}"><strong>Total </strong></td>
+                    <td class="text-right {{$currency_class}}"><strong>{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->total,2)}}</strong></td>
 
                 </tr>
                 <tr>
-                    <td class="currency_sign">Paid</td>
-                    <td class="text-right currency_sign">{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->amount_paid,2)}}</td>
+                    <td class="{{$currency_class}}">Paid</td>
+                    <td class="text-right {{$currency_class}}">{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->amount_paid,2)}}</td>
                 </tr>
                 <tr>
-                    <td class="text-success align-middle currency_sign"><strong>Amount Due</strong></td>
-                    <td class="text-right currency_sign"><strong>{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->amount_due,2)}}</strong></td>
+                    <td class="text-success align-middle {{$currency_class}}"><strong>Amount Due</strong></td>
+                    <td class="text-right {{$currency_class}}"><strong>{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->amount_due,2)}}</strong></td>
                 </tr>
 
             </tbody>
         </table>
         
-        <hr style="margin-top:150px" />
+        <hr style="margin-top:160px" />
 
         @if($invoice->notes)
         <table class="table table-borderless table-td-p-0 ml-2">
