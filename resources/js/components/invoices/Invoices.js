@@ -6,8 +6,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import InvoiceMessageModal from "./InvoiceMessageModal";
 import ConfirmationComponent from "../ConfirmationComponent";
-import EditNotes from "./EditNotes";
+import EditAdminNotes from "./EditAdminNotes";
 import moment from "moment";
+import { downloadFile, formatCurrency } from "../../helpers";
+import config from "../../helpers/config";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
@@ -18,10 +20,10 @@ function Invoices(props) {
     const [showDeleteModal, setDeleteShow] = useState(false);
     const [clientName, setClientName] = useState("");
     const [deleteInvoiceId, setDeleteInvoiceId] = useState();
-    const [editNotesModal, setEditNotesModal] = useState(false);
+    const [editAdminNotesModal, setEditAdminNotesModal] = useState(false);
     const [invoiceId, setInvoiceDataId] = useState();
     const [isLoading, setIsLoading] = useState(false);
-    const [currentNotes, setCurrentNotes] = useState({});
+    const [adminNotes, setAdminNotes] = useState({});
     const [showMarkAsPaidModal, setMarkAsPaid] = useState(false);
     const [markAsPaidInvoiceId, setMarkAsPaidInvoiceId] = useState();
 
@@ -35,7 +37,7 @@ function Invoices(props) {
         }
     }, [dataTable]);
 
-    const handleCloseEditNotesModal = () => setEditNotesModal(false);
+    const closeEditAdminNotesModal = () => setEditAdminNotesModal(false);
     const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
     const openShowMarkAsPaid = () => setMarkAsPaid(true);
@@ -49,8 +51,9 @@ function Invoices(props) {
         var table = $("#datatable").DataTable({
             serverSide: true,
             processing: true,
+            scrollX:true,
             bSort: true,
-            aaSorting: [[ 9, "desc" ]],
+            aaSorting: [[ 0, "asc" ]],
             oLanguage: {
                 sSearch: "_INPUT_",
                 sSearchPlaceholder: "Search"
@@ -80,10 +83,16 @@ function Invoices(props) {
                     data: "last_sent_at",
                     defaultContent: "N/A"
                 },
+                {
+                    title: "Currency",
+                    data: "currency",
+                    defaultContent: "N/A"
+
+                },
                 { title: 'Amount', data: "total"},
                 { title: "Amount Due", data: "amount_due" },
                 {
-                    title: "Notes",
+                    title: "Admin Notes",
                     data: "null",
                     defaultContent: "N/A"
                 },
@@ -101,11 +110,11 @@ function Invoices(props) {
             columnDefs: [
                 {
                     searchable: false,
-                    targets: [1, 4]
+                    targets: [1, 4, 8, 9]
                 },
                 {
                     orderable: false,
-                    targets: [1, 4]
+                    targets: [1, 4, 8, 9]
                 }
             ],
             rowCallback: function(row, data, index) {
@@ -118,32 +127,23 @@ function Invoices(props) {
                 if(data.status == 'open')
                 {
                     $("td:eq(3)", row).addClass('text-danger');
-                    markPaid = `<button id = ${data._id} class="btn btn-sm ml-2 btn-success markPaid">Mark Paid</button>`
+                    markPaid = `<button id = ${data._id} title="Mark as Paid" class="btn btn-sm btn-success ml-1 markPaid"><i class="fa fa-square-check"></i></button>`
                 }
+                let currencySign = config.currencies.find(currency => currency.code === data.currency).sign || "$";
+               
+                $("td:eq(6)", row).html(currencySign + formatCurrency(data.total));
 
-                let currencySigns = {
-                    'USD': '$',
-                    'EUR': '€',
-                    'INR': '₹'
-                }
-                $("td:eq(5)", row).html((currencySigns[data.currency] || data.currency) + data.total);
-
-                $("td:eq(6)", row).html((currencySigns[data.currency] || data.currency) + data.amount_due);
+                $("td:eq(7)", row).html(currencySign + formatCurrency(data.amount_due));
 
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
-                $("td:eq(7)", row).html(notes);
+                $("td:eq(8)", row).html(notes);
 
-                let action = `<button id=${
-                    data._id
-                } class="btn btn-sm btn--prime mr-2 editData" >Edit</button>
-                <button id=${
-                    data._id
-                } class="btn btn-sm btn--cancel deleteData" >Delete</button>
-                <button id=${data._id} client-id=${
-                    data.client_id
-                } class="btn btn-sm ml-2 btn-dark sendData">Send Invoice</button>`;
+                let action = `<button id=${data._id} title="Edit Invoice" class="btn btn-sm btn--prime editData"><i class="fa fa-pencil"></i></button>
+                <button id=${data._id} title="Delete Invoice" class="btn btn-sm btn--cancel deleteData" ><i class="fa fa-trash"></i></button>
+                <button id=${data._id} client-id=${data.client_id} title="Send Mail" class="btn btn-sm btn-info sendData"><i class="fa fa-envelope"></i></button>
+                <button id=${data._id} title="Download Invoice" class="btn btn-sm btn-dark downloadInvoice"><i class="fa fa-download"></i></button>`;
                 
-                $("td:eq(8)", row).html(action + markPaid);
+                $("td:eq(9)", row).html(action + markPaid);
 
             }
         });
@@ -153,33 +153,38 @@ function Invoices(props) {
 
 
     const registerEvent = () => {
-        $("#datatable").on("click", "tbody .deleteData", function(e) {
-            setDeleteInvoiceIdFunction($(e.target).attr("id"));
+        $("#datatable").on("click", "tbody .deleteData", function() {
+            setDeleteInvoiceIdFunction($(this).attr("id"));
         });
 
-        $("#datatable").on("click", "tbody .editData", function(e) {
-            history.push(`invoices/edit/${$(e.target).attr("id")}`);
+        $("#datatable").on("click", "tbody .editData", function() {
+            history.push(`invoices/edit/${$(this).attr("id")}`);
         });
 
-        $("#datatable").on("click", "tbody .sendData", function(e) {
-            let invoiceId = $(e.target).attr("id");
-            let clientId = $(e.target).attr("client-id");
+        $("#datatable").on("click", "tbody .sendData", function() {
+            let invoiceId = $(this).attr("id");
+            let clientId = $(this).attr("client-id");
             setSendInvoiceId(invoiceId);
             getClientName(clientId);
         });
 
-        $("#datatable").on("click", "tbody .notes", function(e){
-            let invoiceId = $(e.target).attr("id");
+        $("#datatable").on("click", "tbody .notes", function(){
+            let invoiceId = $(this).attr("id");
             let invoices = dataTable.rows().data().toArray();
             let currentInvoice = invoices.find(invoice => invoice._id === invoiceId);
-            setCurrentNotes({id: currentInvoice._id, notes: currentInvoice.notes})
-            setEditNotesModal(true)
+            setAdminNotes({id: currentInvoice._id, admin_notes: currentInvoice.admin_notes})
+            setEditAdminNotesModal(true)
             
         })
 
-        $("#datatable").on("click", "tbody .markPaid", function(e) {
-            setMarkAsPaidInvoiceId($(e.target).attr("id"));
+        $("#datatable").on("click", "tbody .markPaid", function() {
+            setMarkAsPaidInvoiceId($(this).attr("id"));
             openShowMarkAsPaid();
+        });
+
+        $("#datatable").on("click", "tbody .downloadInvoice", function() {
+            $(this).attr("disabled", 'disabled');
+            downloadInvoice($(this).attr("id"));
         });
     };
 
@@ -231,16 +236,30 @@ function Invoices(props) {
         });
     }
 
-    const updateNotes = (updatedNotes) => {
-        api.post(`/invoices/${updatedNotes.id}/notes`, { note: updatedNotes.notes })
+    const downloadInvoice = invoiceId => {
+        api.post(`/invoices/${invoiceId}/download`, {}, { responseType: "blob" })
+        .then(res => {
+            downloadFile(res);
+            $('.downloadInvoice').removeAttr('disabled');
+            ToastsStore.success("Invoice downloaded successfully.");
+        })
+        .catch(err=>{
+            $('.downloadInvoice').removeAttr('disabled');
+            ToastsStore.error("Something went wrong! Please Download again.");
+            console.log(err);
+        });
+    }
+
+    const updateAdminNotes = (updatedAdminNotes) => {
+        api.post(`/invoices/${updatedAdminNotes.id}/admin-notes`, { admin_note: updatedAdminNotes.admin_notes })
             .then(res => {
                 dataTable.ajax.reload();
                 ToastsStore.success(res.data.message);
-                handleCloseEditNotesModal();
+                closeEditAdminNotesModal();
             })
             .catch(err => {
-                ToastsStore.success('Unable to update Note!');
-                handleCloseEditNotesModal();
+                ToastsStore.success('Unable to update Admin Note!');
+                closeEditAdminNotesModal();
             });
     }
 
@@ -292,11 +311,11 @@ function Invoices(props) {
                 />
             )}
 
-            {editNotesModal && (
-                <EditNotes
-                handleCloseEditNotesModal={handleCloseEditNotesModal}
-                updateNotes={updateNotes}
-                currentNotes = {currentNotes}
+            {editAdminNotesModal && (
+                <EditAdminNotes
+                closeEditAdminNotesModal={closeEditAdminNotesModal}
+                updateAdminNotes={updateAdminNotes}
+                AdminNotes = {adminNotes}
                 />
             )}
         </div>

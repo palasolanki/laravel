@@ -69,3 +69,29 @@ export function handleFilterOnDateChange(
         ]);
     }
 }
+
+export function downloadFile (res) {
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    const contentDisposition = res.headers["content-disposition"];
+    let fileName = "invoice.pdf";
+    if (contentDisposition) {
+        const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (fileNameMatch.length === 2) {
+            fileName = fileNameMatch[1];
+        }
+    }
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+};
+
+export const formatCurrency = (value) => {
+    return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(value);
+}

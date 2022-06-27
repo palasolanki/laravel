@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../../helpers/api";
 import { ToastsStore } from "react-toasts";
 import { errorResponse } from "../../helpers";
+import config from "../../helpers/config";
 
 const AddClient = props => {
     const initialFormState = {
@@ -10,6 +11,8 @@ const AddClient = props => {
         email: "",
         company_name: "",
         hourly_rate: "",
+        currency: "",
+        invoice_item_title: "",
         country_id: "",
         payment_medium_id: "",
         company_logo: "",
@@ -171,6 +174,36 @@ const AddClient = props => {
                                 value={client.hourly_rate}
                                 onChange={handleInputChange}
                             />
+                        </div>
+                    </div>
+
+                    <div className="form-group">
+                        <label
+                            className="control-label col-auto px-0"
+                            htmlFor="country_id"
+                        >
+                            Currency:
+                        </label>
+                        <div className="col-sm-10 pl-0">
+                            <select
+                                className="form-control"
+                                name="currency"
+                                value={client.currency}
+                                onChange={handleInputChange}
+                            >
+                                <option value="">Select Currency</option>
+                                {config.currencies.map((value, key) => {
+                                    return (
+                                        <option
+                                            value={value.code}
+                                            key={key}
+                                        >
+                                            {value.code}
+                                        </option>
+                                    );
+                                })}
+                                
+                            </select>
                         </div>
                     </div>
 

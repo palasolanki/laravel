@@ -29,7 +29,7 @@ class InvoiceController extends Controller
     {
         $inputs   = $request->validated();
         $invoice  =  Invoice::create($inputs);
-        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $invoice, 'configs' => $this->prepareConfigs()])->setPaper('a4', 'portrait');
+        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $invoice, 'gstConfigs' => config('expense_tracker.gst'), 'currencyConfigs' => config('expense_tracker.currencies')])->setPaper('a4', 'portrait');
         $fileName = 'invoice_' . $invoice->number . '.pdf';
 
         return $pdf->stream($fileName);
@@ -76,7 +76,7 @@ class InvoiceController extends Controller
             ]);
 
         $invoice           = Invoice::where('_id', $request->_id)->first();
-        $pdf               = PDF::loadView('invoice.pdf', ['invoice' => $invoice, 'configs' => $this->prepareConfigs()])->setPaper('a4', 'portrait');
+        $pdf               = PDF::loadView('invoice.pdf', ['invoice' => $invoice, 'gstConfigs' => config('expense_tracker.gst'), 'currencyConfigs' => config('expense_tracker.currencies')])->setPaper('a4', 'portrait');
         $fileName          = 'invoice_' . $invoice->number . '.pdf';
 
         return $pdf->stream($fileName);
@@ -84,7 +84,7 @@ class InvoiceController extends Controller
 
     public function sendInvoice(Invoice $invoice, Request $request)
     {
-        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $invoice])->setPaper('a4', 'portrait');
+        $pdf      = PDF::loadView('invoice.pdf', ['invoice' => $invoice, 'gstConfigs' => config('expense_tracker.gst'), 'currencyConfigs' => config('expense_tracker.currencies')])->setPaper('a4', 'portrait');
         $fileName = 'public/invoice/invoice_' . $invoice->number . '.pdf';
         Storage::put($fileName, $pdf->output());
 
@@ -97,12 +97,12 @@ class InvoiceController extends Controller
         return;
     }
 
-    public function updateNotes(Invoice $invoice, Request $request)
+    public function updateAdminNotes(Invoice $invoice, Request $request)
     {
-        $invoice->notes = $request->note;
+        $invoice->admin_notes = $request->admin_note;
         $invoice->save();
         
-        return response()->json(['message' => 'Note Updated Successfully']);
+        return response()->json(['message' => 'Admin Note Updated Successfully']);
         
     }
 
@@ -115,19 +115,16 @@ class InvoiceController extends Controller
         return response()->json(['message' => 'Status Marked As Paid Successfully']);
     }
 
-    public function getConfig()
+    public function downloadInvoice(Invoice $invoice)
     {
-        return response()->json(['configs' => $this->prepareConfigs()]);
+        $pdf = PDF::loadView('invoice.pdf', ['invoice' => $invoice, 'gstConfigs' => config('expense_tracker.gst'), 'currencyConfigs' => config('expense_tracker.currencies')])->setPaper('a4', 'portrait');
+        $fileName = 'invoice_' . $invoice->number . '.pdf';
+        return $pdf->stream($fileName);
     }
 
-    public function prepareConfigs()
+    public function getGstConfig()
     {
-        $configs = [
-            'SAC_code' => config('expense_tracker.SAC_code'),
-            'IGST' => config('expense_tracker.IGST'),
-            'SGST' => config('expense_tracker.SGST'),
-            'CGST' => config('expense_tracker.CGST'),
-        ];
-        return $configs;
+        return response()->json(['gstConfigs' => config('expense_tracker.gst')]);
     }
+
 }

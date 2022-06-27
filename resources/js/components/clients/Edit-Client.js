@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../../helpers/api";
 import { ToastsStore } from "react-toasts";
 import { errorResponse } from "../../helpers";
+import config from "../../helpers/config";
 
 const EditClient = props => {
     const initialFormState = {
@@ -10,6 +11,8 @@ const EditClient = props => {
         email: "",
         company_name: "",
         hourly_rate: "",
+        currency: "",
+        invoice_item_title:"",
         country_id: "",
         payment_medium_id: "",
         company_logo: "",
@@ -50,13 +53,14 @@ const EditClient = props => {
                     setClient({
                         name: data.name,
                         email: data.email,
-                        company_name: data.company_name,
+                        company_name: data.company_name || "",
                         hourly_rate: data.hourly_rate,
+                        currency: data.currency,
                         country_id: data.country_id,
                         payment_medium_id: data.payment_medium_id,
-                        address: data.address,
+                        address: data.address || "",
                         company_logo: data.company_logo,
-                        invoice_item_title: data.invoice_item_title,
+                        invoice_item_title: data.invoice_item_title || "",
                     });
                     data.company_logo === null
                         ? ""
@@ -186,6 +190,32 @@ const EditClient = props => {
                                 value={client.hourly_rate}
                                 onChange={handleInputChange}
                             />
+                        </div>
+                    </div>
+
+                    <div className="form-group">
+                        <label className="control-label" htmlFor="currency">
+                            Currency:
+                        </label>
+                        <div className="col-sm-10 pl-0">
+                            <select
+                                className="form-control"
+                                name="currency"
+                                value={client.currency || ""}
+                                onChange={handleInputChange}
+                            >
+                                <option value="">Select Currency</option>
+                                {config.currencies.map((value,key) => {
+                                    return (
+                                        <option
+                                            value={value.code}
+                                            key={key}
+                                        >
+                                            {value.code}
+                                        </option>
+                                    );
+                                })}
+                            </select>
                         </div>
                     </div>
 
