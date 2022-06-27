@@ -750,7 +750,7 @@ const AddInvoices = props => {
                                                 <span data-prefix>
                                                     {currencySign}
                                                 </span>
-                                                <span>{Number(total).toFixed(2)}</span>
+                                                <span>{Math.floor(total)}</span>
                                             </td>
                                         </tr>
                                         <tr>
