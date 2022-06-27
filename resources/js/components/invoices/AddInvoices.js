@@ -127,7 +127,7 @@ const AddInvoices = props => {
         setInvoice({
             ...invoice,
             amount_paid: value,
-            amount_due: Number(total).toFixed(2) - value
+            amount_due: total - value
         });
     };
 
@@ -228,7 +228,7 @@ const AddInvoices = props => {
                 break;
             }
         }
-        let total = subTotal * tax;
+        let total = Math.floor(subTotal * tax);
         setTotal(total);
         setInvoice({ ...invoice, amount_due: total-invoice.amount_paid });
 
@@ -750,7 +750,7 @@ const AddInvoices = props => {
                                                 <span data-prefix>
                                                     {currencySign}
                                                 </span>
-                                                <span>{Math.floor(total)}</span>
+                                                <span>{total}</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -794,7 +794,7 @@ const AddInvoices = props => {
                                                     {currencySign}
                                                 </span>
                                                 <span id="amount_due">
-                                                    {Number(invoice.amount_due).toFixed(2)}
+                                                    {invoice.amount_due}
                                                 </span>
                                             </td>
                                         </tr>
