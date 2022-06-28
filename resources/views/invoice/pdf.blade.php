@@ -231,7 +231,7 @@
                     </tr>
                 @endif
                 <tr>
-                    <td class="text-success align-middle {{$currency_class}}"><strong>Total </strong></td>
+                    <td class="text-success align-middle {{$currency_class}}"><strong>Total (Rounded) </strong></td>
                     <td class="text-right {{$currency_class}}"><strong>{{$currencyConfigs[$invoice->currency]}}{{number_format($invoice->total,2)}}</strong></td>
 
                 </tr>
