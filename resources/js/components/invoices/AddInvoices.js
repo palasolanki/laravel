@@ -51,14 +51,13 @@ const AddInvoices = props => {
     // initial effects
     useEffect(() => {
         calculateLineTotal();
-        const fetchGstConfigs = async () => {
-            await api.get("/gst-configs")
+        
+        api.get("/gst-configs")
             .then(res => {
                 setGstConfigs(res.data.gstConfigs);
             })
             .catch(res => {});
-        }
-        fetchGstConfigs();
+            
         
         api.get("/getClients")
             .then(res => {
@@ -750,7 +749,7 @@ const AddInvoices = props => {
                                                 <span data-prefix>
                                                     {currencySign}
                                                 </span>
-                                                <span>{total}</span>
+                                                <span>{total || 0}</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -794,7 +793,7 @@ const AddInvoices = props => {
                                                     {currencySign}
                                                 </span>
                                                 <span id="amount_due">
-                                                    {invoice.amount_due}
+                                                    {invoice.amount_due || 0}
                                                 </span>
                                             </td>
                                         </tr>
