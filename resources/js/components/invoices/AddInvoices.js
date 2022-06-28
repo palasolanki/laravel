@@ -743,7 +743,7 @@ const AddInvoices = props => {
                                                         true
                                                     }
                                                 >
-                                                    Total
+                                                    Total (Rounded)
                                                 </span>
                                             </th>
                                             <td>
