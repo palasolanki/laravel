@@ -37,11 +37,11 @@ const AddInvoices = props => {
     const [total, setTotal] = useState(0);
     const [checkLineTotal, setCheckLineTotal] = useState(false);
     const [clients, setClients] = useState([]);
-    const [disabled, setDisabled] = useState(false);
     const [shouldChangeStatus, setShouldChangeStatus] = useState(false);
     const [gstConfigs, setGstConfigs] = useState({});
     const [subTotal, setSubTotal] = useState(0);
     const [isGstSelected, setIsGstSelected] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [taxes, setTaxes] = useState({
         IGST:0,
         SGST:0,
@@ -51,14 +51,13 @@ const AddInvoices = props => {
     // initial effects
     useEffect(() => {
         calculateLineTotal();
-        const fetchGstConfigs = async () => {
-            await api.get("/gst-configs")
+        
+        api.get("/gst-configs")
             .then(res => {
                 setGstConfigs(res.data.gstConfigs);
             })
             .catch(res => {});
-        }
-        fetchGstConfigs();
+            
         
         api.get("/getClients")
             .then(res => {
@@ -295,17 +294,17 @@ const AddInvoices = props => {
 
     //Form submit events
     const saveInvoice = event => {
-        setDisabled(true);
+        setIsLoading(true);
 
         if(isNaN(invoice.amount_paid))
         {
-            setDisabled(false);
+            setIsLoading(false);
             ToastsStore.error("Amount Paid is not a number");
             return;
         }
         
         if (!invoice.lines.length || !total) {
-            setDisabled(false);
+            setIsLoading(false);
             ToastsStore.error("Invalid Invoice Item or total");
             return;
         }
@@ -315,7 +314,7 @@ const AddInvoices = props => {
             { responseType: "blob" }
         )
             .then(res => {
-                setDisabled(false);
+                setIsLoading(false);
                 ToastsStore.success("Invoice saved successfully.");
                 downloadFile(res);
                 props.history.push("/invoices");
@@ -324,24 +323,24 @@ const AddInvoices = props => {
                 ToastsStore.error(
                     "Oops something's missing! Re-generate invoice."
                 );
-                setDisabled(false);
+                setIsLoading(false);
                 console.log(err);
             });
     };
 
     const editInvoice = (isDownload = true) => {
 
-        setDisabled(true);
+        setIsLoading(true);
 
         if(isNaN(invoice.amount_paid))
         {
-            setDisabled(false);
+            setIsLoading(false);
             ToastsStore.error("Amount Paid is not a number");
             return;
         }
 
         if (!invoice.lines.length || !total) {
-            setDisabled(false)
+            setIsLoading(false)
             ToastsStore.error("Invalid Invoice Item or Total");
             return;
         }
@@ -353,7 +352,7 @@ const AddInvoices = props => {
             }
         )
             .then(res => {
-                setDisabled(false);
+                setIsLoading(false);
                 if(isDownload)
                 {
                     downloadFile(res);
@@ -361,7 +360,7 @@ const AddInvoices = props => {
                 ToastsStore.success("Invoice updated successfully.");
             })
             .catch(function(err) {
-                setDisabled(false);
+                setIsLoading(false);
                 ToastsStore.error(
                     "Something went wrong! Please generate invoice again."
                 );
@@ -750,7 +749,7 @@ const AddInvoices = props => {
                                                 <span data-prefix>
                                                     {currencySign}
                                                 </span>
-                                                <span>{total}</span>
+                                                <span>{total || 0}</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -794,7 +793,7 @@ const AddInvoices = props => {
                                                     {currencySign}
                                                 </span>
                                                 <span id="amount_due">
-                                                    {invoice.amount_due}
+                                                    {invoice.amount_due || 0}
                                                 </span>
                                             </td>
                                         </tr>
@@ -827,8 +826,11 @@ const AddInvoices = props => {
                                     id="edit_save_button"
                                     onClick={() => editInvoice(false)}
                                     className="btn btn--prime mr-1"
-                                    disabled={disabled}
+                                    disabled={isLoading}
                                 >
+                                    {isLoading && (
+                                        <i class="fa fa-spinner fa-spin mr-3"></i>
+                                    )}
                                     Update
                                 </button>
                             )
@@ -838,8 +840,11 @@ const AddInvoices = props => {
                             id="edit_save_button"
                             onClick={invoiceId ? editInvoice : saveInvoice}
                             className="btn btn--prime mr-1"
-                            disabled={disabled}
+                            disabled={isLoading}
                         >
+                            {isLoading && (
+                                <i class="fa fa-spinner fa-spin mr-3"></i>
+                            )}
                             {invoiceId
                                 ? "Update & Download"
                                 : "Save & Download"}

@@ -184,6 +184,8 @@ function Invoices(props) {
 
         $("#datatable").on("click", "tbody .downloadInvoice", function() {
             $(this).attr("disabled", 'disabled');
+            $(this).find('i').removeClass('fa-download').addClass('fa-spinner fa-spin');
+            
             downloadInvoice($(this).attr("id"));
         });
     };
@@ -241,10 +243,12 @@ function Invoices(props) {
         .then(res => {
             downloadFile(res);
             $('.downloadInvoice').removeAttr('disabled');
+            $('.downloadInvoice').find('i').addClass('fa-download').removeClass('fa-spinner fa-spin');
             ToastsStore.success("Invoice downloaded successfully.");
         })
         .catch(err=>{
             $('.downloadInvoice').removeAttr('disabled');
+            $('.downloadInvoice').find('i').addClass('fa-download').removeClass('fa-spinner fa-spin');
             ToastsStore.error("Something went wrong! Please Download again.");
             console.log(err);
         });
