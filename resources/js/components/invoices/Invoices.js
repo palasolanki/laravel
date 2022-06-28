@@ -53,7 +53,7 @@ function Invoices(props) {
             processing: true,
             scrollX:true,
             bSort: true,
-            aaSorting: [[ 0, "asc" ]],
+            aaSorting: [[ 2, "desc" ]],
             oLanguage: {
                 sSearch: "_INPUT_",
                 sSearchPlaceholder: "Search"
