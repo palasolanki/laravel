@@ -38,7 +38,7 @@ const AddInvoices = props => {
     const [checkLineTotal, setCheckLineTotal] = useState(false);
     const [clients, setClients] = useState([]);
     const [shouldChangeStatus, setShouldChangeStatus] = useState(false);
-    const [gstConfigs, setGstConfigs] = useState({});
+    const [gstConfigs, setGstConfigs] = useState(null);
     const [subTotal, setSubTotal] = useState(0);
     const [isGstSelected, setIsGstSelected] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -51,13 +51,13 @@ const AddInvoices = props => {
     // initial effects
     useEffect(() => {
         calculateLineTotal();
-        
+
         api.get("/gst-configs")
             .then(res => {
                 setGstConfigs(res.data.gstConfigs);
             })
             .catch(res => {});
-            
+        
         
         api.get("/getClients")
             .then(res => {
@@ -208,6 +208,8 @@ const AddInvoices = props => {
     );
 
     useEffect(() => {
+        if (!gstConfigs) return;
+
         let tax = 1;
         if(isGstSelected)
         {
@@ -232,7 +234,7 @@ const AddInvoices = props => {
         setInvoice({ ...invoice, amount_due: total-invoice.amount_paid });
 
         
-    }, [subTotal, isGstSelected])
+    }, [subTotal, isGstSelected, gstConfigs])
 
     useEffect(() => {
         calculateTaxes(invoice.gst_option);
@@ -263,7 +265,8 @@ const AddInvoices = props => {
     };
 
     const calculateTaxes = (val) => {
-        if(subTotal === 0 || Object.keys(gstConfigs).length === 0) return;
+        if(subTotal === 0 || !gstConfigs) return;
+        
         switch (val) {
             case "same_state":
                 setTaxes({...taxes, SGST:(gstConfigs.SGST*subTotal)/100, CGST:(gstConfigs.CGST*subTotal)/100, IGST: 0 });
@@ -367,356 +370,70 @@ const AddInvoices = props => {
                 console.log(err);
             });
     };
+    
+    if (!gstConfigs) {
+        return 0;
+    }
 
     return (
         <Fragment>
-            <div className="invoice-form">
-                <div className="invoice-body" style={{ overflow: "auto" }}>
-                    <div className="invoice-header">
-                        <h1 className="invoice-h1">Invoice</h1>
-                        <div
-                            className="invoice-address"
-                            name="bill_from"
-                        >
-                            Radicalloop Technolabs LLP
-                            <br /> 601/A, Parshwanath Esquare, Corporate Road,
-                            Prahladnagar,
-                            <br /> Ahmedabad - 380015, Gujarat, India.
-                            <br /> GSTIN: 24AAUFR2815E1Z6
-                            <br /> www.radicalloop.com | hello@radicalloop.com
-                        </div>
-                    </div>
-                    <article>
-                        <div style={{ float: "left", width: "20%" }}>
-                            <div>
-                                <span>Bill To:</span>
-                                <div suppressContentEditableWarning={true}>
-                                    <select
-                                        name="client_id"
-                                        onChange={onChange}
-                                        value={invoice.client_id}
-                                        className="form-control"
-                                    >
-                                        <option value="">Select Client</option>
-                                        {clientList}
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="invoice-address">
-                                {invoice.bill_to.address}
-                            </div>
-                            <div className="mt-3 mb-4">
-                                <span>Status:</span>
-                                <div
-                                    contentEditable={true}
-                                    suppressContentEditableWarning={true}
+                <div className="invoice-form">
+                    <div className="invoice-body" style={{ overflow: "auto" }}>
+                        <div className="invoice-header">
+                            <h1 className="invoice-h1">Invoice</h1>
+                            <div
+                                className="invoice-address"
+                                name="bill_from"
                                 >
-                                    <select
-                                        name="status"
-                                        onChange={onChange}
-                                        value={invoice.status}
-                                        className="form-control"
-                                    >
-                                        <option value="open">Open</option>
-                                        <option value="paid">Paid</option>
-                                    </select>
-                                </div>
+                                Radicalloop Technolabs LLP
+                                <br /> 601/A, Parshwanath Esquare, Corporate Road,
+                                Prahladnagar,
+                                <br /> Ahmedabad - 380015, Gujarat, India.
+                                <br /> GSTIN: 24AAUFR2815E1Z6
+                                <br /> www.radicalloop.com | hello@radicalloop.com
                             </div>
                         </div>
-                        <div className="invoice-table">
-                            <div style={{ float: "right", width: "80%" }}>
-                                <table className="meta">
-                                    <tbody>
-                                        <tr>
-                                            <th>
-                                                <span
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                >
-                                                    Invoice #
-                                                </span>
-                                            </th>
-                                            <td>
-                                                <span name="number">
-                                                    {invoice.number}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>
-                                                <span
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                >
-                                                    Date
-                                                </span>
-                                            </th>
-                                            <td>
-                                                <DatePicker
-                                                    selected={invoice.date}
-                                                    onChange={e =>
-                                                        onChange(e, "date")
-                                                    }
-                                                    dateFormat="MMMM dd, yyyy"
-                                                />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>
-                                                <span
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                >
-                                                    Due Date
-                                                </span>
-                                            </th>
-                                            <td>
-                                                <DatePicker
-                                                    selected={invoice.due_date}
-                                                    onChange={e =>
-                                                        onChange(e, "due_date")
-                                                    }
-                                                    dateFormat="MMMM dd, yyyy"
-                                                />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>
-                                                <span
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                >
-                                                    Currency
-                                                </span>
-                                            </th>
-                                            <td>
-                                                <select
-                                                    name="currency"
-                                                    onChange={onChange}
-                                                    value={invoice.currency}
-                                                    className="form-control"
-                                                >
-                                                    {config.currencies.map((value,key) => {
-                                                        return (
-                                                            <option
-                                                                value={value.code}
-                                                                key={key}
-                                                            >
-                                                                {value.code}
-                                                            </option>
-                                                        );
-                                                    })}
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <table className="inventory">
-                                <tbody>
-                                    <tr>
-                                        <th>
-                                            <span
-                                                suppressContentEditableWarning={
-                                                    true
-                                                }
-                                            >
-                                                Item
-                                            </span>
-                                        </th>
-                                        <th>
-                                            <span
-                                                suppressContentEditableWarning={
-                                                    true
-                                                }
-                                            >
-                                                SAC Code
-                                            </span>
-                                        </th>
-                                        <th>
-                                            <span
-                                                suppressContentEditableWarning={
-                                                    true
-                                                }
-                                            >
-                                                Qty. / Hrs.
-                                            </span>
-                                        </th>
-                                        <th>
-                                            <span
-                                                suppressContentEditableWarning={
-                                                    true
-                                                }
-                                            >
-                                                Unit Price
-                                            </span>
-                                        </th>
-                                        <th>
-                                            <span
-                                                suppressContentEditableWarning={
-                                                    true
-                                                }
-                                            >
-                                                Amount
-                                            </span>
-                                        </th>
-                                    </tr>
-
-                                    {invoice.lines.map((row, index) => (
-                                        <tr key={index}>
-                                            <td>
-                                                {invoice.lines.length > 1 && (
-                                                    <a
-                                                        className="cut-invoice-btn"
-                                                        onClick={() =>
-                                                            removeRow(index)
-                                                        }
-                                                    >
-                                                        -
-                                                    </a>
-                                                )}
-                                                <span
-                                                    contentEditable={true}
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                    name="item"
-                                                    onBlur={handleChange(index)}
-                                                    style={{
-                                                        wordBreak: "break-all"
-                                                    }}
-                                                >
-                                                    {row.item}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span>{gstConfigs.SAC_code}</span>
-                                            </td>
-
-                                            <td>
-                                                <span
-                                                    contentEditable={true}
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                    name="quantity"
-                                                    onBlur={handleChange(index)}
-                                                >
-                                                    {Number(row.quantity).toFixed(2)}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span data-prefix>
-                                                    {currencySign}
-                                                </span>
-                                                <span
-                                                    contentEditable={true}
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                    name="hourly_rate"
-                                                    onBlur={handleChange(index)}
-                                                >
-                                                    {row.hourly_rate ||
-                                                        invoice.bill_to
-                                                            .hourly_rate ||
-                                                        0}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span data-prefix>
-                                                    {currencySign}
-                                                </span>
-                                                <span>{Number(row.amount).toFixed(2)}</span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                            <a className="add-invoice-btn" onClick={addRow}>
-                                +
-                            </a>
-                            <div style={{ float: "left", width: "20%" }}>                                
-                                <div className="mt-3 mb-4">
-                                    <span>GST ?</span>
-                                    <div>
+                        <article>
+                            <div style={{ float: "left", width: "20%" }}>
+                                <div>
+                                    <span>Bill To:</span>
+                                    <div suppressContentEditableWarning={true}>
                                         <select
-                                            name="gst_option"
+                                            name="client_id"
                                             onChange={onChange}
-                                            value={invoice.gst_option}
+                                            value={invoice.client_id}
                                             className="form-control"
                                         >
-                                            <option value="no">No</option>
-                                            <option value="same_state">Same State</option>
-                                            <option value="other_state">Other State</option>
+                                            <option value="">Select Client</option>
+                                            {clientList}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="invoice-address">
+                                    {invoice.bill_to.address}
+                                </div>
+                                <div className="mt-3 mb-4">
+                                    <span>Status:</span>
+                                    <div
+                                        contentEditable={true}
+                                        suppressContentEditableWarning={true}
+                                    >
+                                        <select
+                                            name="status"
+                                            onChange={onChange}
+                                            value={invoice.status}
+                                            className="form-control"
+                                        >
+                                            <option value="open">Open</option>
+                                            <option value="paid">Paid</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
-                            <div style={{ float: "right", width: "80%" }}>
-                                <table className="balance">
-                                    <tbody>
-                                        <tr>
-                                            <th>
-                                                <span
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                >
-                                                    Subtotal
-                                                </span>
-                                            </th>
-                                            <td>
-                                                <span data-prefix>
-                                                    {currencySign}
-                                                </span>
-                                                <span>{Number(subTotal).toFixed(2)}</span>
-                                            </td>
-                                        </tr>
-                                        {invoice.gst_option === 'same_state' && (
-                                            <>
-                                                <tr>
-                                                    <th>
-                                                        <span
-                                                            suppressContentEditableWarning={
-                                                                true
-                                                            }
-                                                        >
-                                                            SGST @ {gstConfigs.SGST}%
-                                                        </span>
-                                                    </th>
-                                                    <td>
-                                                        <span data-prefix>
-                                                            {currencySign}
-                                                        </span>
-                                                        <span>{Number(taxes.SGST).toFixed(2)}</span>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>
-                                                        <span
-                                                            suppressContentEditableWarning={
-                                                                true
-                                                            }
-                                                        >
-                                                            CGST @ {gstConfigs.CGST}%
-                                                        </span>
-                                                    </th>
-                                                    <td>
-                                                        <span data-prefix>
-                                                            {currencySign}
-                                                        </span>
-                                                        <span>{Number(taxes.CGST).toFixed(2)}</span>
-                                                    </td>
-                                                </tr>
-                                            </>
-                                        )}
-
-                                        {invoice.gst_option === 'other_state' && (
+                            <div className="invoice-table">
+                                <div style={{ float: "right", width: "80%" }}>
+                                    <table className="meta">
+                                        <tbody>
                                             <tr>
                                                 <th>
                                                     <span
@@ -724,134 +441,424 @@ const AddInvoices = props => {
                                                             true
                                                         }
                                                     >
-                                                        IGST @ {gstConfigs.IGST}%
+                                                        Invoice #
+                                                    </span>
+                                                </th>
+                                                <td>
+                                                    <span name="number">
+                                                        {invoice.number}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    <span
+                                                        suppressContentEditableWarning={
+                                                            true
+                                                        }
+                                                    >
+                                                        Date
+                                                    </span>
+                                                </th>
+                                                <td>
+                                                    <DatePicker
+                                                        selected={invoice.date}
+                                                        onChange={e =>
+                                                            onChange(e, "date")
+                                                        }
+                                                        dateFormat="MMMM dd, yyyy"
+                                                    />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    <span
+                                                        suppressContentEditableWarning={
+                                                            true
+                                                        }
+                                                    >
+                                                        Due Date
+                                                    </span>
+                                                </th>
+                                                <td>
+                                                    <DatePicker
+                                                        selected={invoice.due_date}
+                                                        onChange={e =>
+                                                            onChange(e, "due_date")
+                                                        }
+                                                        dateFormat="MMMM dd, yyyy"
+                                                    />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    <span
+                                                        suppressContentEditableWarning={
+                                                            true
+                                                        }
+                                                    >
+                                                        Currency
+                                                    </span>
+                                                </th>
+                                                <td>
+                                                    <select
+                                                        name="currency"
+                                                        onChange={onChange}
+                                                        value={invoice.currency}
+                                                        className="form-control"
+                                                    >
+                                                        {config.currencies.map((value,key) => {
+                                                            return (
+                                                                <option
+                                                                    value={value.code}
+                                                                    key={key}
+                                                                >
+                                                                    {value.code}
+                                                                </option>
+                                                            );
+                                                        })}
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <table className="inventory">
+                                    <tbody>
+                                        <tr>
+                                            <th>
+                                                <span
+                                                    suppressContentEditableWarning={
+                                                        true
+                                                    }
+                                                >
+                                                    Item
+                                                </span>
+                                            </th>
+                                            <th>
+                                                <span
+                                                    suppressContentEditableWarning={
+                                                        true
+                                                    }
+                                                >
+                                                    SAC Code
+                                                </span>
+                                            </th>
+                                            <th>
+                                                <span
+                                                    suppressContentEditableWarning={
+                                                        true
+                                                    }
+                                                >
+                                                    Qty. / Hrs.
+                                                </span>
+                                            </th>
+                                            <th>
+                                                <span
+                                                    suppressContentEditableWarning={
+                                                        true
+                                                    }
+                                                >
+                                                    Unit Price
+                                                </span>
+                                            </th>
+                                            <th>
+                                                <span
+                                                    suppressContentEditableWarning={
+                                                        true
+                                                    }
+                                                >
+                                                    Amount
+                                                </span>
+                                            </th>
+                                        </tr>
+
+                                        {invoice.lines.map((row, index) => (
+                                            <tr key={index}>
+                                                <td>
+                                                    {invoice.lines.length > 1 && (
+                                                        <a
+                                                            className="cut-invoice-btn"
+                                                            onClick={() =>
+                                                                removeRow(index)
+                                                            }
+                                                        >
+                                                            -
+                                                        </a>
+                                                    )}
+                                                    <span
+                                                        contentEditable={true}
+                                                        suppressContentEditableWarning={
+                                                            true
+                                                        }
+                                                        name="item"
+                                                        onBlur={handleChange(index)}
+                                                        style={{
+                                                            wordBreak: "break-all"
+                                                        }}
+                                                    >
+                                                        {row.item}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span>{gstConfigs.SAC_code}</span>
+                                                </td>
+
+                                                <td>
+                                                    <span
+                                                        contentEditable={true}
+                                                        suppressContentEditableWarning={
+                                                            true
+                                                        }
+                                                        name="quantity"
+                                                        onBlur={handleChange(index)}
+                                                    >
+                                                        {Number(row.quantity).toFixed(2)}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span data-prefix>
+                                                        {currencySign}
+                                                    </span>
+                                                    <span
+                                                        contentEditable={true}
+                                                        suppressContentEditableWarning={
+                                                            true
+                                                        }
+                                                        name="hourly_rate"
+                                                        onBlur={handleChange(index)}
+                                                    >
+                                                        {row.hourly_rate ||
+                                                            invoice.bill_to
+                                                                .hourly_rate ||
+                                                            0}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span data-prefix>
+                                                        {currencySign}
+                                                    </span>
+                                                    <span>{Number(row.amount).toFixed(2)}</span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                <a className="add-invoice-btn" onClick={addRow}>
+                                    +
+                                </a>
+                                <div style={{ float: "left", width: "20%" }}>                                
+                                    <div className="mt-3 mb-4">
+                                        <span>GST ?</span>
+                                        <div>
+                                            <select
+                                                name="gst_option"
+                                                onChange={onChange}
+                                                value={invoice.gst_option}
+                                                className="form-control"
+                                            >
+                                                <option value="no">No</option>
+                                                <option value="same_state">Same State</option>
+                                                <option value="other_state">Other State</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{ float: "right", width: "80%" }}>
+                                    <table className="balance">
+                                        <tbody>
+                                            <tr>
+                                                <th>
+                                                    <span
+                                                        suppressContentEditableWarning={
+                                                            true
+                                                        }
+                                                    >
+                                                        Subtotal
                                                     </span>
                                                 </th>
                                                 <td>
                                                     <span data-prefix>
                                                         {currencySign}
                                                     </span>
-                                                    <span>{Number(taxes.IGST).toFixed(2)}</span>
+                                                    <span>{Number(subTotal).toFixed(2)}</span>
                                                 </td>
                                             </tr>
-                                        )}
-                                        <tr>
-                                            <th>
-                                                <span
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                >
-                                                    Total (Rounded)
-                                                </span>
-                                            </th>
-                                            <td>
-                                                <span data-prefix>
-                                                    {currencySign}
-                                                </span>
-                                                <span>{total || 0}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>
-                                                <span
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                >
-                                                    Paid
-                                                </span>
-                                            </th>
-                                            <td>
-                                                <span data-prefix>
-                                                    {currencySign}
-                                                </span>
-                                                <span
-                                                    contentEditable={true}
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                    name="amount_paid"
-                                                    onBlur={onAmountPaidChange}
-                                                >
-                                                    {Number(invoice.amount_paid).toFixed(2)}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>
-                                                <span
-                                                    suppressContentEditableWarning={
-                                                        true
-                                                    }
-                                                >
-                                                    Amount Due
-                                                </span>
-                                            </th>
-                                            <td>
-                                                <span>
-                                                    {currencySign}
-                                                </span>
-                                                <span id="amount_due">
-                                                    {invoice.amount_due || 0}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                            {invoice.gst_option === 'same_state' && (
+                                                <>
+                                                    <tr>
+                                                        <th>
+                                                            <span
+                                                                suppressContentEditableWarning={
+                                                                    true
+                                                                }
+                                                            >
+                                                                SGST @ {gstConfigs.SGST}%
+                                                            </span>
+                                                        </th>
+                                                        <td>
+                                                            <span data-prefix>
+                                                                {currencySign}
+                                                            </span>
+                                                            <span>{Number(taxes.SGST).toFixed(2)}</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <span
+                                                                suppressContentEditableWarning={
+                                                                    true
+                                                                }
+                                                            >
+                                                                CGST @ {gstConfigs.CGST}%
+                                                            </span>
+                                                        </th>
+                                                        <td>
+                                                            <span data-prefix>
+                                                                {currencySign}
+                                                            </span>
+                                                            <span>{Number(taxes.CGST).toFixed(2)}</span>
+                                                        </td>
+                                                    </tr>
+                                                </>
+                                            )}
+
+                                            {invoice.gst_option === 'other_state' && (
+                                                <tr>
+                                                    <th>
+                                                        <span
+                                                            suppressContentEditableWarning={
+                                                                true
+                                                            }
+                                                        >
+                                                            IGST @ {gstConfigs.IGST}%
+                                                        </span>
+                                                    </th>
+                                                    <td>
+                                                        <span data-prefix>
+                                                            {currencySign}
+                                                        </span>
+                                                        <span>{Number(taxes.IGST).toFixed(2)}</span>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            <tr>
+                                                <th>
+                                                    <span
+                                                        suppressContentEditableWarning={
+                                                            true
+                                                        }
+                                                    >
+                                                        Total (Rounded)
+                                                    </span>
+                                                </th>
+                                                <td>
+                                                    <span data-prefix>
+                                                        {currencySign}
+                                                    </span>
+                                                    <span>{total}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    <span
+                                                        suppressContentEditableWarning={
+                                                            true
+                                                        }
+                                                    >
+                                                        Paid
+                                                    </span>
+                                                </th>
+                                                <td>
+                                                    <span data-prefix>
+                                                        {currencySign}
+                                                    </span>
+                                                    <span
+                                                        contentEditable={true}
+                                                        suppressContentEditableWarning={
+                                                            true
+                                                        }
+                                                        name="amount_paid"
+                                                        onBlur={onAmountPaidChange}
+                                                    >
+                                                        {Number(invoice.amount_paid).toFixed(2)}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    <span
+                                                        suppressContentEditableWarning={
+                                                            true
+                                                        }
+                                                    >
+                                                        Amount Due
+                                                    </span>
+                                                </th>
+                                                <td>
+                                                    <span>
+                                                        {currencySign}
+                                                    </span>
+                                                    <span id="amount_due">
+                                                        {invoice.amount_due}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
+                        </article>
+                        <aside>
+                            <span>Notes</span>
+                            <div>
+                                <textarea
+                                    style={{
+                                        border: "none",
+                                        boxShadow: "none"
+                                    }}
+                                    className="form-control"
+                                    rows="6"
+                                    placeholder="Enter Note"
+                                    name="notes"
+                                    onChange={onChange}
+                                    value={invoice.notes || ""}
+                                />
+                            </div>
+                        </aside>
+                        <div className="form-group text-right invoice-save-btn">
+                            {invoiceId && (
+                                    <button
+                                        type="button"
+                                        id="edit_save_button"
+                                        onClick={() => editInvoice(false)}
+                                        className="btn btn--prime mr-1"
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading && (
+                                            <i class="fa fa-spinner fa-spin mr-3"></i>
+                                        )}
+                                        Update
+                                    </button>
+                                )
+                            }
+                            <button
+                                type="button"
+                                id="edit_save_button"
+                                onClick={invoiceId ? editInvoice : saveInvoice}
+                                className="btn btn--prime mr-1"
+                                disabled={isLoading}
+                            >
+                                {isLoading && (
+                                    <i class="fa fa-spinner fa-spin mr-3"></i>
+                                )}
+                                {invoiceId
+                                    ? "Update & Download"
+                                    : "Save & Download"}
+                            </button> 
                         </div>
-                    </article>
-                    <aside>
-                        <span>Notes</span>
-                        <div>
-                            <textarea
-                                style={{
-                                    border: "none",
-                                    boxShadow: "none"
-                                }}
-                                className="form-control"
-                                rows="6"
-                                placeholder="Enter Note"
-                                name="notes"
-                                onChange={onChange}
-                                value={invoice.notes || ""}
-                            />
-                        </div>
-                    </aside>
-                    <div className="form-group text-right invoice-save-btn">
-                        {invoiceId && (
-                                <button
-                                    type="button"
-                                    id="edit_save_button"
-                                    onClick={() => editInvoice(false)}
-                                    className="btn btn--prime mr-1"
-                                    disabled={isLoading}
-                                >
-                                    {isLoading && (
-                                        <i class="fa fa-spinner fa-spin mr-3"></i>
-                                    )}
-                                    Update
-                                </button>
-                            )
-                        }
-                        <button
-                            type="button"
-                            id="edit_save_button"
-                            onClick={invoiceId ? editInvoice : saveInvoice}
-                            className="btn btn--prime mr-1"
-                            disabled={isLoading}
-                        >
-                            {isLoading && (
-                                <i class="fa fa-spinner fa-spin mr-3"></i>
-                            )}
-                            {invoiceId
-                                ? "Update & Download"
-                                : "Save & Download"}
-                        </button> 
                     </div>
                 </div>
-            </div>
         </Fragment>
     );
 };
