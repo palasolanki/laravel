@@ -372,7 +372,7 @@ const AddInvoices = props => {
     };
     
     if (!gstConfigs) {
-        return 0;
+        return null;
     }
 
     return (
