@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\InvoiceRequest;
+use App\Http\Requests\MarkAsPaidRequest;
 use App\Invoice;
 use App\Mail\SendInvoice;
 use Carbon\Carbon;
@@ -106,9 +107,11 @@ class InvoiceController extends Controller
         
     }
 
-    public function markAsPaid(Invoice $invoice)
+    public function markAsPaid(Invoice $invoice, MarkAsPaidRequest $request)
     {
         $invoice->status = 'paid';
+        $invoice->payment_receive_date = $request->payment_receive_date;
+        $invoice->inr_amount_received = $request->inr_amount_received;
         $invoice->amount_paid = $invoice->total;
         $invoice->amount_due = 0;
         $invoice->save();

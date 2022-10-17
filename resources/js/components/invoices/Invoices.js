@@ -8,7 +8,7 @@ import InvoiceMessageModal from "./InvoiceMessageModal";
 import ConfirmationComponent from "../ConfirmationComponent";
 import EditAdminNotes from "./EditAdminNotes";
 import moment from "moment";
-import { downloadFile, formatCurrency } from "../../helpers";
+import { downloadFile, errorResponse, formatCurrency } from "../../helpers";
 import config from "../../helpers/config";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
@@ -26,6 +26,9 @@ function Invoices(props) {
     const [adminNotes, setAdminNotes] = useState({});
     const [showMarkAsPaidModal, setMarkAsPaid] = useState(false);
     const [markAsPaidInvoiceId, setMarkAsPaidInvoiceId] = useState();
+    const [markAsPaidData, setMarkAsPaidData] = useState({payment_receive_date: new Date(), inr_amount_received: 0});
+    const [disabled, setDisabled] = useState(false);
+    const [errors, setErrors] = useState([]);
 
     useEffect(() => {
         initDatatables();
@@ -231,11 +234,19 @@ function Invoices(props) {
     };
 
     const markAsPaid = invoiceId => {
-        api.post(`/invoices/${invoiceId}/mark-paid`).then(res => {
+        setDisabled(true);
+        api.post(`/invoices/${invoiceId}/mark-paid`, markAsPaidData)
+        .then(res => {
+            setDisabled(false);
             handleCloseMarkAsPaid();
             ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
+        })
+        .catch(res => {
+            setDisabled(false);
+            errorResponse(res, setErrors);
         });
+
     }
 
     const downloadInvoice = invoiceId => {
@@ -267,8 +278,19 @@ function Invoices(props) {
             });
     }
 
+    const handleMarkAsPaid = (event) => {
+        let data = {...markAsPaidData};
+        if (event instanceof Date) {
+            data = {...data, ['payment_receive_date']: event}
+        }
+        else {
+            data = {...data, [event.target.name]: parseInt(event.target.value)}
+        }
+        setMarkAsPaidData(data)
+    }
+
     return (
-        <div className="bg-white p-3">
+        <div className="bg-white p-3">            
             <div className="row mx-0 align-items-center">
                 <h2 className="heading invoices__heading">Invoices</h2>
                 <div className="ml-auto d-flex align-items-center mb-2">
@@ -311,10 +333,15 @@ function Invoices(props) {
                     handleCloseDelete={handleCloseMarkAsPaid}
                     btnName="Mark As Paid"
                     confirmBtnColor="btn-success"
+                    isMarkAsPaid={true}
+                    handleMarkAsPaid={handleMarkAsPaid}
+                    disabled={disabled}
+                    errors={errors}
+                    markAsPaidData={markAsPaidData}
                     action={() => markAsPaid(markAsPaidInvoiceId)}
                 />
             )}
-
+            
             {editAdminNotesModal && (
                 <EditAdminNotes
                 closeEditAdminNotesModal={closeEditAdminNotesModal}
