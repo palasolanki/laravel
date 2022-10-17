@@ -10,6 +10,7 @@ import EditAdminNotes from "./EditAdminNotes";
 import moment from "moment";
 import { downloadFile, errorResponse, formatCurrency } from "../../helpers";
 import config from "../../helpers/config";
+import MarkAsPaidConfirmation from "./MarkAsPaidConfirmation";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
@@ -328,12 +329,11 @@ function Invoices(props) {
             )}
 
             {showMarkAsPaidModal && (
-                <ConfirmationComponent
+                <MarkAsPaidConfirmation
                     title="Are you sure you want to mark invoice as paid?"
                     handleCloseDelete={handleCloseMarkAsPaid}
                     btnName="Mark As Paid"
                     confirmBtnColor="btn-success"
-                    isMarkAsPaid={true}
                     handleMarkAsPaid={handleMarkAsPaid}
                     disabled={disabled}
                     errors={errors}
@@ -341,7 +341,7 @@ function Invoices(props) {
                     action={() => markAsPaid(markAsPaidInvoiceId)}
                 />
             )}
-            
+
             {editAdminNotesModal && (
                 <EditAdminNotes
                 closeEditAdminNotesModal={closeEditAdminNotesModal}
