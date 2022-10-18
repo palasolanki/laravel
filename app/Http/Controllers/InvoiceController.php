@@ -138,13 +138,12 @@ class InvoiceController extends Controller
             return response()->json(['message' => 'Income already exist or Invoice status is not paid'], 500);
         }
 
-        $client = Client::with('medium')->findOrFail($invoice->client_id);
+        $client = Client::findOrFail($invoice->client_id);
 
         $incomeLineData = [
             'client' => ['id' => $client->_id, 'name' => $client->name],
             'date' => Carbon::parse($invoice->payment_receive_date),
             'amount' => $invoice->inr_amount_received,
-            'medium' => ['id' => $client->medium->_id, 'medium' => $client->medium->medium],
             'notes' => 'Payment for Invoice #' . $invoice->number,
             'invoice_id' => $invoice->_id
         ];

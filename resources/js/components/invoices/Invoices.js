@@ -132,14 +132,14 @@ function Invoices(props) {
                     );
                 }
                 let markPaid = ``;
-                let addAsInvoice = ``;
+                let addAsIncome = ``;
                 if(data.status == 'open')
                 {
                     $("td:eq(3)", row).addClass('text-danger');
                     markPaid = `<button id = ${data._id} title="Mark as Paid" class="btn btn-sm btn-success ml-1 markPaid"><i class="fa fa-square-check"></i></button>`
                 }
                 if(data.status == 'paid'){
-                    addAsInvoice = `<button id = ${data._id} title="Add As Income" class="btn btn-sm btn-warning ml-1 addAsInvoice"><i class="fa fa-plus"></i></button>`
+                    addAsIncome = `<button id = ${data._id} title="Add As Income" class="btn btn-sm btn-warning ml-1 addAsIncome"><i class="fa fa-plus"></i></button>`
                 }
                 let currencySign = config.currencies.find(currency => currency.code === data.currency).sign || "$";
                
@@ -155,7 +155,7 @@ function Invoices(props) {
                 <button id=${data._id} client-id=${data.client_id} title="Send Mail" class="btn btn-sm btn-info sendData"><i class="fa fa-envelope"></i></button>
                 <button id=${data._id} title="Download Invoice" class="btn btn-sm btn-dark downloadInvoice"><i class="fa fa-download"></i></button>`;
                 
-                $("td:eq(9)", row).html(action + markPaid + addAsInvoice);
+                $("td:eq(9)", row).html(action + markPaid + addAsIncome);
 
             }
         });
@@ -194,7 +194,7 @@ function Invoices(props) {
             openShowMarkAsPaid();
         });
 
-        $("#datatable").on("click", "tbody .addAsInvoice", function() {
+        $("#datatable").on("click", "tbody .addAsIncome", function() {
             setAddAsIncomeInvoiceId($(this).attr("id"));
             openAddAsIncomeModal();
         });
