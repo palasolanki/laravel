@@ -141,8 +141,6 @@ class IncomeController extends Controller
             return response()->json(['message' => 'Income already exist or Invoice status is not paid'], 500);
         }
 
-        // $client = Client::findOrFail($invoice->client_id)->with('medium')->get();
-
         $client = Client::with('medium')->findOrFail($invoice->client_id);
 
         $incomeLineData = [
