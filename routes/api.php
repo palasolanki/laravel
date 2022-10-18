@@ -80,10 +80,12 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/invoices/{invoice}/admin-notes', 'InvoiceController@updateAdminNotes');
     Route::post('/invoices/{invoice}/mark-paid', 'InvoiceController@markAsPaid');
     Route::post('/invoices/{invoice}/download', 'InvoiceController@downloadInvoice');
-
+    Route::post('/add-as-income/{invoice}', 'InvoiceController@addAsIncome');
+    
     Route::get('/invoice/{invoiceId}', 'InvoiceController@edit');
     Route::get('/gst-configs', 'InvoiceController@getGstConfig');
 
     Route::post('/importExpense', 'ExpenseController@importExpense');
     Route::get('expense/download-sample', 'ExpenseController@downloadSample');
+
 });

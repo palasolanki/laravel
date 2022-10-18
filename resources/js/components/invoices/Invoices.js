@@ -8,8 +8,9 @@ import InvoiceMessageModal from "./InvoiceMessageModal";
 import ConfirmationComponent from "../ConfirmationComponent";
 import EditAdminNotes from "./EditAdminNotes";
 import moment from "moment";
-import { downloadFile, formatCurrency } from "../../helpers";
+import { downloadFile, errorResponse, formatCurrency } from "../../helpers";
 import config from "../../helpers/config";
+import MarkAsPaidConfirmation from "./MarkAsPaidConfirmation";
 const $ = require("jquery");
 $.DataTable = require("datatables.net");
 
@@ -26,6 +27,11 @@ function Invoices(props) {
     const [adminNotes, setAdminNotes] = useState({});
     const [showMarkAsPaidModal, setMarkAsPaid] = useState(false);
     const [markAsPaidInvoiceId, setMarkAsPaidInvoiceId] = useState();
+    const [addAsIncomeModal, setAddAsIncomeModal] = useState(false);
+    const [addAsIncomeInvoiceId, setAddAsIncomeInvoiceId] = useState();
+    const [markAsPaidData, setMarkAsPaidData] = useState({payment_receive_date: new Date(), inr_amount_received: 0});
+    const [disabled, setDisabled] = useState(false);
+    const [errors, setErrors] = useState([]);
 
     useEffect(() => {
         initDatatables();
@@ -41,6 +47,8 @@ function Invoices(props) {
     const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
     const openShowMarkAsPaid = () => setMarkAsPaid(true);
+    const openAddAsIncomeModal = () => setAddAsIncomeModal(true);
+    const closeAddAsIncomeModal = () => setAddAsIncomeModal(false);
     const handleCloseMarkAsPaid = () => setMarkAsPaid(false);
 
     const closeMsgModal = () => {
@@ -124,10 +132,14 @@ function Invoices(props) {
                     );
                 }
                 let markPaid = ``;
+                let addAsIncome = ``;
                 if(data.status == 'open')
                 {
                     $("td:eq(3)", row).addClass('text-danger');
                     markPaid = `<button id = ${data._id} title="Mark as Paid" class="btn btn-sm btn-success ml-1 markPaid"><i class="fa fa-square-check"></i></button>`
+                }
+                if(data.status == 'paid'){
+                    addAsIncome = `<button id = ${data._id} title="Add As Income" class="btn btn-sm btn-warning ml-1 addAsIncome"><i class="fa fa-plus"></i></button>`
                 }
                 let currencySign = config.currencies.find(currency => currency.code === data.currency).sign || "$";
                
@@ -143,7 +155,7 @@ function Invoices(props) {
                 <button id=${data._id} client-id=${data.client_id} title="Send Mail" class="btn btn-sm btn-info sendData"><i class="fa fa-envelope"></i></button>
                 <button id=${data._id} title="Download Invoice" class="btn btn-sm btn-dark downloadInvoice"><i class="fa fa-download"></i></button>`;
                 
-                $("td:eq(9)", row).html(action + markPaid);
+                $("td:eq(9)", row).html(action + markPaid + addAsIncome);
 
             }
         });
@@ -180,6 +192,11 @@ function Invoices(props) {
         $("#datatable").on("click", "tbody .markPaid", function() {
             setMarkAsPaidInvoiceId($(this).attr("id"));
             openShowMarkAsPaid();
+        });
+
+        $("#datatable").on("click", "tbody .addAsIncome", function() {
+            setAddAsIncomeInvoiceId($(this).attr("id"));
+            openAddAsIncomeModal();
         });
 
         $("#datatable").on("click", "tbody .downloadInvoice", function() {
@@ -230,12 +247,34 @@ function Invoices(props) {
         });
     };
 
+    const addAsIncome = (invoiceId) => {
+        api.post(`/add-as-income/${invoiceId}`)
+            .then(res => {
+                setDisabled(false);
+                closeAddAsIncomeModal()
+                ToastsStore.success(res.data.message);
+            })
+            .catch(function(err) {
+                setDisabled(false);
+                closeAddAsIncomeModal()
+                ToastsStore.error(err.response.data.message);
+            });
+    }
+
     const markAsPaid = invoiceId => {
-        api.post(`/invoices/${invoiceId}/mark-paid`).then(res => {
+        setDisabled(true);
+        api.post(`/invoices/${invoiceId}/mark-paid`, markAsPaidData)
+        .then(res => {
+            setDisabled(false);
             handleCloseMarkAsPaid();
             ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
+        })
+        .catch(res => {
+            setDisabled(false);
+            errorResponse(res, setErrors);
         });
+
     }
 
     const downloadInvoice = invoiceId => {
@@ -267,8 +306,19 @@ function Invoices(props) {
             });
     }
 
+    const handleMarkAsPaid = (event) => {
+        let data = {...markAsPaidData};
+        if (event instanceof Date) {
+            data = {...data, ['payment_receive_date']: event}
+        }
+        else {
+            data = {...data, [event.target.name]: parseInt(event.target.value)}
+        }
+        setMarkAsPaidData(data)
+    }
+
     return (
-        <div className="bg-white p-3">
+        <div className="bg-white p-3">            
             <div className="row mx-0 align-items-center">
                 <h2 className="heading invoices__heading">Invoices</h2>
                 <div className="ml-auto d-flex align-items-center mb-2">
@@ -305,12 +355,25 @@ function Invoices(props) {
                 />
             )}
 
-            {showMarkAsPaidModal && (
+            {addAsIncomeModal && (
                 <ConfirmationComponent
+                    title="Are you sure to add Invoice as Income?"
+                    handleCloseDelete={closeAddAsIncomeModal}
+                    btnName="Add"
+                    action={() => addAsIncome(addAsIncomeInvoiceId)}
+                />
+            )}
+
+            {showMarkAsPaidModal && (
+                <MarkAsPaidConfirmation
                     title="Are you sure you want to mark invoice as paid?"
                     handleCloseDelete={handleCloseMarkAsPaid}
                     btnName="Mark As Paid"
                     confirmBtnColor="btn-success"
+                    handleMarkAsPaid={handleMarkAsPaid}
+                    disabled={disabled}
+                    errors={errors}
+                    markAsPaidData={markAsPaidData}
                     action={() => markAsPaid(markAsPaidInvoiceId)}
                 />
             )}
