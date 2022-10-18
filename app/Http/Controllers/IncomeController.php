@@ -9,7 +9,6 @@ use App\Tag;
 use Symfony\Component\HttpFoundation\Request;
 use App\Traits\ChartData;
 use Carbon\Carbon;
-use Yajra\DataTables\DataTables;
 
 class IncomeController extends Controller
 {
