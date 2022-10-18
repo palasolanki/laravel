@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Client;
 use App\Http\Requests\IncomeRequest;
 use App\Income;
+use App\Invoice;
 use Pimlie\DataTables\MongodbDataTable;
 use App\Tag;
 use Symfony\Component\HttpFoundation\Request;
@@ -131,5 +133,34 @@ class IncomeController extends Controller
     {
         $tags = Tag::select('_id', 'tag')->where('type', 'income')->get();
         return ['tags' => $tags];
+    }
+
+    public function addAsIncome(Invoice $invoice){
+        
+        if($invoice->status !== 'paid' || Income::where('invoice_id', $invoice->_id)->exists()) {
+            return response()->json(['message' => 'Income already exist or Invoice status is not paid'], 500);
+        }
+
+        // $client = Client::findOrFail($invoice->client_id)->with('medium')->get();
+
+        $client = Client::with('medium')->findOrFail($invoice->client_id);
+
+        $incomeLineData = [
+            'client' => ['id' => $client->_id, 'name' => $client->name],
+            'date' => Carbon::parse($invoice->payment_receive_date),
+            'amount' => $invoice->inr_amount_received,
+            'medium' => ['id' => $client->medium->_id, 'medium' => $client->medium->medium],
+            'notes' => 'Payment for Invoice #' . $invoice->number,
+            'invoice_id' => $invoice->_id
+        ];
+
+        try {
+            Income::create($incomeLineData);
+        }
+        catch(\Exception $e)
+        {
+            return response()->json(['message' => 'Something went wrong! Unable to add as Income'], 500);
+        }
+        return response()->json(['message' => 'Invoice added as income successfully'], 200);
     }
 }

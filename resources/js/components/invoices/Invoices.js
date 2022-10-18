@@ -27,6 +27,8 @@ function Invoices(props) {
     const [adminNotes, setAdminNotes] = useState({});
     const [showMarkAsPaidModal, setMarkAsPaid] = useState(false);
     const [markAsPaidInvoiceId, setMarkAsPaidInvoiceId] = useState();
+    const [addAsIncomeModal, setAddAsIncomeModal] = useState(false);
+    const [addAsIncomeInvoiceId, setAddAsIncomeInvoiceId] = useState();
     const [markAsPaidData, setMarkAsPaidData] = useState({payment_receive_date: new Date(), inr_amount_received: 0});
     const [disabled, setDisabled] = useState(false);
     const [errors, setErrors] = useState([]);
@@ -45,6 +47,8 @@ function Invoices(props) {
     const openShowDelete = () => setDeleteShow(true);
     const handleCloseDelete = () => setDeleteShow(false);
     const openShowMarkAsPaid = () => setMarkAsPaid(true);
+    const openAddAsIncomeModal = () => setAddAsIncomeModal(true);
+    const closeAddAsIncomeModal = () => setAddAsIncomeModal(false);
     const handleCloseMarkAsPaid = () => setMarkAsPaid(false);
 
     const closeMsgModal = () => {
@@ -128,10 +132,14 @@ function Invoices(props) {
                     );
                 }
                 let markPaid = ``;
+                let addAsInvoice = ``;
                 if(data.status == 'open')
                 {
                     $("td:eq(3)", row).addClass('text-danger');
                     markPaid = `<button id = ${data._id} title="Mark as Paid" class="btn btn-sm btn-success ml-1 markPaid"><i class="fa fa-square-check"></i></button>`
+                }
+                if(data.status == 'paid'){
+                    addAsInvoice = `<button id = ${data._id} title="Add As Income" class="btn btn-sm btn-warning ml-1 addAsInvoice"><i class="fa fa-plus"></i></button>`
                 }
                 let currencySign = config.currencies.find(currency => currency.code === data.currency).sign || "$";
                
@@ -147,7 +155,7 @@ function Invoices(props) {
                 <button id=${data._id} client-id=${data.client_id} title="Send Mail" class="btn btn-sm btn-info sendData"><i class="fa fa-envelope"></i></button>
                 <button id=${data._id} title="Download Invoice" class="btn btn-sm btn-dark downloadInvoice"><i class="fa fa-download"></i></button>`;
                 
-                $("td:eq(9)", row).html(action + markPaid);
+                $("td:eq(9)", row).html(action + markPaid + addAsInvoice);
 
             }
         });
@@ -184,6 +192,11 @@ function Invoices(props) {
         $("#datatable").on("click", "tbody .markPaid", function() {
             setMarkAsPaidInvoiceId($(this).attr("id"));
             openShowMarkAsPaid();
+        });
+
+        $("#datatable").on("click", "tbody .addAsInvoice", function() {
+            setAddAsIncomeInvoiceId($(this).attr("id"));
+            openAddAsIncomeModal();
         });
 
         $("#datatable").on("click", "tbody .downloadInvoice", function() {
@@ -233,6 +246,20 @@ function Invoices(props) {
             dataTable.ajax.reload();
         });
     };
+
+    const addAsIncome = (invoiceId) => {
+        api.post(`/add-as-income/${invoiceId}`)
+            .then(res => {
+                setDisabled(false);
+                closeAddAsIncomeModal()
+                ToastsStore.success(res.data.message);
+            })
+            .catch(function(err) {
+                setDisabled(false);
+                closeAddAsIncomeModal()
+                ToastsStore.error(err.response.data.message);
+            });
+    }
 
     const markAsPaid = invoiceId => {
         setDisabled(true);
@@ -325,6 +352,15 @@ function Invoices(props) {
                     handleCloseDelete={handleCloseDelete}
                     btnName="Delete"
                     action={() => deleteInvoice(deleteInvoiceId)}
+                />
+            )}
+
+            {addAsIncomeModal && (
+                <ConfirmationComponent
+                    title="Are you sure to add Invoice as Income?"
+                    handleCloseDelete={closeAddAsIncomeModal}
+                    btnName="Add"
+                    action={() => addAsIncome(addAsIncomeInvoiceId)}
                 />
             )}
 
