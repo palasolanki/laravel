@@ -29,7 +29,7 @@ function Invoices(props) {
     const [markAsPaidInvoiceId, setMarkAsPaidInvoiceId] = useState();
     const [addAsIncomeModal, setAddAsIncomeModal] = useState(false);
     const [addAsIncomeInvoiceId, setAddAsIncomeInvoiceId] = useState();
-    const [markAsPaidData, setMarkAsPaidData] = useState({payment_receive_date: new Date(), inr_amount_received: 0});
+    const [markAsPaidData, setMarkAsPaidData] = useState({});
     const [disabled, setDisabled] = useState(false);
     const [errors, setErrors] = useState([]);
 
@@ -49,7 +49,10 @@ function Invoices(props) {
     const openShowMarkAsPaid = () => setMarkAsPaid(true);
     const openAddAsIncomeModal = () => setAddAsIncomeModal(true);
     const closeAddAsIncomeModal = () => setAddAsIncomeModal(false);
-    const handleCloseMarkAsPaid = () => setMarkAsPaid(false);
+    const handleCloseMarkAsPaid = () => {
+        setErrors([]);
+        setMarkAsPaid(false)
+    };
 
     const closeMsgModal = () => {
         setOpenMsgModal(false);
@@ -131,15 +134,14 @@ function Invoices(props) {
                         moment(data.date).format("MMMM DD, YYYY")
                     );
                 }
-                let markPaid = ``;
-                let addAsIncome = ``;
+
+                let addAsIncomeButton = ``;
                 if(data.status == 'open')
                 {
                     $("td:eq(3)", row).addClass('text-danger');
-                    markPaid = `<button id = ${data._id} title="Mark as Paid" class="btn btn-sm btn-success ml-1 markPaid"><i class="fa fa-square-check"></i></button>`
                 }
                 if(data.status == 'paid'){
-                    addAsIncome = `<button id = ${data._id} title="Add As Income" class="btn btn-sm btn-warning ml-1 addAsIncome"><i class="fa fa-plus"></i></button>`
+                    addAsIncomeButton = `<button class="dropdown-item addAsIncome" id=${data._id}><i class="fa fa-plus mr-2"></i> Add As Income</button>`
                 }
                 let currencySign = config.currencies.find(currency => currency.code === data.currency).sign || "$";
                
@@ -150,12 +152,23 @@ function Invoices(props) {
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
                 $("td:eq(8)", row).html(notes);
 
-                let action = `<button id=${data._id} title="Edit Invoice" class="btn btn-sm btn--prime editData"><i class="fa fa-pencil"></i></button>
-                <button id=${data._id} title="Delete Invoice" class="btn btn-sm btn--cancel deleteData" ><i class="fa fa-trash"></i></button>
-                <button id=${data._id} client-id=${data.client_id} title="Send Mail" class="btn btn-sm btn-info sendData"><i class="fa fa-envelope"></i></button>
-                <button id=${data._id} title="Download Invoice" class="btn btn-sm btn-dark downloadInvoice"><i class="fa fa-download"></i></button>`;
+                let actionButtons = 
+                `<button class="dropdown-item editData" id=${data._id}><i class="fa fa-pencil mr-2"></i> Edit Invoice</button>
+                <button class="dropdown-item deleteData" id=${data._id}><i class="fa fa-trash mr-2"></i> Delete Invoice</button>
+                <button class="dropdown-item sendData" id=${data._id} client-id=${data.client_id}><i class="fa fa-envelope mr-2"></i> Send Mail</button>
+                <button class="dropdown-item downloadInvoice" id=${data._id}><i class="fa fa-download mr-2"></i> Download Invoice</button>
+                <button class="dropdown-item markPaid" id=${data._id} payment_date=${data.payment_receive_date} inr_amount=${data.inr_amount_received}><i class="fa fa-check mr-2"></i> Mark as Paid</button>`
+
+                let dropdownTemplate = `<div class="btn-group">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-display="static" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Actions
+                    </button>
+                    <div class="dropdown-menu p-0 dropdown-menu-lg-right">
+                        ${actionButtons} ${addAsIncomeButton}
+                    </div>
+                </div>`
                 
-                $("td:eq(9)", row).html(action + markPaid + addAsIncome);
+                $("td:eq(9)", row).html(dropdownTemplate);
 
             }
         });
@@ -191,6 +204,7 @@ function Invoices(props) {
 
         $("#datatable").on("click", "tbody .markPaid", function() {
             setMarkAsPaidInvoiceId($(this).attr("id"));
+            setMarkAsPaidData({payment_receive_date: $(this).attr("payment_date"), inr_amount_received: $(this).attr("inr_amount")})
             openShowMarkAsPaid();
         });
 
@@ -312,7 +326,7 @@ function Invoices(props) {
             data = {...data, ['payment_receive_date']: event}
         }
         else {
-            data = {...data, [event.target.name]: parseInt(event.target.value)}
+            data = {...data, [event.target.name]: parseInt(event.target.value) || ''}
         }
         setMarkAsPaidData(data)
     }
@@ -338,6 +352,7 @@ function Invoices(props) {
                     </tfoot>
                 </table>
             </div>
+            
             {openMsgModal && (
                 <InvoiceMessageModal
                     handleCloseMsgModal={closeMsgModal}

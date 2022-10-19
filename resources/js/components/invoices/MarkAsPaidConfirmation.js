@@ -19,7 +19,7 @@ export default function MarkAsPaidConfirmation(props) {
                             ))}
                         </div>
                     )}
-                    <div class="mark-as-paid-field mt-3">
+                    <div className="mark-as-paid-field mt-3">
                         <div className="form-group">
                             <label
                                 className="control-label col-auto px-0"
@@ -31,7 +31,7 @@ export default function MarkAsPaidConfirmation(props) {
                                 className="form-control"
                                 id="payment_receive_date"
                                 name="payment_receive_date"
-                                selected={markAsPaidData.payment_receive_date || new Date()}
+                                selected={markAsPaidData.payment_receive_date === 'undefined' ? new Date() : new Date(markAsPaidData.payment_receive_date)}
                                 onChange={handleMarkAsPaid}
                                 dateFormat="dd-MM-yyyy"
                             />
@@ -49,6 +49,7 @@ export default function MarkAsPaidConfirmation(props) {
                                 className="form-control"
                                 placeholder="Enter INR Amount Received"
                                 name="inr_amount_received"
+                                value={markAsPaidData.inr_amount_received === 'undefined' ? '' : markAsPaidData.inr_amount_received}
                                 onChange={handleMarkAsPaid}
                             />
                         </div>
