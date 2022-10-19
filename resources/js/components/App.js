@@ -13,7 +13,7 @@ import { setAuthorizationToken, setAxiosInterceptor } from '../utils';
 import { setCurrentUser } from '../store/actions/auth';
 import jwt_decode from 'jwt-decode';
 import requireAuth from '../utils/requireAuth'
-
+import 'bootstrap/dist/js/bootstrap.min.js';
 library.add(fab, faBars, faEllipsisV);
 
 export default class App extends Component {

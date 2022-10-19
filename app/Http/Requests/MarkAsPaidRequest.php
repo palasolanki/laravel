@@ -25,7 +25,7 @@ class MarkAsPaidRequest extends FormRequest
     {
         return [
             'payment_receive_date'    => 'required',
-            'inr_amount_received'      => 'required|numeric',
+            'inr_amount_received'      => 'required|numeric|gt:0',
         ];
     }
 
@@ -34,7 +34,8 @@ class MarkAsPaidRequest extends FormRequest
         return [
             'payment_receive_date.required'   => 'Payment Receive Date is required',
             'inr_amount_received.required'   => 'INR Amount is required',
-            'inr_amount_received.numeric'   => 'INR Amount is required'
+            'inr_amount_received.numeric'   => 'INR Amount is required',
+            'inr_amount_received.gt'   => 'INR Amount must be greater than 0'
         ];
     }
 

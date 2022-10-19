@@ -836,7 +836,7 @@ const AddInvoices = props => {
                                         disabled={isLoading}
                                     >
                                         {isLoading && (
-                                            <i class="fa fa-spinner fa-spin mr-3"></i>
+                                            <i className="fa fa-spinner fa-spin mr-3"></i>
                                         )}
                                         Update
                                     </button>
@@ -850,7 +850,7 @@ const AddInvoices = props => {
                                 disabled={isLoading}
                             >
                                 {isLoading && (
-                                    <i class="fa fa-spinner fa-spin mr-3"></i>
+                                    <i className="fa fa-spinner fa-spin mr-3"></i>
                                 )}
                                 {invoiceId
                                     ? "Update & Download"
