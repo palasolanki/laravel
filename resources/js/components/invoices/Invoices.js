@@ -29,11 +29,9 @@ function Invoices(props) {
     const [markAsPaidInvoiceId, setMarkAsPaidInvoiceId] = useState();
     const [addAsIncomeModal, setAddAsIncomeModal] = useState(false);
     const [addAsIncomeInvoiceId, setAddAsIncomeInvoiceId] = useState();
-    const [markAsPaidData, setMarkAsPaidData] = useState({payment_receive_date: new Date(), inr_amount_received: 0});
+    const [markAsPaidData, setMarkAsPaidData] = useState({});
     const [disabled, setDisabled] = useState(false);
     const [errors, setErrors] = useState([]);
-    const [currentPaymentDate, setCurrentPaymentDate] = useState();
-    const [currentInrAmount, setCurrentInrAmount] = useState('');
 
     useEffect(() => {
         initDatatables();
@@ -51,7 +49,10 @@ function Invoices(props) {
     const openShowMarkAsPaid = () => setMarkAsPaid(true);
     const openAddAsIncomeModal = () => setAddAsIncomeModal(true);
     const closeAddAsIncomeModal = () => setAddAsIncomeModal(false);
-    const handleCloseMarkAsPaid = () => setMarkAsPaid(false);
+    const handleCloseMarkAsPaid = () => {
+        setErrors([]);
+        setMarkAsPaid(false)
+    };
 
     const closeMsgModal = () => {
         setOpenMsgModal(false);
@@ -140,7 +141,7 @@ function Invoices(props) {
                     $("td:eq(3)", row).addClass('text-danger');
                 }
                 if(data.status == 'paid'){
-                    addAsIncomeButton = `<button class="dropdown-item addAsIncome" id=${data._id}><i class="fa fa-plus m-2"></i> Add As Income</button>`
+                    addAsIncomeButton = `<button class="dropdown-item addAsIncome" id=${data._id}><i class="fa fa-plus mr-2"></i> Add As Income</button>`
                 }
                 let currencySign = config.currencies.find(currency => currency.code === data.currency).sign || "$";
                
@@ -158,11 +159,11 @@ function Invoices(props) {
                 <button class="dropdown-item downloadInvoice" id=${data._id}><i class="fa fa-download mr-2"></i> Download Invoice</button>
                 <button class="dropdown-item markPaid" id=${data._id} payment_date=${data.payment_receive_date} inr_amount=${data.inr_amount_received}><i class="fa fa-check mr-2"></i> Mark as Paid</button>`
 
-                let dropdownTemplate = `<div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                let dropdownTemplate = `<div class="btn-group">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-display="static" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Actions
                     </button>
-                    <div class="dropdown-menu p-0 dropdown-menu-lg-right" aria-labelledby="dropdownMenu2" data-boundary="window">
+                    <div class="dropdown-menu p-0 dropdown-menu-lg-right">
                         ${actionButtons} ${addAsIncomeButton}
                     </div>
                 </div>`
@@ -203,8 +204,7 @@ function Invoices(props) {
 
         $("#datatable").on("click", "tbody .markPaid", function() {
             setMarkAsPaidInvoiceId($(this).attr("id"));
-            setCurrentPaymentDate($(this).attr("payment_date"));
-            setCurrentInrAmount($(this).attr("inr_amount"))
+            setMarkAsPaidData({payment_receive_date: $(this).attr("payment_date"), inr_amount_received: $(this).attr("inr_amount")})
             openShowMarkAsPaid();
         });
 
@@ -326,8 +326,7 @@ function Invoices(props) {
             data = {...data, ['payment_receive_date']: event}
         }
         else {
-            setCurrentInrAmount(event.target.value);
-            data = {...data, [event.target.name]: parseInt(event.target.value)}
+            data = {...data, [event.target.name]: parseInt(event.target.value) || ''}
         }
         setMarkAsPaidData(data)
     }
@@ -389,8 +388,7 @@ function Invoices(props) {
                     handleMarkAsPaid={handleMarkAsPaid}
                     disabled={disabled}
                     errors={errors}
-                    currentPaymentDate={currentPaymentDate}
-                    currentInrAmount={currentInrAmount}
+                    markAsPaidData={markAsPaidData}
                     action={() => markAsPaid(markAsPaidInvoiceId)}
                 />
             )}

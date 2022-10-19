@@ -2,7 +2,7 @@ import React from 'react'
 import DatePicker from 'react-datepicker';
 
 export default function MarkAsPaidConfirmation(props) {
-    const { title, handleCloseDelete, action, btnName, confirmBtnColor, handleMarkAsPaid, disabled, errors, currentPaymentDate, currentInrAmount} = props;
+    const { title, handleCloseDelete, action, btnName, confirmBtnColor, handleMarkAsPaid, disabled, errors, markAsPaidData} = props;
 
     return (
         <div>
@@ -31,7 +31,7 @@ export default function MarkAsPaidConfirmation(props) {
                                 className="form-control"
                                 id="payment_receive_date"
                                 name="payment_receive_date"
-                                selected={currentPaymentDate === 'undefined' ? new Date() : new Date(currentPaymentDate)}
+                                selected={markAsPaidData.payment_receive_date === 'undefined' ? new Date() : new Date(markAsPaidData.payment_receive_date)}
                                 onChange={handleMarkAsPaid}
                                 dateFormat="dd-MM-yyyy"
                             />
@@ -49,7 +49,7 @@ export default function MarkAsPaidConfirmation(props) {
                                 className="form-control"
                                 placeholder="Enter INR Amount Received"
                                 name="inr_amount_received"
-                                value={currentInrAmount === 'undefined' ? '' : currentInrAmount}
+                                value={markAsPaidData.inr_amount_received === 'undefined' ? '' : markAsPaidData.inr_amount_received}
                                 onChange={handleMarkAsPaid}
                             />
                         </div>
