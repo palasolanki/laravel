@@ -90,9 +90,9 @@ function Invoices(props) {
                 { title: "Date", data: "date" },
                 { title: "Status", data: "status", defaultContent: "open" },
                 {
-                    title: "Last Sent At",
-                    data: "last_sent_at",
-                    defaultContent: "N/A"
+                    title: "Added as Income",
+                    data: "null",
+                    defaultContent: ""
                 },
                 {
                     title: "Currency",
@@ -133,6 +133,10 @@ function Invoices(props) {
                     $("td:eq(2)", row).html(
                         moment(data.date).format("MMMM DD, YYYY")
                     );
+                }
+
+                if(data.income){
+                    $("td:eq(4)", row).html("<i class='fa fa-check' style='color:green'></i>");
                 }
 
                 let addAsIncomeButton = ``;
@@ -203,8 +207,11 @@ function Invoices(props) {
         })
 
         $("#datatable").on("click", "tbody .markPaid", function() {
+            let payment_receive_date = $(this).attr("payment_date") === 'undefined' ? new Date() : $(this).attr("payment_date");         
+            let inr_amount_received = $(this).attr("inr_amount") === 'undefined' ? '' : $(this).attr("inr_amount");  
+                  
             setMarkAsPaidInvoiceId($(this).attr("id"));
-            setMarkAsPaidData({payment_receive_date: $(this).attr("payment_date"), inr_amount_received: $(this).attr("inr_amount")})
+            setMarkAsPaidData({payment_receive_date: payment_receive_date , inr_amount_received: inr_amount_received})
             openShowMarkAsPaid();
         });
 
