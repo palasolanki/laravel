@@ -22,7 +22,7 @@ class InvoiceController extends Controller
     {
         $invoice = Invoice::with(['client' => function ($query) {
             $query->select('name');
-        }]);
+        }, 'income']);
 
         return (new MongodbDataTable($invoice))
             ->make(true);

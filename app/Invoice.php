@@ -29,4 +29,9 @@ class Invoice extends Eloquent
     {
         return $this->hasOne('App\Client', '_id', 'client_id');
     }
+
+    public function income()
+    {
+        return $this->hasOne('App\Income', 'invoice_id', "_id");
+    }
 }
