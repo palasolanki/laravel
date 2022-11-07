@@ -90,9 +90,9 @@ function Invoices(props) {
                 { title: "Date", data: "date" },
                 { title: "Status", data: "status", defaultContent: "open" },
                 {
-                    title: "Last Sent At",
-                    data: "last_sent_at",
-                    defaultContent: "N/A"
+                    title: "Added as Income",
+                    data: null,
+                    defaultContent: ""
                 },
                 {
                     title: "Currency",
@@ -104,12 +104,12 @@ function Invoices(props) {
                 { title: "Amount Due", data: "amount_due" },
                 {
                     title: "Admin Notes",
-                    data: "null",
+                    data: null,
                     defaultContent: "N/A"
                 },
                 {
                     title: "Action",
-                    data: "null",
+                    data: null,
                     defaultContent: "N/A"
                 },
                 { 
@@ -135,12 +135,16 @@ function Invoices(props) {
                     );
                 }
 
+                if (data.income){
+                    $("td:eq(4)", row).html("<i class='fa fa-check' style='color:green'></i>");
+                }
+
                 let addAsIncomeButton = ``;
-                if(data.status == 'open')
+                if (data.status == 'open')
                 {
                     $("td:eq(3)", row).addClass('text-danger');
                 }
-                if(data.status == 'paid'){
+                if (data.status == 'paid'){
                     addAsIncomeButton = `<button class="dropdown-item addAsIncome" id=${data._id}><i class="fa fa-plus mr-2"></i> Add As Income</button>`
                 }
                 let currencySign = config.currencies.find(currency => currency.code === data.currency).sign || "$";
@@ -203,8 +207,11 @@ function Invoices(props) {
         })
 
         $("#datatable").on("click", "tbody .markPaid", function() {
+            let payment_receive_date = !$(this).attr("payment_date")  ? new Date() : $(this).attr("payment_date");         
+            let inr_amount_received = !$(this).attr("inr_amount") ? 0 : $(this).attr("inr_amount");  
+                  
             setMarkAsPaidInvoiceId($(this).attr("id"));
-            setMarkAsPaidData({payment_receive_date: $(this).attr("payment_date"), inr_amount_received: $(this).attr("inr_amount")})
+            setMarkAsPaidData({payment_receive_date: payment_receive_date , inr_amount_received: inr_amount_received})
             openShowMarkAsPaid();
         });
 
@@ -267,6 +274,7 @@ function Invoices(props) {
                 setDisabled(false);
                 closeAddAsIncomeModal()
                 ToastsStore.success(res.data.message);
+                dataTable.ajax.reload();
             })
             .catch(function(err) {
                 setDisabled(false);
