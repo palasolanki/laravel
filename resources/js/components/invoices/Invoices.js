@@ -102,6 +102,7 @@ function Invoices(props) {
                 },
                 { title: 'Amount', data: "total"},
                 { title: "Amount Due", data: "amount_due" },
+                { title: "INR Amount", data: "inr_amount_received", defaultContent: ""},
                 {
                     title: "Admin Notes",
                     data: null,
@@ -154,7 +155,7 @@ function Invoices(props) {
                 $("td:eq(7)", row).html(currencySign + formatCurrency(data.amount_due));
 
                 let notes = `<a href="javascript:void(0)" id=${data._id} class="notes">Notes</a>`;
-                $("td:eq(8)", row).html(notes);
+                $("td:eq(9)", row).html(notes);
 
                 let actionButtons = 
                 `<button class="dropdown-item editData" id=${data._id}><i class="fa fa-pencil mr-2"></i> Edit Invoice</button>
@@ -172,7 +173,7 @@ function Invoices(props) {
                     </div>
                 </div>`
                 
-                $("td:eq(9)", row).html(dropdownTemplate);
+                $("td:eq(10)", row).html(dropdownTemplate);
 
             }
         });
@@ -211,7 +212,7 @@ function Invoices(props) {
             let inr_amount_received = $(this).attr("inr_amount") === 'undefined' ? 0 : $(this).attr("inr_amount");
                   
             setMarkAsPaidInvoiceId($(this).attr("id"));
-            setMarkAsPaidData({payment_receive_date: payment_receive_date, inr_amount_received: inr_amount_received})
+            setMarkAsPaidData({payment_receive_date: payment_receive_date, inr_amount_received: inr_amount_received, add_as_income: true})
             openShowMarkAsPaid();
         });
 
@@ -289,11 +290,15 @@ function Invoices(props) {
         .then(res => {
             setDisabled(false);
             handleCloseMarkAsPaid();
+            if(markAsPaidData.add_as_income){
+                addAsIncome(invoiceId);
+            }
             ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
         })
         .catch(res => {
             setDisabled(false);
+            ToastsStore.error(res.response.data.message);
             errorResponse(res, setErrors);
         });
 
@@ -333,8 +338,11 @@ function Invoices(props) {
         if (event instanceof Date) {
             data = {...data, ['payment_receive_date']: event}
         }
+        else if (event.target.name == 'add_as_income') {
+            data = {...data, [event.target.name]: event.target.checked}
+        }
         else {
-            data = {...data, [event.target.name]: parseInt(event.target.value) || ''}
+            data = {...data, [event.target.name]: event.target.value}
         }
         setMarkAsPaidData(data)
     }
