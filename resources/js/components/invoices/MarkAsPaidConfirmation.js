@@ -49,7 +49,7 @@ export default function MarkAsPaidConfirmation(props) {
                                 className="form-control"
                                 placeholder="Enter INR Amount Received"
                                 name="inr_amount_received"
-                                value={markAsPaidData.inr_amount_received === 'undefined' ? '' : markAsPaidData.inr_amount_received}
+                                value={markAsPaidData.inr_amount_received === 'undefined' ? 0 : markAsPaidData.inr_amount_received}
                                 onChange={handleMarkAsPaid}
                             />
                         </div>
