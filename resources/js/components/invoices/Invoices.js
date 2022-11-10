@@ -207,11 +207,8 @@ function Invoices(props) {
         })
 
         $("#datatable").on("click", "tbody .markPaid", function() {
-            let payment_receive_date = !$(this).attr("payment_date")  ? new Date() : $(this).attr("payment_date");         
-            let inr_amount_received = !$(this).attr("inr_amount") ? 0 : $(this).attr("inr_amount");  
-                  
             setMarkAsPaidInvoiceId($(this).attr("id"));
-            setMarkAsPaidData({payment_receive_date: payment_receive_date , inr_amount_received: inr_amount_received})
+            setMarkAsPaidData({payment_receive_date: $(this).attr("payment_date"), inr_amount_received: $(this).attr("inr_amount")})
             openShowMarkAsPaid();
         });
 
