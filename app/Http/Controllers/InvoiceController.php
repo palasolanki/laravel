@@ -161,9 +161,4 @@ class InvoiceController extends Controller
         }
         return response()->json(['message' => 'Invoice added as income successfully'], 200);
     }
-
-    public function checkAddedAsInvoice($invoice) 
-    {
-        return $invoice->status !== 'paid' || Income::where('invoice_id', $invoice->_id)->exists();
-    }
 }
