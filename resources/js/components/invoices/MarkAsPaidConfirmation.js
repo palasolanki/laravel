@@ -53,6 +53,22 @@ export default function MarkAsPaidConfirmation(props) {
                                 onChange={handleMarkAsPaid}
                             />
                         </div>
+                        <div >
+                            <input
+                                type="checkbox"
+                                id="add_as_income"
+                                name="add_as_income"
+                                className='w-auto h-auto mr-2'
+                                checked={markAsPaidData.add_as_income}
+                                onChange={handleMarkAsPaid}
+                            />
+                            <label
+                                className="control-label col-auto px-0"
+                                htmlFor="add_as_income"
+                            >
+                                Add As Income
+                            </label>
+                        </div>
                     </div>
                     <div style={{textAlign: 'center',}} className="modal-body">
                         <button style={{color: '#fff',}} className="btn btn--prime mr-1" onClick={handleCloseDelete}>Cancel</button>&nbsp;

@@ -111,6 +111,10 @@ class InvoiceController extends Controller
 
     public function markAsPaid(Invoice $invoice, MarkAsPaidRequest $request)
     {
+        if($request->add_as_income && Income::where('invoice_id', $invoice->_id)->exists()) {
+            return response()->json(['message' => 'Already added as income.'], 500);
+        }
+
         $invoice->status = 'paid';
         $invoice->payment_receive_date = $request->payment_receive_date;
         $invoice->inr_amount_received = $request->inr_amount_received;
@@ -132,10 +136,10 @@ class InvoiceController extends Controller
         return response()->json(['gstConfigs' => config('expense_tracker.gst')]);
     }
 
-    public function addAsIncome(Invoice $invoice){
-        
+    public function addAsIncome(Invoice $invoice)
+    {
         if($invoice->status !== 'paid' || Income::where('invoice_id', $invoice->_id)->exists()) {
-            return response()->json(['message' => 'Income already exist or Invoice status is not paid'], 500);
+            return response()->json(['message' => 'Already added as Income or Invoice not marked as Paid'], 500);
         }
 
         $client = Client::findOrFail($invoice->client_id);
@@ -158,4 +162,8 @@ class InvoiceController extends Controller
         return response()->json(['message' => 'Invoice added as income successfully'], 200);
     }
 
+    public function checkAddedAsInvoice($invoice) 
+    {
+        return $invoice->status !== 'paid' || Income::where('invoice_id', $invoice->_id)->exists();
+    }
 }
