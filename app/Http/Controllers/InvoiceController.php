@@ -112,7 +112,7 @@ class InvoiceController extends Controller
     public function markAsPaid(Invoice $invoice, MarkAsPaidRequest $request)
     {
         if($request->add_as_income && Income::where('invoice_id', $invoice->_id)->exists()) {
-            return response()->json(['message' => 'Already added as income.'], 500);
+            return response()->json(['message' => 'Already added as income'], 500);
         }
 
         $invoice->status = 'paid';
@@ -121,6 +121,11 @@ class InvoiceController extends Controller
         $invoice->amount_paid = $invoice->total;
         $invoice->amount_due = 0;
         $invoice->save();
+
+        if($request->add_as_income){
+            $this->addAsIncome($invoice);
+        }
+
         return response()->json(['message' => 'Status Marked As Paid Successfully']);
     }
 
@@ -139,7 +144,7 @@ class InvoiceController extends Controller
     public function addAsIncome(Invoice $invoice)
     {
         if($invoice->status !== 'paid' || Income::where('invoice_id', $invoice->_id)->exists()) {
-            return response()->json(['message' => 'Already added as Income or Invoice not marked as Paid'], 500);
+            return response()->json(['message' => 'Already added as Income or Invoice not marked as paid'], 500);
         }
 
         $client = Client::findOrFail($invoice->client_id);
