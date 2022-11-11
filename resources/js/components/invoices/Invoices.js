@@ -290,9 +290,6 @@ function Invoices(props) {
         .then(res => {
             setDisabled(false);
             handleCloseMarkAsPaid();
-            if(markAsPaidData.add_as_income){
-                addAsIncome(invoiceId);
-            }
             ToastsStore.success(res.data.message);
             dataTable.ajax.reload();
         })
